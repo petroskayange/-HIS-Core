@@ -1,23 +1,15 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>National EMR Series 3</ion-title>
-      </ion-toolbar>
-    </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">National EMR Series 3</ion-title>
-        </ion-toolbar>
-      </ion-header>
 
       <div id="container">
         <ion-row>
           <ion-col>
             <ion-text  id="emr-title">
-              <span id="emr-title-one">National</span> <span id="emr-title-two">EMR</span> <span id="version-desc">Series 3</span>
+              <span id="emr-title-one">National</span>
+              <br>
+              <span id="emr-title-two">EMR</span> <span id="version-desc">Series 3</span>
             </ion-text>
           </ion-col>
         </ion-row>
@@ -71,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonLabel, IonInput, IonList, IonRow, IonCol, IonItem,
+import { IonContent, IonPage, IonLabel, IonInput, IonList, IonRow, IonCol, IonItem,
     IonText, IonButton
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
@@ -87,10 +79,7 @@ export default defineComponent({
     IonButton,
     IonInput,
     IonContent,
-    IonHeader,
     IonPage,
-    IonTitle,
-    IonToolbar,
     IonText
   },
   data() {
