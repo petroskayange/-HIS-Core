@@ -18,7 +18,7 @@
         <ion-row>
           <ion-col>
             <form novalidate>
-              <ion-list>
+              <ion-list class="get-centered">
                 <ion-item>
                   <ion-input
                       v-model="username"
@@ -31,24 +31,21 @@
                       placeholder="Username"
                   ></ion-input>
                 </ion-item>
-
-                <!--                <ion-text color="danger">-->
-                <!--                  <p v-show="!usernameValid || submitted == true" padding-left>Username is required</p>-->
-                <!--                </ion-text>-->
+                <!-- TODO: make this info message for when login was attempted without username entered. -->
+                <ion-text color="danger">
+                  <p v-show="!usernameValid || submitted == true" padding-left>Username is required</p>
+                </ion-text>
 
                 <ion-item>
                   <ion-input v-model="password" name="password" type="password" required placeholder="Password" class="login_input"></ion-input>
                 </ion-item>
-
-                <!--                <ion-text color="danger">-->
-                <!--                  <p v-show="!passwordValid || submitted == true" padding-left>Password is required</p>-->
-                <!--                </ion-text>-->
+                <!-- TODO: make this info message for when login was attempted without password entered. -->
+                <ion-text color="danger">
+                  <p v-show="!passwordValid || submitted == true" padding-left>Password is required</p>
+                </ion-text>
               </ion-list>
 
               <ion-row responsive-sm>
-                <!--                <ion-col>-->
-                <!--                  <ion-button @click="onSignup()" color="light" expand="block">Signup</ion-button>-->
-                <!--                </ion-col>-->
                 <ion-col>
                   <ion-button @click="onLogin(loginForm)" type="submit" expand="block">Login</ion-button>
                 </ion-col>
@@ -151,8 +148,8 @@ export default defineComponent({
   background-position: center;*/
 }
 
-.inputs {
-  height: 75vh;
+.get-centered {
+  text-align: center;
 }
 
 .logos img {
@@ -205,36 +202,6 @@ export default defineComponent({
   margin-bottom: 5px;
   border: 1px solid #8B4513;
   border-radius: 5px;
-}
-
-#login-btn {
-  margin: 5px 0px 0px;
-  margin-right: 0px;
-  height: 60px;
-  float: right;
-  font-size: 2rem;
-  border: 1px solid #7eb9d0;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  font-size: 28px;
-  font-family: arial, helvetica, sans-serif;
-  padding: 10px 10px 10px 10px;
-  text-decoration: none;
-  display: inline-block;
-  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
-  font-weight: bold;
-  color: #FFFFFF;
-  background-color: #36780f;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#36780f), to(#005900));
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#4ba614), to(#008c00));
-  background-image: -webkit-linear-gradient(top, #4ba614, #008c00);
-  background-image: -moz-linear-gradient(top, #4ba614, #008c00);
-  background-image: -ms-linear-gradient(top, #4ba614, #008c00);
-  background-image: -o-linear-gradient(top, #4ba614, #008c00);
-  background-image: linear-gradient(to bottom, #4ba614, #008c00);
-  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
-  margin-right: 10px;
 }
 
 #coat-of-arms {
