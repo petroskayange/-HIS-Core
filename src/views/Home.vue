@@ -2,26 +2,26 @@
   <ion-page>
     <ion-header :translucent="true">
       <ion-toolbar>
-        <ion-title>E-Mastercard v4</ion-title>
+        <ion-title>National EMR Series 3</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">E-Mastercard v4</ion-title>
+          <ion-title size="large">National EMR Series 3</ion-title>
         </ion-toolbar>
       </ion-header>
 
       <div id="container">
         <ion-row>
-          <!-- Left sidebar for image -->
           <ion-col>
-            <div class="login-logo">
-              <img src="/assets/egpaf.jpg" alt="E-Mastercard Logo">
-            </div>
+            <ion-text  id="emr-title">
+              <span id="emr-title-one">National</span> <span id="emr-title-two">EMR</span> <span id="version-desc">Series 3</span>
+            </ion-text>
           </ion-col>
-          <!-- Right sidebar for form -->
+        </ion-row>
+        <ion-row>
           <ion-col>
             <form novalidate>
               <ion-list>
@@ -72,7 +72,7 @@
 
 <script lang="ts">
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonLabel, IonInput, IonList, IonRow, IonCol, IonItem,
-  IonButton
+    IonText, IonButton
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 
@@ -90,7 +90,8 @@ export default defineComponent({
     IonHeader,
     IonPage,
     IonTitle,
-    IonToolbar
+    IonToolbar,
+    IonText
   },
   data() {
     return {
@@ -152,5 +153,28 @@ export default defineComponent({
 
 .list {
   margin-bottom: 0;
+}
+
+#emr-title {
+  font-size: 60px;
+  font-weight: bold;
+  color: #bdb5aa;
+  padding-bottom: 8px;
+  text-shadow: 0 2px 0 rgba(255,255,255,0.8);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.8);
+  text-transform: uppercase;
+}
+
+#emr-title-one {
+  color: #8B4513;
+}
+
+#emr-title-two {
+  color: #CD853F;
+}
+
+#version-desc {
+  font-size: 15px;
+  margin-left: 5px;
 }
 </style>
