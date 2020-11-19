@@ -10,8 +10,7 @@
         <!-- Form -->
         <ion-row>
           <ion-col>
-            <HisForm>
-            </HisForm>
+            <HisForm></HisForm>
           </ion-col>
         </ion-row>
       </div>
@@ -42,7 +41,7 @@ export default defineComponent({
   },
   data() {
     return {
-      labelValue: 'First Name'
+      labelValue: 'First name'
     }
   }
 });

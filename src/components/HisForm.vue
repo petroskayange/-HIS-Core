@@ -1,7 +1,12 @@
 <template>
   <form novalidate>
-    <HisFormElement element-name="first_name" element-type="text" element-placeholder="First Name"></HisFormElement>
-    <HisFormElement element-name="last_name" element-type="text" element-placeholder="Last Name"></HisFormElement>
+    <HisFormElement
+        v-for="element in hisFormElements"
+        :key="element.id"
+        :element-name="element.elementName"
+        :element-type="element.elementType"
+        :element-placeholder="element.elementPlaceholder"
+    ></HisFormElement>
   </form>
 </template>
 
@@ -10,6 +15,15 @@ import HisFormElement from "@/components/HisFormElement";
 
 export default {
   name: "HisForm",
+  data() {
+    return {
+      hisFormElements: [
+        {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
+        {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},
+        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'}
+      ]
+    }
+  },
   components: {
     HisFormElement
   }
