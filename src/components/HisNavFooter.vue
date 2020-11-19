@@ -1,10 +1,10 @@
 <template>
   <ion-footer>
     <ion-toolbar color="dark">
-      <ion-button @click="cancel('redirectUrl')" color="danger">Cancel</ion-button>
-      <ion-button @click="navigatePage('sectionId')" color="primary">Back</ion-button>
-      <ion-button @click="navigatePage('sectionId')" color="primary">Next</ion-button>
-      <ion-button @click="finish('destinationUrl')" color="success">Finish</ion-button>
+      <ion-button @click="cancel('redirectUrl')" color="danger" size="large">Cancel</ion-button>
+      <ion-button slot="end" @click="navigatePage('sectionId')" color="primary" size="large">Back</ion-button>
+      <ion-button slot="end" @click="navigatePage('sectionId')" color="primary" size="large">Next</ion-button>
+      <ion-button slot="end" @click="finish('destinationUrl')" color="success" size="large">Finish</ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
