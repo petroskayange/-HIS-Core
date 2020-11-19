@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Label Value</ion-title>
+        <ion-title>{labelValue}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -14,7 +14,16 @@
               <ion-list class="get-centered">
                 <ion-item>
                   <ion-input
-                      v-model="first_name"
+                      name="first_name"
+                      type="text"
+                      spellcheck="false"
+                      autocapitalize="off"
+                      required
+                      placeholder="First Name"
+                  ></ion-input>
+                </ion-item>
+                <ion-item>
+                  <ion-input
                       name="first_name"
                       type="text"
                       spellcheck="false"
@@ -32,7 +41,7 @@
 
     <ion-footer>
       <ion-toolbar>
-        <ion-title>Button Navigations come here</ion-title>
+        <ion-title>Button Navigations component comes here</ion-title>
       </ion-toolbar>
     </ion-footer>
   </ion-page>
@@ -57,6 +66,11 @@ export default defineComponent({
     IonInput,
     IonContent,
     IonPage
+  },
+  data() {
+    return {
+      labelValue: 'First Name'
+    }
   }
 });
 </script>
