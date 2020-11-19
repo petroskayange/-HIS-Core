@@ -1,8 +1,8 @@
 <template>
   <form novalidate>
     <HisFormElement
-        v-for="element in hisFormElements"
-        :key="element.id"
+        v-for="(element, counter) in hisFormElements"
+        :key="counter"
         :element-name="element.elementName"
         :element-type="element.elementType"
         :element-placeholder="element.elementPlaceholder"
@@ -26,6 +26,11 @@ export default {
   },
   components: {
     HisFormElement
+  },
+  computed: {
+    showElement() {
+      return this.counter < this.hisFormElements.length;
+    }
   }
 }
 </script>
