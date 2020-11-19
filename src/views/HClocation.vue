@@ -18,28 +18,26 @@
       </div>
     </ion-content>
 
-    <ion-footer :translucent = "true" class="loc-footer">
-      <ion-button class="footer-btns" color="danger">Cancel</ion-button>
-    </ion-footer>
+    <HisNavFooter></HisNavFooter>
 
   </ion-page>
 </template>
 
 <script lang="ts">
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButton} from '@ionic/vue';
+import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/vue';
 import { defineComponent } from 'vue';
 import BarcodeScan from '@/components/BarcodeScan.vue';
+import HisNavFooter from "@/components/HisNavFooter.vue";
 
 export default defineComponent({
   name: 'HC location',
   components: {
-    IonButton,
+    HisNavFooter,
     IonContent,
     IonHeader,
     IonPage,
     IonTitle,
     IonToolbar,
-    IonFooter,
     "barcode-scan": BarcodeScan
   }
 });
@@ -61,14 +59,4 @@ export default defineComponent({
   margin: 20px;
 }
 
-.loc-footer {
-    height: 100px !important;
-    background-color: #333 !important;
-}
-
-.footer-btns {
-    margin: 20px;
-    height: 70px;
-    width: 150px;
-}
 </style>

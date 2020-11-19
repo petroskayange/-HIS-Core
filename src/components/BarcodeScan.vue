@@ -7,8 +7,8 @@
                 <ion-img id="barcode-img" src="/assets/images/barcode.png"></ion-img>
             </ion-col>
             <ion-col size-md="10" size="12">
-                <ion-input type="text" id="barcode-inputbox" 
-                 :autofocus="true" ref="barcodeInputbox" v-on:input="checkForBarcode"></ion-input>
+                <ion-input id="barcode-inputbox" autofocus="true"
+                           type="text" v-on:input="checkForBarcode"></ion-input>
             </ion-col>
         </ion-row>
       </ion-grid>
@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts">
-//import { IonInput } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {IonCol, IonGrid, IonImg, IonInput, IonRow} from "@ionic/vue";
 
@@ -35,7 +34,7 @@ export default defineComponent({
       //const inp = await this.$refs.barcodeInputbox.getInputElement();
       },
     async checkForBarcode() {
-      // const barcodeEntered = await this.barcodeInputbox.getInputElement();
+      // const barcodeEntered = await this.$refs.barcodeInputbox.getInputElement();
       // if (barcodeEntered.value.match(/.+\$$/i) != null) {
       //   alert("Found $ sign");
       // }
