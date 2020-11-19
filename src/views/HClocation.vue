@@ -26,13 +26,14 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter } from '@ionic/vue';
+import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonFooter, IonButton} from '@ionic/vue';
 import { defineComponent } from 'vue';
 import BarcodeScan from '@/components/BarcodeScan.vue';
 
 export default defineComponent({
   name: 'HC location',
   components: {
+    IonButton,
     IonContent,
     IonHeader,
     IonPage,

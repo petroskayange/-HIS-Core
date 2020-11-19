@@ -39,11 +39,7 @@
       </div>
     </ion-content>
 
-    <ion-footer>
-      <ion-toolbar>
-        <ion-title>Button Navigations component comes here</ion-title>
-      </ion-toolbar>
-    </ion-footer>
+    <HisNavFooter></HisNavFooter>
   </ion-page>
 </template>
 
@@ -51,11 +47,12 @@
 import { IonContent, IonPage, IonInput, IonList, IonRow, IonCol, IonItem, IonHeader, IonToolbar, IonTitle, IonFooter
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import HisNavFooter from "@/components/HisNavFooter.vue";
 
 export default defineComponent({
   name: 'MultipleInputs',
   components: {
-    IonFooter,
+    HisNavFooter,
     IonHeader,
     IonToolbar,
     IonTitle,
