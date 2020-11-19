@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>{labelValue}</ion-title>
+        <ion-title>{{ labelValue }}</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -10,30 +10,7 @@
         <!-- Form -->
         <ion-row>
           <ion-col>
-            <form novalidate>
-              <ion-list class="get-centered">
-                <ion-item>
-                  <ion-input
-                      name="first_name"
-                      type="text"
-                      spellcheck="false"
-                      autocapitalize="off"
-                      required
-                      placeholder="First Name"
-                  ></ion-input>
-                </ion-item>
-                <ion-item>
-                  <ion-input
-                      name="first_name"
-                      type="text"
-                      spellcheck="false"
-                      autocapitalize="off"
-                      required
-                      placeholder="First Name"
-                  ></ion-input>
-                </ion-item>
-              </ion-list>
-            </form>
+            <HisForm></HisForm>
           </ion-col>
         </ion-row>
       </div>
@@ -44,23 +21,21 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonInput, IonList, IonRow, IonCol, IonItem, IonHeader, IonToolbar, IonTitle, IonFooter
-} from '@ionic/vue';
+import { IonContent, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonTitle} from '@ionic/vue';
 import { defineComponent } from 'vue';
 import HisNavFooter from "@/components/HisNavFooter.vue";
+import HisForm from "@/components/HisForm.vue";
 
 export default defineComponent({
   name: 'MultipleInputs',
   components: {
+    HisForm,
     HisNavFooter,
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonList,
     IonRow,
     IonCol,
-    IonItem,
-    IonInput,
     IonContent,
     IonPage
   },
