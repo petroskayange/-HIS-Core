@@ -50,24 +50,32 @@ export default defineComponent({
   position: absolute;
   left: 0;
   right: 0;
-  top: 150px;
+  top: 20%;
   transform: translateY(-50%);
   background-color: #F0F0F0;
   border-style: solid;
   border-width: 1px;
   border-radius: 9px;
-  height: 155px;
-  margin: 20px;
+  height: 20%;
+  margin: 3%;
 }
 
 .loc-footer {
-    height: 100px !important;
+    height: 10% !important;
     background-color: #333 !important;
 }
 
 .footer-btns {
-    margin: 20px;
-    height: 70px;
-    width: 150px;
+  margin-left: 1%;
+  margin-top: 1%;
+  height: 8vh;
 }
+
+ @media only screen and (max-width: 900px) {
+   #container {
+     top: 20%;
+     height: 15%;
+   }
+ }
+
 </style>
