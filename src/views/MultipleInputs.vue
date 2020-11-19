@@ -10,7 +10,8 @@
         <!-- Form -->
         <ion-row>
           <ion-col>
-            <HisForm></HisForm>
+            <HisForm>
+            </HisForm>
           </ion-col>
         </ion-row>
       </div>
