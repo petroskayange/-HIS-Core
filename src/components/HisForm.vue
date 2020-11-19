@@ -1,6 +1,7 @@
 <template>
   <form novalidate>
-    <HisFormElement placeholder="This test"></HisFormElement>
+    <HisFormElement element-name="first_name" element-type="text" element-placeholder="First Name"></HisFormElement>
+    <HisFormElement element-name="last_name" element-type="text" element-placeholder="Last Name"></HisFormElement>
   </form>
 </template>
 

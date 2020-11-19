@@ -2,12 +2,12 @@
   <ion-list class="get-centered">
     <ion-item>
       <ion-input
-          name="first_name"
-          type="text"
+          :name="elementName"
+          :type="elementType"
           spellcheck="false"
           autocapitalize="off"
           required
-          placeholder='{{ placeholder }}'
+          :placeholder="elementPlaceholder"
       ></ion-input>
     </ion-item>
   </ion-list>
@@ -24,7 +24,15 @@ name: "HisFormElement",
     IonItem
   },
   props: {
-    placeholder: {
+    elementName: {
+      type: String,
+      required: true
+    },
+    elementType: {
+      type: String,
+      required: true
+    },
+    elementPlaceholder: {
       type: String
     }
   }
