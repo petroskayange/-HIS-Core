@@ -45,7 +45,8 @@ export default defineComponent({
       multiFormElements: [
         {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
         {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},
-        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'}
+        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'},
+        {elementName: 'birthdate', elementType: 'date', elementPlaceholder: 'Date of Birth'}
       ]
     }
   }

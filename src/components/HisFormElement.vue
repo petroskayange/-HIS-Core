@@ -8,20 +8,30 @@
           autocapitalize="off"
           required
           :placeholder="elementPlaceholder"
+          v-show="elementType !== 'date'"
       ></ion-input>
+      <ion-datetime
+          value="2019-10-01T15:43:40.394Z"
+          display-timezone="utc"
+          :name="elementName"
+          :type="elementType"
+          :placeholder="elementPlaceholder"
+          v-show="elementType === 'date'"
+      ></ion-datetime>
     </ion-item>
   </ion-list>
 </template>
 
 <script>
-import {IonInput, IonItem, IonList} from "@ionic/vue";
+import {IonDatetime, IonInput, IonItem, IonList} from "@ionic/vue";
 
 export default {
 name: "HisFormElement",
   components: {
   IonList,
     IonInput,
-    IonItem
+    IonItem,
+    IonDatetime
   },
   props: {
     elementName: {
@@ -33,6 +43,9 @@ name: "HisFormElement",
       required: true
     },
     elementPlaceholder: {
+      type: String
+    },
+    elementValue: {
       type: String
     }
   }
