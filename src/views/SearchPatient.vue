@@ -27,7 +27,7 @@ import HisNavFooter from "@/components/HisNavFooter.vue";
 import HisForm from "@/components/HisForm.vue";
 
 export default defineComponent({
-  name: 'MultipleInputs',
+  name: 'SearchPatient',
   components: {
     HisForm,
     HisNavFooter,
