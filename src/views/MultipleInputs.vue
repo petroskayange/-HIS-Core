@@ -10,7 +10,7 @@
         <!-- Form -->
         <ion-row>
           <ion-col>
-            <HisForm></HisForm>
+            <HisForm :his-form-elements="multiFormElements"></HisForm>
           </ion-col>
         </ion-row>
       </div>
@@ -41,7 +41,12 @@ export default defineComponent({
   },
   data() {
     return {
-      labelValue: 'First name'
+      labelValue: 'Enter',
+      multiFormElements: [
+        {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
+        {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},
+        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'}
+      ]
     }
   }
 });

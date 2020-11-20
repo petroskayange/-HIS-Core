@@ -1,7 +1,7 @@
 <template>
   <form novalidate>
     <HisFormElement
-        v-for="(element, counter) in hisFormElements"
+        v-for="(element, counter) in formElements"
         :key="counter"
         :element-name="element.elementName"
         :element-type="element.elementType"
@@ -17,19 +17,16 @@ export default {
   name: "HisForm",
   data() {
     return {
-      hisFormElements: [
-        {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
-        {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},
-        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'}
-      ]
+      formElements: this.hisFormElements
     }
   },
   components: {
     HisFormElement
   },
-  computed: {
-    showElement() {
-      return this.counter < this.hisFormElements.length;
+  props: {
+    hisFormElements: {
+      type: Array,
+      required: true
     }
   }
 }
