@@ -41,7 +41,7 @@ export default defineComponent({
   },
   data() {
     return {
-      labelValue: 'Enter',
+      labelValue: 'Search Patient',
       multiFormElements: [
         {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
         {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},

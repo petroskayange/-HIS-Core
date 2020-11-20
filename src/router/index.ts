@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
-import MultipleInputs from "@/views/MultipleInputs.vue";
+import MultipleInputs from "@/views/SearchPatient.vue";
 import HClocation from '../views/HClocation.vue';
+import SearchPatient from "@/views/SearchPatient.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -15,9 +16,9 @@ const routes: Array<RouteRecordRaw> = [
     component: Home
   },
   {
-    path: '/multiple_inputs',
-    name: 'Multiple Inputs',
-    component: MultipleInputs
+    path: '/search_patient',
+    name: 'Search Patient',
+    component: SearchPatient
   },
   {
     path: '/select_hc_location',
