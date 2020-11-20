@@ -38,7 +38,7 @@
               </ion-item>
               <!-- TODO: make this info message for when login was attempted without username entered. -->
               <ion-text color="danger">
-                <!-- <p v-show="!usernameValid || submitted == true" padding-left>Username is required</p> -->
+                <p v-show="!validateUsername" padding-left>Username is required</p>
               </ion-text>
 
               <ion-item>
@@ -56,7 +56,7 @@
               </ion-item>
               <!-- TODO: make this info message for when login was attempted without password entered. -->
               <ion-text color="danger">
-                <!-- <p v-show="!passwordValid || submitted == true" padding-left>Password is required</p> -->
+                <p v-show="!validatePassword" padding-left>Password is required</p>
               </ion-text>
             </ion-list>
           </form>
@@ -68,8 +68,9 @@
         :val="this[active]"
         v-if="active"
         :custom="customButton"
-        @printStuff="printStuff"
+        @doLogin="doLogin"
         :position="currentHeight"
+        @nextEvent="goToNextField"
       >
       </keyboard>
     </ion-content>
@@ -141,12 +142,28 @@ export default defineComponent({
       submitted: false,
       usernameValid: false,
       passwordValid: false,
+      minUsernameLength: 4,
+      minPasswordLength: 4,
       customButton: {
         name: "login",
-        action: "printStuff",
+        action: "doLogin",
       },
       currentHeight: null,
     };
+  },
+  computed: {
+    validateUsername() {
+      if (!this.username || this.username.length < this.minUsernameLength) {
+        return false;
+      }
+      return true;
+    },
+    validatePassword() {
+      if (!this.password || this.password.length < this.minPasswordLength) {
+        return false;
+      }
+      return true;
+    }
   },
   methods: {
     doSomething(e) {
@@ -157,8 +174,17 @@ export default defineComponent({
     dosomethingElse(e) {
       this[this.active] = e;
     },
-    printStuff(e) {
-      console.log(e);
+    goToNextField() {
+      const nextField = this.active === 'username' ? 'password' : 'username';
+      this.doSomething(nextField);
+    },
+    doLogin() {
+      if (!(this.validateUsername && this.validatePassword)) {
+
+            console.log("no logged in");
+              return;
+      }
+      console.log("logged in");
     },
   },
   onLogin(ev) {
@@ -250,7 +276,7 @@ ion-input {
   padding-bottom: 8px;
   text-shadow: 0 2px 0 rgba(255, 255, 255, 0.8);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 }
 
 #emr-title-one {
