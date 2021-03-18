@@ -99,7 +99,7 @@
   </ion-page>
 </template>
 
-<script >
+<script>
 import {
   IonContent,
   IonInput,
@@ -112,10 +112,11 @@ import {
   IonToolbar,
   IonHeader,
   IonPage,
+  toastController
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import keyboard from "../../components/Keyboard/qwerty.vue";
-
+import ApiClient from "@/services/api_client"
 export default defineComponent({
   // emits: ['input-char'],
   name: "Home",
@@ -148,7 +149,7 @@ export default defineComponent({
         name: "login",
         action: "doLogin",
       },
-      currentHeight: null,
+      currentHeight:  null,
     };
   },
   computed: {
@@ -178,12 +179,54 @@ export default defineComponent({
       const nextField = this.active === 'username' ? 'password' : 'username';
       this.doSomething(nextField);
     },
-    doLogin() {
-      if (!(this.validateUsername && this.validatePassword)) {
+    async showMessage(message) {
+       const toast = await toastController
+        .create({
+          message: message,
+          position: 'top',
+          animated: true,
+          duration: 4000
+        })
+      return toast.present();
+    },
+    doLogin: async function(){
+       const params = { username: this.username.toLowerCase(), password: this.password.toLowerCase() };
+      const response = await ApiClient.post("auth/login", params, 
+        [401]
+      ).catch((error) => {
+        console.log(error);
+        // this.errors.push("Failed to connect to API")
+        // this.loading = false;
+      });
 
-            console.log("no logged in");
-              return;
+      if (response.status === 200) {
+        const {
+          authorization: { token, user }
+        } = await response.json();
+        sessionStorage.setItem("apiKey", token);
+        sessionStorage.setItem("username", user.username);
+        sessionStorage.setItem("userID", user.user_id);
+        // this.$store.commit('setUser', user);
+        // this.errors = [];
+        this.$router.push("/");
+        // this.loading = false;
+      } else if (response.status === 401){
+        // this.errors.push("Invalid username or password");
+        this.showMessage("Invalid username or password")
+        // this.loading = false;
+        return;
+      }else {
+
+        this.showMessage("An error has occured")
+        console.warn(`Response: ${response.status} - ${response.body}`);
       }
+      //validate password and username here
+      // if (!(this.validateUsername && this.validatePassword)) {
+
+      //       console.log("no logged in");
+      //         return;
+      // }
+
       console.log("logged in");
     },
   },

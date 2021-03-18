@@ -1,0 +1,7 @@
+{
+    "apiURL": "127.0.0.1",
+    "apiPort": "8000",
+	"apiProtocol": "http",
+	"version": "4.0",
+    "apiVersion": "v1"
+}
