@@ -29,8 +29,6 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
-    IonInput,
-    IonImg
   },
   data() {
     return {
