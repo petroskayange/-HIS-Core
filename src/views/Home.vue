@@ -30,10 +30,24 @@
 
   <ion-footer>
     <ion-toolbar>
-       <ion-button color="danger left" size="large" router-link="/login">Logout</ion-button>
-        <ion-button color="primary" size="large">Applications</ion-button>
-        <ion-button color="success" size="large">Find or Register</ion-button>
+     <ion-row>
+       <ion-col>
+        <ion-button color="danger left" size="large" router-link="/login">Logout</ion-button>
+       </ion-col>
+       <ion-col>
+
         <ion-button color="primary" size="large">Find By</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="success" size="large">Find or Register</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="primary" size="large">Applications</ion-button>
+       </ion-col>
+
+     </ion-row>
     </ion-toolbar>
   </ion-footer>
   </ion-page>
@@ -63,17 +77,20 @@ export default defineComponent({
     return {
       barcode
     }
-  }
+  },
+  mounted() {
+      if (!sessionStorage.apiKey) {
+        this.$router.push('/login');
+      } 
+    }
 });
 </script>
 
 <style scoped>
 ion-button {
-    float: right;
+    width: 100%;
   }
-  .left {
-    float: left;
-  }
+  
   .outlined{
     border: solid 1px grey;
   }
