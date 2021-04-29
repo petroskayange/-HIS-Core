@@ -26,7 +26,26 @@
       
 
       <div id="container">
-        <p>Home content</p>
+     <ion-toolbar>
+     <ion-row>
+
+       <ion-col>
+        <ion-button color="primary" >Overview</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="primary" >Reports</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="primary" @click="openModal">Administration</ion-button>
+       </ion-col>
+
+     </ion-row>
+    </ion-toolbar>
+    <div style="width: 100%; background-color: red; height: 100%;">
+      hey
+      </div>       
       </div>
     </ion-content>
    
@@ -187,15 +206,7 @@ ion-button {
   .outlined{
     border: solid 1px grey;
   }
-#container {
-  text-align: center;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
 
 #container strong {
   font-size: 20px;
