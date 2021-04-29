@@ -1,115 +1,185 @@
 <template>
   <ion-page>
+    <ion-header :translucent="true">
+        <ion-toolbar>
+      <ion-row >
+      <ion-col size="0.5" >
+          <ion-icon :icon="barcode" size="large" style="height: 100%;"></ion-icon>
+      </ion-col>
+      <ion-col size="3.5" class="outlined">
+          <ion-input autofocus="true"></ion-input>
+      </ion-col>
+      <ion-col size="5">
+        <p >Facility name: {{facilityName}}</p>
+        <p>Location: {{userLocation}}</p>
+        <p>Date: {{sessionDate}}</p>
+        <p>User: {{userName}}</p>
+      </ion-col>
+      <ion-col size="3">
+       {{applicationName}}
+      </ion-col>
+    </ion-row>
+    </ion-toolbar>
+    </ion-header>
+
     <ion-content :fullscreen="true">
-      <div id="container" class="main">
-        <!-- Title -->
-        <ion-row>
-          <ion-col>
-            <ion-text>
-              <span id="emr-title">
-              <span id="emr-title-one">National</span>
-              <br>
-              <span id="emr-title-two">EMR</span> <span id="version-desc">Series 3</span>
-              </span>
-            </ion-text>
-          </ion-col>
-        </ion-row>
-        <!-- Form -->
-        <ion-row>
-          <ion-col>
-            <form novalidate>
-              <ion-list class="get-centered">
-                <ion-item>
-                  <ion-input
-                      v-model="username"
-                      name="username"
-                      type="text"
-                      spellcheck="false"
-                      autocapitalize="off"
-                      required
-                      class="login_input"
-                      placeholder="Username"
-                  ></ion-input>
-                </ion-item>
-                <!-- TODO: make this info message for when login was attempted without username entered. -->
-                <ion-text color="danger">
-                  <p v-show="!usernameValid || submitted == true" padding-left>Username is required</p>
-                </ion-text>
+      
 
-                <ion-item>
-                  <ion-input v-model="password" name="password" type="password" required placeholder="Password" class="login_input"></ion-input>
-                </ion-item>
-                <!-- TODO: make this info message for when login was attempted without password entered. -->
-                <ion-text color="danger">
-                  <p v-show="!passwordValid || submitted == true" padding-left>Password is required</p>
-                </ion-text>
-              </ion-list>
-
-              <ion-row responsive-sm>
-                <ion-col>
-                  <ion-button @click="onLogin(loginForm)" type="submit" expand="block">Login</ion-button>
-                </ion-col>
-              </ion-row>
-            </form>
-          </ion-col>
-        </ion-row>
-        <!-- Logos -->
-        <ion-row>
-          <ion-col>
-            <div>
-              <span class="logos">
-                <img id="coat-of-arms" src="/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png" alt="Malawi Coat of Arms logo"/>
-              </span>
-              <span class="logos">
-                <img class="other-logos" src="/assets/images/login-logos/PEPFAR.png"  alt="PEPFAR logo"/>
-              </span>
-            </div>
-          </ion-col>
-        </ion-row>
+      <div id="container">
+        <p>Home content</p>
       </div>
     </ion-content>
+   
+
+  <ion-footer>
+    <ion-toolbar>
+     <ion-row>
+       <ion-col>
+        <ion-button color="danger left" size="large" router-link="/login">Logout</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="primary" size="large">Find By</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="success" size="large">Find or Register</ion-button>
+       </ion-col>
+       <ion-col>
+
+        <ion-button color="primary" size="large" @click="openModal">Applications</ion-button>
+       </ion-col>
+
+     </ion-row>
+    </ion-toolbar>
+  </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonPage, IonInput, IonList, IonRow, IonCol, IonItem,
-  IonText, IonButton
-} from '@ionic/vue';
+import { IonContent, IonHeader, modalController, IonFooter, IonPage, IonTabs, IonTabBar,IonTabButton, IonTitle, IonToolbar, IonIcon,  IonInput, IonRow, IonCol, IonItem,
+  IonText, IonButton } from '@ionic/vue';
 import { defineComponent } from 'vue';
-
+import { barcode } from 'ionicons/icons';
+import ApiClient from "@/services/api_client"
+import Modal from '@/components/Modal.vue'
 export default defineComponent({
   name: 'Home',
   components: {
-    IonList,
+    IonContent,
+    IonHeader,
+    IonPage,
+    IonToolbar,
+    IonIcon,
+    IonInput,
     IonRow,
     IonCol,
-    IonItem,
     IonButton,
-    IonInput,
-    IonContent,
-    IonPage,
-    IonText
+    IonFooter,
   },
   data() {
     return {
-      username: '',
-      password: '',
-      submitted: false,
+      facilityName: "",
+      userLocation: "",
+      sessionDate: "",
+      userName: "",
+      APIVersion: "",
+      applicationName: ""
     }
   },
-  get usernameValid() {
-    return true;
+  methods: {
+    fetchLocationID: async function() {
+        const response = await ApiClient.get("global_properties?property=current_health_center_id");
+
+        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+
+        const data = await response.json();
+        this.fetchLocationName(data.current_health_center_id);
+      },
+      fetchLocationUUID: async function() {
+        const response = await ApiClient.get("global_properties?property=site_uuid");
+
+        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+
+        const data = await response.json();
+        sessionStorage.siteUUID = data.site_uuid;
+      },
+      fetchSessionDate: async function() {
+        const response = await ApiClient.get("current_time");
+
+        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+
+        const data = await response.json();
+        this.sessionDate = data.date;
+        sessionStorage.sessionDate = data.date;
+        // this.fetchLocationName(data.current_health_center_id);
+      },
+      async fetchAPIVersion() {
+        const response = await ApiClient.get("version");
+
+        if (!response || response.status !== 200) return;
+
+        const data = await response.json();
+
+        this.APIVersion = data["System version"];
+        sessionStorage.APIVersion = data["System version"]; 
+      },
+      async fetchLocationName(locationID: string) {
+        const response = await ApiClient.get("locations/" + locationID);
+
+        if (!response || response.status !== 200) return;
+
+        const data = await response.json();
+        this.createSessionLocationName(data);
+      },
+       createSessionLocationName(data: any){
+        this.facilityName =  data.name;
+        sessionStorage.location = data.name;
+        sessionStorage.locationName = data.name;
+      },
+      async openModal() {
+      const modal = await modalController
+        .create({
+          component: Modal,
+          cssClass: 'my-custom-class',
+          componentProps: {
+            // title: 'New Title'
+          },
+        })
+      return modal.present();
+    },
+    
   },
-  get passwordValid() {
-    return true;
+  setup() {
+    return {
+      barcode
+    }
   },
-  onLogin(ev: any) {
-    ev.preventDefault();
-  }
+  mounted() {
+    this.applicationName = sessionStorage.applicationName;
+    this.userLocation = sessionStorage.userLocation;
+    this.userName = sessionStorage.username;
+      if (!sessionStorage.apiKey) {
+        this.$router.push('/login');
+      }
+      this.fetchLocationID(); 
+      this.fetchSessionDate();
+    }
+    
 });
 </script>
 
 <style scoped>
+ion-col p {
+  margin: 0;
+}
+ion-button {
+    width: 100%;
+  }
+  
+  .outlined{
+    border: solid 1px grey;
+  }
 #container {
   text-align: center;
 
@@ -136,81 +206,5 @@ export default defineComponent({
 
 #container a {
   text-decoration: none;
-}
-
-.main {
-  display: table;
-  width: 100%;
-  border: 1px solid black;
-  height: 97vh;
-  /*background-image: url("/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png");
-  background-repeat: no-repeat;
-  background-position: center;*/
-}
-
-.get-centered {
-  text-align: center;
-}
-
-.logos img {
-  width: 90px;
-  height: 90px;
-  margin-left: 10px;
-  float: left;
-}
-
-.login-logo img {
-  max-width: 150px;
-}
-
-.list {
-  margin-bottom: 0;
-}
-
-#emr-title {
-  font-size: 60px;
-  font-weight: bold;
-  color: #bdb5aa;
-  padding-bottom: 8px;
-  text-shadow: 0 2px 0 rgba(255,255,255,0.8);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.8);
-  text-transform: uppercase;
-}
-
-#emr-title-one {
-  color: #8B4513;
-}
-
-#emr-title-two {
-  color: #CD853F;
-}
-
-#version-desc {
-  font-size: 15px;
-  margin-left: 5px;
-}
-
-.login_input {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: calc(100% - 30px);
-  font-family: Nimbus Sans L,Arial Narrow,sans-serif;
-  font-size: 2.2em;
-  background-color: lightgrey;
-  color: #000;
-  padding: 5px;
-  margin-bottom: 5px;
-  border: 1px solid #8B4513;
-  border-radius: 5px;
-}
-
-#coat-of-arms {
-  height: 160px !important;
-  width: 160px !important;
-}
-
-.other-logos {
-  bottom: -70px !important;
-  position: relative;
 }
 </style>

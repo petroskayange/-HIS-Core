@@ -195,8 +195,6 @@ export default defineComponent({
         [401]
       ).catch((error) => {
         console.log(error);
-        // this.errors.push("Failed to connect to API")
-        // this.loading = false;
       });
 
       if (response.status === 200) {
@@ -206,14 +204,9 @@ export default defineComponent({
         sessionStorage.setItem("apiKey", token);
         sessionStorage.setItem("username", user.username);
         sessionStorage.setItem("userID", user.user_id);
-        // this.$store.commit('setUser', user);
-        // this.errors = [];
-        this.$router.push("/");
-        // this.loading = false;
+        this.$router.push("/select_hc_location");
       } else if (response.status === 401){
-        // this.errors.push("Invalid username or password");
         this.showMessage("Invalid username or password")
-        // this.loading = false;
         return;
       }else {
 
