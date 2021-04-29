@@ -42,7 +42,13 @@ export default defineComponent({
         }
     },
     async setApplication(app) {
-         await modalController.dismiss();
+        await modalController.dismiss(
+          {
+            applicationIcon: app.applicationIcon,
+            applicationName: app.applicationName,
+            programID: app.programID
+          }
+        )
         sessionStorage.setItem("applicationImage", app.applicationIcon)
         sessionStorage.setItem("applicationName", app.applicationName)
         sessionStorage.setItem("programID", app.programID)

@@ -166,6 +166,9 @@ export default defineComponent({
       return true;
     }
   },
+  mounted() {
+    sessionStorage.clear();
+  },
   methods: {
     doSomething(e) {
       const top = this.$refs[e].$el.getBoundingClientRect().top;

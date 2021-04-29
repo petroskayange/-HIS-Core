@@ -130,10 +130,10 @@ export default defineComponent({
         if (!response || response.status !== 200) return;
 
         const data = await response.json();
+        this.facilityName =  data.name;
         this.createSessionLocationName(data);
       },
        createSessionLocationName(data: any){
-        this.facilityName =  data.name;
         sessionStorage.location = data.name;
         sessionStorage.locationName = data.name;
       },
@@ -145,8 +145,11 @@ export default defineComponent({
           componentProps: {
             // title: 'New Title'
           },
-        })
-      return modal.present();
+        });
+
+      modal.present();
+      const { data } = await modal.onDidDismiss();
+      this.applicationName = data.applicationName;
     },
     
   },
@@ -156,7 +159,11 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.applicationName = sessionStorage.applicationName;
+    if(!sessionStorage.applicationName) {
+      this.openModal();
+    }else {
+     this.applicationName = sessionStorage.applicationName;
+    }
     this.userLocation = sessionStorage.userLocation;
     this.userName = sessionStorage.username;
       if (!sessionStorage.apiKey) {
