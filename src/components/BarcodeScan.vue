@@ -22,6 +22,7 @@
 import { toastController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {IonCol, IonGrid, IonImg, IonInput, IonRow} from "@ionic/vue";
+import ApiClient from "@/services/api_client"
 
 export default defineComponent({
   name: 'BarcodeScan',
@@ -40,14 +41,21 @@ export default defineComponent({
         const inp = await this.$refs.barcodeInputbox.getInputElement();
       },
       checkForbarcode(){
-        //const barcodeEntered = await this.$refs.barcodeInputbox.getInputElement();
-
         if(this.barcodeText.match(/.+\$$/i) != null){
-          this.showMessage("Found $ sign");
-          this.barcodeText = "";
+          this.barcodeText = this.barcodeText.replace(/$/ig, '');
+          this.scanLocation();
         }
       },
-
+      async scanLocation() {
+        const response = await ApiClient.get("locations/" + this.barcodeText, {}, {});
+        if (!response || response.status !== 200) {
+          this.showMessage("Invalid location")
+        }else {
+          const data = await response.json();
+          sessionStorage.userLocation = data.name;
+          this.$router.push("/");
+        }
+      },
       loadAttributes() {
         console.log("aaa");
       }, async showMessage(message) {

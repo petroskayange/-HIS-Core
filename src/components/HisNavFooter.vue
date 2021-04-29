@@ -28,6 +28,7 @@ export default {
       console.log(sectionId);
     },
     finish(destinationUrl) {
+      this.$router.push("/");
       console.log(destinationUrl);
     }
   }

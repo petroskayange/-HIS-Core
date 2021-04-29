@@ -57,7 +57,6 @@ const ApiClient = (() => {
     async function expandPath(resourcePath: string) {
         const config = await getConfig();
         if (config.data) {
-            console.log(config);
             return {
                 status: "complete",
                 url: `${config.data.protocol}://${config.data.host}:${config.data.port}/api/v1/${resourcePath}`

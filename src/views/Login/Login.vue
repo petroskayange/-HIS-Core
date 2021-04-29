@@ -204,7 +204,7 @@ export default defineComponent({
         sessionStorage.setItem("apiKey", token);
         sessionStorage.setItem("username", user.username);
         sessionStorage.setItem("userID", user.user_id);
-        this.$router.push("/");
+        this.$router.push("/select_hc_location");
       } else if (response.status === 401){
         this.showMessage("Invalid username or password")
         return;
