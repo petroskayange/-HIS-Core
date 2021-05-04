@@ -30,22 +30,22 @@
      <ion-row>
 
        <ion-col>
-        <ion-button color="primary" >Overview</ion-button>
+        <ion-button color="primary" @click="activeTab = 1">Overview</ion-button>
        </ion-col>
        <ion-col>
 
-        <ion-button color="primary" >Reports</ion-button>
+        <ion-button color="primary" @click="activeTab = 2">Reports</ion-button>
        </ion-col>
        <ion-col>
 
-        <ion-button color="primary" @click="openModal">Administration</ion-button>
+        <ion-button color="primary" @click="activeTab = 3">Administration</ion-button>
        </ion-col>
 
      </ion-row>
     </ion-toolbar>
-    <div style="width: 100%; background-color: red; height: 100%;">
-      hey
-      </div>       
+        <overview v-show="activeTab == 1"> </overview>
+      <reports v-show="activeTab == 2"></reports>
+      <administration v-show="activeTab == 3"></administration>
       </div>
     </ion-content>
    
@@ -76,12 +76,14 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, modalController, IonFooter, IonPage, IonTabs, IonTabBar,IonTabButton, IonTitle, IonToolbar, IonIcon,  IonInput, IonRow, IonCol, IonItem,
-  IonText, IonButton } from '@ionic/vue';
+import { IonContent, IonHeader, modalController, IonFooter, IonPage, IonToolbar, IonIcon,  IonInput, IonRow, IonCol, IonButton } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { barcode } from 'ionicons/icons';
 import ApiClient from "@/services/api_client"
 import Modal from '@/components/Modal.vue'
+import Administration from '@/components/ART/administration.vue';
+import Reports from '@/components/ART/reports.vue';
+import Overview from '@/components/ART/overview.vue';
 export default defineComponent({
   name: 'Home',
   components: {
@@ -95,6 +97,9 @@ export default defineComponent({
     IonCol,
     IonButton,
     IonFooter,
+    Administration,
+    Reports,
+    Overview
   },
   data() {
     return {
@@ -103,7 +108,8 @@ export default defineComponent({
       sessionDate: "",
       userName: "",
       APIVersion: "",
-      applicationName: ""
+      applicationName: "",
+      activeTab: 1
     }
   },
   methods: {
