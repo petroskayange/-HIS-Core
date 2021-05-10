@@ -33,7 +33,7 @@
                   required
                   class="login_input"
                   placeholder="Username"
-                  @ionFocus="doSomething('username')"
+                  @ionFocus="focusKeyboard('username')"
                 ></ion-input>
               </ion-item>
               <!-- TODO: make this info message for when login was attempted without username entered. -->
@@ -49,7 +49,7 @@
                   type="password"
                   required
                   placeholder="Password"
-                  @ionFocus="doSomething('password')"
+                  @ionFocus="focusKeyboard('password')"
                   class="login_input"
                 >
                 </ion-input>
@@ -64,8 +64,8 @@
       </ion-row>
 
       <keyboard
-        @inputChar="dosomethingElse"
-        :val="this[active]"
+        @inputChar="enterChar"
+        :val="getVal"
         v-if="active"
         :custom="customButton"
         @doLogin="doLogin"
@@ -99,7 +99,7 @@
   </ion-page>
 </template>
 
-<script>
+<script lang="ts">
 import {
   IonContent,
   IonInput,
@@ -135,11 +135,12 @@ export default defineComponent({
     IonHeader,
     keyboard,
   },
-  data() {
+ data() {
     return {
       username: "",
       password: "",
-      active: null,
+      active: "",
+      busy: false,
       submitted: false,
       usernameValid: false,
       passwordValid: false,
@@ -149,7 +150,7 @@ export default defineComponent({
         name: "login",
         action: "doLogin",
       },
-      currentHeight:  null,
+      currentHeight: null,
     };
   },
   computed: {
@@ -164,69 +165,90 @@ export default defineComponent({
         return false;
       }
       return true;
-    }
+    },
+    getVal(): any {
+      if (this.active === "username") {
+        return this.username;
+      } else {
+        return this.password;
+      }
+    },
   },
   mounted() {
     sessionStorage.clear();
   },
   methods: {
-    doSomething(e) {
-      const top = this.$refs[e].$el.getBoundingClientRect().top;
+    focusKeyboard(e: string) {
+      const child: any = this.$refs[e];
+      const top = child.$el.getBoundingClientRect().top;
       this.currentHeight = top;
       this.active = e;
     },
-    dosomethingElse(e) {
-      this[this.active] = e;
+    enterChar(e: string) {
+      if (this.active === "username") {
+        this.username = e;
+      } else {
+        this.password = e;
+      }
+    },
+    getActive(): string {
+      if (this.active === "username") {
+        return this.username;
+      } else {
+        return this.password;
+      }
     },
     goToNextField() {
-      const nextField = this.active === 'username' ? 'password' : 'username';
-      this.doSomething(nextField);
+      const nextField = this.active === "username" ? "password" : "username";
+      this.focusKeyboard(nextField);
     },
-    async showMessage(message) {
-       const toast = await toastController
-        .create({
-          message: message,
-          position: 'top',
-          animated: true,
-          duration: 4000
-        })
+    async showMessage(message: string) {
+      const toast = await toastController.create({
+        message: message,
+        position: "top",
+        animated: true,
+        duration: 4000,
+      });
       return toast.present();
     },
-    doLogin: async function(){
-       const params = { username: this.username.toLowerCase(), password: this.password.toLowerCase() };
-      const response = await ApiClient.post("auth/login", params, 
-        [401]
-      ).catch((error) => {
-        console.log(error);
-      });
+    doLogin: async function () {
+      this.busy = true;
 
-      if (response.status === 200) {
-        const {
+      if (this.validateUsername && this.validatePassword) {
+        const params = {
+          username: this.username.toLowerCase(),
+          password: this.password.toLowerCase(),
+        };
+        const response = await ApiClient.post(
+          "auth/login",
+          params
+        ).catch((error) => {
+          console.log(error);
+        });
+        if (response) {
+          if (response.status === 200) {
+           const {
           authorization: { token, user }
         } = await response.json();
         sessionStorage.setItem("apiKey", token);
         sessionStorage.setItem("username", user.username);
         sessionStorage.setItem("userID", user.user_id);
         this.$router.push("/select_hc_location");
-      } else if (response.status === 401){
-        this.showMessage("Invalid username or password")
-        return;
-      }else {
-
-        this.showMessage("An error has occured")
-        console.warn(`Response: ${response.status} - ${response.body}`);
+          } else if (response.status === 401) {
+            this.showMessage("Invalid username or password");
+          } else {
+            this.showMessage("An error has occured");
+            console.warn(`Response: ${response.status} - ${response.body}`);
+          }
+        }
       }
-      //validate password and username here
-      // if (!(this.validateUsername && this.validatePassword)) {
-
-      //       console.log("no logged in");
-      //         return;
-      // }
-
-      console.log("logged in");
+      else {
+        this.showMessage("Complete form to log in");
+      }
+      this.busy = false;
     },
   },
-  onLogin(ev) {
+  onLogin(ev: any) {
     ev.preventDefault();
   },
 });
@@ -345,14 +367,5 @@ ion-input {
   border-radius: 5px;
 }
 
-#coat-of-arms {
-  /* height: 100px !important;
-  width: 100px !important; */
-}
 
-.other-logos {
-  /* bottom: 0px !important; */
-  /* position: relative; */
-  /* right: 0; */
-}
 </style>

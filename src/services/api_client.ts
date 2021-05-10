@@ -1,5 +1,8 @@
-import { Router } from "vue-router";
-
+// import { Router } from "vue-router";
+import router from '@/router/index';
+import {
+    toastController,
+} from "@ionic/vue";
 const ApiClient = (() => {
     interface Config {
         protocol?: string;
@@ -8,34 +11,27 @@ const ApiClient = (() => {
         apiVersion?: string;
         username?: string;
         password?: string;
-        // router?: any,
         version?: string;
         source?: string;
     }
-    let router: Router;
-
-    // let config : Config = {    // Load from config file
-    //   protocol: null,
-    //   host: null,
-    //   port: null,
-    //   apiVersion: 'v1',
-    //   username: null,
-    //   password: null,
-    //   router: null,
-    //   version: null,
-    //   source: null  // The actual config object stored on the server
-    // }
-
-
-
-    async function getConfig(): Promise<{ status: string; data?: Config | undefined }> {
+    const showMessage =async (message: string) => {
+        const toast = await toastController.create({
+            message: message,
+            position: "top",
+            animated: true,
+            duration: 6000,
+            color: 'warning'
+        });
+        return toast.present();
+    };
+    async function getConfig(): Promise<{ status: string; data?: Config | undefined; message?: string }> {
         try {
 
             const response = await fetch('/config.json');
 
             if (response.status !== 200) {
-                console.error(`Looks like there was a problem. Status Code: ${response.status}`);
-                return { status: "error" };
+                const message = `Looks like there was a problem. Status Code: ${response.status}`;
+                return { status: "error", message:  message};
             }
             const config: Config = {};
             const data = await response.json();
@@ -50,12 +46,14 @@ const ApiClient = (() => {
 
             return { status: "complete", data: config };
         } catch (err) {
-            console.log('Fetch Error :-S', err);
             return { status: "error" };
         }
     }
     async function expandPath(resourcePath: string) {
         const config = await getConfig();
+        if(config.message) {
+            showMessage(config.message);
+        }
         if (config.data) {
             return {
                 status: "complete",
@@ -74,13 +72,6 @@ const ApiClient = (() => {
             'Authorization': sessionStorage.apiKey,
             'Content-Type': 'application/json'
         };
-    }
-    function getRouter() {
-        if (!router) {
-            throw new Error('Router not configured');
-        }
-
-        return router;
     }
 
     async function execFetch(uri: string, params: object, noRedirectCodes: number[] = []) {
@@ -103,24 +94,22 @@ const ApiClient = (() => {
                     return null;
                 } else if (response.status >= 500 && !noRedirectCodes.includes(response.status)) {
                     const { error, exception } = await response.json();
-                    // getRouter().push({ name: 'error', query: { message: `${error} - ${exception}` } })
+                    showMessage(`${error} - ${exception}`);
                     return null;
                 } else {
                     return response;
                 }
             } catch (e) {
                 console.error(`Failed to fetch ${url}`, e);
-                // getRouter().push({ name: 'error', query: { 'message': `Could not fetch ${url} due to ${e.name} - ${e.message}` } })
+                showMessage(`Failed to fetch ${url}`);
                 return null;
             }
-
-
         }
         else {
-            alert('could not configure services');
+            showMessage('could not configure services');
         }
     }
-
+    
 
     const get = (uri: string, options = []) => execFetch(uri, { method: 'GET' }, options)
 
