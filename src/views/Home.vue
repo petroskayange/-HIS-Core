@@ -1,91 +1,110 @@
 <template>
   <ion-page>
     <ion-header :translucent="true">
-        <ion-toolbar>
-      <ion-row >
-      <ion-col size="0.5" >
-          <ion-icon :icon="barcode" size="large" style="height: 100%;"></ion-icon>
-      </ion-col>
-      <ion-col size="3.5" class="outlined">
-          <ion-input autofocus="true"></ion-input>
-      </ion-col>
-      <ion-col size="5">
-        <p >Facility name: {{facilityName}}</p>
-        <p>Location: {{userLocation}}</p>
-        <p>Date: {{sessionDate}}</p>
-        <p>User: {{userName}}</p>
-      </ion-col>
-      <ion-col size="3">
-       {{applicationName}}
-      </ion-col>
-    </ion-row>
-    </ion-toolbar>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col size="0.5">
+            <ion-icon
+              :icon="barcode"
+              size="large"
+              style="height: 100%"
+            ></ion-icon>
+          </ion-col>
+          <ion-col size="3.5" class="outlined">
+            <ion-input autofocus="true"></ion-input>
+          </ion-col>
+          <ion-col size="5">
+            <p>Facility name: {{ facilityName }}</p>
+            <p>Location: {{ userLocation }}</p>
+            <p>Date: {{ sessionDate }}</p>
+            <p>User: {{ userName }}</p>
+          </ion-col>
+          <ion-col size="3">
+            {{ applicationName }}
+          </ion-col>
+        </ion-row>
+      </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
-      
-
       <div id="container">
-     <ion-toolbar>
-     <ion-row>
-
-       <ion-col>
-        <ion-button color="primary" @click="activeTab = 1">Overview</ion-button>
-       </ion-col>
-       <ion-col>
-
-        <ion-button color="primary" @click="activeTab = 2">Reports</ion-button>
-       </ion-col>
-       <ion-col>
-
-        <ion-button color="primary" @click="activeTab = 3">Administration</ion-button>
-       </ion-col>
-
-     </ion-row>
-    </ion-toolbar>
-        <overview v-show="activeTab == 1"> </overview>
-      <reports v-show="activeTab == 2"></reports>
-      <administration v-show="activeTab == 3"></administration>
+           <ion-segment scrollable value="1">
+    <ion-segment-button value="1" @click="activeTab = 1">
+      <ion-label>Overview</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="2" @click="activeTab = 2">
+      <ion-label>Reports</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="3" @click="activeTab = 3">
+      <ion-label>Administration</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+        <ion-card>
+          <ion-card-content>
+<overview v-show="activeTab == 1"> </overview>
+        <reports v-show="activeTab == 2"></reports>
+        <administration v-show="activeTab == 3"></administration>
+          </ion-card-content>
+        </ion-card>
+        
       </div>
     </ion-content>
-   
 
-  <ion-footer>
-    <ion-toolbar>
-     <ion-row>
-       <ion-col>
-        <ion-button color="danger left" size="large" router-link="/login">Logout</ion-button>
-       </ion-col>
-       <ion-col>
-
-        <ion-button color="primary" size="large">Find By</ion-button>
-       </ion-col>
-       <ion-col>
-
-        <ion-button color="success" size="large">Find or Register</ion-button>
-       </ion-col>
-       <ion-col>
-
-        <ion-button color="primary" size="large" @click="openModal">Applications</ion-button>
-       </ion-col>
-
-     </ion-row>
-    </ion-toolbar>
-  </ion-footer>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-row>
+          <ion-col>
+            <ion-button color="danger left" size="large" router-link="/login"
+              >Logout</ion-button
+            >
+          </ion-col>
+          <ion-col>
+            <ion-button color="primary" size="large">Find By</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button color="success" size="large"
+              >Find or Register</ion-button
+            >
+          </ion-col>
+          <ion-col>
+            <ion-button color="primary" size="large" @click="openModal"
+              >Applications</ion-button
+            >
+          </ion-col>
+        </ion-row>
+      </ion-toolbar>
+    </ion-footer>
   </ion-page>
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, modalController, IonFooter, IonPage, IonToolbar, IonIcon,  IonInput, IonRow, IonCol, IonButton } from '@ionic/vue';
-import { defineComponent } from 'vue';
-import { barcode } from 'ionicons/icons';
-import ApiClient from "@/services/api_client"
-import Modal from '@/components/Modal.vue'
-import Administration from '@/components/ART/administration.vue';
-import Reports from '@/components/ART/reports.vue';
-import Overview from '@/components/ART/overview.vue';
+import {
+  IonContent,
+  IonHeader,
+  modalController,
+  IonFooter,
+  IonPage,
+  IonToolbar,
+  IonIcon,
+  IonInput,
+  IonRow,
+  IonCol,
+  IonButton,
+  IonSegment,
+  IonSegmentButton, 
+  IonLabel,
+  IonCard,
+  IonCardContent,
+} from "@ionic/vue";
+import { defineComponent } from "vue";
+import { barcode } from "ionicons/icons";
+import ApiClient from "@/services/api_client";
+import Modal from "@/components/Modal.vue";
+import Administration from "@/components/ART/administration.vue";
+import Reports from "@/components/ART/reports.vue";
+import Overview from "@/components/ART/overview.vue";
 export default defineComponent({
-  name: 'Home',
+  name: "Home",
   components: {
     IonContent,
     IonHeader,
@@ -99,7 +118,12 @@ export default defineComponent({
     IonFooter,
     Administration,
     Reports,
-    Overview
+    IonSegment,
+    IonSegmentButton,
+    Overview,
+    IonLabel,
+    IonCard,
+    IonCardContent
   },
   data() {
     return {
@@ -109,95 +133,98 @@ export default defineComponent({
       userName: "",
       APIVersion: "",
       applicationName: "",
-      activeTab: 1
-    }
+      activeTab: 1,
+    };
   },
   methods: {
-    fetchLocationID: async function() {
-        const response = await ApiClient.get("global_properties?property=current_health_center_id");
+    fetchLocationID: async function () {
+      const response = await ApiClient.get(
+        "global_properties?property=current_health_center_id"
+      );
 
-        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
-        const data = await response.json();
-        this.fetchLocationName(data.current_health_center_id);
-      },
-      fetchLocationUUID: async function() {
-        const response = await ApiClient.get("global_properties?property=site_uuid");
+      const data = await response.json();
+      this.fetchLocationName(data.current_health_center_id);
+    },
+    fetchLocationUUID: async function () {
+      const response = await ApiClient.get(
+        "global_properties?property=site_uuid"
+      );
 
-        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
-        const data = await response.json();
-        sessionStorage.siteUUID = data.site_uuid;
-      },
-      fetchSessionDate: async function() {
-        const response = await ApiClient.get("current_time");
+      const data = await response.json();
+      sessionStorage.siteUUID = data.site_uuid;
+    },
+    fetchSessionDate: async function () {
+      const response = await ApiClient.get("current_time");
 
-        if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
-        const data = await response.json();
-        this.sessionDate = data.date;
-        sessionStorage.sessionDate = data.date;
-        // this.fetchLocationName(data.current_health_center_id);
-      },
-      async fetchAPIVersion() {
-        const response = await ApiClient.get("version");
+      const data = await response.json();
+      this.sessionDate = data.date;
+      sessionStorage.sessionDate = data.date;
+      // this.fetchLocationName(data.current_health_center_id);
+    },
+    async fetchAPIVersion() {
+      const response = await ApiClient.get("version");
 
-        if (!response || response.status !== 200) return;
+      if (!response || response.status !== 200) return;
 
-        const data = await response.json();
+      const data = await response.json();
 
-        this.APIVersion = data["System version"];
-        sessionStorage.APIVersion = data["System version"]; 
-      },
-      async fetchLocationName(locationID: string) {
-        const response = await ApiClient.get("locations/" + locationID);
+      this.APIVersion = data["System version"];
+      sessionStorage.APIVersion = data["System version"];
+    },
+    async fetchLocationName(locationID: string) {
+      const response = await ApiClient.get("locations/" + locationID);
 
-        if (!response || response.status !== 200) return;
+      if (!response || response.status !== 200) return;
 
-        const data = await response.json();
-        this.facilityName =  data.name;
-        this.createSessionLocationName(data);
-      },
-       createSessionLocationName(data: any){
-        sessionStorage.location = data.name;
-        sessionStorage.locationName = data.name;
-      },
-      async openModal() {
-      const modal = await modalController
-        .create({
-          component: Modal,
-          cssClass: 'my-custom-class',
-          componentProps: {
-            // title: 'New Title'
-          },
-        });
+      const data = await response.json();
+      this.facilityName = data.name;
+      this.createSessionLocationName(data);
+    },
+    createSessionLocationName(data: any) {
+      sessionStorage.location = data.name;
+      sessionStorage.locationName = data.name;
+    },
+    async openModal() {
+      const modal = await modalController.create({
+        component: Modal,
+        cssClass: "my-custom-class",
+        componentProps: {
+          // title: 'New Title'
+        },
+      });
 
       modal.present();
       const { data } = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
     },
-    
   },
   setup() {
     return {
-      barcode
-    }
+      barcode,
+    };
   },
   mounted() {
-    if(!sessionStorage.applicationName) {
-      this.openModal();
-    }else {
-     this.applicationName = sessionStorage.applicationName;
-    }
-    this.userLocation = sessionStorage.userLocation;
-    this.userName = sessionStorage.username;
-      if (!sessionStorage.apiKey) {
-        this.$router.push('/login');
+    if (!sessionStorage.apiKey) {
+      this.$router.push("/login");
+    } else {
+      if (!sessionStorage.applicationName) {
+        this.openModal();
+      } else {
+        this.applicationName = sessionStorage.applicationName;
       }
-      this.fetchLocationID(); 
+
+      this.userLocation = sessionStorage.userLocation;
+      this.userName = sessionStorage.username;
+      this.fetchLocationID();
       this.fetchSessionDate();
     }
-    
+  },
 });
 </script>
 
@@ -206,13 +233,12 @@ ion-col p {
   margin: 0;
 }
 ion-button {
-    width: 100%;
-  }
-  
-  .outlined{
-    border: solid 1px grey;
-  }
+  width: 100%;
+}
 
+.outlined {
+  border: solid 1px grey;
+}
 
 #container strong {
   font-size: 20px;

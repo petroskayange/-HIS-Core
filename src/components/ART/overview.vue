@@ -1,13 +1,42 @@
 <template>
-    <apexchart width="500" type="bar" :options="options" :series="series"></apexchart>
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <p>Complete / incomplete visits: last 5 days</p>
+    <apexchart width="100%" type="bar" :options="options" :series="series"></apexchart>
+    </ion-col>
+    <ion-col>
+
+  <!-- List Headers in Lists -->
+  <ion-list>
+    <ion-list-header lines="inset">
+      <ion-button>  </ion-button>
+      <ion-button>Male</ion-button>
+      <ion-button>FeMale</ion-button>
+      <ion-button>Me</ion-button>
+      <ion-button>Facility</ion-button>
+    </ion-list-header>
+    <ion-item lines="none">
+      <ion-label color="primary">
+        <h2>1</h2>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+
+    </ion-col>
+  </ion-row>
+</ion-grid>
 
 </template>
 
 <script lang="ts">
+import { IonGrid, IonRow, IonCol, IonList, IonButton, IonItem, IonListHeader, IonLabel } from '@ionic/vue';
+import { defineComponent } from 'vue';
 import ApiClient from "@/services/api_client"
 import moment from 'moment'
 
-export default {
+export default defineComponent({
     data: function() {
     return {
       options: {
@@ -21,8 +50,20 @@ export default {
       series: [{
         name: 'series-1',
         data: [30, 40, 45, 50, 49, 60, 70, 91]
-      }]
+      }],
+      encounters: [
+          'HIV clinic registration',
+          'HIV reception','Vitals',
+          'HIV staging','HIV clinic consultation',
+          'ART adherence','Treatment',
+          'Dispensing','Appointments'
+        ]
     }
+  },
+  components: {
+    IonGrid,
+    IonRow,
+    IonCol, IonList, IonButton, IonItem, IonListHeader, IonLabel
   },
   methods: {
         getVisits: async function() {
@@ -37,9 +78,9 @@ export default {
       },
   },
   created: function(){
-      console.log(moment());
+      // console.log(moment());
   }
-};
+});
 </script>
 
 <style>
