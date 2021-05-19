@@ -10,9 +10,13 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import {  Option } from '../Form/Field'
+import { IonList, IonItem, IonLabel} from "@ionic/vue"
 
 export default defineComponent({
     name: "HisSelect",
+    components: {
+        IonList, IonItem, IonLabel
+    },
     props: {
         items: {
             required: true,
