@@ -38,7 +38,7 @@ export default defineComponent({
         return this.formData[field.id]
     },
     isRequireNext(field: Field): Boolean {
-        if (!('require_next' in field)) {
+        if (!field.require_next) {
             return true
         }
         return field.require_next ? true : false
