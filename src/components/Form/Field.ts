@@ -1,8 +1,8 @@
 export enum FieldType {
-    TT_TEXT,
-    TT_DATETIME,
-    TT_SELECT,
-    TT_MULTIPLE_SELECT
+    TT_TEXT="text",
+    TT_DATETIME="datetime",
+    TT_SELECT="select",
+    TT_MULTIPLE_SELECT="select-multiple"
 }
 
 export interface Option {
