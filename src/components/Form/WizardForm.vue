@@ -78,7 +78,7 @@ export default defineComponent({
             }
         }
     },
-    onPrev(){
+    onPrev() : void {
         const prevIndex = this.activeIndex - 1
         if (prevIndex >= 1){
             this.activeIndex = prevIndex
@@ -88,13 +88,13 @@ export default defineComponent({
             }
         }
     },
-    onValue(value: String | number) {
+    onValue(value: String | number) : void {
         this.formData[this.activeField.id] = value
         if (!this.isRequireNext(this.activeField)) {
             this.onNext()
         }
     },
-    onFinish(){
+    onFinish() : void {
         this.$emit('onfinish', this.formData)
     },
   },
