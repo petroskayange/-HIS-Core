@@ -33,14 +33,20 @@ export default defineComponent({
       activeField: {} as Field,
     };
   },
-  methods: { 
-    getValue(field: Field): any{
+  mounted(){
+    this.buildFormData(this.fields)
+  },
+  methods: {
+    buildFormData(fields: Array<Field>): void {
+      this.formData = {}
+      fields.forEach(field => this.formData[field.id] = field)
+    },
+    getValue(field: Field): any {
         return this.formData[field.id]
     },
     isRequireNext(field: Field): Boolean {
-        if (!field.require_next) {
-            return true
-        }
+        if (!field.require_next) return true
+
         return field.require_next ? true : false
     },
     isCondition(field: Field): Boolean {
@@ -55,7 +61,7 @@ export default defineComponent({
         }
         return null
     },
-    onNext() {
+    onNext(): void {
         const totalFields = this.fields.length
         const nextIndex = this.activeIndex + 1
         const errors : null | Array<string> = this.validate(
