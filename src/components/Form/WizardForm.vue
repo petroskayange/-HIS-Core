@@ -33,6 +33,14 @@ export default defineComponent({
       activeField: {} as Field,
     };
   },
+  watch: {
+    next(){
+        this.onNext()
+    },
+    prev() {
+        this.onPrev()
+    }
+  },
   mounted(){
     this.buildFormData(this.fields)
   },
@@ -70,22 +78,24 @@ export default defineComponent({
 
         if (errors) return this.$emit('onErrors', errors)
 
-        if (nextIndex < totalFields){
-            this.activeIndex = nextIndex
-            this.activeField = this.fields[this.activeIndex]
-            if (!this.isCondition(this.activeField)) {
-                this.onNext()
-            }
+        if (nextIndex >= totalFields) return 
+
+        this.activeIndex = nextIndex
+        this.activeField = this.fields[this.activeIndex]
+        
+        if (!this.isCondition(this.activeField)) {
+            this.onNext()
         }
     },
     onPrev() : void {
         const prevIndex = this.activeIndex - 1
-        if (prevIndex >= 1){
-            this.activeIndex = prevIndex
-            this.activeField = this.fields[this.activeIndex]
-            if (!this.isCondition(this.activeField)) {
-                this.onPrev()
-            }
+        if (prevIndex <= 1) return 
+        
+        this.activeIndex = prevIndex
+        this.activeField = this.fields[this.activeIndex]
+        
+        if (!this.isCondition(this.activeField)) {
+            this.onPrev()
         }
     },
     onValue(value: String | number) : void {
