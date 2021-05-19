@@ -34,21 +34,36 @@ export default defineComponent({
     };
   },
   methods: { 
+    getValue(field: Field): any{
+        return this.formData[field.id]
+    },
+    isRequireNext(field: Field): Boolean {
+        if (!('require_next' in field)) {
+            return true
+        }
+        return field.require_next ? true : false
+    },
     isCondition(field: Field): Boolean {
-        if ('condition' in field) {
+        if (field.condition) {
             return field.condition(this.formData)
         }
         return true
     },
-    isValidation(value: String, field: Field) {
-        if ('validation' in field) {
+    validate(value: String, field: Field): null | Array<string> {
+        if (field.validation) {
             return field.validation(value, this.formData)
         }
-        return true
+        return null
     },
     onNext() {
         const totalFields = this.fields.length
         const nextIndex = this.activeIndex + 1
+        const errors : null | Array<string> = this.validate(
+            this.getValue(this.activeField), this.formData
+        )
+
+        if (errors) return this.$emit('onErrors', errors)
+
         if (nextIndex < totalFields){
             this.activeIndex = nextIndex
             this.activeField = this.fields[this.activeIndex]
@@ -67,8 +82,11 @@ export default defineComponent({
             }
         }
     },
-    onValue(value: String | number){
+    onValue(value: String | number) {
         this.formData[this.activeField.id] = value
+        if (!this.isRequireNext(this.activeField)) {
+            this.onNext()
+        }
     },
     onFinish(){
         this.$emit('onfinish', this.formData)
