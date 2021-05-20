@@ -6,17 +6,17 @@ export enum FieldType {
 }
 
 export interface Option {
-    label: string,
-    value: string | number,
-    isChecked?: Boolean
+    label: string;
+    value: string | number;
+    isChecked?: boolean;
 }
 
 export interface Field {
     id: string | number;
-    help_text: string;
+    helpText: string;
     type: FieldType;
     condition?: Function;
     validation?: Function;
     options: Array<Option>;
-    require_next?: Boolean;
+    requireNext?: boolean;
 }
