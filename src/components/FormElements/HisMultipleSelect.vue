@@ -24,7 +24,7 @@ export default defineComponent({
   components: { IonCheckbox, IonItem, IonLabel, IonList },
   name: "HisMultipleSelect",
   props: {
-    items: {
+    options: {
       required: true,
       type: Object as PropType<Option[]>,
     },
@@ -46,7 +46,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.listData = [...this.items];
+    this.listData = [...this.options];
   },
 });
 </script>
