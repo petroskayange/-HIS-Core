@@ -81,7 +81,7 @@ export default defineComponent({
 
       if (errors) return this.$emit('onErrors', errors)
 
-      if (nextIndex >= totalFields) return 
+      if (nextIndex > totalFields) return 
 
       this.activeIndex = nextIndex
       this.activeField = this.fields[this.activeIndex]
