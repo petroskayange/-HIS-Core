@@ -1,7 +1,7 @@
 <template>
     <div> 
         <ion-list>
-            <ion-item v-for="(item, index) in options" :key="index" @click="onselect(Item)"> 
+            <ion-item button v-for="(item, index) in options" :key="index" @click="onselect(item)"> 
                 <ion-label> {{item.label}} </ion-label>
             </ion-item>
         </ion-list>
