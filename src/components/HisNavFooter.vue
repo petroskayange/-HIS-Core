@@ -1,10 +1,10 @@
 <template>
   <ion-footer>
     <ion-toolbar color="dark">
-      <ion-button @click="cancel('redirectUrl')" color="danger" size="large">Cancel</ion-button>
-      <ion-button slot="end" @click="navigatePage('sectionId')" color="primary" size="large">Back</ion-button>
-      <ion-button slot="end" @click="navigatePage('sectionId')" color="primary" size="large">Next</ion-button>
-      <ion-button slot="end" @click="finish('destinationUrl')" color="success" size="large">Finish</ion-button>
+      <ion-button @click="onCancel" color="danger" size="large">Cancel</ion-button>
+      <ion-button slot="end" @click="onBack" color="primary" size="large">Back</ion-button>
+      <ion-button slot="end" @click="onNext" color="primary" size="large">Next</ion-button>
+      <ion-button slot="end" @click="onFinish" color="success" size="large">Finish</ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
@@ -21,15 +21,17 @@ export default {
     IonToolbar
   },
   methods: {
-    cancel(redirectUrl) {
-      console.log(redirectUrl);
+    onCancel() {
+      this.$emit('onCancel')
     },
-    navigatePage(sectionId) {
-      console.log(sectionId);
+    onNext() {
+      this.$emit('onNext')
     },
-    finish(destinationUrl) {
-      this.$router.push("/");
-      console.log(destinationUrl);
+    onBack() {
+      this.$emit('onBack')
+    },
+    onFinish() {
+      this.$emit('onFinish')
     }
   }
 }

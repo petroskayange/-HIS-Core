@@ -18,7 +18,7 @@
       </div>
     </ion-content>
 
-    <HisNavFooter></HisNavFooter>
+    <HisNavFooter @onFinish="gotoHome"></HisNavFooter>
 
   </ion-page>
 </template>
@@ -39,6 +39,11 @@ export default defineComponent({
     IonTitle,
     IonToolbar,
     "barcode-scan": BarcodeScan
+  },
+  methods: {
+    gotoHome(){
+      this.$router.push({path: "/"})
+    }
   }
 });
 </script>
