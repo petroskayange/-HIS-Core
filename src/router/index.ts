@@ -6,6 +6,7 @@ import Home from '../views/Home.vue';
 import HClocation from '../views/HClocation.vue';
 import SearchPatient from "@/views/SearchPatient.vue";
 import SearchClient from '../views/SearchClient.vue'
+import Example from '../views/Example.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -36,6 +37,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/search_client',
     name: 'Search client',
     component: SearchClient
+  },
+  {
+    path: '/example',
+    name: 'Example',
+    component: Example
   }
 ]
 
