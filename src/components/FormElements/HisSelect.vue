@@ -9,7 +9,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import {  Option } from '../Form/Field'
+import {  Option } from '../Forms/FieldType'
 import { IonList, IonItem, IonLabel} from "@ionic/vue"
 
 export default defineComponent({
