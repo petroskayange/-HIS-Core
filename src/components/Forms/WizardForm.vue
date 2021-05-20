@@ -40,10 +40,10 @@ export default defineComponent({
     };
   },
   watch: {
-    next(val: Boolean){
+    next(val: boolean){
       if (val) this.onNext()
     },
-    prev(val: Boolean) {
+    prev(val: boolean) {
       if (val) this.onPrev()
     }
   },
@@ -58,21 +58,21 @@ export default defineComponent({
     getValue(field: Field): any {
       return this.formData[field.id]
     },
-    setValue(value: any, field: Field):void {
+    setValue(value: any, field: Field): void {
       this.formData[field.id] = value
     },
-    isRequireNext(field: Field): Boolean {
+    isRequireNext(field: Field): boolean {
       if (!field.requireNext) return true
 
       return field.requireNext ? true : false
     },
-    isCondition(field: Field): Boolean {
+    isCondition(field: Field): boolean {
       if (field.condition) {
         return field.condition(this.formData)
       }
       return true
     },
-    validate(value: String, field: Field): null | Array<string> {
+    validate(value: string, field: Field): null | Array<string> {
       if (field.validation) {
         return field.validation(value, this.formData)
       }
@@ -81,7 +81,7 @@ export default defineComponent({
     onNext(): void {
       const totalFields = this.fields.length
       const nextIndex = this.activeIndex + 1
-      const errors : null | Array<string> = this.validate(
+      const errors: null | Array<string> = this.validate(
         this.getValue(this.activeField), this.formData
       )
 
@@ -98,7 +98,7 @@ export default defineComponent({
       }
       this.$emit('onNext', this.activeField)
     },
-    onPrev() : void {
+    onPrev(): void {
       const prevIndex = this.activeIndex - 1
       if (prevIndex <= 1) return 
 
@@ -111,13 +111,13 @@ export default defineComponent({
       }
       this.$emit('onPrev', this.activeField)
     },
-    onValue(value: String | number) : void {
+    onValue(value: string | number): void {
       this.formData[this.activeField.id] = value
       if (!this.isRequireNext(this.activeField)) {
         this.onNext()
       }
     },
-    onFinish() : void {
+    onFinish(): void {
       this.$emit('onFinish', this.formData)
     },
   },
