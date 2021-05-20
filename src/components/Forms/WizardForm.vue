@@ -11,9 +11,15 @@
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
 import { Field } from "./FieldType";
+import SingleSelect from '@/components/FormElements/HisSelect.vue'
+import MultipleSelect from '@/components/FormElements/HisMultipleSelect.vue'
 
 export default defineComponent({
   name: "WizardForm",
+  components: { 
+    SingleSelect, 
+    MultipleSelect 
+  },
   props: {
     next: {
       type: Boolean
