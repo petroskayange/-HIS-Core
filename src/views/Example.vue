@@ -31,32 +31,51 @@ export default defineComponent({
       fields: [
         {
           id: "1234",
-          helpText: "My Name",
-          type: FieldType.TT_SELECT,
-          requireNext: false,
+          helpText: "Select Multiple values",
+          type: FieldType.TT_MULTIPLE_SELECT,
           options: [
             {
-              label: "Andrew Mfune",
-              value: "Andrew Mfune",
+              label: "Foo",
+              value: "Foo",
             },
             {
-              label: "Yewo Mfune",
-              value: "Yewo Mfune",
+              label: "Baz",
+              value: "Baz",
+            },
+            {
+              label: "Bar",
+              value: "Bar",
             },
           ],
         },
         {
           id: "1234",
-          helpText: "My Name",
+          helpText: "Click on value to proceed",
+          type: FieldType.TT_SELECT,
+          requireNext: false,
+          options: [
+            {
+              label: "Duke",
+              value: "Duke",
+            },
+            {
+              label: "Dork",
+              value: "Dork",
+            },
+          ],
+        },
+        {
+          id: "1234",
+          helpText: "Select one value and click next",
           type: FieldType.TT_SELECT,
           options: [
             {
-              label: "Thom Mfune",
-              value: "Thom Mfune",
+              label: "Fur",
+              value: "Fur",
             },
             {
-              label: "Khetase Mfune",
-              value: "Khetase Mfune",
+              label: "Fume",
+              value: "Fame",
             },
           ],
         }
