@@ -80,8 +80,8 @@ export default defineComponent({
       )
 
       if (errors) return this.$emit('onErrors', errors)
-
-      if (nextIndex > totalFields) return 
+      
+      if (nextIndex >= totalFields) return this.onFinish()
 
       this.activeIndex = nextIndex
       this.activeField = this.fields[this.activeIndex]
@@ -112,7 +112,7 @@ export default defineComponent({
       }
     },
     onFinish() : void {
-      this.$emit('onfinish', this.formData)
+      this.$emit('onFinish', this.formData)
     },
   },
 });
