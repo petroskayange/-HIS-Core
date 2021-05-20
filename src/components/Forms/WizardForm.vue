@@ -49,6 +49,7 @@ export default defineComponent({
   },
   mounted(){
     this.buildFormData(this.fields)
+    this.activeField = this.fields[0]
   },
   methods: {
     buildFormData(fields: Array<Field>): void {
