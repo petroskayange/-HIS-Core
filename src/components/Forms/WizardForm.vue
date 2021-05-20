@@ -1,9 +1,17 @@
 <template>
   <div>
+    <h2>
+      <b>{{ activeField.helpText }}</b>
+    </h2>
+    <ion-input
+      :value="value"
+      type="text"
+      class="input_display"
+      disabled
+    />
     <keep-alive>
       <component
         v-bind:is="activeField.type"
-        :label="activeField.helpText"
         :options="activeField.options"
         @onValue="onValue"
       />
@@ -12,26 +20,25 @@
 </template>
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
-import { Field } from "./FieldType";
-import SingleSelect from '@/components/FormElements/HisSelect.vue'
-import MultipleSelect from '@/components/FormElements/HisMultipleSelect.vue'
-
+import { Field, Option } from "./FieldType";
+import SingleSelect from "@/components/FormElements/HisSelect.vue";
+import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
 export default defineComponent({
   name: "WizardForm",
-  components: { 
-    SingleSelect, 
-    MultipleSelect 
+  components: {
+    SingleSelect,
+    MultipleSelect,
   },
   props: {
     next: {
-      type: Boolean
+      type: Boolean,
     },
     prev: {
-      type: Boolean
+      type: Boolean,
     },
     fields: {
       required: true,
-      type: Object as PropType<Field[]>
+      type: Object as PropType<Field[]>,
     },
   },
   data() {
@@ -39,91 +46,118 @@ export default defineComponent({
       activeIndex: 0,
       formData: {} as any,
       activeField: {} as Field,
+      value: "" as any
     };
   },
   watch: {
-    next(val: boolean){
-      if (val) this.onNext(); this.$emit('onNext', this.activeField);
+    next(val: boolean) {
+      if (val) this.onNext();
+      this.$emit("onNext", this.activeField);
     },
     prev(val: boolean) {
-      if (val) this.onPrev(); this.$emit('onPrev', this.activeField);
-    }
+      if (val) this.onPrev();
+      this.$emit("onPrev", this.activeField);
+    },
   },
-  mounted(){
-    this.buildFormData(this.fields)
-    this.activeField = this.fields[0]
+  mounted() {
+    this.buildFormData(this.fields);
+    this.activeField = this.fields[0];
   },
   methods: {
     buildFormData(fields: Array<Field>): void {
-      this.formData = {}
-      fields.forEach(field => this.formData[field.id] = field)
+      this.formData = {};
+      fields.forEach((field) => (this.formData[field.id] = null));
     },
     getValue(field: Field): any {
-      return this.formData[field.id]
+      return this.formData[field.id];
     },
     setValue(value: any, field: Field): void {
-      this.formData[field.id] = value
+      this.formData[field.id] = value;
+      this.value = this.resolveValue(value)
     },
     isRequireNext(field: Field): boolean {
-      if (!("requireNext" in field)) return true
+      if (!("requireNext" in field)) return true;
 
-      return field.requireNext ? true : false
+      return field.requireNext ? true : false;
     },
     isCondition(field: Field): boolean {
       if (field.condition) {
-        return field.condition(this.formData)
+        return field.condition(this.formData);
       }
-      return true
+      return true;
     },
     validate(value: string, field: Field): null | Array<string> {
       if (field.validation) {
-        return field.validation(value, this.formData)
+        return field.validation(value, this.formData);
       }
-      return null
+      return null;
     },
     onNext(): void {
-      const totalFields = this.fields.length
-      const nextIndex = this.activeIndex + 1
+      const totalFields = this.fields.length;
+      const nextIndex = this.activeIndex + 1;
       const errors: null | Array<string> = this.validate(
-        this.getValue(this.activeField), this.formData
-      )
+        this.getValue(this.activeField),
+        this.formData
+      );
 
-      if (errors) return this.$emit('onErrors', errors)
+      if (errors) return this.$emit("onErrors", errors);
 
-      if (nextIndex >= totalFields) return this.onFinish()
+      if (nextIndex >= totalFields) return this.onFinish();
 
-      this.setActiveField(nextIndex)
-      
+      this.setActiveField(nextIndex);
+
       if (!this.isCondition(this.activeField)) {
-        this.setValue(null, this.activeField)
-        return this.onNext()
+        this.setValue(null, this.activeField);
+        return this.onNext();
       }
     },
     onPrev(): void {
-      const prevIndex = this.activeIndex - 1
-      
-      if (prevIndex <= -1) return
+      const prevIndex = this.activeIndex - 1;
 
-      this.setActiveField(prevIndex)
+      if (prevIndex <= -1) return;
+
+      this.setActiveField(prevIndex);
 
       if (!this.isCondition(this.activeField)) {
-        this.setValue(null, this.activeField)
-        return this.onPrev()
+        this.setValue(null, this.activeField);
+        return this.onPrev();
       }
     },
-    setActiveField(index: number){
-      this.activeIndex = index
-      this.activeField = this.fields[this.activeIndex]
+    setActiveField(index: number) {
+      this.activeIndex = index;
+      this.activeField = this.fields[this.activeIndex];
+      this.value = this.resolveValue(this.formData[this.activeField.id])
     },
-    onValue(value: string | number): void {
-      this.formData[this.activeField.id] = value
-      if (!this.isRequireNext(this.activeField)) {
-        this.onNext()
-      }
+    onValue(value: string | number | Option | Array<Option>): void {
+      this.setValue(value, this.activeField);
+      if (!this.isRequireNext(this.activeField)) this.onNext();
     },
     onFinish(): void {
-      this.$emit('onFinish', this.formData)
+      this.$emit("onFinish", this.formData);
     },
+    resolveValue(value: string | Option | Array<Option> | number): string | number {
+      if (Array.isArray(value)) {
+        return this.value.map((item: Option) => item.label).join(';')
+      }
+
+      if (typeof value === 'object' && value != null) return value.label
+
+      return value
+    }
   },
 });
 </script>
+<style scoped>
+.input_display {
+  border: 1px solid rgb(94, 91, 91);
+  border-radius: 5px;
+  width: 100%;
+  font-family: Nimbus Sans L, Arial Narrow, sans-serif;
+  font-size: 2.2em;
+  background-color: rgb(231, 231, 231);
+  color: #000;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+</style>
