@@ -1,11 +1,13 @@
 <template>
   <div>
-    <component
-      v-bind:is="activeField.type"
-      :label="activeField.helpText"
-      :options="activeField.options"
-      @onValue="onValue"
-    />
+    <keep-alive>
+      <component
+        v-bind:is="activeField.type"
+        :label="activeField.helpText"
+        :options="activeField.options"
+        @onValue="onValue"
+      />
+    </keep-alive>
   </div>
 </template>
 <script lang='ts'>
@@ -41,10 +43,10 @@ export default defineComponent({
   },
   watch: {
     next(val: boolean){
-      if (val) this.onNext()
+      if (val) this.onNext(); this.$emit('onNext', this.activeField);
     },
     prev(val: boolean) {
-      if (val) this.onPrev()
+      if (val) this.onPrev(); this.$emit('onPrev', this.activeField);
     }
   },
   mounted(){
@@ -87,30 +89,31 @@ export default defineComponent({
       )
 
       if (errors) return this.$emit('onErrors', errors)
-      
+
       if (nextIndex >= totalFields) return this.onFinish()
 
-      this.activeIndex = nextIndex
-      this.activeField = this.fields[this.activeIndex]
+      this.setActiveField(nextIndex)
       
       if (!this.isCondition(this.activeField)) {
         this.setValue(null, this.activeField)
         return this.onNext()
       }
-      this.$emit('onNext', this.activeField)
     },
     onPrev(): void {
       const prevIndex = this.activeIndex - 1
-      if (prevIndex <= 1) return 
+      
+      if (prevIndex <= -1) return
 
-      this.activeIndex = prevIndex
-      this.activeField = this.fields[this.activeIndex]
+      this.setActiveField(prevIndex)
 
       if (!this.isCondition(this.activeField)) {
         this.setValue(null, this.activeField)
         return this.onPrev()
       }
-      this.$emit('onPrev', this.activeField)
+    },
+    setActiveField(index: number){
+      this.activeIndex = index
+      this.activeField = this.fields[this.activeIndex]
     },
     onValue(value: string | number): void {
       this.formData[this.activeField.id] = value
