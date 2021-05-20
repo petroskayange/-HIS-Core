@@ -15,8 +15,8 @@ export interface Field {
     id: string | number;
     help_text: string;
     type: FieldType;
-    condition: Function;
-    validation: Function;
+    condition?: Function;
+    validation?: Function;
     options: Array<Option>;
     require_next?: Boolean;
 }
