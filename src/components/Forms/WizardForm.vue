@@ -2,7 +2,7 @@
   <div>
     <component
       v-bind:is="activeField.type"
-      :label="activeField.help_text"
+      :label="activeField.helpText"
       :options="activeField.options"
       @onValue="onValue"
     />
@@ -62,9 +62,9 @@ export default defineComponent({
       this.formData[field.id] = value
     },
     isRequireNext(field: Field): Boolean {
-      if (!field.require_next) return true
+      if (!field.requireNext) return true
 
-      return field.require_next ? true : false
+      return field.requireNext ? true : false
     },
     isCondition(field: Field): Boolean {
       if (field.condition) {
