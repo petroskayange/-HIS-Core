@@ -10,16 +10,16 @@
 </template>
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
-import { Field } from "./Field";
+import { Field } from "./FieldType";
 
 export default defineComponent({
   name: "WizardForm",
   props: {
     next: {
-        type: Boolean
+      type: Boolean
     },
     prev: {
-        type: Boolean
+      type: Boolean
     },
     fields: {
       required: true,
@@ -34,11 +34,11 @@ export default defineComponent({
     };
   },
   watch: {
-    next(){
-        this.onNext()
+    next(val: Boolean | null){
+      if (val) this.onNext()
     },
-    prev() {
-        this.onPrev()
+    prev(val: Boolean | null) {
+      if (val) this.onPrev()
     }
   },
   mounted(){
@@ -50,62 +50,62 @@ export default defineComponent({
       fields.forEach(field => this.formData[field.id] = field)
     },
     getValue(field: Field): any {
-        return this.formData[field.id]
+      return this.formData[field.id]
     },
     isRequireNext(field: Field): Boolean {
-        if (!field.require_next) return true
+      if (!field.require_next) return true
 
-        return field.require_next ? true : false
+      return field.require_next ? true : false
     },
     isCondition(field: Field): Boolean {
-        if (field.condition) {
-            return field.condition(this.formData)
-        }
-        return true
+      if (field.condition) {
+        return field.condition(this.formData)
+      }
+      return true
     },
     validate(value: String, field: Field): null | Array<string> {
-        if (field.validation) {
-            return field.validation(value, this.formData)
-        }
-        return null
+      if (field.validation) {
+        return field.validation(value, this.formData)
+      }
+      return null
     },
     onNext(): void {
-        const totalFields = this.fields.length
-        const nextIndex = this.activeIndex + 1
-        const errors : null | Array<string> = this.validate(
-            this.getValue(this.activeField), this.formData
-        )
+      const totalFields = this.fields.length
+      const nextIndex = this.activeIndex + 1
+      const errors : null | Array<string> = this.validate(
+          this.getValue(this.activeField), this.formData
+      )
 
-        if (errors) return this.$emit('onErrors', errors)
+      if (errors) return this.$emit('onErrors', errors)
 
-        if (nextIndex >= totalFields) return 
+      if (nextIndex >= totalFields) return 
 
-        this.activeIndex = nextIndex
-        this.activeField = this.fields[this.activeIndex]
-        
-        if (!this.isCondition(this.activeField)) {
-            this.onNext()
-        }
+      this.activeIndex = nextIndex
+      this.activeField = this.fields[this.activeIndex]
+      
+      if (!this.isCondition(this.activeField)) {
+        this.onNext()
+      }
     },
     onPrev() : void {
-        const prevIndex = this.activeIndex - 1
-        if (prevIndex <= 1) return 
-        
-        this.activeIndex = prevIndex
-        this.activeField = this.fields[this.activeIndex]
-        
-        if (!this.isCondition(this.activeField)) {
-            this.onPrev()
-        }
+      const prevIndex = this.activeIndex - 1
+      if (prevIndex <= 1) return 
+      
+      this.activeIndex = prevIndex
+      this.activeField = this.fields[this.activeIndex]
+      
+      if (!this.isCondition(this.activeField)) {
+          this.onPrev()
+      }
     },
     onValue(value: String | number) : void {
-        this.formData[this.activeField.id] = value
-        if (!this.isRequireNext(this.activeField)) {
-            this.onNext()
-        }
+      this.formData[this.activeField.id] = value
+      if (!this.isRequireNext(this.activeField)) {
+          this.onNext()
+      }
     },
     onFinish() : void {
-        this.$emit('onfinish', this.formData)
+      this.$emit('onfinish', this.formData)
     },
   },
 });
