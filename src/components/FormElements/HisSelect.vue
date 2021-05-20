@@ -1,7 +1,7 @@
 <template>
     <div> 
         <ion-list>
-            <ion-item v-for="(item, index) in items" :key="index" @click="onselect(Item)"> 
+            <ion-item v-for="(item, index) in options" :key="index" @click="onselect(Item)"> 
                 <ion-label> {{item.label}} </ion-label>
             </ion-item>
         </ion-list>
@@ -18,7 +18,7 @@ export default defineComponent({
         IonList, IonItem, IonLabel
     },
     props: {
-        items: {
+        options: {
             required: true,
             type: Object as PropType<Option[]> 
         }
