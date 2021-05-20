@@ -1,7 +1,7 @@
 export enum FieldType {
     TT_TEXT="text",
     TT_DATETIME="datetime",
-    TT_SELECT="select",
+    TT_SELECT="single-select",
     TT_MULTIPLE_SELECT="select-multiple"
 }
 
