@@ -2,16 +2,8 @@
   <div>
     <ion-list>
       <ion-item v-for="(data, index) in listData" :key="index">
-        <ion-grid>
-          <ion-row>
-            <ion-col> 
-              <ion-checkbox :modelValue="data.isChecked" /> 
-            </ion-col>
-            <ion-col>
-              <ion-label> {{ data.label }} </ion-label>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+        <ion-label> {{ data.label }} </ion-label>
+        <ion-checkbox slot="end" :modelValue="data.isChecked" size="34"/> 
       </ion-item>
     </ion-list>
   </div>
