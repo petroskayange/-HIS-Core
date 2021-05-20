@@ -34,10 +34,10 @@ export default defineComponent({
     };
   },
   watch: {
-    next(val: Boolean | null){
+    next(val: Boolean){
       if (val) this.onNext()
     },
-    prev(val: Boolean | null) {
+    prev(val: Boolean) {
       if (val) this.onPrev()
     }
   },
@@ -51,6 +51,9 @@ export default defineComponent({
     },
     getValue(field: Field): any {
       return this.formData[field.id]
+    },
+    setValue(value: any, field: Field):void {
+      this.formData[field.id] = value
     },
     isRequireNext(field: Field): Boolean {
       if (!field.require_next) return true
@@ -73,7 +76,7 @@ export default defineComponent({
       const totalFields = this.fields.length
       const nextIndex = this.activeIndex + 1
       const errors : null | Array<string> = this.validate(
-          this.getValue(this.activeField), this.formData
+        this.getValue(this.activeField), this.formData
       )
 
       if (errors) return this.$emit('onErrors', errors)
@@ -84,24 +87,28 @@ export default defineComponent({
       this.activeField = this.fields[this.activeIndex]
       
       if (!this.isCondition(this.activeField)) {
-        this.onNext()
+        this.setValue(null, this.activeField)
+        return this.onNext()
       }
+      this.$emit('onNext', this.activeField)
     },
     onPrev() : void {
       const prevIndex = this.activeIndex - 1
       if (prevIndex <= 1) return 
-      
+
       this.activeIndex = prevIndex
       this.activeField = this.fields[this.activeIndex]
-      
+
       if (!this.isCondition(this.activeField)) {
-          this.onPrev()
+        this.setValue(null, this.activeField)
+        return this.onPrev()
       }
+      this.$emit('onPrev', this.activeField)
     },
     onValue(value: String | number) : void {
       this.formData[this.activeField.id] = value
       if (!this.isRequireNext(this.activeField)) {
-          this.onNext()
+        this.onNext()
       }
     },
     onFinish() : void {
