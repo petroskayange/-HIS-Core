@@ -137,7 +137,7 @@ export default defineComponent({
     },
     resolveValue(value: string | Option | Array<Option> | number): string | number {
       if (Array.isArray(value)) {
-        return this.value.map((item: Option) => item.label).join(';')
+        return value.map((item: Option) => item.label).join(';')
       }
 
       if (typeof value === 'object' && value != null) return value.label
