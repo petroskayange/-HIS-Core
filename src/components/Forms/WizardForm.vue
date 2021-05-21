@@ -92,14 +92,17 @@ export default defineComponent({
       }
       return null;
     },
-    onNext(): void {
+    onNext(skipValidation = false): void {
       const totalFields = this.fields.length;
       const nextIndex = this.activeIndex + 1;
-      const errors: null | Array<string> = this.validate(
-        this.getValue(this.activeField), this.activeField
-      );
 
-      if (errors) return this.$emit("onErrors", errors);
+      if (!skipValidation) {
+        const errors: null | Array<string> = this.validate(
+          this.getValue(this.activeField), this.activeField
+        );
+  
+        if (errors) return this.$emit("onErrors", errors);
+      }
 
       if (nextIndex >= totalFields) return this.onFinish();
 
@@ -107,7 +110,7 @@ export default defineComponent({
 
       if (!this.isCondition(this.activeField)) {
         this.setValue(null, this.activeField);
-        return this.onNext();
+        return this.onNext(true);
       }
     },
     onPrev(): void {
