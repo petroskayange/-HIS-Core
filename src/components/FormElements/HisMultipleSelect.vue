@@ -1,12 +1,10 @@
 <template>
-  <div>
     <ion-list>
-      <ion-item v-for="(data, index) in listData" :key="index">
-        <ion-label> {{ data.label }} </ion-label>
-        <ion-checkbox slot="end" :modelValue="data.isChecked" size="34"/> 
-      </ion-item>
-    </ion-list>
-  </div>
+      <ion-item v-for="(entry, index) in listData" :key="index">
+        <ion-label> {{ entry.label }} </ion-label>
+        <ion-checkbox v-model="entry.isChecked" slot="end"/>
+    </ion-item>
+  </ion-list>
 </template>
 <script lang="ts">
 import { Option } from "../Forms/FieldType";
@@ -21,24 +19,25 @@ export default defineComponent({
       type: Object as PropType<Option[]>,
     },
   },
-  watch: {
-    listData: {
-      handler(updatedItems: Array<Option>) {
-        this.$emit(
-          "onValue",
-          updatedItems.map((item) => item.isChecked)
-        );
-      },
-      deep: true,
-    },
-  },
   data() {
     return {
       listData: [] as Array<Option>,
     };
   },
+  watch: {
+    listData: {
+      handler(updatedItems: Array<Option>) {
+        const values = updatedItems.filter((item) => item.isChecked);
+        if (values.length >= 1) this.$emit("onValue", values);
+      },
+      deep: true,
+    },
+  },
   mounted() {
-    this.listData = [...this.options];
+    this.listData = this.options.map((item) => {
+      item.isChecked = false;
+      return item;
+    });
   },
 });
 </script>
