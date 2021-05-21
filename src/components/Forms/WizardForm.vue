@@ -96,8 +96,7 @@ export default defineComponent({
       const totalFields = this.fields.length;
       const nextIndex = this.activeIndex + 1;
       const errors: null | Array<string> = this.validate(
-        this.getValue(this.activeField),
-        this.formData
+        this.getValue(this.activeField), this.activeField
       );
 
       if (errors) return this.$emit("onErrors", errors);
