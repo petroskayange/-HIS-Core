@@ -56,6 +56,9 @@ export default defineComponent({
           id: "multiple_select",
           helpText: "Select Multiple values",
           type: FieldType.TT_MULTIPLE_SELECT,
+          validation(value) {
+            return !value ? ['Value is required']: null
+          },
           options: [
             {
               label: "Foo",
@@ -75,6 +78,9 @@ export default defineComponent({
           id: 'conditional_data',
           helpText: "Conditionally display next question",
           type: FieldType.TT_SELECT,
+          validation(value) {
+            return !value ? ['Value is required']: null
+          },
           options: [
             {
               label: "Show Games",
@@ -90,6 +96,9 @@ export default defineComponent({
           id: 'music_presentation',
           helpText: 'Showing Music',
           type: FieldType.TT_SELECT,
+          validation(value) {
+            return !value ? ['Value is required']: null
+          },
           condition(formData) {
             return formData.conditional_data.value === 'Show Music' 
           },
@@ -104,6 +113,9 @@ export default defineComponent({
           id: 'games_presentation',
           helpText: 'Showing Games',
           type: FieldType.TT_SELECT,
+          validation(value) {
+            return !value ? ['Value is required']: null
+          },
           condition(formData) {
             return formData.conditional_data.value === 'Show Games'
           },
@@ -119,6 +131,9 @@ export default defineComponent({
           helpText: "Click on value to proceed",
           type: FieldType.TT_SELECT,
           requireNext: false,
+          validation(value) {
+            return !value ? ['Value is required']: null
+          },
           options: [
             {
               label: "Duke",
