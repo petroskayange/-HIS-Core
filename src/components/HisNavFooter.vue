@@ -2,6 +2,7 @@
   <ion-footer>
     <ion-toolbar color="dark">
       <ion-button @click="onCancel" color="danger" size="large">Cancel</ion-button>
+      <ion-button slot="end" v-show="showClear" @click="onClear" color="primary" size="large">Clear</ion-button>
       <ion-button slot="end" v-show="showBack" @click="onBack" color="primary" size="large">Back</ion-button>
       <ion-button slot="end" v-show="showNext" @click="onNext" color="primary" size="large">Next</ion-button>
       <ion-button slot="end" v-show="showFinish" @click="onFinish" color="success" size="large">Finish</ion-button>
@@ -20,6 +21,10 @@ export default {
       type: Boolean,
       default: () => true
     },
+    showClear: {
+      type: Boolean,
+      default: () => false
+    },
     showBack: {
       type: Boolean,
       default: () => false
@@ -35,6 +40,9 @@ export default {
     IonToolbar
   },
   methods: {
+    onClear(){
+      this.$emit('onClear')
+    },
     onCancel() {
       this.$emit('onCancel')
     },
