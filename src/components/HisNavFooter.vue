@@ -2,9 +2,9 @@
   <ion-footer>
     <ion-toolbar color="dark">
       <ion-button @click="onCancel" color="danger" size="large">Cancel</ion-button>
-      <ion-button slot="end" @click="onBack" color="primary" size="large">Back</ion-button>
-      <ion-button slot="end" @click="onNext" color="primary" size="large">Next</ion-button>
-      <ion-button slot="end" @click="onFinish" color="success" size="large">Finish</ion-button>
+      <ion-button slot="end" v-show="showBack" @click="onBack" color="primary" size="large">Back</ion-button>
+      <ion-button slot="end" v-show="showNext" @click="onNext" color="primary" size="large">Next</ion-button>
+      <ion-button slot="end" v-show="showFinish" @click="onFinish" color="success" size="large">Finish</ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
@@ -15,6 +15,20 @@ import {IonButton, IonFooter, IonToolbar} from "@ionic/vue";
 
 export default {
   name: "HisNavFooter",
+  props: {
+    showNext: {
+      type: Boolean,
+      default: () => true
+    },
+    showBack: {
+      type: Boolean,
+      default: () => false
+    },
+    showFinish: {
+      type: Boolean,
+      default: () => false
+    }
+  },
   components: {
     IonButton,
     IonFooter,
