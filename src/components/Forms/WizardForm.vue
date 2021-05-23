@@ -13,6 +13,8 @@
       <component
         v-bind:is="activeField.type"
         :options="activeField.options"
+        :clear="isClear"
+        @onClear="isClear=false"
         @onValue="onValue"
       />
     </keep-alive>
@@ -30,19 +32,23 @@ export default defineComponent({
     MultipleSelect,
   },
   props: {
+    clear: {
+      type: Boolean
+    },
     next: {
-      type: Boolean,
+      type: Boolean
     },
     prev: {
-      type: Boolean,
+      type: Boolean
     },
     fields: {
       required: true,
-      type: Object as PropType<Field[]>,
+      type: Object as PropType<Field[]>
     },
   },
   data() {
     return {
+      isClear: false,
       activeIndex: 0,
       formData: {} as any,
       activeField: {} as Field,
@@ -50,6 +56,13 @@ export default defineComponent({
     };
   },
   watch: {
+    clear(val: boolean) {
+      if (val) {
+        this.isClear = true
+        this.setValue(null, this.activeField)
+      }
+      this.$emit("onClear")
+    },
     next(val: boolean) {
       if (val) this.onNext();
       this.$emit("onNext", {field: this.activeField, index: this.activeIndex});

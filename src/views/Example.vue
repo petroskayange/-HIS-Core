@@ -4,6 +4,8 @@
       :fields="fields"
       :next="isNext"
       :prev="isPrev"
+      :clear="isClear"
+      @onClear="isClear=false"
       @onErrors="onErrors"
       @onNext="updateNext"
       @onPrev="updatePrev"
@@ -13,7 +15,9 @@
       :showBack="showBack"
       :showNext="showNext"
       :showFinish="showFinish"
+      :showClear="true"
       @onCancel="onCancel"
+      @onClear="isClear=true"
       @onNext="isNext=true"
       @onBack="isPrev=true"
       @onFinish="onSubmit"
@@ -58,6 +62,7 @@ export default defineComponent({
       showNext: true,
       showBack: false,
       showFinish: false,
+      isClear: false,
       isNext: false,
       isPrev: false,
       fields: [

@@ -14,6 +14,9 @@ export default defineComponent({
   components: { IonCheckbox, IonItem, IonLabel, IonList },
   name: "HisMultipleSelect",
   props: {
+    clear: {
+      type: Boolean
+    },
     options: {
       required: true,
       type: Object as PropType<Option[]>,
@@ -24,20 +27,32 @@ export default defineComponent({
       listData: [] as Array<Option>,
     };
   },
+  methods: {
+    setListData(){
+      this.listData = this.options.map((item) => {
+        item.isChecked = false;
+        return item;
+      });
+    }
+  },
   watch: {
+    clear(val: boolean){
+      if (val) {
+        this.setListData()
+        this.$emit('onClear')
+      }
+    },
     listData: {
       handler(updatedItems: Array<Option>) {
         const values = updatedItems.filter((item) => item.isChecked);
-        if (values.length >= 1) this.$emit("onValue", values);
+        
+        if (values.length >= 1)  this.$emit("onValue", values);
       },
       deep: true,
     },
   },
   mounted() {
-    this.listData = this.options.map((item) => {
-      item.isChecked = false;
-      return item;
-    });
+    this.setListData()
   },
 });
 </script>
