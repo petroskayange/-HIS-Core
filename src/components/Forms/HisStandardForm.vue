@@ -39,6 +39,7 @@ import { Field } from "./FieldType";
 import { defineComponent, PropType } from "vue";
 import { IonPage } from "@ionic/vue";
 export default defineComponent({
+    name: "HisStandardForm",
     components: { BaseForm, IonPage, HisFooter, HisFormSummary },
     props: {
         fields: {
