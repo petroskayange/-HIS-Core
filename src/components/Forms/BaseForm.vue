@@ -62,7 +62,7 @@ export default defineComponent({
     },
     next(val: boolean) {
       if (val) this.onNext();
-      this.$emit("onNext", {field: this.activeField, index: this.activeIndex});
+      this.emitNext()
     },
     prev(val: boolean) {
       if (val) this.onPrev();
@@ -142,7 +142,11 @@ export default defineComponent({
     },
     onValue(value: string | number | Option | Array<Option>): void {
       this.setValue(value, this.activeField);
-      if (!this.isRequireNext(this.activeField)) this.onNext();
+
+      if (!this.isRequireNext(this.activeField)) this.onNext(), this.emitNext();
+    },
+    emitNext() {
+      this.$emit("onNext", {field: this.activeField, index: this.activeIndex});
     },
     onFinish(): void {
       this.$emit("onFinish", this.formData);
