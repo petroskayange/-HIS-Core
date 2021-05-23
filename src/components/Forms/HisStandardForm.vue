@@ -23,7 +23,7 @@
       :showFinish="showFinishBtn"
       :showClear="true"
       @onCancel="onCancel"
-      @onClear="isClear=true"
+      @onClear="onClear"
       @onNext="isNext=true"
       @onBack="onBack"
       @onFinish="onSubmit"
@@ -69,6 +69,12 @@ export default defineComponent({
             const confirmation = confirm('Are you sure you want to cancel?') 
             if (confirmation) {
                 this.$router.push({path: this.cancelDestinationPath})
+            }
+        },
+        onClear() {
+            const confirmation = confirm('Are you sure you want to clear field data?')
+            if (confirmation) {
+                this.isClear = true
             }
         },
         onBack(){
