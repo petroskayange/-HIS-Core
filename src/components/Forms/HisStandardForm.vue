@@ -92,27 +92,41 @@ export default defineComponent({
             this.showClearBtn = false
             this.showSummary = true
             this.showFinishBtn = true
-            this.showNextBtn = false
             this.$emit('onFinish', formData)
+        },
+        onSubmit(): void {
+            this.$emit('onSubmit')
         },
         updateNext({ field, index }: any): void {
             this.isNext = false
             
             if (index >= 1) this.showPrevBtn = true
             
+            if (this.fieldRequiresNextBtn(field) && !this.showSummary) {
+                this.showNextBtn = true
+            } else {
+                this.showNextBtn = false
+            }
+
             this.$emit('onNext', field)
+        },
+        fieldRequiresNextBtn(field: Field): boolean{
+            if (!("requireNext" in field)) return true;
+            return field.requireNext ? true : false;
         },
         updatePrev({ field, index }: any): void {
             this.isPrev = false
-            this.showNextBtn = true
             this.showFinishBtn = false
+            
+            if (this.fieldRequiresNextBtn(field)) {
+                this.showNextBtn = true
+            } else {
+                this.showNextBtn = false
+            }
             
             if (index === 0) this.showPrevBtn = false
             
             this.$emit('onPrev', field)
-        },
-        onSubmit(): void {
-            this.$emit('onSubmit')
         },
         buildSummaryData(formData: any): Array<Option> {
             const data: Array<Option> = [];
