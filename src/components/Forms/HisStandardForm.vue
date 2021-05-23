@@ -83,7 +83,8 @@ export default defineComponent({
                 this.showNextBtn = true
                 this.showFinishBtn = false
                 this.showClearBtn = true
-                return this.showSummary = false
+                this.showSummary = false
+                return
             }
             this.isPrev = true
         },
