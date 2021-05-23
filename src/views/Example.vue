@@ -10,6 +10,9 @@
       @onFinish="onFinish"
     />
     <his-footer
+      :showBack="showBack"
+      :showNext="showNext"
+      :showFinish="showFinish"
       @onCancel="onCancel"
       @onNext="isNext=true"
       @onBack="isPrev=true"
@@ -32,16 +35,19 @@ export default defineComponent({
     onCancel(){
       this.$router.push({path: "/"})
     },
-    onFinish(data) {
-      console.log(data)
+    onFinish() {
+      this.showFinish = true
+      this.showNext = false
     },
-    updateNext(field) {
+    updateNext({ index }) {
       this.isNext = false
-      console.log(`Next: ${JSON.stringify(field)}`)
+      if (index >= 1) this.showBack = true
     },
-    updatePrev(field) {
+    updatePrev({ index }) {
       this.isPrev = false
-      console.log(`Prev: ${JSON.stringify(field)}`)
+      this.showNext = true
+      this.showFinish = false
+      if (index === 0) this.showBack = false
     },
     onSubmit() {
       console.log('Form was submitted')
@@ -49,6 +55,9 @@ export default defineComponent({
   },
   data() {
     return {
+      showNext: true,
+      showBack: false,
+      showFinish: false,
       isNext: false,
       isPrev: false,
       fields: [
@@ -78,6 +87,7 @@ export default defineComponent({
           id: 'conditional_data',
           helpText: "Conditionally display next question",
           type: FieldType.TT_SELECT,
+          requireNext:false,
           validation(value) {
             return !value ? ['Value is required']: null
           },
