@@ -1,7 +1,7 @@
 <template> 
     <ion-input
       :value="value"
-      type="text"
+      :type="type"
       class="input_display"
       :disabled="disabled"
     />
@@ -18,10 +18,12 @@ export default defineComponent({
         },
         type: {
             type: String,
-            required: true
+            required: true,
+            default: ()=> 'text'
         },
         disabled:{
-            type: Boolean
+            type: Boolean,
+            default: () => true
         }
     }
 })

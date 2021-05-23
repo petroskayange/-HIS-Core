@@ -1,9 +1,6 @@
 <template>
   <div>
-    <h2>
-      <b>{{ activeField.helpText }}</b>
-    </h2>
-    <his-text-input type="text" :disabled="true" :value="value"/> 
+    <h1> {{activeField.helpText}} </h1>
     <keep-alive>
       <component
         v-bind:is="activeField.type"
@@ -18,13 +15,11 @@
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
 import { Field, Option } from "./FieldType";
-import HisTextInput from "@/components/FormElements/HisTextInput.vue";
 import SingleSelect from "@/components/FormElements/HisSelect.vue";
 import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
 export default defineComponent({
   name: "BaseForm",
   components: {
-    HisTextInput,
     SingleSelect,
     MultipleSelect,
   },
@@ -49,7 +44,6 @@ export default defineComponent({
       activeIndex: 0,
       formData: {} as any,
       activeField: {} as Field,
-      value: "" as any
     };
   },
   watch: {
@@ -83,7 +77,6 @@ export default defineComponent({
     },
     setValue(value: any, field: Field): void {
       this.formData[field.id] = value;
-      this.value = this.resolveValue(value)
     },
     isRequireNext(field: Field): boolean {
       if (!("requireNext" in field)) return true;
@@ -138,7 +131,6 @@ export default defineComponent({
     setActiveField(index: number) {
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
-      this.value = this.resolveValue(this.formData[this.activeField.id])
     },
     onValue(value: string | number | Option | Array<Option>): void {
       this.setValue(value, this.activeField);
@@ -150,16 +142,12 @@ export default defineComponent({
     },
     onFinish(): void {
       this.$emit("onFinish", this.formData);
-    },
-    resolveValue(value: string | Option | Array<Option> | number): string | number {
-      if (Array.isArray(value)) {
-        return value.map((item: Option) => item.label).join(';')
-      }
-
-      if (typeof value === 'object' && value != null) return value.label
-
-      return value
     }
   },
 });
 </script>
+<style scoped>
+  h1 {
+    font-weight:bold
+  }
+</style>
