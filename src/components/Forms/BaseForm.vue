@@ -60,8 +60,8 @@ export default defineComponent({
       if (val) {
         this.isClear = true
         this.setValue(null, this.activeField)
+        this.$emit("onClear")
       }
-      this.$emit("onClear")
     },
     next(val: boolean) {
       if (val) this.onNext();
