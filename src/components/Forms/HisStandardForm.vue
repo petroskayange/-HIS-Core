@@ -21,7 +21,7 @@
       :showBack="showPrevBtn"
       :showNext="showNextBtn"
       :showFinish="showFinishBtn"
-      :showClear="true"
+      :showClear="showClearBtn"
       @onCancel="onCancel"
       @onClear="onClear"
       @onNext="isNext=true"
@@ -54,6 +54,7 @@ export default defineComponent({
     data:()=>({
       summaryData: [] as Array<Option> | Array<Option[]>,
       showSummary: false,
+      showClearBtn: true,
       showNextBtn: true,
       showPrevBtn: false,
       showFinishBtn: false,
@@ -81,12 +82,14 @@ export default defineComponent({
             if(this.showSummary) {
                 this.showNextBtn = true
                 this.showFinishBtn = false
+                this.showClearBtn = true
                 return this.showSummary = false
             }
             this.isPrev = true
         },
         onFinish(formData: any) {
             this.summaryData = this.buildSummaryData(formData)
+            this.showClearBtn = false
             this.showSummary = true
             this.showFinishBtn = true
             this.showNextBtn = false
