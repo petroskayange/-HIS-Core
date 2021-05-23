@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <wizard-form
+    <base-form
       :fields="fields"
       :next="isNext"
       :prev="isPrev"
@@ -25,13 +25,13 @@
   </ion-page>
 </template>
 <script>
-import WizardForm from "@/components/Forms/WizardForm.vue";
+import BaseForm from "@/components/Forms/BaseForm.vue";
 import HisFooter from "@/components/HisNavFooter.vue";
 import { defineComponent } from "vue";
 import { IonPage } from "@ionic/vue";
 import { FieldType } from "@/components/Forms/FieldType";
 export default defineComponent({
-  components: { WizardForm, IonPage, HisFooter },
+  components: { BaseForm, IonPage, HisFooter },
   methods: {
     onErrors(errors){
       alert(errors.join(', '))

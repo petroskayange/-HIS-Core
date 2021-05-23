@@ -26,7 +26,7 @@ import { Field, Option } from "./FieldType";
 import SingleSelect from "@/components/FormElements/HisSelect.vue";
 import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
 export default defineComponent({
-  name: "WizardForm",
+  name: "BaseForm",
   components: {
     SingleSelect,
     MultipleSelect,
