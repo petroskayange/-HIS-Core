@@ -52,11 +52,11 @@ export default defineComponent({
   watch: {
     next(val: boolean) {
       if (val) this.onNext();
-      this.$emit("onNext", this.activeField);
+      this.$emit("onNext", {field: this.activeField, index: this.activeIndex});
     },
     prev(val: boolean) {
       if (val) this.onPrev();
-      this.$emit("onPrev", this.activeField);
+      this.$emit("onPrev", {field: this.activeField, index: this.activeIndex});
     },
   },
   mounted() {
