@@ -1,10 +1,10 @@
 <template>
   <ion-grid class="key-b" fixed>
     <ion-row>
-      <ion-col size="10">
+      <ion-col size="9">
         <base-keyboard :layout="activeLayout.primaryKeys" :onKeyPress="keypress" />
       </ion-col>
-      <ion-col size="2">
+      <ion-col size="3">
         <base-keyboard :layout="activeLayout.functionKeys" :onKeyPress="keypress" />
       </ion-col>
     </ion-row>
@@ -36,7 +36,7 @@ export default defineComponent({
     },
   },
   mounted(){
-    this.activeLayout = this.layouts.alphabetical
+    this.activeLayout = this.layouts.qwerty
   },
   data: () => ({
     activeLayout: {},
