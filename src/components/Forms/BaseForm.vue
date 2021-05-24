@@ -3,6 +3,7 @@
     <h1> {{activeField.helpText}} </h1>
     <keep-alive>
       <component
+        :key="activeField.id"
         v-bind:is="activeField.type"
         :options="activeField.options"
         :clear="isClear"
