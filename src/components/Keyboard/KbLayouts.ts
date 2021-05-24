@@ -14,7 +14,7 @@ export const ALPHABETICAL = [
 export const QWERTY = [
     ['q', 'w', 'e', 'r', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'i', "'"],
-    ['z', 'x', 'c', 'v', 'b', 'm', ',', '.', 'A-Z']
+    ['z', 'x', 'c', 'v', 'b', 'm', 'n', ',', '.', 'A-Z']
 ]
 
 export const CHARACTERS_AND_NUMBERS = [
