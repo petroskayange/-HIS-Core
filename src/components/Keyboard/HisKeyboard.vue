@@ -21,9 +21,10 @@ import {
   ALPHABETICAL_FUNCTION_KEYS,
   NUM_FUNCTION_KEYS,
 } from "@/components/Keyboard/KbLayouts";
+import { IonGrid, IonRow, IonCol } from "@ionic/vue";
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 export default defineComponent({
-  components: { BaseKeyboard },
+  components: { BaseKeyboard, IonGrid, IonRow, IonCol },
   props: {
     onKeyPress: {
       type: Function,
