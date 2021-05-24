@@ -18,6 +18,7 @@ export default defineComponent({
     layout: {
       type: Array,
       required: true,
+      default: () => []
     },
     onKeyPress: {
       type: Function,
