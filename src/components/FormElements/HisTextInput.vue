@@ -18,7 +18,6 @@ export default defineComponent({
         },
         type: {
             type: String,
-            required: true,
             default: ()=> 'text'
         },
         disabled:{
