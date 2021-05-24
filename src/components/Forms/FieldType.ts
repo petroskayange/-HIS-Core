@@ -1,5 +1,5 @@
 export enum FieldType {
-    TT_TEXT="text",
+    TT_TEXT="text-input",
     TT_DATETIME="datetime",
     TT_SELECT="single-select",
     TT_MULTIPLE_SELECT="multiple-select"
