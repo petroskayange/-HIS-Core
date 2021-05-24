@@ -32,8 +32,22 @@ export default defineComponent({
   },
   methods: {
     keypress(key: any) {
-      this.onKeyPress(key);
+      const fk = this.resolveFunctionKeys(key)
+      if (fk != undefined) {
+        this.onKeyPress(key);
+      }
     },
+    resolveFunctionKeys(key: string){
+      if (key.match(/qwerty/i)) {
+        this.activeLayout = this.layouts.qwerty
+      }else if (key.match(/a-z/i)) {
+        this.activeLayout = this.layouts.alphabetical
+      }else if (key.match(/0-9/i)) {
+        this.activeLayout = this.layouts.numerical
+      } else {  
+        return key
+      }
+    }
   },
   mounted(){
     this.activeLayout = this.layouts.qwerty
