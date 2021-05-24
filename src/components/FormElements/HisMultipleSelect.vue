@@ -45,6 +45,8 @@ export default defineComponent({
   },
   methods: {
     keypress(text: any) {
+      if (!this.filter) this.selected = ''
+
       this.filter = handleVirtualInput(text, this.selected)
       this.selected = this.filter
     },
@@ -58,8 +60,8 @@ export default defineComponent({
   watch: {
     clear(val: boolean){
       if (val) {
-        this.selected = ''
         this.filter = ''
+        this.selected = ''
         this.setListData()
         this.$emit('onClear')
       }
@@ -67,6 +69,7 @@ export default defineComponent({
     listData: {
       handler(updatedItems: Array<Option>) {
         const values = updatedItems.filter((item) => item.isChecked);
+        this.filter = ''
         this.selected = values.map(item => item.label).join(';')
         if (values.length >= 1)  this.$emit("onValue", values);
       },
