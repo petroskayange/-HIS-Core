@@ -1,8 +1,8 @@
 export const NUMBER_ONLY = [
-    [1, 2, 3],
-    [4, 5, 6, 'qwerty'],
-    [7, 8, 9],
-    ['',0,'']
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    [''   ,0,  '' ]
 ]
 
 export const ALPHABETICAL = [
@@ -37,7 +37,6 @@ export const QWERTY_FUNCTION_KEYS = [
 ]
 
 export const NUM_FUNCTION_KEYS = [
-    ['A-Z'],
-    ['', ''],
+    ['A-Z', 'qwerty'],
     ['Unknown', 'Delete']
 ]
