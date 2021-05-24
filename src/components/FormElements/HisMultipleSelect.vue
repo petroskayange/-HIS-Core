@@ -1,21 +1,25 @@
 <template>
     <div>
-      <his-text-input :value="selected" /> 
+      <his-text-input :value="selected" :disabled="false" /> 
       <ion-list>
-        <ion-item v-for="(entry, index) in listData" :key="index">
+        <ion-item v-for="(entry, index) in filtered" :key="index">
           <ion-label> {{ entry.label }} </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
       </ion-list>
+      <his-keyboard :onKeyPress="keypress"/>
     </div>
 </template>
 <script lang="ts">
 import HisTextInput from "@/components/FormElements/HisTextInput.vue"
+import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
+import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { Option } from "../Forms/FieldType";
 import { defineComponent, PropType } from "vue";
 import { IonCheckbox, IonItem, IonLabel, IonList } from "@ionic/vue";
+
 export default defineComponent({
-  components: { IonCheckbox, IonItem, IonLabel, IonList, HisTextInput },
+  components: { IonCheckbox, IonItem, IonLabel, IonList, HisTextInput, HisKeyboard  },
   name: "HisMultipleSelect",
   props: {
     clear: {
@@ -27,10 +31,23 @@ export default defineComponent({
     },
   },
   data: () => ({
+    filter: '',
     selected: '',
     listData: [] as Array<Option>,
   }),
+  computed: {
+    filtered(): Array<Option> {
+      if (this.filter) {
+        return this.listData.filter(item => item.label.match(new RegExp(this.filter, 'i')))
+      }
+      return this.listData
+    }
+  },
   methods: {
+    keypress(text: any) {
+      this.filter = handleVirtualInput(text, this.selected)
+      this.selected = this.filter
+    },
     setListData(){
       this.listData = this.options.map((item) => {
         item.isChecked = false;
@@ -42,6 +59,7 @@ export default defineComponent({
     clear(val: boolean){
       if (val) {
         this.selected = ''
+        this.filter = ''
         this.setListData()
         this.$emit('onClear')
       }
