@@ -19,6 +19,14 @@ export default defineComponent({
     return {
       fields: [
         {
+          id: "name_field",
+          helpText: "What is your name",
+          type: FieldType.TT_TEXT,
+          validation(value: any): null | Array<string> {
+            return !value ? ["Value is required"] : null;
+          },
+        },
+        {
           id: "multiple_select",
           helpText: "Select Multiple values",
           type: FieldType.TT_MULTIPLE_SELECT,

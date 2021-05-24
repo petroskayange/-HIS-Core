@@ -18,9 +18,12 @@ import { defineComponent, PropType } from "vue";
 import { Field, Option } from "./FieldType";
 import SingleSelect from "@/components/FormElements/HisSelect.vue";
 import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
+import TextInput from "@/components/FormElements/HisTextInput.vue"
+
 export default defineComponent({
   name: "BaseForm",
   components: {
+    TextInput,
     SingleSelect,
     MultipleSelect,
   },

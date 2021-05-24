@@ -3,7 +3,7 @@ import { defineComponent, PropType } from 'vue'
 import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { IonList, IonItem, IonLabel} from "@ionic/vue"
-import HisTextInput from "@/components/FormElements/HisTextInput.vue";
+import HisTextInput from "@/components/FormElements/BaseTextInput.vue";
 import { Option } from '../Forms/FieldType'
 
 export default defineComponent({
