@@ -4,6 +4,7 @@
 *~
 *.sw[mnpcod]
 .tmp
+*.json
 *.tmp
 *.tmp.*
 *.sublime-project

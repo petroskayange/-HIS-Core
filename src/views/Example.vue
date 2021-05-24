@@ -1,0 +1,145 @@
+<template>
+  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+</template> 
+<script lang="ts">
+import { defineComponent } from "vue";
+import { FieldType } from "@/components/Forms/FieldType"
+import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+export default defineComponent({
+  components: { HisStandardForm },
+  methods: {
+    onFinish(formData: any) {
+      console.log(formData)
+    },
+    onSubmit() {
+      console.log("Form has been submitted");
+    },
+  },
+  data() {
+    return {
+      fields: [
+        {
+          id: "name_field",
+          helpText: "What is your name",
+          type: FieldType.TT_TEXT,
+          validation(value: any): null | Array<string> {
+            return !value ? ["Value is required"] : null;
+          },
+        },
+        {
+          id: "multiple_select",
+          helpText: "Select Multiple values",
+          type: FieldType.TT_MULTIPLE_SELECT,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          options: [
+            {
+              label: "Foo",
+              value: "Foo",
+            },
+            {
+              label: "Baz",
+              value: "Baz",
+            },
+            {
+              label: "Bar",
+              value: "Bar",
+            },
+          ],
+        },
+        {
+          id: "conditional_data",
+          helpText: "Conditionally display next question",
+          type: FieldType.TT_SELECT,
+          requireNext: false,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          options: [
+            {
+              label: "Show Games",
+              value: "Show Games",
+            },
+            {
+              label: "Show Music",
+              value: "Show Music",
+            },
+          ],
+        },
+        {
+          id: "music_presentation",
+          helpText: "Showing Music",
+          type: FieldType.TT_SELECT,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          condition(formData: any) {
+            return formData.conditional_data.value === "Show Music";
+          },
+          options: [
+            {
+              label: "No Music",
+              value: "No Music",
+            },
+          ],
+        },
+        {
+          id: "games_presentation",
+          helpText: "Showing Games",
+          type: FieldType.TT_SELECT,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          condition(formData: any) {
+            return formData.conditional_data.value === "Show Games";
+          },
+          options: [
+            {
+              label: "No Games",
+              value: "No Games",
+            },
+          ],
+        },
+        {
+          id: "does_not_require_next",
+          helpText: "Click on value to proceed",
+          type: FieldType.TT_SELECT,
+          requireNext: false,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          options: [
+            {
+              label: "Duke",
+              value: "Duke",
+            },
+            {
+              label: "Dork",
+              value: "Dork",
+            },
+          ],
+        },
+        {
+          id: "validated",
+          helpText: "Value is Required before next",
+          type: FieldType.TT_SELECT,
+          validation(value: any) {
+            return !value ? ["Value is required"] : null;
+          },
+          options: [
+            {
+              label: "Fur",
+              value: "Fur",
+            },
+            {
+              label: "Fume",
+              value: "Fame",
+            },
+          ],
+        },
+      ],
+    };
+  },
+});
+</script>
