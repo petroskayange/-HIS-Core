@@ -11,66 +11,36 @@
     </div>
 </template>
 <script lang="ts">
-import HisTextInput from "@/components/FormElements/HisTextInput.vue"
-import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
-import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { Option } from "../Forms/FieldType";
-import { defineComponent, PropType } from "vue";
-import { IonCheckbox, IonItem, IonLabel, IonList } from "@ionic/vue";
+import { defineComponent } from "vue";
+import { IonCheckbox } from "@ionic/vue";
+import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 
 export default defineComponent({
-  components: { IonCheckbox, IonItem, IonLabel, IonList, HisTextInput, HisKeyboard  },
+  components: { IonCheckbox },
   name: "HisMultipleSelect",
-  props: {
-    clear: {
-      type: Boolean
-    },
-    options: {
-      required: true,
-      type: Object as PropType<Option[]>,
-    },
-  },
-  data: () => ({
-    filter: '',
-    selected: '',
-    listData: [] as Array<Option>,
-  }),
-  computed: {
-    filtered(): Array<Option> {
-      if (this.filter) {
-        return this.listData.filter(item => item.label.match(new RegExp(this.filter, 'i')))
-      }
-      return this.listData
-    }
-  },
+  mixins: [SelectMixin],
   methods: {
-    keypress(text: any) {
-      if (!this.filter) this.selected = ''
-
-      this.filter = handleVirtualInput(text, this.selected)
-      this.selected = this.filter
-    },
     setListData(){
       this.listData = this.options.map((item) => {
         item.isChecked = false;
         return item;
-      });
+      });   
     }
   },
   watch: {
     clear(val: boolean){
       if (val) {
-        this.filter = ''
-        this.selected = ''
         this.setListData()
-        this.$emit('onClear')
+        this.clearSelection()
       }
     },
     listData: {
       handler(updatedItems: Array<Option>) {
         const values = updatedItems.filter((item) => item.isChecked);
-        this.filter = ''
         this.selected = values.map(item => item.label).join(';')
+        this.filter = ''
+
         if (values.length >= 1)  this.$emit("onValue", values);
       },
       deep: true,
