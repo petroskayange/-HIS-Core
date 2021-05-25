@@ -82,5 +82,10 @@ export default defineComponent({
   bottom: 55px;
   position: absolute;
   width: 100%;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 10px;
+  height: 36vh;
 }
 </style>
