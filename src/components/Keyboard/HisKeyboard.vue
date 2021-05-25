@@ -1,5 +1,5 @@
 <template>
-  <ion-grid class="key-b" fixed>
+  <ion-grid class="key-b">
     <ion-row>
       <ion-col size="9">
         <base-keyboard :layout="activeLayout.primaryKeys" :onKeyPress="keypress" />
