@@ -1,19 +1,19 @@
 <template>
-  <ion-grid>
-    <ion-row v-for="(row, rowIndex) in layout" :key="rowIndex">
-      <ion-col v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
-        <ion-button @click="() => keyPress(btnKey)" expand="full" size="large">
+  <table id="keyboard">
+    <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
+      <td v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
+        <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn" full block>
           {{ btnKey }}
         </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+      </td>
+      </tr>
+  </table>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { IonButton, IonGrid, IonCol, IonRow } from "@ionic/vue";
+import { IonButton } from "@ionic/vue";
 export default defineComponent({
-  components: { IonButton, IonGrid, IonCol, IonRow },
+  components: { IonButton },
   props: {
     layout: {
       type: Array,
@@ -32,3 +32,11 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+table {
+  width: 80%;
+}
+.keyboard-btn {
+  width: 80%;
+}
+</style>
