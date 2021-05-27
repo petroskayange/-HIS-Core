@@ -21,33 +21,32 @@ export default defineComponent({
   name: "HisMultipleSelect",
   mixins: [SelectMixin],
   methods: {
-    setListData(){
-      this.listData = this.options.map((item) => {
-        item.isChecked = false;
-        return item;
-      });   
-    }
+    setState(dataItem: Option, isChecked=false) {
+      dataItem.isChecked = isChecked
+      return dataItem
+    },
   },
   watch: {
     clear(val: boolean){
       if (val) {
-        this.setListData()
         this.clearSelection()
+        this.listData = this.listData.map((item)=>this.setState(item))
       }
     },
     listData: {
       handler(updatedItems: Array<Option>) {
+        this.filter = ''
         const values = updatedItems.filter((item) => item.isChecked);
         this.selected = values.map(item => item.label).join(';')
-        this.filter = ''
 
-        if (values.length >= 1)  this.$emit("onValue", values);
+        if (values.length >= 1) this.$emit("onValue", values);
       },
       deep: true,
     },
   },
-  mounted() {
-    this.setListData()
+  async mounted() {
+    const options = await this.options()
+    this.listData = options.map((item: Option)=>this.setState(item))
   },
 });
 </script>

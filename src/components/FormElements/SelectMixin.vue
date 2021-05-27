@@ -14,7 +14,7 @@ export default defineComponent({
         },
         options: {
             required: true,
-            type: Object as PropType<Option[]>
+            type: Function
         },
     },
     data: () => ({ 
@@ -23,12 +23,12 @@ export default defineComponent({
         listData: [] as Array<Option>
     }),
     computed: {
-    filtered(): Array<Option> {
-        if (this.filter) {
-            return this.listData.filter(item => this.isMatch(item.label, this.filter))
+        filtered(): Array<Option> {
+            if (this.filter) {
+                return this.listData.filter(item => this.isMatch(item.label, this.filter))
+            }
+            return this.listData
         }
-        return this.listData
-    }
     },
     methods: {
         isMatch(itemA: string, itemB: string){
