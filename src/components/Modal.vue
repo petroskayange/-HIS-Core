@@ -34,7 +34,7 @@ export default defineComponent({
                 return { status: "error" };
             }
             const data = await response.json();
-            this.apps = data.apps.filter(app => app.available == true);
+            this.apps = data.apps.filter(app => app.available === "true");
 
         } catch (err) {
             console.log('Fetch Error :-S', err);

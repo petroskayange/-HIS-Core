@@ -26,8 +26,8 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true">
-      <div id="container">
+    <ion-content :fullscreen="true" >
+      <div id="container" v-if="ready">
            <ion-segment scrollable value="1">
     <ion-segment-button value="1" @click="activeTab = 1">
       <ion-label>Overview</ion-label>
@@ -134,6 +134,7 @@ export default defineComponent({
       APIVersion: "",
       applicationName: "",
       activeTab: 1,
+      ready: false,
     };
   },
   methods: {
@@ -190,6 +191,13 @@ export default defineComponent({
       sessionStorage.location = data.name;
       sessionStorage.locationName = data.name;
     },
+    loadApplicationData() {
+      this.ready = true;
+      this.userLocation = sessionStorage.userLocation;
+      this.userName = sessionStorage.username;
+      this.fetchLocationID();
+      this.fetchSessionDate();
+    },
     async openModal() {
       const modal = await modalController.create({
         component: Modal,
@@ -202,6 +210,7 @@ export default defineComponent({
       modal.present();
       const { data } = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
+      this.loadApplicationData();
     },
   },
   setup() {
@@ -213,16 +222,12 @@ export default defineComponent({
     if (!sessionStorage.apiKey) {
       this.$router.push("/login");
     } else {
-      if (!sessionStorage.applicationName) {
+      if(!Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")) {
         this.openModal();
       } else {
         this.applicationName = sessionStorage.applicationName;
+        this.loadApplicationData();
       }
-
-      this.userLocation = sessionStorage.userLocation;
-      this.userName = sessionStorage.username;
-      this.fetchLocationID();
-      this.fetchSessionDate();
     }
   },
 });
