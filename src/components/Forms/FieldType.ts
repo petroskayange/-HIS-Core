@@ -16,6 +16,8 @@ export interface Field {
     helpText: string;
     type: FieldType;
     condition?: Function;
+    prepend?: boolean;
+    prependValue?: string;
     validation?: Function;
     options: Array<Option>;
     requireNext?: boolean;

@@ -1,5 +1,5 @@
 <template>
-    <base-input :value="value"/>
+    <base-input :value="value" :prepend="prepend" :prependValue="prependValue"/>
     <his-keyboard :onKeyPress="keypress" :disabled="false"> </his-keyboard>
 </template>
 <script lang="ts">
@@ -14,6 +14,14 @@ export default defineComponent({
     props: {
         clear: {
             type: Boolean
+        },
+        prepend: {
+            type: Boolean,
+            default: ()=> false
+        },
+        prependValue: {
+            type: String,
+            default: ()=> ''
         }
     },
     methods: {

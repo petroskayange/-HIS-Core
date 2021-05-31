@@ -6,6 +6,8 @@
         :key="activeField.id"
         v-bind:is="activeField.type"
         :options="activeField.options"
+        :prepend="activeField.prepend"
+        :prependValue="activeField.prependValue"
         :clear="isClear"
         @onClear="isClear=false"
         @onValue="onValue"
