@@ -11,7 +11,7 @@
             ></ion-icon>
           </ion-col>
           <ion-col size="3.5" class="outlined">
-            <ion-input autofocus="true"></ion-input>
+            <ion-input autofocus="true" v-model="patientBarcode"></ion-input>
           </ion-col>
           <ion-col size="5">
             <p>Facility name: {{ facilityName }}</p>
@@ -20,33 +20,43 @@
             <p>User: {{ userName }}</p>
           </ion-col>
           <ion-col size="3">
-            {{ applicationName }}
+            <ion-row>
+              <ion-col>
+                <p>
+                  {{ applicationName }}
+                </p>
+              </ion-col>
+              <ion-col>
+                <ion-thumbnail v-if="applicationIcon">
+                  <ion-img :src="applicationIcon"></ion-img>
+                </ion-thumbnail>
+              </ion-col>
+            </ion-row>
           </ion-col>
         </ion-row>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" >
+    <ion-content :fullscreen="true">
       <div id="container" v-if="ready">
-           <ion-segment scrollable value="1">
-    <ion-segment-button value="1" @click="activeTab = 1">
-      <ion-label>Overview</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="2" @click="activeTab = 2">
-      <ion-label>Reports</ion-label>
-    </ion-segment-button>
-    <ion-segment-button value="3" @click="activeTab = 3">
-      <ion-label>Administration</ion-label>
-    </ion-segment-button>
-  </ion-segment>
+        <ion-segment scrollable value="1" class="ion-justify-content-center">
+          <ion-segment-button value="1" @click="activeTab = 1">
+            <ion-label>Overview</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="2" @click="activeTab = 2">
+            <ion-label>Reports</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="3" @click="activeTab = 3">
+            <ion-label>Administration</ion-label>
+          </ion-segment-button>
+        </ion-segment>
         <ion-card>
           <ion-card-content>
-<overview v-show="activeTab == 1"> </overview>
-        <reports v-show="activeTab == 2"></reports>
-        <administration v-show="activeTab == 3"></administration>
+            <overview v-show="activeTab == 1"> </overview>
+            <reports v-show="activeTab == 2"></reports>
+            <administration v-show="activeTab == 3"></administration>
           </ion-card-content>
         </ion-card>
-        
       </div>
     </ion-content>
 
@@ -91,10 +101,12 @@ import {
   IonCol,
   IonButton,
   IonSegment,
-  IonSegmentButton, 
+  IonSegmentButton,
   IonLabel,
   IonCard,
   IonCardContent,
+  IonImg,
+  IonThumbnail
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { barcode } from "ionicons/icons";
@@ -123,7 +135,9 @@ export default defineComponent({
     Overview,
     IonLabel,
     IonCard,
-    IonCardContent
+    IonCardContent,
+    IonImg,
+    IonThumbnail
   },
   data() {
     return {
@@ -135,6 +149,8 @@ export default defineComponent({
       applicationName: "",
       activeTab: 1,
       ready: false,
+      patientBarcode: "",
+      applicationIcon: null,
     };
   },
   methods: {
@@ -210,6 +226,7 @@ export default defineComponent({
       modal.present();
       const { data } = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
+      this.applicationIcon = data.applicationIcon;
       this.loadApplicationData();
     },
   },
@@ -222,10 +239,13 @@ export default defineComponent({
     if (!sessionStorage.apiKey) {
       this.$router.push("/login");
     } else {
-      if(!Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")) {
+      if (
+        !Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")
+      ) {
         this.openModal();
       } else {
         this.applicationName = sessionStorage.applicationName;
+        this.applicationIcon = sessionStorage.applicationImage;
         this.loadApplicationData();
       }
     }

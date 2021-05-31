@@ -7,10 +7,7 @@
                 <img id="barcode-img" src="/assets/images/barcode.png" />
             </ion-col>
             <ion-col size-md="10">
-                <!--ion-input type="text" id="barcode-inputbox" v-model="barcodeText"
-                 :autofocus="true" ref="barcodeInputbox"></ion-input --> <!--v-on:input="checkForbarcode"></ion-input> -->
-                <input type="text" id="barcode-inputbox" v-model="barcodeText" 
-                  autofocus ref="barcodeInputbox" />
+                  <ion-input autofocus="true" id="barcode-inputbox" v-model="barcodeText"></ion-input>
             </ion-col>
         </ion-row>
       </ion-grid>
@@ -30,6 +27,7 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
+    IonInput
   },
   data() {
     return {
@@ -37,9 +35,6 @@ export default defineComponent({
     }
   },
   methods: {
-      async setInputFocus(){
-        const inp = await this.$refs.barcodeInputbox.getInputElement();
-      },
       checkForbarcode(){
         if(this.barcodeText.match(/.+\$$/i) != null){
           this.barcodeText = this.barcodeText.replace(/$/ig, '');
@@ -69,9 +64,6 @@ export default defineComponent({
       return toast.present();
     }
   } ,
-  mounted(){
-    this.setInputFocus();
-  },
   watch: {
     barcodeText: function() {
       this.checkForbarcode();
