@@ -2,9 +2,11 @@
   <table id="keyboard">
     <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
       <td v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
-        <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn" full block>
-          {{ btnKey }}
-        </ion-button>
+        <div v-if="btnKey">
+          <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn" full block>
+            {{ btnKey }}
+          </ion-button>
+        </div>
       </td>
       </tr>
   </table>
