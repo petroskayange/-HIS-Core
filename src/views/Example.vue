@@ -121,6 +121,15 @@ export default defineComponent({
           ]),
         },
         {
+          id: "option_params",
+          helpText: "Option console.log params",
+          type: FieldType.TT_SELECT, 
+          options: (fdata: any) => {
+            console.log(fdata)
+            return []
+          }
+        },
+        {
           id: "validated",
           helpText: "Value is Required before next",
           type: FieldType.TT_SELECT,

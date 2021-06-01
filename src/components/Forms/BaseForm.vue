@@ -7,6 +7,7 @@
         v-bind:is="activeField.type"
         :options="activeField.options"
         :clear="isClear"
+        :fdata="formData"
         @onClear="isClear=false"
         @onValue="onValue"
       />

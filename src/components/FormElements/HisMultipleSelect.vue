@@ -45,7 +45,7 @@ export default defineComponent({
     },
   },
   async mounted() {
-    const options = await this.options()
+    const options = await this.options(this.fdata)
     this.listData = options.map((item: Option)=>this.setState(item))
   },
 });

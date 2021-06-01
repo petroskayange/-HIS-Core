@@ -29,7 +29,7 @@ export default defineComponent({
         }
     },
     async mounted() {
-        this.listData = await this.options()
+        this.listData = await this.options(this.fdata)
     }
 })
 </script>

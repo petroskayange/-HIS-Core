@@ -9,6 +9,10 @@ import { Option } from '../Forms/FieldType'
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard },
     props: {
+        fdata: {
+            type: Object,
+            required: true
+        },
         clear: {
             type: Boolean
         },
