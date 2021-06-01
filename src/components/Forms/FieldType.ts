@@ -17,6 +17,6 @@ export interface Field {
     type: FieldType;
     condition?: Function;
     validation?: Function;
-    options?: Function;
+    options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
 }
