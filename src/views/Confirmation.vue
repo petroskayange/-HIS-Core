@@ -3,26 +3,45 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-row>
-          <ion-col >
-            <p>Patient Name: {{ patientName }}</p>
-            <p>Birthdate: {{ userLocation }}</p>
-            <p>Ancestry district: {{ sessionDate }}</p>
-            <p>Ancestry TA: {{ sessionDate }}</p>
-            <p>Ancestry village: {{ sessionDate }}</p>
-            <p>Current District : {{ userName }}</p>
-            <p>Current TA : {{ userName }}</p>
-            <p>Current Village : {{ userName }}</p>
+          <ion-col size="1">
+            <ion-icon
+              :icon="gender === 'M' ? man : woman"
+              size="large"
+              style="height: 100%"
+            ></ion-icon>
           </ion-col>
+          <ion-col size="6"
+            ><p>Patient Name: {{ patientName }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Birthdate : {{ birthdate }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Ancestry district: {{ ancestryDistrict }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Ancestry TA: {{ ancestryTA }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Ancestry village: {{ ancestryVillage }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Current District : {{ currentDistrict }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Current TA : {{ currentTA }}</p></ion-col
+          >
+          <ion-col size="3"
+            ><p>Current Village : {{ currentVillage }}</p></ion-col
+          >
         </ion-row>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true">
-        <ion-card>
-          <ion-card-content>
-            
-          </ion-card-content>
-        </ion-card>
+      <ion-card>
+        <ion-card-content> </ion-card-content>
+      </ion-card>
     </ion-content>
 
     <ion-footer>
@@ -32,17 +51,14 @@
             <ion-button color="danger left" size="large" router-link="/"
               >Cancel</ion-button
             >
-            
           </ion-col>
-        <ion-col>
-<ion-button color="danger left" size="large" router-link="/"
+          <ion-col>
+            <ion-button color="danger left" size="large" router-link="/"
               >Void</ion-button
             >
-          </ion-col> 
+          </ion-col>
           <ion-col>
-            <ion-button color="success" size="large" @click="openModal"
-              >Continue</ion-button
-            >
+            <ion-button color="success" size="large">Continue</ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>
@@ -62,13 +78,16 @@ import {
   IonButton,
   IonSegment,
   IonSegmentButton,
-  IonLabel,
+  IonIcon,
   IonCard,
   IonCardContent,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
-import { barcode } from "ionicons/icons";
+import { barcode, man, woman } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
+import { Patient } from "@/interfaces/patient";
+import { Patientservice } from "@/services/patient_service";
+import dayjs from "dayjs";
 export default defineComponent({
   name: "Home",
   components: {
@@ -82,8 +101,7 @@ export default defineComponent({
     IonFooter,
     IonCard,
     IonCardContent,
-    // IonImg,
-    // IonThumbnail
+    IonIcon,
   },
   data() {
     return {
@@ -97,75 +115,53 @@ export default defineComponent({
       ready: false,
       patientBarcode: "",
       applicationIcon: null,
+      patientID: "",
+      patientName: "",
+      landmark: "",
+      phoneNumber: "",
+      currentDistrict: "",
+      currentTA: "",
+      currentVillage: "",
+      ancestryDistrict: "",
+      ancestryTA: "",
+      ancestryVillage: "",
+      gender: "",
+      birthdate: "",
+      dayjs,
     };
   },
   methods: {
-    fetchLocationID: async function () {
-      const response = await ApiClient.get(
-        "global_properties?property=current_health_center_id"
-      );
+    fetchPatient: async function () {
+      const response = await ApiClient.get(`/patients/${this.patientID}`);
 
       if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
-      const data = await response.json();
-      this.fetchLocationName(data.current_health_center_id);
-    },
-    fetchLocationUUID: async function () {
-      const response = await ApiClient.get(
-        "global_properties?property=site_uuid"
-      );
-
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      sessionStorage.siteUUID = data.site_uuid;
-    },
-    fetchSessionDate: async function () {
-      const response = await ApiClient.get("current_time");
-
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      this.sessionDate = data.date;
-      sessionStorage.sessionDate = data.date;
-      // this.fetchLocationName(data.current_health_center_id);
-    },
-    async fetchAPIVersion() {
-      const response = await ApiClient.get("version");
-
-      if (!response || response.status !== 200) return;
-
-      const data = await response.json();
-
-      this.APIVersion = data["System version"];
-      sessionStorage.APIVersion = data["System version"];
-    },
-    async fetchLocationName(locationID: string) {
-      const response = await ApiClient.get("locations/" + locationID);
-
-      if (!response || response.status !== 200) return;
-
-      const data = await response.json();
-      this.facilityName = data.name;
-      // this.createSessionLocationName(data);
-    },
-    
-    loadApplicationData() {
-      this.ready = true;
-      this.userLocation = sessionStorage.userLocation;
-      this.userName = sessionStorage.username;
-      this.fetchLocationID();
-      this.fetchSessionDate();
-    },
-    
+      const data: Patient = await response.json();
+      const patient = new Patientservice(data);
+      this.patientName = patient.getFullName();
+      this.landmark = patient.getAttribute(19);
+      this.phoneNumber = patient.getAttribute(12);
+      const addresses = patient.getAddresses();
+      this.gender = data.person.gender;
+      this.birthdate = dayjs(data.person.birthdate).format("DD/MMM/YYYY");
+      this.ancestryDistrict = addresses.ancestryDistrict;
+      this.ancestryTA = addresses.ancestryTA;
+      this.ancestryVillage = addresses.ancestryVillage;
+      this.currentDistrict = addresses.currentDistrict;
+      this.currentTA = addresses.currentTA;
+      this.currentVillage = addresses.ancestryVillage;
+    }
   },
   setup() {
     return {
       barcode,
+      man,
+      woman,
     };
   },
   mounted() {
-   // load stuff here 
+    this.patientID = this.$route.params.person_id as any;
+    this.fetchPatient();
   },
 });
 </script>

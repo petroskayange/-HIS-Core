@@ -236,9 +236,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    if (!sessionStorage.apiKey) {
-      this.$router.push("/login");
-    } else {
       if (
         !Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")
       ) {
@@ -248,7 +245,6 @@ export default defineComponent({
         this.applicationIcon = sessionStorage.applicationImage;
         this.loadApplicationData();
       }
-    }
   },
 });
 </script>
