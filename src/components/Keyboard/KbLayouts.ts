@@ -14,7 +14,7 @@ export const ALPHABETICAL = [
 export const QWERTY = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'i', "'"],
-    ['z', 'x', 'c', 'v', 'b', 'm', 'n', ',', '.']
+    ['z', 'x', 'c', 'v', 'b', 'm', 'n', ',', '.', 'A-Z']
 ]
 
 export const CHARACTERS_AND_NUMBERS = [
@@ -26,14 +26,14 @@ export const CHARACTERS_AND_NUMBERS = [
 
 export const ALPHABETICAL_FUNCTION_KEYS = [
     ['0-9', 'Delete'],
-    ['Unknown'],
-    ['Space']
+    ['', 'Unknown'],
+    ['', 'Space']
 ]
 
 export const QWERTY_FUNCTION_KEYS = [
-    ['0-9', 'A-Z'],
-    ['Space', 'Delete'],
-    ['Unknown']
+    ['', 'Delete'],
+    ['', '0-9'],
+    ['', 'Unknown']
 ]
 
 export const NUM_FUNCTION_KEYS = [

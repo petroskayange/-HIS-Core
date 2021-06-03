@@ -3,7 +3,7 @@
     <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
       <td v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
         <div v-if="btnKey">
-          <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn" full block>
+          <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn">
             {{ btnKey }}
           </ion-button>
         </div>
@@ -34,11 +34,22 @@ export default defineComponent({
   },
 });
 </script>
+
 <style scoped>
 table {
-  width: 80%;
+  width: 90%;
+}
+td {
+  padding: 2px;
 }
 .keyboard-btn {
-  width: 80%;
+  font-weight: bold;
+  width: 90%;
+}
+@media only screen and (width: 1024px) {
+  .keyboard-btn {
+    height: 57px;
+    font-size: 1.3rem;
+  }
 }
 </style>
