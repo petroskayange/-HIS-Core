@@ -1,10 +1,11 @@
 <template>
-  <ion-grid class="key-b" fixed>
+  <ion-grid class="key-b">
     <ion-row>
-      <ion-col size="9">
+      <ion-col :size="activeLayout.colSizePrimary || 9">
         <base-keyboard :layout="activeLayout.primaryKeys" :onKeyPress="keypress" />
       </ion-col>
-      <ion-col size="3">
+      <ion-col v-if="activeLayout.colSizeSpace" :size="activeLayout.colSizeSpace"></ion-col>
+      <ion-col :size="activeLayout.colSizeSecondary || 3">
         <base-keyboard :layout="activeLayout.functionKeys" :onKeyPress="keypress" />
       </ion-col>
     </ion-row>
@@ -63,14 +64,19 @@ export default defineComponent({
       numerical: {
         primaryKeys: NUMBER_ONLY,
         functionKeys: NUM_FUNCTION_KEYS,
+        colSizePrimary:4,
+        colSizeSpace: 4,
+        colSizeSecondary: 4
       },
       qwerty: {
         primaryKeys: QWERTY,
         functionKeys: QWERTY_FUNCTION_KEYS,
+        colSizePrimary: 10,
+        colSizeSecondary: 2
       },
       qwertyNumerical: {
         primaryKeys: CHARACTERS_AND_NUMBERS,
-        functionKeys: [],
+        functionKeys: []
       },
     },
   }),
@@ -79,8 +85,12 @@ export default defineComponent({
 <style scoped>
 .key-b {
   left: 0;
-  bottom: 55px;
+  bottom: 60px;
   position: absolute;
   width: 100%;
+  border-radius: 15px;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 2px;
 }
 </style>
