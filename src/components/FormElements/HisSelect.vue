@@ -28,8 +28,8 @@ export default defineComponent({
             this.$emit('onValue', item)
         }
     },
-    mounted() {
-        this.listData = [...this.options]
+    async mounted() {
+        this.listData = await this.options(this.fdata)
     }
 })
 </script>

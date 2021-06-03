@@ -19,6 +19,6 @@ export interface Field {
     prepend?: boolean;
     prependValue?: string;
     validation?: Function;
-    options: Array<Option>;
+    options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
 }

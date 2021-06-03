@@ -1,19 +1,21 @@
 <template>
-  <ion-grid>
-    <ion-row v-for="(row, rowIndex) in layout" :key="rowIndex">
-      <ion-col v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
-        <ion-button @click="() => keyPress(btnKey)" expand="full" size="large">
-          {{ btnKey }}
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <table id="keyboard">
+    <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
+      <td v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
+        <div v-if="btnKey">
+          <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn">
+            {{ btnKey }}
+          </ion-button>
+        </div>
+      </td>
+      </tr>
+  </table>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { IonButton, IonGrid, IonCol, IonRow } from "@ionic/vue";
+import { IonButton } from "@ionic/vue";
 export default defineComponent({
-  components: { IonButton, IonGrid, IonCol, IonRow },
+  components: { IonButton },
   props: {
     layout: {
       type: Array,
@@ -32,3 +34,22 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+table {
+  width: 90%;
+}
+td {
+  padding: 2px;
+}
+.keyboard-btn {
+  font-weight: bold;
+  width: 90%;
+}
+@media only screen and (width: 1024px) {
+  .keyboard-btn {
+    height: 57px;
+    font-size: 1.3rem;
+  }
+}
+</style>

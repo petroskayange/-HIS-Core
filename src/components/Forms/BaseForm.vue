@@ -9,6 +9,7 @@
         :prepend="activeField.prepend"
         :prependValue="activeField.prependValue"
         :clear="isClear"
+        :fdata="formData"
         @onClear="isClear=false"
         @onValue="onValue"
       />
