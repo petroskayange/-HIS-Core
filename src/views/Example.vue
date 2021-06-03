@@ -33,7 +33,7 @@ export default defineComponent({
           validation(value: any) {
             return !value ? ["Value is required"] : null;
           },
-          options: [
+          options:()=> ([
             {
               label: "Foo",
               value: "Foo",
@@ -46,7 +46,7 @@ export default defineComponent({
               label: "Bar",
               value: "Bar",
             },
-          ],
+          ]),
         },
         {
           id: "conditional_data",
@@ -56,7 +56,7 @@ export default defineComponent({
           validation(value: any) {
             return !value ? ["Value is required"] : null;
           },
-          options: [
+          options: ()=> ([
             {
               label: "Show Games",
               value: "Show Games",
@@ -65,7 +65,7 @@ export default defineComponent({
               label: "Show Music",
               value: "Show Music",
             },
-          ],
+          ]),
         },
         {
           id: "music_presentation",
@@ -77,12 +77,12 @@ export default defineComponent({
           condition(formData: any) {
             return formData.conditional_data.value === "Show Music";
           },
-          options: [
+          options: ()=> ([
             {
               label: "No Music",
               value: "No Music",
             },
-          ],
+          ]),
         },
         {
           id: "games_presentation",
@@ -94,12 +94,12 @@ export default defineComponent({
           condition(formData: any) {
             return formData.conditional_data.value === "Show Games";
           },
-          options: [
+          options: ()=>([
             {
               label: "No Games",
               value: "No Games",
             },
-          ],
+          ]),
         },
         {
           id: "does_not_require_next",
@@ -109,7 +109,7 @@ export default defineComponent({
           validation(value: any) {
             return !value ? ["Value is required"] : null;
           },
-          options: [
+          options: ()=>([
             {
               label: "Duke",
               value: "Duke",
@@ -118,7 +118,16 @@ export default defineComponent({
               label: "Dork",
               value: "Dork",
             },
-          ],
+          ]),
+        },
+        {
+          id: "option_params",
+          helpText: "Option console.log params",
+          type: FieldType.TT_SELECT, 
+          options: (fdata: any) => {
+            console.log(fdata)
+            return []
+          }
         },
         {
           id: "validated",
@@ -127,7 +136,7 @@ export default defineComponent({
           validation(value: any) {
             return !value ? ["Value is required"] : null;
           },
-          options: [
+          options: ()=>([
             {
               label: "Fur",
               value: "Fur",
@@ -136,7 +145,7 @@ export default defineComponent({
               label: "Fume",
               value: "Fame",
             },
-          ],
+          ]),
         },
       ],
     };
