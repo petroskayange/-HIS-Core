@@ -5,6 +5,7 @@
       <component
         :key="activeField.id"
         v-bind:is="activeField.type"
+        :config="activeField.config"
         :options="activeField.options"
         :clear="isClear"
         :fdata="formData"

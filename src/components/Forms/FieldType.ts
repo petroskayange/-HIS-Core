@@ -21,4 +21,5 @@ export interface Field {
     validation?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
+    config?: Record<string, any>;
 }
