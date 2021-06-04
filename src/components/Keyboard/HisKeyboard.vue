@@ -2,84 +2,59 @@
   <ion-grid class="key-b">
     <ion-row>
       <ion-col :size="activeLayout.colSizePrimary || 9">
-        <base-keyboard :layout="activeLayout.primaryKeys" :onKeyPress="keypress" />
+        <base-keyboard :layout="activeLayout.primaryKeyBoard" :onKeyPress="keypress" />
       </ion-col>
       <ion-col v-if="activeLayout.colSizeSpace" :size="activeLayout.colSizeSpace"></ion-col>
       <ion-col :size="activeLayout.colSizeSecondary || 3">
-        <base-keyboard :layout="activeLayout.functionKeys" :onKeyPress="keypress" />
+        <base-keyboard :layout="activeLayout.secondaryKeyboard" :onKeyPress="keypress" />
       </ion-col>
     </ion-row>
   </ion-grid>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
-import {
-  NUMBER_ONLY,
-  ALPHABETICAL,
-  QWERTY,
-  QWERTY_FUNCTION_KEYS,
-  CHARACTERS_AND_NUMBERS,
-  ALPHABETICAL_FUNCTION_KEYS,
-  NUM_FUNCTION_KEYS,
-} from "@/components/Keyboard/KbLayouts";
+import { defineComponent, PropType } from "vue";
 import { IonGrid, IonRow, IonCol } from "@ionic/vue";
+import { HisKeyboardConfig, KEY_BTN_NAV } from "@/components/Keyboard/HisKbConfigurations"
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 export default defineComponent({
   components: { BaseKeyboard, IonGrid, IonRow, IonCol },
   props: {
+    kbConfig: {
+      type: Object as PropType<HisKeyboardConfig>,
+      required: true
+    },
     onKeyPress: {
       type: Function,
       required: true,
     },
   },
+  data: () => ({
+    activeLayout: {} as HisKeyboardConfig
+  }),
+  mounted() {
+    this.activeLayout = this.kbConfig
+  },
   methods: {
     keypress(key: any) {
-      const fk = this.resolveFunctionKeys(key)
-      if (fk != undefined) {
+      if (!this.isFunctionKey(key)) {
         this.onKeyPress(key);
       }
     },
-    resolveFunctionKeys(key: string){
-      if (key.match(/qwerty/i)) {
-        this.activeLayout = this.layouts.qwerty
-      }else if (key.match(/a-z/i)) {
-        this.activeLayout = this.layouts.alphabetical
-      }else if (key.match(/0-9/i)) {
-        this.activeLayout = this.layouts.numerical
-      } else {  
-        return key
+    isFunctionKey(key: string) {  
+      if (this.switchKeyboard(key)) {
+        return true
       }
+      return false
+    },
+    switchKeyboard(key: string): boolean {
+      const kbIndex = KEY_BTN_NAV.map(item => item.btn).indexOf(key)
+      if (kbIndex >= 0) {
+        this.activeLayout = KEY_BTN_NAV[kbIndex].keyboard
+        return true
+      }
+      return false
     }
   },
-  mounted(){
-    this.activeLayout = this.layouts.qwerty
-  },
-  data: () => ({
-    activeLayout: {},
-    layouts: {
-      alphabetical: {
-        primaryKeys: ALPHABETICAL,
-        functionKeys: ALPHABETICAL_FUNCTION_KEYS,
-      },
-      numerical: {
-        primaryKeys: NUMBER_ONLY,
-        functionKeys: NUM_FUNCTION_KEYS,
-        colSizePrimary:4,
-        colSizeSpace: 4,
-        colSizeSecondary: 4
-      },
-      qwerty: {
-        primaryKeys: QWERTY,
-        functionKeys: QWERTY_FUNCTION_KEYS,
-        colSizePrimary: 10,
-        colSizeSecondary: 2
-      },
-      qwertyNumerical: {
-        primaryKeys: CHARACTERS_AND_NUMBERS,
-        functionKeys: []
-      },
-    },
-  }),
 });
 </script>
 <style scoped>
