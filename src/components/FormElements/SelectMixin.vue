@@ -6,7 +6,7 @@ import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import HisTextInput from "@/components/FormElements/BaseTextInput.vue";
 import { Option } from '../Forms/FieldType'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
-import SelectConfig from "@/components/FormElements/SelectConfig"
+import SelectConfig from "@/components/FormElements/Interfaces/SelectConfig"
 
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard },
