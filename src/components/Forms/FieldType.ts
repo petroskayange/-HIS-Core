@@ -1,4 +1,5 @@
 export enum FieldType {
+    TT_MONTHLY_DAYS="monthly-days",
     TT_TEXT="text-input",
     TT_NUMBER = "number-input",
     TT_DATETIME="datetime",

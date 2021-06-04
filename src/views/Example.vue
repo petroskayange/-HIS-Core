@@ -27,9 +27,14 @@ export default defineComponent({
           },
         },
         {
-          id: "number",
-          helpText: "What's your age",
+          id: "year",
+          helpText: "Year of birth",
           type: FieldType.TT_NUMBER
+        },
+        {
+          id: "day",
+          helpText: "Day of birth",
+          type: FieldType.TT_MONTHLY_DAYS
         },
         {
           id: "multiple_select",

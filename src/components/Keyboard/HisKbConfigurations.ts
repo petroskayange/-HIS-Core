@@ -36,7 +36,7 @@ export const NUMBERS: HisKeyboardConfig = {
     ],
 }
 
-export const CALENDAR_DAYS: HisKeyboardConfig = {
+export const MONTHLY_DAYS: HisKeyboardConfig = {
     primaryKeyBoard: MONTHLY_DAYS_LO,
     secondaryKeyboard: [
         [''],
