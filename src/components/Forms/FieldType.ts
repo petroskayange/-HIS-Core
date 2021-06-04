@@ -1,4 +1,5 @@
 export enum FieldType {
+    TT_MONTHLY_DAYS="monthly-days",
     TT_TEXT="text-input",
     TT_NUMBER = "number-input",
     TT_DATETIME="datetime",
@@ -22,4 +23,5 @@ export interface Field {
     validation?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
+    config?: Record<string, any>;
 }

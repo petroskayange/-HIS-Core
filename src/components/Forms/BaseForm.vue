@@ -5,6 +5,7 @@
       <component
         :key="activeField.id"
         v-bind:is="activeField.type"
+        :config="activeField.config"
         :options="activeField.options"
         :prepend="activeField.prepend"
         :prependValue="activeField.prependValue"
@@ -23,6 +24,7 @@ import SingleSelect from "@/components/FormElements/HisSelect.vue";
 import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
 import TextInput from "@/components/FormElements/HisTextInput.vue"
 import NumberInput from "@/components/FormElements/HisNumberInput.vue"
+import MonthlyDays from "@/components/FormElements/HisMonthlyDays.vue"
 
 export default defineComponent({
   name: "BaseForm",
@@ -30,7 +32,8 @@ export default defineComponent({
     TextInput,
     SingleSelect,
     MultipleSelect,
-    NumberInput
+    NumberInput,
+    MonthlyDays
   },
   props: {
     clear: {

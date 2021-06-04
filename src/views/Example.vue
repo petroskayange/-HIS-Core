@@ -27,15 +27,23 @@ export default defineComponent({
           },
         },
         {
-          id: "number",
-          helpText: "What's your age",
+          id: "year",
+          helpText: "Year of birth",
           type: FieldType.TT_NUMBER
+        },
+        {
+          id: "day",
+          helpText: "Day of birth",
+          type: FieldType.TT_MONTHLY_DAYS
         },
         {
           id: "multiple_select",
           helpText: "Select Multiple values",
           type: FieldType.TT_MULTIPLE_SELECT,
-          validation(value: any) {
+          config: {
+            showKeyboard: false
+          },
+          validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
           options:()=> ([
@@ -51,6 +59,18 @@ export default defineComponent({
               label: "Bar",
               value: "Bar",
             },
+            {
+              label: "Foo",
+              value: "Foo",
+            },
+            {
+              label: "Baz",
+              value: "Baz",
+            },
+            {
+              label: "Bar",
+              value: "Bar",
+            }
           ]),
         },
         {
@@ -58,7 +78,7 @@ export default defineComponent({
           helpText: "Conditionally display next question",
           type: FieldType.TT_SELECT,
           requireNext: false,
-          validation(value: any) {
+          validation(value: any): null | Array<string>{
             return !value ? ["Value is required"] : null;
           },
           options: ()=> ([
@@ -76,7 +96,7 @@ export default defineComponent({
           id: "music_presentation",
           helpText: "Showing Music",
           type: FieldType.TT_SELECT,
-          validation(value: any) {
+          validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
           condition(formData: any) {
@@ -93,7 +113,7 @@ export default defineComponent({
           id: "games_presentation",
           helpText: "Showing Games",
           type: FieldType.TT_SELECT,
-          validation(value: any) {
+          validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
           condition(formData: any) {
@@ -111,7 +131,7 @@ export default defineComponent({
           helpText: "Click on value to proceed",
           type: FieldType.TT_SELECT,
           requireNext: false,
-          validation(value: any) {
+          validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
           options: ()=>([
@@ -138,7 +158,7 @@ export default defineComponent({
           id: "validated",
           helpText: "Value is Required before next",
           type: FieldType.TT_SELECT,
-          validation(value: any) {
+          validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
           options: ()=>([

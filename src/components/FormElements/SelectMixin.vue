@@ -6,10 +6,14 @@ import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import HisTextInput from "@/components/FormElements/BaseTextInput.vue";
 import { Option } from '../Forms/FieldType'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
+import SelectConfig from "@/components/FormElements/SelectConfig"
 
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard },
     props: {
+        config: {
+            type: Object as PropType<SelectConfig>,
+        },
         fdata: {
             type: Object,
             required: true
@@ -23,11 +27,19 @@ export default defineComponent({
         },
     },
     data: () => ({ 
+        showKeyboard: true,
         selected: '',
         filter: '',
         keyboard: QWERTY,
         listData: [] as Array<Option>
     }),
+    created(){
+        if (this.config) {
+            if (this.config.showKeyboard === false) {
+                this.showKeyboard = false
+            }
+        }
+    },
     computed: {
         filtered(): Array<Option> {
             if (this.filter) {
