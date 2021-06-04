@@ -6,7 +6,7 @@
                 <ion-label> {{item.label}} </ion-label>
             </ion-item>
         </ion-list>
-        <his-keyboard :onKeyPress="keypress"/>
+        <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress"/>
     </div>
 </template>
 <script lang="ts">

@@ -7,7 +7,7 @@
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
       </ion-list>
-      <his-keyboard :onKeyPress="keypress"/>
+      <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress"/>
     </div>
 </template>
 <script lang="ts">
