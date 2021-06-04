@@ -27,6 +27,11 @@ export default defineComponent({
           },
         },
         {
+          id: "number",
+          helpText: "What's your age",
+          type: FieldType.TT_NUMBER
+        },
+        {
           id: "multiple_select",
           helpText: "Select Multiple values",
           type: FieldType.TT_MULTIPLE_SELECT,
