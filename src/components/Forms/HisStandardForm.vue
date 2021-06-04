@@ -42,6 +42,10 @@ export default defineComponent({
     name: "HisStandardForm",
     components: { BaseForm, IonPage, HisFooter, HisFormSummary },
     props: {
+        skipSummary: {
+            type: Boolean,
+            default: () => false
+        },
         fields: {
             type: Object as PropType<Field[]>,
             required: true
@@ -90,20 +94,33 @@ export default defineComponent({
             this.isPrev = true
         },
         onFinish(formData: any) {
-            this.summaryData = this.buildSummaryData(formData)
-            this.showClearBtn = false
-            this.showSummary = true
-            this.showFinishBtn = true
-            this.$emit('onFinish', formData)
+            if (this.skipSummary) {
+                this.$emit('onFinish', formData)
+                this.$emit('onSubmit')
+            } else { 
+                this.summaryData = this.buildSummaryData(formData)
+                this.showSummary = true
+                this.showClearBtn = false
+                this.showFinishBtn = true
+                this.$emit('onFinish', formData)
+            }
         },
         onSubmit(): void {
-            this.$emit('onSubmit')
+            if (!this.skipSummary) return this.$emit('onSubmit')
+
+            this.isNext = true
         },
         updateNext({ field, index }: any): void {
             this.isNext = false
             
             if (index >= 1) this.showPrevBtn = true
             
+            if (this.skipSummary && index +1 >= this.fields.length) {
+                this.showFinishBtn = true
+                this.showNextBtn = false
+                return
+            }
+
             if (this.fieldRequiresNextBtn(field) && !this.showSummary) {
                 this.showNextBtn = true
             } else {
