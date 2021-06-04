@@ -5,6 +5,8 @@
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/FieldType"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
+
 export default defineComponent({
   components: { HisStandardForm },
   methods: {
@@ -30,6 +32,16 @@ export default defineComponent({
           id: "year",
           helpText: "Year of birth",
           type: FieldType.TT_NUMBER
+        },
+        {
+          id: "month",
+          helpText: "Month of birth",
+          type: FieldType.TT_SELECT,
+          requireNext: false,
+          options: () => MonthOptions,
+          config: {
+            showKeyboard: false
+          }
         },
         {
           id: "day",
@@ -147,7 +159,7 @@ export default defineComponent({
         },
         {
           id: "option_params",
-          helpText: "Option console.log params",
+          helpText: "Console.log Prop sent via options",
           type: FieldType.TT_SELECT, 
           options: (fdata: any) => {
             console.log(fdata)
