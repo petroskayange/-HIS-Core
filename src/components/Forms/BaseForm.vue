@@ -148,7 +148,11 @@ export default defineComponent({
       if (!this.isRequireNext(this.activeField)) this.onNext(), this.emitNext();
     },
     emitNext() {
-      this.$emit("onNext", {field: this.activeField, index: this.activeIndex});
+      this.$emit("onNext", {
+        field: this.activeField, 
+        index: this.activeIndex, 
+        formData: this.formData
+      });
     },
     onFinish(): void {
       this.$emit("onFinish", this.formData);
