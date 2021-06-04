@@ -34,8 +34,8 @@
 import BaseForm from "@/components/Forms/BaseForm.vue";
 import HisFooter from "@/components/HisNavFooter.vue";
 import HisFormSummary from "@/components/DataViews/HisFormSummary.vue"
-import { Option } from "@/components/Forms/FieldType"
-import { Field } from "./FieldType";
+import { Option } from "@/components/Forms/FieldInterface"
+import { Field } from "./FieldInterface";
 import { defineComponent, PropType } from "vue";
 import { IonPage } from "@ionic/vue";
 export default defineComponent({

@@ -11,7 +11,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Option } from '../Forms/FieldType'
+import { Option } from '../Forms/FieldInterface'
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 
 export default defineComponent({

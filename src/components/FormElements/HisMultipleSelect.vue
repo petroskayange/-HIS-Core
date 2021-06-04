@@ -11,7 +11,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Option } from "../Forms/FieldType";
+import { Option } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"

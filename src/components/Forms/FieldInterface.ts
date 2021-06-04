@@ -1,11 +1,4 @@
-export enum FieldType {
-    TT_MONTHLY_DAYS="monthly-days",
-    TT_TEXT="text-input",
-    TT_NUMBER = "number-input",
-    TT_DATETIME="datetime",
-    TT_SELECT="single-select",
-    TT_MULTIPLE_SELECT="multiple-select"
-}
+import { FieldType } from "@/components/Forms/BaseFormElements"
 
 export interface Option {
     label: string;

@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { IonList, IonItem, IonGrid, IonRow, IonCol } from "@ionic/vue";
-import { Option } from "@/components/Forms/FieldType"
+import { Option } from "@/components/Forms/FieldInterface"
 
 export default defineComponent({
     components: { IonList, IonItem, IonGrid, IonRow, IonCol },

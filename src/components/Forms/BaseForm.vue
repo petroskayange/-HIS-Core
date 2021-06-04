@@ -17,12 +17,12 @@
 </template>
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
-import { Field, Option } from "./FieldType";
-import BaseFormElements from "@/components/Forms/BaseFormElements"
+import { Field, Option } from "./FieldInterface";
+import { BaseFormComponents } from "@/components/Forms/BaseFormElements"
 export default defineComponent({
   name: "BaseForm",
   components: {
-    ...BaseFormElements
+    ...BaseFormComponents
   },
   props: {
     clear: {
