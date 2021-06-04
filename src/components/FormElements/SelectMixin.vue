@@ -27,7 +27,7 @@ export default defineComponent({
         },
     },
     data: () => ({ 
-        showKeyboard: true,
+        showKeyboard: false,
         selected: '',
         filter: '',
         keyboard: QWERTY,
@@ -35,8 +35,8 @@ export default defineComponent({
     }),
     created(){
         if (this.config) {
-            if (this.config.showKeyboard === false) {
-                this.showKeyboard = false
+            if (this.config.showKeyboard === true) {
+                this.showKeyboard = true
             }
         }
     },
