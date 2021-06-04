@@ -6,7 +6,7 @@
             <ion-label> {{item.label}} </ion-label>
         </ion-item>
     </ion-list>
-    <his-keyboard :onKeyPress="keypress" :disabled="false"> </his-keyboard>
+    <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress" :disabled="false"> </his-keyboard>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -14,11 +14,13 @@ import BaseInput from "@/components/FormElements/BaseTextInput.vue"
 import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { Option } from '../Forms/FieldType'
+import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 
 export default defineComponent({
     components: { BaseInput, HisKeyboard },
     data: ()=>({ 
         value: '',
+        keyboard: QWERTY,
         listData: [] as Array<Option>
     }),
     props: {
