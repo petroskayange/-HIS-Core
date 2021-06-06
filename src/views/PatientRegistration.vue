@@ -3,11 +3,13 @@
 </template> 
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
+import Validation from "@/components/Forms/validations/StandardValidations"
+import moment from "moment"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -28,18 +30,21 @@ export default defineComponent({
         {
             id: 'given_name',
             helpText: 'First name',
-            type: FieldType.TT_TEXT
+            type: FieldType.TT_TEXT,
+            validation: (val: any) => Validation.isName(val)
         },
         {
             id: 'family_name',
             helpText: "Last name",
-            type: FieldType.TT_TEXT
+            type: FieldType.TT_TEXT,
+            validation: (val: any) => Validation.isName(val)
         },
         {
             id: 'gender',
             helpText: 'Gender',
             type: FieldType.TT_SELECT,
             requireNext: false,
+            validation: (val: any) => Validation.required(val),
             options: () => ([
                 { 
                     label: 'Male',
@@ -54,19 +59,54 @@ export default defineComponent({
         {
             id: 'birth_year',
             helpText: 'Year of birth',
-            type: FieldType.TT_NUMBER
+            type: FieldType.TT_NUMBER,
+            validation(val: any) {
+                const minYr = moment().subtract(100, 'years').year()
+                const maxYr = moment().year()
+                const noYear = Validation.required(val)
+                const notInRange = Validation.rangeOf(val, minYr, maxYr)
+
+                if (val.label.match(/Unknown/i)) return
+
+                return noYear || notInRange
+            }
         },
         {
             id: 'birth_month',
             helpText: 'Month of Birth',
             requireNext: false,
             type: FieldType.TT_SELECT,
-            options: () => MonthOptions
+            options: () => MonthOptions,
+            validation: (val: any,form: any) => {
+                const month = val.value
+                const year = form.birth_year.value
+                const date = `${year}-${month}-01`
+                const notValid = moment().isAfter(date) ? null : ['Month is greater than current month']
+                const noMonth = Validation.required(val)
+
+                return noMonth || notValid
+            }
         },
         {
             id: 'birth_day',
             helpText: 'Birth day',
-            type: FieldType.TT_MONTHLY_DAYS
+            type: FieldType.TT_MONTHLY_DAYS,
+            validation: (val: any, form: any) => {
+                const day = val.value
+                const year = form.birth_year.value
+                const month = form.birth_month.value
+                const date = `${year}-${month}-${day}`
+                const notValid = moment().isAfter(date) ? null : ['Date is greater than current date']
+                const noDay = Validation.required(val)
+
+                return noDay || notValid
+            }
+        },
+        {
+            id: 'age_estimate',
+            helpText: 'Age Estimate',
+            type: FieldType.TT_NUMBER,
+            validation: (val: any) => Validation.isNumber(val)
         },
         {
             id: 'home_region',
