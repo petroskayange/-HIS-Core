@@ -28,6 +28,12 @@ export default defineComponent({
     onSubmit() {
       console.log("Form has been submitted");
     },
+    mapToOption(listOptions: Array<string>): Array<Option> {
+        return listOptions.map((item: any) => ({
+            label: item,
+            value: item
+        })) 
+    },
     async getFacilities(): Promise<Option[]> {
         const facilities = await Location.getFacilities()
         return facilities.map((facility: any) => ({
@@ -203,51 +209,18 @@ export default defineComponent({
                 id: 'landmark',
                 helpText: 'Closest Landmark or Plot Number',
                 type: FieldType.TT_SELECT,
-                options: () => ([
-                    {
-                        label: 'Catholic Church',
-                        value: 'Catholic Church,'
-                    },
-                    {
-                        label: 'CCAP',
-                        value: 'CCAP'
-                    },
-                    {
-                        label: 'Seventh Day',
-                        value: 'Seventh Day'
-                    },
-                    {
-                        label: 'Mosque',
-                        value: 'Mosque'
-                    },
-                    {
-                        label: 'Primary School',
-                        value: 'Primary School'
-                    },
-                    {
-                        label: 'Borehole',
-                        value: 'Borehole'
-                    },
-                    {
-                        label: 'Secondary School',
-                        value: 'Secondary School'
-                    },
-                    {
-                        label: 'College',
-                        value: 'College'
-                    },
-                    {
-                        label: 'Market',
-                        value: 'Market'
-                    },
-                    {
-                        label: 'Football Ground',
-                        value: 'Football Ground'
-                    },
-                    {
-                        label: 'Other',
-                        value: 'Other'
-                    }
+                options: () => this.mapToOption([
+                    'Catholic Church',
+                    'CCAP',
+                    'Seventh Day',
+                    'Mosque',
+                    'Primary School',
+                    'Borehole',
+                    'Secondary School',
+                    'College',
+                    'Market',
+                    'Football Ground',
+                    'Other'
                 ]),
             },
             {
@@ -259,15 +232,9 @@ export default defineComponent({
                 id: 'patient_type',
                 helpText: 'Type of patient',
                 type: FieldType.TT_SELECT,
-                options: () => ([
-                    {
-                        label: 'New patient',
-                        value: 'New patient'
-                    },
-                    {
-                        label: 'External consultation',
-                        value: 'External consultation'
-                    }
+                options: () => this.mapToOption([
+                    'New patient',
+                    'External consultation',
                 ])
             },
             {
@@ -281,19 +248,10 @@ export default defineComponent({
                 id: 'occupation',
                 helpText: 'Occupation',
                 type: FieldType.TT_SELECT,
-                options: () => ([
-                    {
-                        label: 'MDF Reserve',
-                        value: 'MDF Reserve'
-                    },
-                    {
-                        label: 'MDF Retired',
-                        value: 'MDF Retired'
-                    },
-                    {
-                        label: 'Civilian',
-                        value: 'Civilian'
-                    }
+                options: () => this.mapToOption([
+                    'MDF Reserve',
+                    'MDF Retired',
+                    'Civilian'
                 ])
             },
             {
@@ -310,83 +268,29 @@ export default defineComponent({
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
-                options: () => ([
-                    {
-                        label: 'First Lieutenant',
-                        value: 'First Lieutenant'
-                    },
-                    {
-                        label: 'Captain',
-                        value: 'Captain'
-                    },
-                    {
-                        label: 'Major',
-                        value: 'Major'
-                    },
-                    {
-                        label: 'Lieutenant Colonel',
-                        value: 'Lieutenant Colonel'
-                    },
-                    {
-                        label: 'Colonel',
-                        value: 'Colonel'
-                    },
-                    {
-                        label: 'Brigadier General',
-                        value: 'Brigadier General'
-                    },
-                    {
-                        label: 'Lieutenant General',
-                        value: 'Lieutenant General'
-                    },
-                    {
-                        label: 'General',
-                        value: 'General'
-                    },
-                    {
-                        label: 'Private',
-                        value: 'Private'
-                    },
-                    {
-                        label: 'Corporal',
-                        value: 'Corporal'
-                    },
-                    {
-                        label: 'Lance Corporal',
-                        value: 'Lance Corporal'
-                    },
-                    {
-                        label: 'Seargent',
-                        value: 'Seargent'
-                    },
-                    {
-                        label: 'Staff Seargent',
-                        value: 'Staff Seargent'
-                    },
-                    {
-                        label: 'Warrant Officer class 1',
-                        value: 'Warrant Officer class 1'
-                    },
-                    {
-                        label: 'Warrant Officer class 2',
-                        value: 'Warrant Officer class 2'
-                    }
+                options: () => this.mapToOption([
+                    'First Lieutenant',
+                    'Captain',
+                    'Major',
+                    'Lieutenant Colonel',
+                    'Colonel',
+                    'Brigadier General',
+                    'Lieutenant General',
+                    'General',
+                    'Private',
+                    'Corporal',
+                    'Lance Corporal',
+                    'Seargent',
+                    'Staff Seargent',
+                    'Warrant Officer class 1',
+                    'Warrant Officer class 2'
                 ])
             },
             {
                 id: 'guardian_present',
                 helpText: 'Register guardian?',
                 type: FieldType.TT_SELECT,
-                options: () => ([
-                    {
-                        label: 'Yes',
-                        value: 'Yes'
-                    },
-                    {
-                        label: 'No',
-                        value: 'No'
-                    }
-                ])
+                options: () => this.mapToOption(['Yes', 'No'])
             }
         ]
     }
