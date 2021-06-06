@@ -28,6 +28,13 @@ export default defineComponent({
     onSubmit() {
       console.log("Form has been submitted");
     },
+    async getFacilities(): Promise<Option[]> {
+        const facilities = await Location.getFacilities()
+        return facilities.map((facility: any) => ({
+            label: facility.name,
+            value: facility.location_id
+        }))
+    },
     async getRegions(): Promise<Option[]> {
         const regions = await Location.getRegions()
         return regions.map((region: any) => ({
@@ -266,7 +273,9 @@ export default defineComponent({
             {
                 id: 'location',
                 helpText: 'Please select facility name',
-                type: FieldType.TT_TEXT
+                type: FieldType.TT_SELECT,
+                condition: (form: any) => form.patient_type.label === 'External consultation',  
+                options: () => this.getFacilities()
             },
             {
                 id: 'occupation',
