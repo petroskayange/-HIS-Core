@@ -5,6 +5,10 @@ async function get(url: string) {
     return req?.json()
 }
 
+async function getFacilities() {
+    return get('/locations?name=')
+}
+
 async function getRegions() {
     return get('/regions')
 }
@@ -23,6 +27,7 @@ async function getVillages(filter='') {
 
 
 export default  {
+    getFacilities,
     getRegions,
     getDistricts,
     getTAs,
