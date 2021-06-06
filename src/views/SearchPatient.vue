@@ -3,7 +3,7 @@
 </template> 
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
