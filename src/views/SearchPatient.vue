@@ -1,5 +1,5 @@
 <template>
-  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+  <his-standard-form :fields="fields" :skipSummary="true" @onSubmit="onSubmit" @onFinish="onFinish"/>
 </template> 
 
 <script lang="ts">
