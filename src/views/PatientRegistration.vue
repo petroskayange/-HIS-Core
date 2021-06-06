@@ -77,6 +77,7 @@ export default defineComponent({
             requireNext: false,
             type: FieldType.TT_SELECT,
             options: () => MonthOptions,
+            condition: (form: any) => !form.birth_year.value.match(/Unknown/i),
             validation: (val: any,form: any) => {
                 const month = val.value
                 const year = form.birth_year.value
@@ -91,6 +92,7 @@ export default defineComponent({
             id: 'birth_day',
             helpText: 'Birth day',
             type: FieldType.TT_MONTHLY_DAYS,
+            condition: (form: any) => form.birth_month != null && !form.birth_month.value.match(/Unknown/i),
             validation: (val: any, form: any) => {
                 const day = val.value
                 const year = form.birth_year.value
@@ -106,6 +108,7 @@ export default defineComponent({
             id: 'age_estimate',
             helpText: 'Age Estimate',
             type: FieldType.TT_NUMBER,
+            condition: (form: any) => form.birth_year.value.match(/Unknown/i),
             validation: (val: any) => Validation.isNumber(val)
         },
         {

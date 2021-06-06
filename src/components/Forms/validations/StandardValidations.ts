@@ -10,8 +10,8 @@ function isName(value: any): null | Array<string> {
     return !value || !value.label.match(validation) ? ['Invalid name Input']: null
 }
 
-function isNumber(value: any): null | Array<string> {
-    return isNaN(value) ? ['Value must be a number'] : null
+function isNumber(val: any): null | Array<string> {
+    return isNaN(parseInt(val.value)) ? ['Value must be a number'] : null
 }
 
 function rangeOf(val: any, min: number, max: number): null | Array<string> {
