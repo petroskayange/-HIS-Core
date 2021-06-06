@@ -7,7 +7,7 @@ import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
-import { isName, required } from "@/components/Forms/validations/StandardValidations"
+import StdValidaton from "@/components/Forms/validations/StandardValidations"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -29,20 +29,20 @@ export default defineComponent({
           id: 'given_name',
           helpText: 'First name',
           type: FieldType.TT_TEXT,
-          validation: (value: any) => isName(value)
+          validation: (value: any) => StdValidaton.isName(value)
         },
         {
           id: 'family_name',
           helpText: "Last name",
           type: FieldType.TT_TEXT,
-          validation: (value: any) => isName(value)
+          validation: (value: any) => StdValidaton.isName(value)
         },
         {
           id: 'gender',
           helpText: 'Gender',
           type: FieldType.TT_SELECT,
           requireNext: false,
-          validation: (value: any) => required(value),
+          validation: (value: any) => StdValidaton.required(value),
           options: () => ([
             { 
                 label: 'Male',
