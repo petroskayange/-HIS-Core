@@ -22,14 +22,14 @@ export default defineComponent({
             if (val) this.clearSelection()
         }
     },
+    async activated() {
+        this.listData = await this.options(this.fdata)
+    },
     methods: {
         onselect(item: Option): void {
             this.selected = item.label
             this.$emit('onValue', item)
         }
-    },
-    async mounted() {
-        this.listData = await this.options(this.fdata)
     }
 })
 </script>

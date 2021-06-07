@@ -1,7 +1,6 @@
 <template>
   <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
-</template> 
-
+</template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
@@ -9,61 +8,157 @@ import { Field, Option } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
-import Location from "@/services/Location"
-import moment from "moment"
+import {getFacilities, getRegions, getDistricts, getTAs, getVillages} from "@/services/Location"
+import {searchFamilyName, searchGivenName, PersonInterface, createPerson} from "@/services/Person"
+import { PersonAttribute, createPersonAttributes } from '@/services/PersonAttributes'
+import HisDate from "@/utils/Date"
 
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
     fields: [] as Array<Field>,
-    isMilitarySite: false
+    isMilitarySite: false,
+    form: {} as Record<string, Option> | Record<string, null>
   }),
   created(){
     this.fields = this.getFields()
   },
   methods: {
-    onFinish(formData: any) {
-      console.log(formData)
+    onFinish(form: Record<string, Option> | Record<string, null>) {
+        this.form = form
     },
-    onSubmit() {
-      console.log("Form has been submitted");
+    async onSubmit() {
+      const personPayload: PersonInterface = this.resolvePerson(this.form)
+      try {
+        const person: PersonInterface = await createPerson(personPayload)
+        if (person.person_id) {
+            const personAttributePayload = this.resolvePersonAttributes(this.form, person.person_id)     
+            
+            if (personAttributePayload.length >= 1) {
+                await createPersonAttributes(personAttributePayload)  
+            } 
+        }
+        alert('Record has been Created!')
+      }catch(e) {
+        alert('Unable to create record')
+      }
+       
+    },
+    resolvePersonAttributes(form: Record<string, Option> | Record<string, null>, personId: number) {
+        const filter = [
+            'person_regiment_id',
+            'person_date_joined_military',
+            'rank'
+        ]
+        const data: Record<string, string> = this.resolveData(form, filter)
+        return this.generatePersonAttributes(data, personId)
+    },
+    resolvePerson(form: any) {
+        const filter = [
+            'given_name',
+            'family_name',
+            'gender',
+            'home_district',
+            'occupation',
+            'home_traditional_authority',
+            'home_village',
+            'current_district',
+            'current_traditional_authority',
+            'current_village',
+            'landmark',
+            'cell_phone_number',
+            'facility_name',
+            'patient_type',
+            'relationship'
+        ]
+        return {...this.resolveBirthDate(form), ...this.resolveData(form, filter)}
+    },
+    resolveData(form: Record<string, Option> | Record<string, null>, filter: Array<string>) {
+        const output: any = {} 
+        for(const name in form) {
+            const data = form[name]
+            if (!filter.includes(name)) continue
+
+            if (data && data.value != null) {
+                output[name] = data.value
+            }
+        }
+        return output
+    },
+    generatePersonAttributes(data: Record<string, string> | Record<string, number>, personId: number) {
+        const patientAttributes: Array<PersonAttribute> = []
+        // TODO: retrieve these identifiers using API call
+        const attrMap: Record<string, number> = {
+            'person_regiment_id': 35,
+            'person_date_joined_military': 37,
+            'rank': 36
+        }
+        for (const attr in data) {
+            const value = data[attr]
+            patientAttributes.push({ 
+                'person_id': personId,
+                'person_attribute_type_id': attrMap[attr], 
+                value
+            })
+        }
+        return patientAttributes
+    },
+    resolveBirthDate(form: any) {
+        const ageEstimate = form.age_estimate
+        const year = form.birth_year
+        const month = form.birth_month
+        const day = form.birth_day
+
+        if (ageEstimate && ageEstimate.value) {
+            return { 
+                'birthdate_estimated': true, 
+                birthdate: HisDate.estimateDateFromAge(ageEstimate.value)
+            }
+        }
+        if (month && month.label.match(/Unknown/i)) {
+            return {
+                'birthdate_estimated': true,
+                birthdate: HisDate.stitchDate(year.value)
+            }
+        }
+        return { 
+            'birthdate_estimated': false, 
+            birthdate: HisDate.stitchDate(year.value, month.value, day.value) 
+        }
     },
     mapToOption(listOptions: Array<string>): Array<Option> {
-        return listOptions.map((item: any) => ({
-            label: item,
-            value: item
-        })) 
+        return listOptions.map((item: any) => ({ label: item, value: item })) 
     },
     async getFacilities(): Promise<Option[]> {
-        const facilities = await Location.getFacilities()
+        const facilities = await getFacilities()
         return facilities.map((facility: any) => ({
             label: facility.name,
             value: facility.location_id
         }))
     },
     async getRegions(): Promise<Option[]> {
-        const regions = await Location.getRegions()
+        const regions = await getRegions()
         return regions.map((region: any) => ({
             label: region.name,
             value: region.region_id
         }))
     },
     async getDistricts(regionID: string): Promise<Option[]> {
-        const districts = await Location.getDistricts(regionID)
+        const districts = await getDistricts(regionID)
         return districts.map((district: any) => ({
             label: district.name,
             value: district.district_id
         }))
     },
     async getTraditionalAuthorities(districtID: string): Promise<Option[]> {
-        const TAs = await Location.getTAs(districtID)
+        const TAs = await getTAs(districtID)
         return TAs.map((TA: any) => ({
             label: TA.name,
             value: TA.traditional_authority_id
         }))
     },
     async getVillages(traditionalAuthorityID: string): Promise<Option[]> {
-        const villages = await Location.getVillages(traditionalAuthorityID)
+        const villages = await getVillages(traditionalAuthorityID)
         return villages.map((village: any) => ({
             label: village.name,
             value: village.village_id
@@ -75,13 +170,25 @@ export default defineComponent({
                 id: 'given_name',
                 helpText: 'First name',
                 type: FieldType.TT_TEXT,
-                validation: (val: any) => Validation.isName(val)
+                validation: (val: any) => Validation.isName(val),
+                options: async (form: any) => {
+                    if (!form.given_name || form.given_name.value === null) return []
+
+                    const names = await searchGivenName(form.given_name.value)
+                    return this.mapToOption(names)
+                }
             },
             {
                 id: 'family_name',
                 helpText: "Last name",
                 type: FieldType.TT_TEXT,
-                validation: (val: any) => Validation.isName(val)
+                validation: (val: any) => Validation.isName(val),
+                options: async (form: any) => {
+                    if (!form.family_name || form.family_name.value === null) return []
+
+                    const names = await searchFamilyName(form.family_name.value)
+                    return this.mapToOption(names)
+                }
             },
             {
                 id: 'gender',
@@ -105,8 +212,8 @@ export default defineComponent({
                 helpText: 'Year of birth',
                 type: FieldType.TT_NUMBER,
                 validation(val: any) {
-                    const minYr = moment().subtract(100, 'years').year()
-                    const maxYr = moment().year()
+                    const minYr = HisDate.getYearFromAge(100)
+                    const maxYr = HisDate.getCurrentYear()
                     const noYear = Validation.required(val)
                     const notInRange = Validation.rangeOf(val, minYr, maxYr)
 
@@ -126,7 +233,7 @@ export default defineComponent({
                     const month = val.value
                     const year = form.birth_year.value
                     const date = `${year}-${month}-01`
-                    const notValid = moment().isAfter(date) ? null : ['Month is greater than current month']
+                    const notValid = HisDate.dateIsAfter(date) ? null : ['Month is greater than current month']
                     const noMonth = Validation.required(val)
 
                     return noMonth || notValid
@@ -136,13 +243,13 @@ export default defineComponent({
                 id: 'birth_day',
                 helpText: 'Birth day',
                 type: FieldType.TT_MONTHLY_DAYS,
-                condition: (form: any) => form.birth_month != null && !form.birth_month.value.match(/Unknown/i),
+                condition: (form: any) => form.birth_month != null && !form.birth_month.label.match(/Unknown/i),
                 validation: (val: any, form: any) => {
                     const day = val.value
                     const year = form.birth_year.value
                     const month = form.birth_month.value
                     const date = `${year}-${month}-${day}`
-                    const notValid = moment().isAfter(date) ? null : ['Date is greater than current date']
+                    const notValid = HisDate.dateIsAfter(date) ? null : ['Date is greater than current date']
                     const noDay = Validation.required(val)
 
                     return noDay || notValid
@@ -159,6 +266,7 @@ export default defineComponent({
                 id: 'home_region',
                 helpText: 'Region of origin',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
             },
@@ -166,23 +274,32 @@ export default defineComponent({
                 id: 'home_district',
                 helpText: 'Home District',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getDistricts(form.home_region.value)
             },
             {
-                id: 'home_ta',
+                id: 'home_traditional_authority',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
             },
             {
                 id: 'home_village',
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
-                options: (form: any) => this.getVillages(form.home_ta.value)
+                requireNext: false,
+                validation: (val: any) => Validation.required(val),
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
+                options: (form: any) => this.getVillages(form.home_traditional_authority.value)
             },
             {
                 id: 'current_region',
                 helpText: 'Current Region',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
@@ -190,25 +307,32 @@ export default defineComponent({
             {
                 id: 'current_district',
                 helpText: 'District',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getDistricts(form.current_region.value)
             },
             {
-                id: 'current_ta',
+                id: 'current_traditional_authority',
                 helpText: 'Current TA',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.current_district.value)
             },
             {
                 id: 'current_village',
                 helpText: 'Current Village',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
-                options: (form: any) => this.getVillages(form.current_ta.value)
+                validation: (val: any) => Validation.required(val),
+                options: (form: any) => this.getVillages(form.current_traditional_authority.value)
             },
             {
                 id: 'landmark',
                 helpText: 'Closest Landmark or Plot Number',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'Catholic Church',
                     'CCAP',
@@ -224,7 +348,7 @@ export default defineComponent({
                 ]),
             },
             {
-                id: 'cellphone',
+                id: 'cell_phone_number',
                 helpText: 'Cell phone number',
                 type: FieldType.TT_NUMBER,
                 validation: (val: any) => {
@@ -237,6 +361,7 @@ export default defineComponent({
                 id: 'patient_type',
                 helpText: 'Type of patient',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'New patient',
                     'External consultation',
@@ -246,6 +371,7 @@ export default defineComponent({
                 id: 'location',
                 helpText: 'Please select facility name',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 condition: (form: any) => form.patient_type.label === 'External consultation',  
                 options: () => this.getFacilities()
             },
@@ -253,6 +379,8 @@ export default defineComponent({
                 id: 'occupation',
                 helpText: 'Occupation',
                 type: FieldType.TT_SELECT,
+                condition: () => this.isMilitarySite,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'MDF Reserve',
                     'MDF Retired',
@@ -262,17 +390,23 @@ export default defineComponent({
             {
                 id: 'person_regiment_id',
                 helpText: 'Regiment ID',
-                type: FieldType.TT_NUMBER
+                type: FieldType.TT_NUMBER,
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
+                validation: (val: any) => Validation.required(val), 
             },
             {
                 id: 'person_date_joined_military',
                 helpText: 'Date joined MDF',
-                type: FieldType.TT_TEXT
+                type: FieldType.TT_TEXT,
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
+                validation: (val: any) => Validation.required(val)
             },
             {
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 options: () => this.mapToOption([
                     'First Lieutenant',
                     'Captain',
@@ -292,9 +426,10 @@ export default defineComponent({
                 ])
             },
             {
-                id: 'guardian_present',
+                id: 'relationship',
                 helpText: 'Register guardian?',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption(['Yes', 'No'])
             }
         ]

@@ -13,11 +13,12 @@ import { defineComponent } from 'vue'
 import BaseInput from "@/components/FormElements/BaseTextInput.vue"
 import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
+import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 
 export default defineComponent({
-    components: { BaseInput, HisKeyboard },
+    components: { BaseInput, HisKeyboard, IonList, IonItem, IonLabel },
     data: ()=>({ 
         value: '',
         keyboard: QWERTY,
@@ -51,13 +52,18 @@ export default defineComponent({
         },
         async keypress(text: any){
             this.value = handleVirtualInput(text, this.value)
-            if (this.options) {
-                this.listData = await this.options(this.fdata)  
-            }
             this.$emit('onValue', { label: this.value, value: this.value })
         }
     },
     watch: {
+        fdata: {
+            async handler(data: any) {
+              if (this.options) {
+                this.listData = await this.options(data)
+              }
+            },
+            deep: true
+        },
         clear(val: boolean){
             if (val) this.value = ''
         }
