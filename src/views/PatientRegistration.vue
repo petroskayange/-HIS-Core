@@ -115,7 +115,7 @@ export default defineComponent({
                 birthdate: HisDate.estimateDateFromAge(ageEstimate.value)
             }
         }
-        if (month && month.value.match(/Unknown/i)) {
+        if (month && month.label.match(/Unknown/i)) {
             return {
                 'birthdate_estimated': true,
                 birthdate: HisDate.stitchDate(year.value)
@@ -243,7 +243,7 @@ export default defineComponent({
                 id: 'birth_day',
                 helpText: 'Birth day',
                 type: FieldType.TT_MONTHLY_DAYS,
-                condition: (form: any) => form.birth_month != null && !form.birth_month.value.match(/Unknown/i),
+                condition: (form: any) => form.birth_month != null && !form.birth_month.label.match(/Unknown/i),
                 validation: (val: any, form: any) => {
                     const day = val.value
                     const year = form.birth_year.value
