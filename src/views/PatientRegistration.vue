@@ -226,7 +226,12 @@ export default defineComponent({
             {
                 id: 'cellphone',
                 helpText: 'Cell phone number',
-                type: FieldType.TT_NUMBER
+                type: FieldType.TT_NUMBER,
+                validation: (val: any) => {
+                    const notIsset = Validation.required(val)
+                    const notValid = Validation.hasLengthRangeOf(val, 6, 15)
+                    return notIsset || notValid
+                }
             },
             {
                 id: 'patient_type',
