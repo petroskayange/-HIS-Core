@@ -159,6 +159,7 @@ export default defineComponent({
                 id: 'home_region',
                 helpText: 'Region of origin',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
             },
@@ -166,6 +167,7 @@ export default defineComponent({
                 id: 'home_district',
                 helpText: 'Home District',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getDistricts(form.home_region.value)
             },
@@ -173,6 +175,7 @@ export default defineComponent({
                 id: 'home_ta',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
@@ -181,6 +184,7 @@ export default defineComponent({
                 id: 'home_village',
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
+                requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getVillages(form.home_ta.value)
@@ -188,6 +192,7 @@ export default defineComponent({
             {
                 id: 'current_region',
                 helpText: 'Current Region',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
@@ -195,6 +200,7 @@ export default defineComponent({
             {
                 id: 'current_district',
                 helpText: 'District',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getDistricts(form.current_region.value)
@@ -202,6 +208,7 @@ export default defineComponent({
             {
                 id: 'current_ta',
                 helpText: 'Current TA',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.current_district.value)
@@ -209,6 +216,7 @@ export default defineComponent({
             {
                 id: 'current_village',
                 helpText: 'Current Village',
+                requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getVillages(form.current_ta.value)
