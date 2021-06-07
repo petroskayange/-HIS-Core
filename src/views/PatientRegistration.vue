@@ -28,9 +28,7 @@ export default defineComponent({
         this.form = form
     },
     async onSubmit() {
-      const personPayload: PersonInterface  = {
-          ...this.resolveDate(this.form), ...this.resolvePerson(this.form)
-        }
+      const personPayload: PersonInterface = this.resolvePerson(this.form)
       try {
         const person: PersonInterface = await createPerson(personPayload)
         if (person.person_id) {
@@ -46,30 +44,14 @@ export default defineComponent({
       }
        
     },
-    resolvePersonAttributes(form: any, personId: number) {
+    resolvePersonAttributes(form: Record<string, Option> | Record<string, null>, personId: number) {
         const filter = [
             'person_regiment_id',
             'person_date_joined_military',
             'rank'
         ]
-        // TODO: retrieve these identifiers using API call
-        const attrMap: Record<string, number> = {
-            'person_regiment_id': 35,
-            'person_date_joined_military': 37,
-            'rank': 36
-        }
         const data: Record<string, string> = this.resolveData(form, filter)
-        const patientAttributes: Array<PersonAttribute> = []
-
-        for (const attr in data) {
-            const value = data[attr]
-            patientAttributes.push({ 
-                'person_id': personId,
-                'person_attribute_type_id': attrMap[attr], 
-                value
-            })
-        }
-        return patientAttributes
+        return this.generatePersonAttributes(data, personId)
     },
     resolvePerson(form: any) {
         const filter = [
@@ -89,7 +71,7 @@ export default defineComponent({
             'patient_type',
             'relationship'
         ]
-        return this.resolveData(form, filter)
+        return {...this.resolveBirthDate(form), ...this.resolveData(form, filter)}
     },
     resolveData(form: Record<string, Option> | Record<string, null>, filter: Array<string>) {
         const output: any = {} 
@@ -103,7 +85,25 @@ export default defineComponent({
         }
         return output
     },
-    resolveDate(form: any) {
+    generatePersonAttributes(data: Record<string, string> | Record<string, number>, personId: number) {
+        const patientAttributes: Array<PersonAttribute> = []
+        // TODO: retrieve these identifiers using API call
+        const attrMap: Record<string, number> = {
+            'person_regiment_id': 35,
+            'person_date_joined_military': 37,
+            'rank': 36
+        }
+        for (const attr in data) {
+            const value = data[attr]
+            patientAttributes.push({ 
+                'person_id': personId,
+                'person_attribute_type_id': attrMap[attr], 
+                value
+            })
+        }
+        return patientAttributes
+    },
+    resolveBirthDate(form: any) {
         const ageEstimate = form.age_estimate
         const year = form.birth_year
         const month = form.birth_month
