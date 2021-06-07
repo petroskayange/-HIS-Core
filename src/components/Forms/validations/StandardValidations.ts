@@ -1,5 +1,3 @@
-import moment from "moment"
-
 function required(value: any): null | Array<string> {
     const noneFalsy = [undefined, '', null]
     return noneFalsy.includes(value.label) ? ['Field is empty!']: null
