@@ -10,6 +10,7 @@ import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import Location from "@/services/Location"
+import Person  from "@/services/Person"
 import moment from "moment"
 
 export default defineComponent({
@@ -75,13 +76,25 @@ export default defineComponent({
                 id: 'given_name',
                 helpText: 'First name',
                 type: FieldType.TT_TEXT,
-                validation: (val: any) => Validation.isName(val)
+                validation: (val: any) => Validation.isName(val),
+                options: async (form: any) => {
+                    if (!form.given_name || form.given_name.value === null) return []
+
+                    const names = await Person.searchGivenName(form.given_name.value)
+                    return this.mapToOption(names)
+                }
             },
             {
                 id: 'family_name',
                 helpText: "Last name",
                 type: FieldType.TT_TEXT,
-                validation: (val: any) => Validation.isName(val)
+                validation: (val: any) => Validation.isName(val),
+                options: async (form: any) => {
+                    if (!form.family_name || form.family_name.value === null) return []
+
+                    const names = await Person.searchFamilyName(form.family_name.value)
+                    return this.mapToOption(names)
+                }
             },
             {
                 id: 'gender',
