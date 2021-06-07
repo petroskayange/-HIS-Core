@@ -9,28 +9,44 @@ import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import {getFacilities, getRegions, getDistricts, getTAs, getVillages} from "@/services/Location"
-import {searchFamilyName, searchGivenName}  from "@/services/Person"
+import {searchFamilyName, searchGivenName, PersonInterface, createPerson} from "@/services/Person"
+import { PersonAttribute, createPersonAttributes } from '@/services/PersonAttributes'
 import HisDate from "@/utils/Date"
-import { PersonAttribute } from '@/services/PersonAttributes'
 
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
     fields: [] as Array<Field>,
-    isMilitarySite: true
+    isMilitarySite: false,
+    form: {} as Record<string, Option> | Record<string, null>
   }),
   created(){
     this.fields = this.getFields()
   },
   methods: {
-    onFinish(form: any) {
-      const person = {...this.resolveDate(form), ...this.resolvePerson(form)}
-      const personAttributes = this.resolvePersonAttributes(form)
+    onFinish(form: Record<string, Option> | Record<string, null>) {
+        this.form = form
     },
-    onSubmit() {
-      console.log("Form has been submitted");
+    async onSubmit() {
+      const personPayload: PersonInterface  = {
+          ...this.resolveDate(this.form), ...this.resolvePerson(this.form)
+        }
+      try {
+        const person: PersonInterface = await createPerson(personPayload)
+        if (person.person_id) {
+            const personAttributePayload = this.resolvePersonAttributes(this.form, person.person_id)     
+            
+            if (personAttributePayload.length >= 1) {
+                await createPersonAttributes(personAttributePayload)  
+            } 
+        }
+        alert('Record has been Created!')
+      }catch(e) {
+        alert('Unable to create record')
+      }
+       
     },
-    resolvePersonAttributes(form: any) {
+    resolvePersonAttributes(form: any, personId: number) {
         const filter = [
             'person_regiment_id',
             'person_date_joined_military',
@@ -47,7 +63,11 @@ export default defineComponent({
 
         for (const attr in data) {
             const value = data[attr]
-            patientAttributes.push({ 'person_attribute_type_id': attrMap[attr], value })
+            patientAttributes.push({ 
+                'person_id': personId,
+                'person_attribute_type_id': attrMap[attr], 
+                value
+            })
         }
         return patientAttributes
     },

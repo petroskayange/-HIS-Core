@@ -1,6 +1,7 @@
 import ApiClient  from "./api_client";
 
 export interface PersonInterface {
+    person_id?: number;
     given_name: string;
     family_name: string;
     gender: string;

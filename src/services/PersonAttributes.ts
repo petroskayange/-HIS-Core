@@ -1,11 +1,12 @@
 import ApiClient from './api_client'
 
 export interface PersonAttribute {
-    person_attribute_type_id: number,
-    value: number | string
+    person_id: number;
+    person_attribute_type_id: number;
+    value: number | string;
 }
 
-export async function createAttributes(data: Array<PersonAttribute>) {
+export async function createPersonAttributes(data: Array<PersonAttribute>) {
     const req = await ApiClient.post('/person_attributes', data)
     
     if (req && req.ok) return req?.json()
