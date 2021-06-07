@@ -1,7 +1,6 @@
 <template>
   <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
-</template> 
-
+</template>
 <script lang="ts">
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
@@ -12,22 +11,77 @@ import Validation from "@/components/Forms/validations/StandardValidations"
 import {getFacilities, getRegions, getDistricts, getTAs, getVillages} from "@/services/Location"
 import {searchFamilyName, searchGivenName}  from "@/services/Person"
 import HisDate from "@/utils/Date"
+import { PersonAttribute } from '@/services/PersonAttributes'
 
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
     fields: [] as Array<Field>,
-    isMilitarySite: false
+    isMilitarySite: true
   }),
   created(){
     this.fields = this.getFields()
   },
   methods: {
-    onFinish(formData: any) {
-      console.log(formData)
+    onFinish(form: any) {
+      const person = {...this.resolveDate(form), ...this.resolvePerson(form)}
+      const personAttributes = this.resolvePersonAttributes(form)
     },
     onSubmit() {
       console.log("Form has been submitted");
+    },
+    resolvePersonAttributes(form: any) {
+        const filter = [
+            'person_regiment_id',
+            'person_date_joined_military',
+            'rank'
+        ]
+        // TODO: retrieve these identifiers using API call
+        const attrMap: Record<string, number> = {
+            'person_regiment_id': 35,
+            'person_date_joined_military': 37,
+            'rank': 36
+        }
+        const data: Record<string, string> = this.resolveData(form, filter)
+        const patientAttributes: Array<PersonAttribute> = []
+
+        for (const attr in data) {
+            const value = data[attr]
+            patientAttributes.push({ 'person_attribute_type_id': attrMap[attr], value })
+        }
+        return patientAttributes
+    },
+    resolvePerson(form: any) {
+        const filter = [
+            'given_name',
+            'family_name',
+            'gender',
+            'home_district',
+            'occupation',
+            'home_traditional_authority',
+            'home_village',
+            'current_district',
+            'current_traditional_authority',
+            'current_village',
+            'landmark',
+            'cell_phone_number',
+            'facility_name',
+            'patient_type',
+            'relationship'
+        ]
+        return this.resolveData(form, filter)
+    },
+    resolveData(form: Record<string, Option> | Record<string, null>, filter: Array<string>) {
+        const output: any = {} 
+        for(const name in form) {
+            const data = form[name]
+            if (!filter.includes(name)) continue
+
+            if (data && data.value != null) {
+                output[name] = data.value
+            }
+        }
+        return output
     },
     resolveDate(form: any) {
         const ageEstimate = form.age_estimate
@@ -352,7 +406,7 @@ export default defineComponent({
                 ])
             },
             {
-                id: 'guardian_present',
+                id: 'relationship',
                 helpText: 'Register guardian?',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
