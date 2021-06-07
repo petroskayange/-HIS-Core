@@ -166,18 +166,21 @@ export default defineComponent({
                 id: 'home_district',
                 helpText: 'Home District',
                 type: FieldType.TT_SELECT,
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getDistricts(form.home_region.value)
             },
             {
                 id: 'home_ta',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
             },
             {
                 id: 'home_village',
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
+                condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getVillages(form.home_ta.value)
             },
             {
@@ -265,21 +268,21 @@ export default defineComponent({
                 id: 'person_regiment_id',
                 helpText: 'Regiment ID',
                 type: FieldType.TT_NUMBER,
-                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 validation: (val: any) => Validation.required(val), 
             },
             {
                 id: 'person_date_joined_military',
                 helpText: 'Date joined MDF',
                 type: FieldType.TT_TEXT,
-                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 validation: (val: any) => Validation.required(val)
             },
             {
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
-                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
+                condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 options: () => this.mapToOption([
                     'First Lieutenant',
                     'Captain',
