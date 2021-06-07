@@ -44,7 +44,7 @@ export default defineComponent({
       deep: true,
     },
   },
-  async mounted() {
+  async activated() {
     const options = await this.options(this.fdata)
     this.listData = options.map((item: Option)=>this.setState(item))
   },
