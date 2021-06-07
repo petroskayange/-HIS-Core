@@ -1,54 +1,60 @@
 <template>
-  <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ labelValue }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content :fullscreen="true">
-      <div id="container" class="main">
-        <!-- Form -->
-        <ion-row>
-          <ion-col>
-            <HisForm :his-form-elements="multiFormElements"></HisForm>
-          </ion-col>
-        </ion-row>
-      </div>
-    </ion-content>
-
-    <HisNavFooter></HisNavFooter>
-  </ion-page>
-</template>
+  <his-standard-form :fields="fields" :skipSummary="true" @onSubmit="onSubmit" @onFinish="onFinish"/>
+</template> 
 
 <script lang="ts">
-import { IonContent, IonPage, IonRow, IonCol, IonHeader, IonToolbar, IonTitle} from '@ionic/vue';
-import { defineComponent } from 'vue';
-import HisNavFooter from "@/components/HisNavFooter.vue";
-import HisForm from "@/components/HisForm.vue";
+import { defineComponent } from "vue";
+import { FieldType } from "@/components/Forms/BaseFormElements"
+import { Field } from "@/components/Forms/FieldInterface"
+import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+import StdValidaton from "@/components/Forms/validations/StandardValidations"
 
 export default defineComponent({
-  name: 'SearchPatient',
-  components: {
-    HisForm,
-    HisNavFooter,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonRow,
-    IonCol,
-    IonContent,
-    IonPage
+  components: { HisStandardForm },
+  data: () => ({
+    fields: [] as Array<Field>
+  }),
+  created(){
+    this.fields = this.getFields()
   },
-  data() {
-    return {
-      labelValue: 'Search Patient',
-      multiFormElements: [
-        {elementName: 'first_name', elementType: 'text', elementPlaceholder: 'First Name'},
-        {elementName: 'middle_name', elementType: 'text', elementPlaceholder: 'Middle Name'},
-        {elementName: 'last_name', elementType: 'text', elementPlaceholder: 'Last Name'},
-        {elementName: 'birthdate', elementType: 'date', elementPlaceholder: 'Date of Birth'}
-      ]
-    }
+  methods: {
+    onFinish(formData: any) {
+      console.log(formData)
+    },
+    onSubmit() {
+      console.log("Form has been submitted");
+    },
+    getFields: (): Array<Field> => ([
+        {
+          id: 'given_name',
+          helpText: 'First name',
+          type: FieldType.TT_TEXT,
+          validation: (value: any) => StdValidaton.isName(value)
+        },
+        {
+          id: 'family_name',
+          helpText: "Last name",
+          type: FieldType.TT_TEXT,
+          validation: (value: any) => StdValidaton.isName(value)
+        },
+        {
+          id: 'gender',
+          helpText: 'Gender',
+          type: FieldType.TT_SELECT,
+          requireNext: false,
+          validation: (value: any) => StdValidaton.required(value),
+          options: () => ([
+            { 
+                label: 'Male',
+                value: 'M'
+            },
+            {
+                label: 'Female',
+                value: 'F'
+            }
+          ])
+        },
+    ])
   }
-});
+})
 </script>

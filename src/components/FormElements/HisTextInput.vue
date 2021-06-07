@@ -13,7 +13,7 @@ import { defineComponent } from 'vue'
 import BaseInput from "@/components/FormElements/BaseTextInput.vue"
 import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
-import { Option } from '../Forms/FieldType'
+import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 
 export default defineComponent({

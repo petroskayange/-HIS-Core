@@ -4,9 +4,9 @@ import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import HisTextInput from "@/components/FormElements/BaseTextInput.vue";
-import { Option } from '../Forms/FieldType'
+import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
-import SelectConfig from "@/components/FormElements/SelectConfig"
+import SelectConfig from "@/components/FormElements/Interfaces/SelectConfig"
 
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard },
@@ -27,7 +27,7 @@ export default defineComponent({
         },
     },
     data: () => ({ 
-        showKeyboard: true,
+        showKeyboard: false,
         selected: '',
         filter: '',
         keyboard: QWERTY,
@@ -35,8 +35,8 @@ export default defineComponent({
     }),
     created(){
         if (this.config) {
-            if (this.config.showKeyboard === false) {
-                this.showKeyboard = false
+            if (this.config.showKeyboard === true) {
+                this.showKeyboard = true
             }
         }
     },

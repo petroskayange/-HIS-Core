@@ -19,21 +19,12 @@
 </template>
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
-import { Field, Option } from "./FieldType";
-import SingleSelect from "@/components/FormElements/HisSelect.vue";
-import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
-import TextInput from "@/components/FormElements/HisTextInput.vue"
-import NumberInput from "@/components/FormElements/HisNumberInput.vue"
-import MonthlyDays from "@/components/FormElements/HisMonthlyDays.vue"
-
+import { Field, Option } from "./FieldInterface";
+import { BaseFormComponents } from "@/components/Forms/BaseFormElements"
 export default defineComponent({
   name: "BaseForm",
   components: {
-    TextInput,
-    SingleSelect,
-    MultipleSelect,
-    NumberInput,
-    MonthlyDays
+    ...BaseFormComponents
   },
   props: {
     clear: {
@@ -150,7 +141,11 @@ export default defineComponent({
       if (!this.isRequireNext(this.activeField)) this.onNext(), this.emitNext();
     },
     emitNext() {
-      this.$emit("onNext", {field: this.activeField, index: this.activeIndex});
+      this.$emit("onNext", {
+        field: this.activeField, 
+        index: this.activeIndex, 
+        formData: this.formData
+      });
     },
     onFinish(): void {
       this.$emit("onFinish", this.formData);
