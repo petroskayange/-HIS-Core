@@ -253,6 +253,8 @@ export default defineComponent({
                 id: 'occupation',
                 helpText: 'Occupation',
                 type: FieldType.TT_SELECT,
+                condition: () => this.isMilitarySite,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'MDF Reserve',
                     'MDF Retired',
@@ -262,17 +264,22 @@ export default defineComponent({
             {
                 id: 'person_regiment_id',
                 helpText: 'Regiment ID',
-                type: FieldType.TT_NUMBER
+                type: FieldType.TT_NUMBER,
+                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
+                validation: (val: any) => Validation.required(val), 
             },
             {
                 id: 'person_date_joined_military',
                 helpText: 'Date joined MDF',
-                type: FieldType.TT_TEXT
+                type: FieldType.TT_TEXT,
+                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
+                validation: (val: any) => Validation.required(val)
             },
             {
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
+                condition: (form: any) => form.occupation && form.occupation.match(/MDF/i),
                 options: () => this.mapToOption([
                     'First Lieutenant',
                     'Captain',
