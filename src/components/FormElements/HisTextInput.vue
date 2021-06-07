@@ -42,13 +42,18 @@ export default defineComponent({
         },
         async keypress(text: any){
             this.value = handleVirtualInput(text, this.value)
-            if (this.options) {
-                this.listData = await this.options(this.fdata)  
-            }
             this.$emit('onValue', { label: this.value, value: this.value })
         }
     },
     watch: {
+        fdata: {
+            async handler(data: any) {
+              if (this.options) {
+                this.listData = await this.options(data)
+              }
+            },
+            deep: true
+        },
         clear(val: boolean){
             if (val) this.value = ''
         }
