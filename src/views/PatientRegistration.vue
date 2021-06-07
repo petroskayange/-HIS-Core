@@ -9,8 +9,8 @@ import { Field, Option } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
-import Location from "@/services/Location"
-import Person  from "@/services/Person"
+import {getFacilities, getRegions, getDistricts, getTAs, getVillages} from "@/services/Location"
+import {searchFamilyName, searchGivenName}  from "@/services/Person"
 import moment from "moment"
 
 export default defineComponent({
@@ -36,35 +36,35 @@ export default defineComponent({
         })) 
     },
     async getFacilities(): Promise<Option[]> {
-        const facilities = await Location.getFacilities()
+        const facilities = await getFacilities()
         return facilities.map((facility: any) => ({
             label: facility.name,
             value: facility.location_id
         }))
     },
     async getRegions(): Promise<Option[]> {
-        const regions = await Location.getRegions()
+        const regions = await getRegions()
         return regions.map((region: any) => ({
             label: region.name,
             value: region.region_id
         }))
     },
     async getDistricts(regionID: string): Promise<Option[]> {
-        const districts = await Location.getDistricts(regionID)
+        const districts = await getDistricts(regionID)
         return districts.map((district: any) => ({
             label: district.name,
             value: district.district_id
         }))
     },
     async getTraditionalAuthorities(districtID: string): Promise<Option[]> {
-        const TAs = await Location.getTAs(districtID)
+        const TAs = await getTAs(districtID)
         return TAs.map((TA: any) => ({
             label: TA.name,
             value: TA.traditional_authority_id
         }))
     },
     async getVillages(traditionalAuthorityID: string): Promise<Option[]> {
-        const villages = await Location.getVillages(traditionalAuthorityID)
+        const villages = await getVillages(traditionalAuthorityID)
         return villages.map((village: any) => ({
             label: village.name,
             value: village.village_id
@@ -80,7 +80,7 @@ export default defineComponent({
                 options: async (form: any) => {
                     if (!form.given_name || form.given_name.value === null) return []
 
-                    const names = await Person.searchGivenName(form.given_name.value)
+                    const names = await searchGivenName(form.given_name.value)
                     return this.mapToOption(names)
                 }
             },
@@ -92,7 +92,7 @@ export default defineComponent({
                 options: async (form: any) => {
                     if (!form.family_name || form.family_name.value === null) return []
 
-                    const names = await Person.searchFamilyName(form.family_name.value)
+                    const names = await searchFamilyName(form.family_name.value)
                     return this.mapToOption(names)
                 }
             },
@@ -185,7 +185,7 @@ export default defineComponent({
                 options: (form: any) => this.getDistricts(form.home_region.value)
             },
             {
-                id: 'home_ta',
+                id: 'home_traditional_authority',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
                 requireNext: false,
@@ -200,7 +200,7 @@ export default defineComponent({
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
-                options: (form: any) => this.getVillages(form.home_ta.value)
+                options: (form: any) => this.getVillages(form.home_traditional_authority.value)
             },
             {
                 id: 'current_region',
@@ -219,7 +219,7 @@ export default defineComponent({
                 options: (form: any) => this.getDistricts(form.current_region.value)
             },
             {
-                id: 'current_ta',
+                id: 'current_traditional_authority',
                 helpText: 'Current TA',
                 requireNext: false,
                 type: FieldType.TT_SELECT,
@@ -254,7 +254,7 @@ export default defineComponent({
                 ]),
             },
             {
-                id: 'cellphone',
+                id: 'cell_phone_number',
                 helpText: 'Cell phone number',
                 type: FieldType.TT_NUMBER,
                 validation: (val: any) => {

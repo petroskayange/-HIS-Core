@@ -5,31 +5,22 @@ async function get(url: string) {
     return req?.json()
 }
 
-async function getFacilities() {
+export async function getFacilities() {
     return get('/locations?name=')
 }
 
-async function getRegions() {
+export async function getRegions() {
     return get('/regions')
 }
 
-async function getDistricts(filter='') {
+export async function getDistricts(filter='') {
     return get(`/districts?region_id=${filter}`)
 }
 
-async function getTAs(filter='') {
+export async function getTAs(filter='') {
     return get(`/traditional_authorities?district_id=${filter}`)
 }
 
-async function getVillages(filter='') {
+export async function getVillages(filter='') {
     return get(`/villages?traditional_authority_id=${filter}`)
-}
-
-
-export default  {
-    getFacilities,
-    getRegions,
-    getDistricts,
-    getTAs,
-    getVillages
 }

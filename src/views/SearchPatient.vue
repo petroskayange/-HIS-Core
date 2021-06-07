@@ -8,8 +8,8 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field } from "@/components/Forms/FieldInterface"
 import { Option } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
-import StdValidaton from "@/components/Forms/validations/StandardValidations"
-import Person from "@/services/Person"
+import Validaton from "@/components/Forms/validations/StandardValidations"
+import {searchGivenName, searchFamilyName} from "@/services/Person"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -38,11 +38,11 @@ export default defineComponent({
           id: 'given_name',
           helpText: 'First name',
           type: FieldType.TT_TEXT,
-          validation: (value: any) => StdValidaton.isName(value),
+          validation: (value: any) => Validaton.isName(value),
           options: async (form: any) => {
             if (!form.given_name || form.given_name.value === null) return []
 
-            const names = await Person.searchGivenName(form.given_name.value)
+            const names = await searchGivenName(form.given_name.value)
             return this.mapToOption(names)
           }
         },
@@ -50,11 +50,11 @@ export default defineComponent({
           id: 'family_name',
           helpText: "Last name",
           type: FieldType.TT_TEXT,
-          validation: (value: any) => StdValidaton.isName(value),
+          validation: (value: any) => Validaton.isName(value),
           options: async (form: any) => {
             if (!form.family_name || form.family_name.value === null) return []
 
-            const names = await Person.searchFamilyName(form.family_name.value)
+            const names = await searchFamilyName(form.family_name.value)
             return this.mapToOption(names)
           }
         },
@@ -62,7 +62,7 @@ export default defineComponent({
           id: 'gender',
           helpText: 'Gender',
           type: FieldType.TT_SELECT,
-          validation: (value: any) => StdValidaton.required(value),
+          validation: (value: any) => Validaton.required(value),
           options: () => ([
             { 
                 label: 'Male',
