@@ -11,7 +11,7 @@ import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import {getFacilities, getRegions, getDistricts, getTAs, getVillages} from "@/services/Location"
 import {searchFamilyName, searchGivenName}  from "@/services/Person"
-import moment from "moment"
+import HisDate from "@/utils/Date"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -29,11 +29,31 @@ export default defineComponent({
     onSubmit() {
       console.log("Form has been submitted");
     },
+    resolveDate(form: any) {
+        const ageEstimate = form.age_estimate
+        const year = form.birth_year
+        const month = form.birth_month
+        const day = form.birth_day
+
+        if (ageEstimate && ageEstimate.value) {
+            return { 
+                'birthdate_estimated': true, 
+                birthdate: HisDate.estimateDateFromAge(ageEstimate.value)
+            }
+        }
+        if (month && month.value.match(/Unknown/i)) {
+            return {
+                'birthdate_estimated': true,
+                birthdate: HisDate.stitchDate(year.value)
+            }
+        }
+        return { 
+            'birthdate_estimated': false, 
+            birthdate: HisDate.stitchDate(year.value, month.value, day.value) 
+        }
+    },
     mapToOption(listOptions: Array<string>): Array<Option> {
-        return listOptions.map((item: any) => ({
-            label: item,
-            value: item
-        })) 
+        return listOptions.map((item: any) => ({ label: item, value: item })) 
     },
     async getFacilities(): Promise<Option[]> {
         const facilities = await getFacilities()
@@ -118,8 +138,8 @@ export default defineComponent({
                 helpText: 'Year of birth',
                 type: FieldType.TT_NUMBER,
                 validation(val: any) {
-                    const minYr = moment().subtract(100, 'years').year()
-                    const maxYr = moment().year()
+                    const minYr = HisDate.getYearFromAge(100)
+                    const maxYr = HisDate.getCurrentYear()
                     const noYear = Validation.required(val)
                     const notInRange = Validation.rangeOf(val, minYr, maxYr)
 
@@ -139,7 +159,7 @@ export default defineComponent({
                     const month = val.value
                     const year = form.birth_year.value
                     const date = `${year}-${month}-01`
-                    const notValid = moment().isAfter(date) ? null : ['Month is greater than current month']
+                    const notValid = HisDate.dateIsAfter(date) ? null : ['Month is greater than current month']
                     const noMonth = Validation.required(val)
 
                     return noMonth || notValid
@@ -155,7 +175,7 @@ export default defineComponent({
                     const year = form.birth_year.value
                     const month = form.birth_month.value
                     const date = `${year}-${month}-${day}`
-                    const notValid = moment().isAfter(date) ? null : ['Date is greater than current date']
+                    const notValid = HisDate.dateIsAfter(date) ? null : ['Date is greater than current date']
                     const noDay = Validation.required(val)
 
                     return noDay || notValid
@@ -232,7 +252,7 @@ export default defineComponent({
                 requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
-                options: (form: any) => this.getVillages(form.current_ta.value)
+                options: (form: any) => this.getVillages(form.current_traditional_authority.value)
             },
             {
                 id: 'landmark',
