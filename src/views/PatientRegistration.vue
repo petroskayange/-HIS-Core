@@ -174,12 +174,14 @@ export default defineComponent({
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
             },
             {
                 id: 'home_village',
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getVillages(form.home_ta.value)
             },
@@ -194,24 +196,28 @@ export default defineComponent({
                 id: 'current_district',
                 helpText: 'District',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getDistricts(form.current_region.value)
             },
             {
                 id: 'current_ta',
                 helpText: 'Current TA',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.current_district.value)
             },
             {
                 id: 'current_village',
                 helpText: 'Current Village',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getVillages(form.current_ta.value)
             },
             {
                 id: 'landmark',
                 helpText: 'Closest Landmark or Plot Number',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'Catholic Church',
                     'CCAP',
@@ -240,6 +246,7 @@ export default defineComponent({
                 id: 'patient_type',
                 helpText: 'Type of patient',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'New patient',
                     'External consultation',
@@ -249,6 +256,7 @@ export default defineComponent({
                 id: 'location',
                 helpText: 'Please select facility name',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 condition: (form: any) => form.patient_type.label === 'External consultation',  
                 options: () => this.getFacilities()
             },
@@ -282,6 +290,7 @@ export default defineComponent({
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 options: () => this.mapToOption([
                     'First Lieutenant',
@@ -305,6 +314,7 @@ export default defineComponent({
                 id: 'guardian_present',
                 helpText: 'Register guardian?',
                 type: FieldType.TT_SELECT,
+                validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption(['Yes', 'No'])
             }
         ]
