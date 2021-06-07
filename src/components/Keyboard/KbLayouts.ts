@@ -21,13 +21,13 @@ export const ALPHABETICAL_LO = [
 
 export const QWERTY_LO = [
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'i', "'"],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', "'"],
     ['z', 'x', 'c', 'v', 'b', 'm', 'n', ',', '.', 'A-Z']
 ]
 
 export const CHARACTERS_AND_NUMBERS_LO = [
     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
     ['q', 'w', 'e', 'r', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'i'],
+    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
     ['z', 'x', 'c', 'v', 'b', 'm', ',', '.', "'"],
 ]
