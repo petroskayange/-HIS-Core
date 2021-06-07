@@ -39,9 +39,21 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <ion-card>
-        <ion-card-content> </ion-card-content>
-      </ion-card>
+      <ion-row>
+        <ion-col size="4" v-for="(card, index) in cards" :key="index">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>{{card.title}}</ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+
+              <h2 v-for="(info, id) in card.data" :key="id">
+              {{info.label}} {{ info.value }}</h2>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
     </ion-content>
 
     <ion-footer>
@@ -53,7 +65,11 @@
             >
           </ion-col>
           <ion-col>
-            <ion-button color="danger left" size="large" router-link="/"
+            <ion-button
+              color="danger left"
+              size="large"
+              router-link="/"
+              v-if="isAdmin"
               >Void</ion-button
             >
           </ion-col>
@@ -86,6 +102,8 @@ import { defineComponent } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
+import { Role } from "@/interfaces/role";
+import { Observation } from "@/interfaces/observation";
 import { Patientservice } from "@/services/patient_service";
 import dayjs from "dayjs";
 export default defineComponent({
@@ -127,6 +145,9 @@ export default defineComponent({
       ancestryVillage: "",
       gender: "",
       birthdate: "",
+      cards: [] as any,
+      ARVNumber: "",
+      NPID: "",
       dayjs,
     };
   },
@@ -150,6 +171,85 @@ export default defineComponent({
       this.currentDistrict = addresses.currentDistrict;
       this.currentTA = addresses.currentTA;
       this.currentVillage = addresses.ancestryVillage;
+      this.ARVNumber = patient.getPatientIdentifier(4);
+      const ARVNumber= patient.getPatientIdentifier(4);
+      const NPID = patient.getPatientIdentifier(3);
+      this.cards.push({
+        title: 'PATIENT IDENTIFIERS',
+        data: [
+          {
+            label: "ARV Number",
+            value: ARVNumber
+          },
+          {
+            label: "NPID",
+            value: NPID
+          }
+        ]
+      });
+      await this.fetchAlerts()
+      .then(this.fetchLabOrders)
+      .then(this.fetchProgramInfo)
+      .then(this.fetchOutCome)
+      .then(this.fetchGuardians)
+    },
+    fetchAlerts: async function() {
+      const response = await ApiClient.get(`/observations?person_id=${this.patientID}&concept_id=7755`);
+
+      if (!response || response.status !== 200) return;
+      const data: Observation[] = await response.json();
+      const sideEffects: Observation[] = data.filter(observation=>{
+        return observation.children[0].value_coded == 1065;
+      });
+
+      const displayData = {
+        title: "ALERTS",
+        data: [
+          {
+          label: "Side effects",
+          value: sideEffects.length
+          }
+        ]
+      }
+
+      this.cards.push(displayData);
+
+    },
+    fetchLabOrders: async function() {
+      const displayData = {
+        title: "Labs",
+        data: [
+          
+        ]
+      }
+      this.cards.push(displayData);
+    },
+    fetchProgramInfo: async function() {
+      const displayData = {
+        title: "PROGRAM INFORMATION",
+        data: [
+          
+        ]
+      }
+      this.cards.push(displayData);
+    },
+    fetchOutCome: async function() {
+      const displayData = {
+        title: "Outcome",
+        data: [
+          
+        ]
+      }
+      this.cards.push(displayData);
+    },
+    fetchGuardians: async function() {
+      const displayData = {
+        title: "GUARDIAN(s)",
+        data: [
+          
+        ]
+      }
+      this.cards.push(displayData);
     }
   },
   setup() {
@@ -163,6 +263,16 @@ export default defineComponent({
     this.patientID = this.$route.params.person_id as any;
     this.fetchPatient();
   },
+  computed: {
+    isAdmin() {
+      const roles = JSON.parse(sessionStorage.userRoles).filter(
+        (role: Role) => {
+          return role.role.match(/super|admin/i);
+        }
+      );
+      return roles.length > 0;
+    },
+  },
 });
 </script>
 
@@ -173,7 +283,9 @@ ion-col p {
 ion-button {
   width: 100%;
 }
-
+ion-card {
+  height: 250px;
+}
 .outlined {
   border: solid 1px grey;
 }

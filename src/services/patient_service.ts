@@ -1,6 +1,7 @@
 import { Patient } from '@/interfaces/patient';
 import { getFullName } from '@/interfaces/name'
 import { getPersonAttribute } from '@/interfaces/personAttribute'
+import { getPatientIdentifier } from '@/interfaces/patientIdentifier'
 export class Patientservice {
     patient: Patient;
     constructor(patient: Patient) {
@@ -18,6 +19,9 @@ export class Patientservice {
     }
     getAttribute(personAttributeTypeID: number) {
         return getPersonAttribute(this.patient.person.person_attributes, personAttributeTypeID);
+    }
+    getPatientIdentifier(patientIdentifierTypeID: number) {
+        return getPatientIdentifier(this.patient.patient_identifiers, patientIdentifierTypeID);
     }
     getAddresses() {
         const addressOBJ = {

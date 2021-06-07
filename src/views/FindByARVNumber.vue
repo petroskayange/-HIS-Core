@@ -1,9 +1,9 @@
 <template>
-  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish" :skipSummary="true"/>
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { FieldType } from "@/components/Forms/FieldType"
+import { FieldType } from "@/components/Forms/BaseFormElements"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import ApiClient from "@/services/api_client";
 export default defineComponent({
@@ -61,6 +61,24 @@ export default defineComponent({
   data() {
     return {
       fields: [
+        {
+          id: "does_not_require_next",
+          helpText: "Click on value to proceed",
+          type: FieldType.TT_SELECT,
+          config: {
+            showKeyboard: false,
+          },
+          requireNext: false,
+          validation(value: any): null | Array<string> {
+            return !value ? ["Value is required"] : null;
+          },
+          options: ()=>([
+            {
+              label: "ARV Number",
+              value: "ARV Number",
+            },
+          ]),
+        },
         {
           id: "arv_number",
           helpText: "ARV Number",

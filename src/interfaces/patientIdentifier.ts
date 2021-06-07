@@ -16,9 +16,9 @@ export interface PatientIdentifier {
     uuid:                  string;
     type:                  PatientIdentifierType;
 }
- export const getAttribute = (patientIdentifiers: PatientIdentifier[], patientIdentifierTypeName: string): string=> {
-        let attribute = patientIdentifiers.filter(attr => {
-          return attr.type.name === patientIdentifierTypeName;
+ export const getPatientIdentifier = (patientIdentifiers: PatientIdentifier[], patientIdentifierTypeID: number): string=> {
+        const identifiers = patientIdentifiers.filter(identifier => {
+          return identifier.type.patient_identifier_type_id === patientIdentifierTypeID;
         });
-        return attribute.length > 0 ? attribute[0].identifier : "";
+        return identifiers.length > 0 ? identifiers[0].identifier : "";
 }
