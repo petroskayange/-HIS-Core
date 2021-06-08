@@ -1,7 +1,7 @@
 <template>
     <div>
-      <view-port>
-      <his-text-input :value="selected" :disabled="false" /> 
+      <view-port :height="showKeyboard ? 390 : 589">
+      <his-text-input :value="selected" :disabled="false"/> 
       <ion-list>
         <ion-item v-for="(entry, index) in filtered" :key="index" color="light">
           <ion-label> {{ entry.label }} </ion-label>

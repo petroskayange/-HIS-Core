@@ -1,8 +1,19 @@
 <template> 
-    <div id='view-port'> 
-        <slot> </slot>
+    <div id='view-port' :style="{maxHeight: `${height}px`}"> 
+        <slot></slot>
     </div>
 </template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+    props: {
+        height: {
+            type: Number,
+            default: () => 589
+        }
+    }
+})
+</script>
 <style scoped>
     #view-port {
         border: 1px solid black;
@@ -12,6 +23,5 @@
         border-radius: 10px;
         padding: 5px;
         overflow-x: scroll;
-        max-height: 589px;
     }
 </style>
