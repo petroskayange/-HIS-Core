@@ -351,7 +351,11 @@ export default defineComponent({
                 id: 'cell_phone_number',
                 helpText: 'Cell phone number',
                 type: FieldType.TT_NUMBER,
-                validation: (val: any) => Validation.isMWPhoneNumber(val)
+                validation: (val: any) => {
+                    if (val && val.value.match(/Unknown/i)) return
+
+                    return Validation.isMWPhoneNumber(val)
+                } 
             },
             {
                 id: 'patient_type',
