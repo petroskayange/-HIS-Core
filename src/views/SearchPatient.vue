@@ -9,7 +9,7 @@ import { Field } from "@/components/Forms/FieldInterface"
 import { Option } from "@/components/Forms/FieldInterface"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validaton from "@/components/Forms/validations/StandardValidations"
-import {searchGivenName, searchFamilyName} from "@/services/Person"
+import {PersonService} from "@/services/person_service"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -42,7 +42,7 @@ export default defineComponent({
           options: async (form: any) => {
             if (!form.given_name || form.given_name.value === null) return []
 
-            const names = await searchGivenName(form.given_name.value)
+            const names = await PersonService.searchGivenName(form.given_name.value)
             return this.mapToOption(names)
           }
         },
@@ -54,7 +54,7 @@ export default defineComponent({
           options: async (form: any) => {
             if (!form.family_name || form.family_name.value === null) return []
 
-            const names = await searchFamilyName(form.family_name.value)
+            const names = await PersonService.searchFamilyName(form.family_name.value)
             return this.mapToOption(names)
           }
         },
