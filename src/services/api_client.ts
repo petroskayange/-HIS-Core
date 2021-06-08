@@ -14,13 +14,13 @@ const ApiClient = (() => {
         version?: string;
         source?: string;
     }
-    const showMessage =async (message: string) => {
+    const showMessage =async (message: string, color = "warning", duration= 6000) => {
         const toast = await toastController.create({
             message: message,
             position: "top",
             animated: true,
-            duration: 6000,
-            color: 'warning'
+            duration: duration,
+            color: color
         });
         return toast.present();
     };
@@ -126,7 +126,7 @@ const ApiClient = (() => {
     const remove = (uri: string, data: object, options = []) => execFetch(uri, { method: 'DELETE', body: JSON.stringify(data) }, options);
     const put = (uri: string, data: object, options = []) => execFetch(uri, { method: 'PUT', body: JSON.stringify(data) }, options);
     const setRouter = (route: any) => route = router;
-    return { get, post, put, remove, getConfig, setRouter };
+    return { get, post, put, remove, getConfig, setRouter, showMessage };
 })();
 
 export default ApiClient;

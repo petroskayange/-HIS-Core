@@ -1,31 +1,31 @@
-<template> 
-    <ion-input
-      :value="value"
-      :type="type"
-      class="input_display"
-      :disabled="disabled"
-    />
+<template>
+  <ion-input
+    :value="value"
+    :type="type"
+    class="input_display"
+    :disabled="disabled"
+  />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import {IonInput} from '@ionic/vue'
+import { defineComponent } from "vue";
+import { IonInput, IonGrid, IonRow, IonCol } from "@ionic/vue";
 export default defineComponent({
-    name: "HisInput",
-    components: { IonInput},
-    props: {
-        value: {
-            required: false
-        },
-        type: {
-            type: String,
-            default: ()=> 'text'
-        },
-        disabled:{
-            type: Boolean,
-            default: () => true
-        }
+  name: "HisInput",
+  components: { IonInput },
+  props: {
+    value: {
+      required: false,
+    },
+    type: {
+      type: String,
+      default: () => "text",
+    },
+    disabled: {
+      type: Boolean,
+      default: () => true,
     }
-})
+  },
+});
 </script>
 <style scoped>
 .input_display {

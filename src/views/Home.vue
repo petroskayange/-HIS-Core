@@ -69,7 +69,7 @@
             >
           </ion-col>
           <ion-col>
-            <ion-button color="primary" size="large">Find By</ion-button>
+            <ion-button color="primary" size="large" router-link="/patients/search/by_arv">Find By</ion-button>
           </ion-col>
           <ion-col>
             <ion-button color="success" size="large"
@@ -236,9 +236,6 @@ export default defineComponent({
     };
   },
   mounted() {
-    if (!sessionStorage.apiKey) {
-      this.$router.push("/login");
-    } else {
       if (
         !Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")
       ) {
@@ -248,7 +245,6 @@ export default defineComponent({
         this.applicationIcon = sessionStorage.applicationImage;
         this.loadApplicationData();
       }
-    }
   },
 });
 </script>
