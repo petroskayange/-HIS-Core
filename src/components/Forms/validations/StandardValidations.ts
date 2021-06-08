@@ -9,6 +9,12 @@ function required(value: any): null | Array<string> {
     return null
 }
 
+function isMWPhoneNumber(val: any) {
+    //Regex source: https://gist.github.com/kwalter94/1861f1f0fa192382a75a445ad70f07ec
+    const validation = /^(\+?265|0)(((88|99)\d{7})|(1\d{6})|(2\d{8})|(31\d{8}))$/
+    return !val || !val.value.match(validation) ? ['Not a valid phone number']: null
+}
+
 function isName(value: any): null | Array<string> {
     const validation = /^(?=.{2,100}$)[a-z!A-Z]+(?:['_.\-!\][a-z]+[a-z!A-Z])*$/
     return !value || !value.label.match(validation) ? ['Invalid name Input']: null
@@ -30,6 +36,7 @@ function rangeOf(val: any, min: number, max: number): null | Array<string> {
 
 export default {
     required,
+    isMWPhoneNumber,
     isName,
     isNumber,
     hasLengthRangeOf,
