@@ -1,7 +1,7 @@
 <template>
 <ion-grid>
         <ion-row >
-            <ion-col v-if="config.prepend" size-md="2">
+            <ion-col v-if="config && config.prepend" size-md="2">
                 <p>{{config.prependValue}}</p>
             </ion-col>
             <ion-col size-md="">
