@@ -1,20 +1,21 @@
 <template>
-<ion-grid>
-        <ion-row >
-            <ion-col v-if="config && config.prepend" size-md="2">
-                <p>{{config.prependValue}}</p>
-            </ion-col>
-            <ion-col size-md="">
-                <base-input :value="value"/>
-            </ion-col>
-        </ion-row>
-      </ion-grid>
-    <!-- <base-input :value="value"/> -->
-    <ion-list v-if="listData.length > 0">
-        <ion-item button v-for="(item, index) in listData" :key="index" @click="onselect(item)"> 
-            <ion-label> {{item.label}} </ion-label>
-        </ion-item>
-    </ion-list>
+    <view-port>
+        <ion-grid>
+            <ion-row >
+                <ion-col v-if="config && config.prepend" size-md="2">
+                    <p>{{config.prependValue}}</p>
+                </ion-col>
+                <ion-col size-md="">
+                    <base-input :value="value"/>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <ion-list v-if="listData.length > 0">
+            <ion-item button v-for="(item, index) in listData" :key="index" @click="onselect(item)"> 
+                <ion-label> {{item.label}} </ion-label>
+            </ion-item>
+        </ion-list>
+    </view-port>   
     <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress" :disabled="false"> </his-keyboard>
 </template>
 <script lang="ts">
@@ -26,8 +27,9 @@ import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 import { TextInput } from '@/components/FormElements/Interfaces/TextConfig'
+import ViewPort from "@/components/DataViews/ViewPort.vue"
 export default defineComponent({
-    components: { BaseInput, HisKeyboard, IonList, IonItem, IonLabel },
+    components: { BaseInput, HisKeyboard, ViewPort, IonList, IonItem, IonLabel },
     data: ()=>({ 
         value: '',
         keyboard: QWERTY,

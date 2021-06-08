@@ -30,22 +30,21 @@ export default defineComponent({
     },
     disabled: {
       type: Boolean,
-      default: () => true,
+      default: () => false,
     }
   },
 });
 </script>
 <style scoped>
 .input_display {
-  border: 1px solid rgb(94, 91, 91);
-  border-radius: 5px;
-  width: 100%;
-  font-family: Nimbus Sans L, Arial Narrow, sans-serif;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid silver;
+  width: 99.5%;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
   font-size: 2.2em;
-  background-color: rgb(231, 231, 231);
-  color: #000;
-  padding: 5px;
-  margin-bottom: 5px;
-  border-radius: 5px;
+  background: none;
+  padding-left: 5px;
 }
 </style>

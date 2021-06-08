@@ -1,11 +1,13 @@
 <template>
     <div>
-        <his-text-input :value="selected" /> 
-        <ion-list>
-            <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
-                <ion-label> {{item.label}} </ion-label>
-            </ion-item>
-        </ion-list>
+        <view-port>
+            <his-text-input :value="selected" /> 
+            <ion-list>
+                <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
+                    <ion-label> {{item.label}} </ion-label>
+                </ion-item>
+            </ion-list>
+        </view-port>
         <his-keyboard v-if="showKeyboard" :kbConfig="keyboard" :onKeyPress="keypress"/>
     </div>
 </template>
@@ -13,7 +15,6 @@
 import { defineComponent } from 'vue'
 import { Option } from '../Forms/FieldInterface'
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
-
 export default defineComponent({
     name: "HisSelect",
     mixins: [SelectMixin],
