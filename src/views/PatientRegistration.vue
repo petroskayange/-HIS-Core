@@ -38,52 +38,31 @@ export default defineComponent({
             
             if (attributesPayload.length >= 1) {
                 await PersonAttributeService.create(attributesPayload)  
-            } 
+            }
         }
         alert('Record has been Created!')
       }catch(e) {
         alert('Unable to create record')
-      }
-       
+      } 
     },
     resolvePersonAttributes(form: Record<string, Option> | Record<string, null>, personId: number) {
-        const filter = [
-            'person_regiment_id',
-            'person_date_joined_military',
-            'rank'
-        ]
-        const data: Record<string, string> = this.resolveData(form, filter)
+        const data: Record<string, string> = this.resolveData(form, 'person_attributes')
         return this.generatePersonAttributes(data, personId)
     },
     resolvePerson(form: any) {
-        const filter = [
-            'given_name',
-            'family_name',
-            'gender',
-            'home_district',
-            'occupation',
-            'home_traditional_authority',
-            'home_village',
-            'current_district',
-            'current_traditional_authority',
-            'current_village',
-            'landmark',
-            'cell_phone_number',
-            'facility_name',
-            'patient_type',
-            'relationship'
-        ]
-        return {...this.resolveBirthDate(form), ...this.resolveData(form, filter)}
+        return {...this.resolveBirthDate(form), ...this.resolveData(form, 'person')}
     },
-    resolveData(form: Record<string, Option> | Record<string, null>, filter: Array<string>) {
+    resolveData(form: Record<string, Option> | Record<string, null>, group: string) {
         const output: any = {} 
         for(const name in form) {
             const data = form[name]
-            if (!filter.includes(name)) continue
+            const filter = this.fields.filter(item => {
+                return item.id === name && item.group === group
+            })
 
-            if (data && data.value != null) {
-                output[name] = data.value
-            }
+            if (filter.length <= 0) continue 
+
+            if (data && data.value != null) output[name] = data.value
         }
         return output
     },
@@ -172,6 +151,7 @@ export default defineComponent({
                 id: 'given_name',
                 helpText: 'First name',
                 type: FieldType.TT_TEXT,
+                group: 'person',
                 validation: (val: any) => Validation.isName(val),
                 options: async (form: any) => {
                     if (!form.given_name || form.given_name.value === null) return []
@@ -184,6 +164,7 @@ export default defineComponent({
                 id: 'family_name',
                 helpText: "Last name",
                 type: FieldType.TT_TEXT,
+                group: 'person',
                 validation: (val: any) => Validation.isName(val),
                 options: async (form: any) => {
                     if (!form.family_name || form.family_name.value === null) return []
@@ -196,6 +177,7 @@ export default defineComponent({
                 id: 'gender',
                 helpText: 'Gender',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 options: () => ([
@@ -268,6 +250,7 @@ export default defineComponent({
                 id: 'home_region',
                 helpText: 'Region of origin',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
@@ -276,6 +259,7 @@ export default defineComponent({
                 id: 'home_district',
                 helpText: 'Home District',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 requireNext: false,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 options: (form: any) => this.getDistricts(form.home_region.value)
@@ -284,6 +268,7 @@ export default defineComponent({
                 id: 'home_traditional_authority',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 requireNext: false,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 validation: (val: any) => Validation.required(val),
@@ -293,6 +278,7 @@ export default defineComponent({
                 id: 'home_village',
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
@@ -302,6 +288,7 @@ export default defineComponent({
                 id: 'current_region',
                 helpText: 'Current Region',
                 requireNext: false,
+                group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.getRegions()
@@ -310,6 +297,7 @@ export default defineComponent({
                 id: 'current_district',
                 helpText: 'District',
                 requireNext: false,
+                group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getDistricts(form.current_region.value)
@@ -318,6 +306,7 @@ export default defineComponent({
                 id: 'current_traditional_authority',
                 helpText: 'Current TA',
                 requireNext: false,
+                group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.current_district.value)
@@ -325,6 +314,7 @@ export default defineComponent({
             {
                 id: 'current_village',
                 helpText: 'Current Village',
+                group: 'person',
                 requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
@@ -333,6 +323,7 @@ export default defineComponent({
             {
                 id: 'landmark',
                 helpText: 'Closest Landmark or Plot Number',
+                group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
@@ -352,12 +343,14 @@ export default defineComponent({
             {
                 id: 'cell_phone_number',
                 helpText: 'Cell phone number',
+                group: 'person',
                 type: FieldType.TT_NUMBER,
                 validation: (val: any) => Validation.isMWPhoneNumber(val)
             },
             {
                 id: 'patient_type',
                 helpText: 'Type of patient',
+                group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
@@ -369,6 +362,7 @@ export default defineComponent({
                 id: 'location',
                 helpText: 'Please select facility name',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => form.patient_type.label === 'External consultation',  
                 options: () => this.getFacilities()
@@ -377,6 +371,7 @@ export default defineComponent({
                 id: 'occupation',
                 helpText: 'Occupation',
                 type: FieldType.TT_SELECT,
+                group: 'person_attributes',
                 condition: () => this.isMilitarySite,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
@@ -389,6 +384,7 @@ export default defineComponent({
                 id: 'person_regiment_id',
                 helpText: 'Regiment ID',
                 type: FieldType.TT_NUMBER,
+                group: 'person_attributes',
                 condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 validation: (val: any) => Validation.required(val), 
             },
@@ -396,6 +392,7 @@ export default defineComponent({
                 id: 'person_date_joined_military',
                 helpText: 'Date joined MDF',
                 type: FieldType.TT_TEXT,
+                group: 'person_attributes',
                 condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 validation: (val: any) => Validation.required(val)
             },
@@ -403,6 +400,7 @@ export default defineComponent({
                 id: 'rank',
                 helpText: 'Rank',
                 type: FieldType.TT_SELECT,
+                group: 'person_attributes',
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => form.occupation && form.occupation.value.match(/MDF/i),
                 options: () => this.mapToOption([
@@ -427,6 +425,7 @@ export default defineComponent({
                 id: 'relationship',
                 helpText: 'Register guardian?',
                 type: FieldType.TT_SELECT,
+                group: 'person',
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption(['Yes', 'No'])
             }
