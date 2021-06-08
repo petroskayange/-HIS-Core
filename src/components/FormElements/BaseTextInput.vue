@@ -1,6 +1,6 @@
 <template>
   <ion-input
-    :value="value"
+    v-model="text"
     :type="type"
     class="input_display"
     :disabled="disabled"
@@ -12,6 +12,14 @@ import { IonInput, IonGrid, IonRow, IonCol } from "@ionic/vue";
 export default defineComponent({
   name: "HisInput",
   components: { IonInput },
+  data:()=>({
+    text: '' as string | number
+  }),
+  watch: {
+    value(val: number | string) {
+      this.text = val
+    }
+  },
   props: {
     value: {
       required: false,
