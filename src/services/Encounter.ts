@@ -1,6 +1,6 @@
-import ApiClient from "./api_client"
+import {Service} from "@/services/service"
 
-export interface Encounter {
+export interface NewEncounter {
     encounter_type_id: number;
     patient_id: number;
     program_id: number;
@@ -8,10 +8,15 @@ export interface Encounter {
     encounter_type_name?: string;
 }
 
-export async function createEncounter(data: Encounter) {
-    const req = await ApiClient.post('/encounters', data)
-    
-    if (req && req.ok) return req?.json()
+export class EncounterService extends Service {
+    encounter: NewEncounter
 
-    throw 'Unable to save Encounter'
+    constructor(data: NewEncounter) {
+        super()
+        this.encounter = data
+    }
+
+    create() {
+        return Service.postJson('/encounters', this.encounter)
+    }
 }
