@@ -10,7 +10,7 @@ export default defineComponent({
   components: { HisStandardForm },
   methods: {
     onFinish(formData: any) {
-      const ARVNumber = this.fields[0].prependValue + formData.arv_number.value;
+      const ARVNumber = this.fields[1].config.prependValue + formData.arv_number.value;
       this.fetchclient(ARVNumber);
     },
     onSubmit() {
@@ -24,7 +24,7 @@ export default defineComponent({
       if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
       const data = await response.json();
-      this.fields[0].prependValue = `${data.site_prefix}-ARV-`;
+      this.fields[1].config.prependValue = `${data.site_prefix}-ARV-`;
     },
     fetchclient: async function(arvNumber: string) {
       const response = await ApiClient.get(
@@ -62,8 +62,8 @@ export default defineComponent({
     return {
       fields: [
         {
-          id: "does_not_require_next",
-          helpText: "Click on value to proceed",
+          id: "identifier_type",
+          helpText: "Select identifier type",
           type: FieldType.TT_SELECT,
           config: {
             showKeyboard: false,
@@ -86,9 +86,11 @@ export default defineComponent({
           validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
           },
+          config: {
           prepend: true,
-          disabled: true,
           prependValue: "ARV"
+          },
+          disabled: true,
         },
       ],
     };

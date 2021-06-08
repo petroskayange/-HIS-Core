@@ -1,49 +1,31 @@
-<template> 
-      <ion-grid>
-        <ion-row >
-            <ion-col v-if="prepend" size-md="2">
-                <p>{{prependValue}}</p>
-            </ion-col>
-            <ion-col size-md="">
-            <ion-input
-                :value="value"
-                :type="type"
-                class="input_display"
-                :disabled="disabled"
-                />
-            </ion-col>
-        </ion-row>
-      </ion-grid>
-    
+<template>
+  <ion-input
+    :value="value"
+    :type="type"
+    class="input_display"
+    :disabled="disabled"
+  />
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
-import {IonInput, IonGrid, IonRow, IonCol} from '@ionic/vue'
+import { defineComponent } from "vue";
+import { IonInput, IonGrid, IonRow, IonCol } from "@ionic/vue";
 export default defineComponent({
-    name: "HisInput",
-    components: { IonInput, IonGrid, IonRow, IonCol},
-    props: {
-        value: {
-            required: false
-        },
-        type: {
-            type: String,
-            default: ()=> 'text'
-        },
-        disabled:{
-            type: Boolean,
-            default: () => true
-        },
-        prepend: {
-            type: Boolean,
-            default: ()=> false
-        },
-        prependValue: {
-            type: String,
-            default: ()=> ''
-        }
+  name: "HisInput",
+  components: { IonInput },
+  props: {
+    value: {
+      required: false,
+    },
+    type: {
+      type: String,
+      default: () => "text",
+    },
+    disabled: {
+      type: Boolean,
+      default: () => true,
     }
-})
+  },
+});
 </script>
 <style scoped>
 .input_display {

@@ -10,8 +10,8 @@ export interface ObsValue {
 }
 
 export interface Observation {
-    encounter_id: number,
-    observations: Array<ObsValue>,
+    encounter_id: number;
+    observations: Array<ObsValue>;
 }
 
 export async function createObservation(data: Observation) {
@@ -19,5 +19,10 @@ export async function createObservation(data: Observation) {
     
     if (req && req.ok) return req?.json()
 
+    throw 'Unable to save Observations'
+}
+export async function getObservation(patientID: number, conceptID: number) {
+    const req = await ApiClient.get(`/observations?person_id=${patientID}&concept_id=${conceptID}`)
+    if (req && req.ok) return req?.json()
     throw 'Unable to save Observations'
 }

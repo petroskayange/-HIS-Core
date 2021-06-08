@@ -104,6 +104,7 @@ import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
 import { Role } from "@/interfaces/role";
 import { Observation } from "@/interfaces/observation";
+import { getObservation } from '@/services/Observations'
 import { Patientservice } from "@/services/patient_service";
 import dayjs from "dayjs";
 export default defineComponent({
@@ -194,11 +195,9 @@ export default defineComponent({
       .then(this.fetchGuardians)
     },
     fetchAlerts: async function() {
-      const response = await ApiClient.get(`/observations?person_id=${this.patientID}&concept_id=7755`);
+      const data: Observation[] = await getObservation(parseInt(this.patientID), 7755);
 
-      if (!response || response.status !== 200) return;
-      const data: Observation[] = await response.json();
-      const sideEffects: Observation[] = data.filter(observation=>{
+      const sideEffects= data.filter(observation=>{
         return observation.children[0].value_coded == 1065;
       });
 

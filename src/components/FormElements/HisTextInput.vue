@@ -1,5 +1,14 @@
 <template>
-    <base-input :value="value" :prepend="prepend" :prependValue="prependValue"/>
+<ion-grid>
+        <ion-row >
+            <ion-col v-if="config.prepend" size-md="2">
+                <p>{{config.prependValue}}</p>
+            </ion-col>
+            <ion-col size-md="">
+                <base-input :value="value"/>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
     <!-- <base-input :value="value"/> -->
     <ion-list v-if="listData.length > 0">
         <ion-item button v-for="(item, index) in listData" :key="index" @click="onselect(item)"> 
@@ -9,14 +18,14 @@
     <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress" :disabled="false"> </his-keyboard>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import BaseInput from "@/components/FormElements/BaseTextInput.vue"
 import HisKeyboard from "@/components/Keyboard/HisKeyboard.vue"
 import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
-
+import { TextInput } from '@/components/FormElements/Interfaces/TextConfig'
 export default defineComponent({
     components: { BaseInput, HisKeyboard, IonList, IonItem, IonLabel },
     data: ()=>({ 
@@ -33,17 +42,12 @@ export default defineComponent({
             type: Function,
             required: false,
         },
+        config: {
+            type: Object as PropType<TextInput>
+        },
         clear: {
             type: Boolean
         },
-        prepend: {
-            type: Boolean,
-            default: ()=> false
-        },
-        prependValue: {
-            type: String,
-            default: ()=> ''
-        }
     },
     methods: {
         onselect(item: Option){
