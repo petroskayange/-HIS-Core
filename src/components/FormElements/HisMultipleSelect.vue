@@ -1,12 +1,14 @@
 <template>
     <div>
-      <his-text-input :value="selected" :disabled="false" /> 
+      <view-port :showFull="!showKeyboard">
+      <his-text-input :value="selected" :disabled="false"/> 
       <ion-list>
-        <ion-item v-for="(entry, index) in filtered" :key="index">
+        <ion-item v-for="(entry, index) in filtered" :key="index" color="light">
           <ion-label> {{ entry.label }} </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
       </ion-list>
+      </view-port>
       <his-keyboard v-if="showKeyboard" :kbConfig="keyboard" :onKeyPress="keypress"/>
     </div>
 </template>
