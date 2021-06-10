@@ -209,7 +209,6 @@ export default defineComponent({
             {
                 id: 'birth_month',
                 helpText: 'Month of Birth',
-                requireNext: false,
                 type: FieldType.TT_SELECT,
                 options: () => MonthOptions,
                 condition: (form: any) => !form.birth_year.value.match(/Unknown/i),
@@ -268,8 +267,11 @@ export default defineComponent({
                 id: 'home_traditional_authority',
                 helpText: 'Home TA',
                 type: FieldType.TT_SELECT,
-                group: 'person',
                 requireNext: false,
+                config: {
+                    showKeyboard: true
+                },
+                group: 'person',
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 validation: (val: any) => Validation.required(val),
                 options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
@@ -279,6 +281,9 @@ export default defineComponent({
                 helpText: 'Home Village',
                 type: FieldType.TT_SELECT,
                 group: 'person',
+                config: {
+                    showKeyboard: true
+                },
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
