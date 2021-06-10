@@ -1,17 +1,9 @@
 <template>
   <view-port>
-  <ion-list>
+  <ion-list inset>
     <ion-item v-for="(item, index) in fieldItems" :key="index">
-      <ion-grid>
-          <ion-row >
-            <ion-col>
-                {{item.label}}
-            </ion-col>
-            <ion-col>
-                {{item.value}}
-            </ion-col>
-          </ion-row>
-      </ion-grid>
+      <ion-label> {{item.label}} </ion-label>
+      <ion-label slot="end"> {{item.value}} </ion-label>
     </ion-item>
   </ion-list>
   </view-port>
@@ -19,11 +11,11 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { IonList, IonItem, IonGrid, IonRow, IonCol } from "@ionic/vue";
+// import { IonLabel, IonList } from "@ionic/vue";
 import { Option } from "@/components/Forms/FieldInterface"
 import ViewPort from "./ViewPort.vue";
 export default defineComponent({
-    components: { IonList, IonItem, IonGrid, IonRow, IonCol, ViewPort },
+    components: { ViewPort },
     props: {
         fieldItems: {
             type: Object as PropType<Option[]>

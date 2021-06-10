@@ -1,6 +1,6 @@
 <template>
     <div>
-        <view-port :height="showKeyboard ? 390 : 589">
+        <view-port :showFull="!showKeyboard">
             <his-text-input :value="selected" /> 
             <ion-list>
                 <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 

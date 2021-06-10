@@ -60,7 +60,7 @@ export default defineComponent({
 <style scoped>
 .key-b {
   left: 0;
-  bottom: 60px;
+  bottom: 0;
   position: absolute;
   width: 100%;
   border-radius: 15px;

@@ -1,5 +1,5 @@
 <template>
-    <view-port>
+    <view-port :showFull="false">
         <ion-grid>
             <ion-row >
                 <ion-col v-if="config && config.prepend" size-md="2">
