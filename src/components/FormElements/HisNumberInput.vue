@@ -31,7 +31,10 @@ export default defineComponent({
     },
     watch: {
         clear(val: boolean){
-            if (val) this.value = ''
+            if (val) {
+                this.value = ''
+                this.$emit('onClear')
+            }
         }
     }
 })
