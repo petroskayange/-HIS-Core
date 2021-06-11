@@ -31,7 +31,7 @@ export class Patientservice extends Service {
         const data =  [
             this.getFullName(),
             `(${this.getGender()})`,
-            this.getDateOfBirth(),
+            this.getBirthdate(),
             `, ${this.getCurrentDistrict()}`
         ]
         return data.join(' ')
@@ -45,12 +45,29 @@ export class Patientservice extends Service {
         return this.patient.person.gender
     }
 
-    getDateOfBirth() {
+    getBirthdate() {
         return this.patient.person.birthdate
     }
 
     getFullName() {
         return getFullName(this.patient.person.names[0]);
+    }
+
+    getNationalID() {
+        const ids = this.patient.patient_identifiers.filter(item => item.type.name === 'National id')
+        return ids.length >= 1 ? ids[0].identifier : 'Unknown'
+    }
+
+    getHomeDistrict() {
+        return this.getAddresses().ancestryDistrict
+    }
+
+    getHomeVillage() {
+        return this.getAddresses().ancestryVillage
+    }
+
+    getCurrentTA() {
+        return this.getAddresses().currentTA
     }
 
     getAttribute(personAttributeTypeID: number) {
