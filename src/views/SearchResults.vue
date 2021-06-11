@@ -3,10 +3,14 @@
         <ion-content> 
             <ion-row> 
                 <ion-col> 
-                    <his-select :options="getPatientOptions" :fdata="{}"> </his-select>
+                    <h2> Results </h2>
+                    <his-select :options="getPatientOptions" @onValue="setDemographics" :fdata="{}"> </his-select>
                 </ion-col>
                 <ion-col>
-                    <!-- TODO: add patient demographics -->
+                    <h2> Patient Details </h2>
+                    <view-port> 
+                        <list-view :fieldItems="this.demographics"> </list-view> 
+                    </view-port>
                 </ion-col>
             </ion-row>
         </ion-content>
@@ -19,7 +23,7 @@
                     New Search
                 </ion-button>
                 <ion-button slot="end" color="primary" size="large">
-                    Clear
+                    New Patient
                 </ion-button>
                 <ion-button slot="end" color="success" size="large">
                     Finish
@@ -35,11 +39,22 @@ import { Patientservice } from "@/services/patient_service"
 import { Patient } from "@/interfaces/patient"
 import { Option } from "@/components/Forms/FieldInterface"
 import HisSelect from "@/components/FormElements/HisSelect.vue"
+import ListView from "@/components/DataViews/HisFormSummary.vue"
+import ViewPort from "@/components/DataViews/ViewPort.vue"
+
 export default defineComponent({
-    components: { IonRow, IonPage, IonFooter, IonContent, IonButton, IonCol, IonToolbar, HisSelect},
+    components: { IonRow, IonPage, IonFooter, IonContent, IonButton, IonCol, IonToolbar, HisSelect, ListView, ViewPort},
     data:() => ({
-        patientNames: [] as Array<Option>,
-        results: {} as Array<Patient>,
+        demographics: [
+            { label: 'Patient ID', value: ''},
+            { label: 'Name', value: ''},
+            { label: 'Gender', value:''},
+            { label: 'Birthdate', value: '' },
+            { label: 'Home District', value: ''},
+            { label: 'Home Village', value: '' },
+            { label: 'Current District', value: ''},
+            { label: 'Current T/A', value: ''}
+        ] as Array<Option>,
         gname: '' as any,
         fname: '' as any,
         gender: '' as any
@@ -53,12 +68,54 @@ export default defineComponent({
         async getPatientOptions(){
             const patients = await Patientservice.searchByName(this.gname, this.fname)
             return patients.map((item: Patient) => {
+                console.log(item)
                 const patient = new Patientservice(item)
                 return {
                     label: patient.getPatientInfoString(),
-                    value: patient.getID()
+                    value: patient.getID(),
+                    other: patient
                 }
             })
+        },
+        setDemographics({other}: any) {
+            if (typeof other != 'object') return
+          
+            const patientService = other
+
+            this.demographics = [
+                {
+                    label: 'Patient ID',
+                    value: patientService.getNationalID()
+                },
+                {
+                    label: 'Name',
+                    value: patientService.getFullName()
+                },
+                {
+                    label: 'Gender',
+                    value: patientService.getGender()
+                },
+                {
+                    label: 'Birthdate',
+                    value: patientService.getBirthdate()
+                },
+                {
+                    label: 'Home District',
+                    value: patientService.getHomeDistrict()
+                },
+                {
+                    label: 'Home Village',
+                    value: patientService.getHomeVillage()
+                },
+                {
+                    label: 'Current District',
+                    value: patientService.getCurrentDistrict()
+                },
+                {
+                    label: 'Current T/A',
+                    value: patientService.getCurrentTA()
+                }
+            ]
         }
     }
 })
