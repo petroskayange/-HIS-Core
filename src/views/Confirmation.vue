@@ -43,13 +43,13 @@
         <ion-col size="4" v-for="(card, index) in cards" :key="index">
           <ion-card>
             <ion-card-header>
-              <ion-card-title>{{card.title}}</ion-card-title>
+              <ion-card-title>{{ card.title }}</ion-card-title>
             </ion-card-header>
 
             <ion-card-content>
-
               <h2 v-for="(info, id) in card.data" :key="id">
-              {{info.label}} {{ info.value }}</h2>
+                {{ info.label }} <strong> {{ info.value }}</strong>
+              </h2>
             </ion-card-content>
           </ion-card>
         </ion-col>
@@ -83,6 +83,10 @@
 </template>
 
 <script lang="ts">
+interface DataInterface {
+  label: string;
+  value: string;
+}
 import {
   IonContent,
   IonHeader,
@@ -104,8 +108,10 @@ import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
 import { Role } from "@/interfaces/role";
 import { Observation } from "@/interfaces/observation";
-import { getObservation } from '@/services/Observations'
+import { getObservation } from "@/services/Observations";
 import { Patientservice } from "@/services/patient_service";
+import { ProgramService } from "@/services/program_service";
+import { RelationshipService } from "@/services/relationship_service";
 import dayjs from "dayjs";
 export default defineComponent({
   name: "Home",
@@ -173,31 +179,33 @@ export default defineComponent({
       this.currentTA = addresses.currentTA;
       this.currentVillage = addresses.ancestryVillage;
       this.ARVNumber = patient.getPatientIdentifier(4);
-      const ARVNumber= patient.getPatientIdentifier(4);
+      const ARVNumber = patient.getPatientIdentifier(4);
       const NPID = patient.getPatientIdentifier(3);
       this.cards.push({
-        title: 'PATIENT IDENTIFIERS',
+        title: "PATIENT IDENTIFIERS",
         data: [
           {
             label: "ARV Number",
-            value: ARVNumber
+            value: ARVNumber,
           },
           {
             label: "NPID",
-            value: NPID
-          }
-        ]
+            value: NPID,
+          },
+        ],
       });
       await this.fetchAlerts()
-      .then(this.fetchLabOrders)
-      .then(this.fetchProgramInfo)
-      .then(this.fetchOutCome)
-      .then(this.fetchGuardians)
+        .then(this.fetchLabOrders)
+        .then(this.fetchProgramInfo)
+        .then(this.fetchGuardians);
     },
-    fetchAlerts: async function() {
-      const data: Observation[] = await getObservation(parseInt(this.patientID), 7755);
+    fetchAlerts: async function () {
+      const data: Observation[] = await getObservation(
+        parseInt(this.patientID),
+        7755
+      );
 
-      const sideEffects= data.filter(observation=>{
+      const sideEffects = data.filter((observation) => {
         return observation.children[0].value_coded == 1065;
       });
 
@@ -205,51 +213,98 @@ export default defineComponent({
         title: "ALERTS",
         data: [
           {
-          label: "Side effects",
-          value: sideEffects.length
-          }
-        ]
-      }
+            label: "Side effects",
+            value: sideEffects.length,
+          },
+        ],
+      };
 
       this.cards.push(displayData);
-
     },
-    fetchLabOrders: async function() {
+    fetchLabOrders: async function () {
       const displayData = {
         title: "Labs",
-        data: [
-          
-        ]
-      }
+        data: [],
+      };
       this.cards.push(displayData);
     },
-    fetchProgramInfo: async function() {
+    fetchProgramInfo: async function () {
       const displayData = {
         title: "PROGRAM INFORMATION",
-        data: [
-          
-        ]
+        data: [] as DataInterface[],
+      };
+      let outcome = "";
+      await ProgramService.getNextTask(parseInt(this.patientID)).then(
+        (task) => {
+          displayData.data.push({
+            label: "Next Task",
+            value: task.name,
+          });
+        }
+      );
+      await ProgramService.getProgramInformation(parseInt(this.patientID)).then(
+        (task) => {
+          displayData.data.push({
+            label: "ART Duration",
+            value: `${task.art_duration} month(s) `,
+          });
+          outcome = task.current_outcome;
+        }
+      );
+      await ProgramService.getFastTrackStatus(parseInt(this.patientID)).then(
+        (task) => {
+          const data = task["Continue FT"] === true ? "Yes" : "No";
+          displayData.data.push({
+            label: "On Fast Track",
+            value: data,
+          });
+        }
+      );
+      const appointMentObs: Observation[] = await getObservation(
+        parseInt(this.patientID),
+        5096
+      );
+      if (appointMentObs.length > 0) {
+        const nextAPPT = dayjs(appointMentObs[0].value_datetime).format(
+          "DD/MMM/YYYY"
+        );
+        displayData.data.push({
+          label: "Next Appointment",
+          value: nextAPPT,
+        });
       }
       this.cards.push(displayData);
+      this.fetchOutCome(outcome);
     },
-    fetchOutCome: async function() {
+    fetchOutCome: async function (outcome: string) {
       const displayData = {
         title: "Outcome",
         data: [
-          
-        ]
-      }
+          {
+            label: "Current Outcome",
+            value: outcome,
+          },
+        ] as DataInterface[],
+      };
       this.cards.push(displayData);
     },
-    fetchGuardians: async function() {
-      const displayData = {
-        title: "GUARDIAN(s)",
-        data: [
-          
-        ]
-      }
-      this.cards.push(displayData);
-    }
+    fetchGuardians: async function () {
+      const relationships = RelationshipService.getGuardianDetails(
+        parseInt(this.patientID)
+      ).then((relationship: any) => {
+        const rel: DataInterface[] = relationship.map((r: any) => {
+          return {
+            label: r.name,
+            value: r.relationshipType,
+          };
+        });
+        const displayData = {
+          title: "GUARDIAN(s)",
+          data: { ...rel },
+        };
+        this.cards.push(displayData);
+      });
+    },
   },
   setup() {
     return {
@@ -284,26 +339,5 @@ ion-button {
 }
 ion-card {
   height: 250px;
-}
-.outlined {
-  border: solid 1px grey;
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
 }
 </style>
