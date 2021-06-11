@@ -7,9 +7,9 @@ import HisTextInput from "@/components/FormElements/BaseTextInput.vue";
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 import SelectConfig from "@/components/FormElements/Interfaces/SelectConfig"
-
+import ViewPort from "@/components/DataViews/ViewPort.vue"
 export default defineComponent({
-    components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard },
+    components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard, ViewPort },
     props: {
         config: {
             type: Object as PropType<SelectConfig>,

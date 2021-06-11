@@ -1,5 +1,10 @@
 <template> 
   <ion-page>
+    <ion-content>
+    <div v-if="showSummary">
+        <h3><b>Summary</b> </h3>
+        <his-form-summary :fieldItems="summaryData" />
+    </div>
     <div v-show="!showSummary">
         <base-form
         :fields="fields"
@@ -13,10 +18,7 @@
         @onFinish="onFinish"
         />
     </div>
-    <div v-if="showSummary">
-        <h3><b>Summary</b> </h3>
-        <his-form-summary :fieldItems="summaryData" />
-    </div>
+    </ion-content>
     <his-footer
       :showBack="showPrevBtn"
       :showNext="showNextBtn"
@@ -37,10 +39,10 @@ import HisFormSummary from "@/components/DataViews/HisFormSummary.vue"
 import { Option } from "@/components/Forms/FieldInterface"
 import { Field } from "./FieldInterface";
 import { defineComponent, PropType } from "vue";
-import { IonPage } from "@ionic/vue";
+import { IonPage, IonContent } from "@ionic/vue";
 export default defineComponent({
     name: "HisStandardForm",
-    components: { BaseForm, IonPage, HisFooter, HisFormSummary },
+    components: { BaseForm, IonPage, IonContent, HisFooter, HisFormSummary },
     props: {
         skipSummary: {
             type: Boolean,

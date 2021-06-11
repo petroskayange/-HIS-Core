@@ -72,7 +72,7 @@
             <ion-button color="primary" size="large" router-link="/patients/search/by_arv">Find By</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large"
+            <ion-button color="success" size="large" router-link="/search_patient"
               >Find or Register</ion-button
             >
           </ion-col>
