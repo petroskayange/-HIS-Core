@@ -3,6 +3,7 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 export interface Option {
     label: string;
     value: string | number;
+    other?: any;
     isChecked?: boolean;
 }
 
