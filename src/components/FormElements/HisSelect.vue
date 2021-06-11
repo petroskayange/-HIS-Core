@@ -26,6 +26,9 @@ export default defineComponent({
     async activated() {
         this.listData = await this.options(this.fdata)
     },
+    async mounted() {
+        this.listData = await this.options(this.fdata)
+    },
     methods: {
         onselect(item: Option): void {
             this.selected = item.label
