@@ -26,7 +26,7 @@ export default defineComponent({
     },
     onSubmit() {
       const data: Record<string, string> = this.resolveData(this.form)
-      this.$router.push({path: '/search_results', query: data})
+      this.$router.push({path: '/patient/search_results', query: data})
     },
     resolveData(form: Record<string, Option> | Record<string, null>) {
       const output: any = {} 
