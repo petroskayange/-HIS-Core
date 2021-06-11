@@ -2,11 +2,19 @@ import { Patient } from '@/interfaces/patient';
 import { getFullName } from '@/interfaces/name'
 import { getPersonAttribute } from '@/interfaces/personAttribute'
 import { getPatientIdentifier } from '@/interfaces/patientIdentifier'
-export class Patientservice {
+import { Service } from "@/services/service"
+
+export class Patientservice extends Service {
     patient: Patient;
     constructor(patient: Patient) {
+        super()
         this.patient = patient;
     }
+
+    public static async searchByName(givenName: string, familyName: string) {
+        return super.getJson(`/search/patients?given_name=${givenName}&family_name=${familyName}`)
+    }
+
     public static toPatient(json: string): Patient {
         return JSON.parse(json);
     }
@@ -14,9 +22,37 @@ export class Patientservice {
     public static patientToJson(value: Patient): string {
         return JSON.stringify(value);
     }
+
+    getID() {
+        return this.patient.patient_id
+    }
+
+    getPatientInfoString() {
+        const data =  [
+            this.getFullName(),
+            `(${this.getGender()})`,
+            this.getDateOfBirth(),
+            `, ${this.getCurrentDistrict()}`
+        ]
+        return data.join(' ')
+    }
+
+    getCurrentDistrict() {
+        return this.getAddresses().currentDistrict
+    }
+
+    getGender() {
+        return this.patient.person.gender
+    }
+
+    getDateOfBirth() {
+        return this.patient.person.birthdate
+    }
+
     getFullName() {
         return getFullName(this.patient.person.names[0]);
     }
+
     getAttribute(personAttributeTypeID: number) {
         return getPersonAttribute(this.patient.person.person_attributes, personAttributeTypeID);
     }
