@@ -94,7 +94,6 @@ import {
 } from "@ionic/vue";
 import { Patientservice } from "@/services/patient_service";
 import { Patient } from "@/interfaces/patient";
-import { Option } from "@/components/Forms/FieldInterface";
 import ResultCard from "@/components/DataViews/HisResultCard.vue";
 
 export default defineComponent({
@@ -118,17 +117,7 @@ export default defineComponent({
     results: [],
     selectedPerson: {} as any,
     isPersonSelected: false,
-    demographics: [] as Array<Option>,
-    defaultDemographics: [
-      { label: "Patient ID", value: "-" },
-      { label: "Name", value: "-" },
-      { label: "Gender", value: "-" },
-      { label: "Birthdate", value: "-" },
-      { label: "Home District", value: "-" },
-      { label: "Home Village", value: "-" },
-      { label: "Current District", value: "-" },
-      { label: "Current T/A", value: "-" },
-    ] as Array<Option>,
+    demographics: [] as any
   }),
   computed: {
     resultTitle(): string {
@@ -152,7 +141,6 @@ export default defineComponent({
     $route: {
       async handler({ query }: any) {
         this.selectedPerson = {};
-        this.demographics = this.defaultDemographics;
         this.isPersonSelected = false;
         this.gname = query.given_name;
         this.fname = query.family_name;
@@ -162,6 +150,7 @@ export default defineComponent({
           this.fname,
           this.gender
         );
+        this.showDetails({});
       },
       deep: true,
       immediate: true,
@@ -189,39 +178,42 @@ export default defineComponent({
       this.selectedPerson = person;
       this.showDetails(person);
     },
+    getPatientProp(patient: any, prop: string) {
+      return prop in patient ? patient[prop]() : '-'
+    },
     showDetails(person: any) {
       this.demographics = [
         {
           label: "Patient ID",
-          value: person.getNationalID(),
+          value: this.getPatientProp(person, 'getNationalID')
         },
         {
           label: "Name",
-          value: person.getFullName(),
+          value: this.getPatientProp(person, 'getFullName'),
         },
         {
           label: "Gender",
-          value: person.getGender(),
+          value: this.getPatientProp(person, 'getGender'),
         },
         {
           label: "Birthdate",
-          value: person.getBirthdate(),
+          value: this.getPatientProp(person, 'getBirthdate'),
         },
         {
           label: "Home District",
-          value: person.getHomeDistrict(),
+          value: this.getPatientProp(person, 'getHomeDistrict'),
         },
         {
           label: "Home Village",
-          value: person.getHomeVillage(),
+          value: this.getPatientProp(person, 'getHomeVillage'),
         },
         {
           label: "Current District",
-          value: person.getCurrentDistrict(),
+          value: this.getPatientProp(person, 'getCurrentDistrict'),
         },
         {
           label: "Current T/A",
-          value: person.getCurrentTA(),
+          value: this.getPatientProp(person, 'getCurrentTA'),
         },
       ];
     },

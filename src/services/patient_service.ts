@@ -67,7 +67,7 @@ export class Patientservice extends Service {
     }
 
     getCurrentTA() {
-        return this.getAddresses().currentTA
+        return this.getAddresses().ancestryTA
     }
 
     getAttribute(personAttributeTypeID: number) {
