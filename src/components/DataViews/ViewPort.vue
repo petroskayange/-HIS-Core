@@ -22,12 +22,12 @@ export default defineComponent({
         width: 100%;
         border-radius: 10px;
         padding: 5px;
+        overflow-y: scroll;
     }
     .full {
-        max-height: 100%;
+        height: 80vh;
     }
     .half {
-        max-height: 350px;
-        overflow-x: scroll;
+        height: 50vh;
     }
 </style>
