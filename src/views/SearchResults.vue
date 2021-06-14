@@ -39,7 +39,7 @@
                 <ion-button color="primary" size="large" slot="end">
                     New Patient
                 </ion-button>
-                <ion-button v-if="isPersonSelected" color="success" size="large" slot="end">
+                <ion-button v-if="isPersonSelected" color="success" size="large" :router-link="confirmationPageUrl" slot="end">
                     Continue
                 </ion-button>
             </ion-toolbar>
@@ -62,7 +62,7 @@ export default defineComponent({
         fname: '' as any,
         gender: '' as any,
         results: [],
-        selectedPerson: {},
+        selectedPerson: {} as any,
         isPersonSelected: false,
         demographics: [
             { label: 'Patient ID', value: '-'},
@@ -84,6 +84,9 @@ export default defineComponent({
         },
         genderIcon(): any {
             return this.gender === 'M' ? man : woman
+        },
+        confirmationPageUrl(): string {
+           return `/patients/confirm/${this.selectedPerson.getID()}` 
         }
     },
     async created() {
