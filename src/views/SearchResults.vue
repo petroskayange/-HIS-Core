@@ -3,14 +3,28 @@
         <ion-content> 
             <ion-row> 
                 <ion-col> 
-                    <h2> Results </h2>
-                    <his-select :options="getPatientOptions" @onValue="setDemographics" :fdata="{}"> </his-select>
+                    <result-card :title="resultTitle" :subtitle="resultSubtitle" :icon="genderIcon" />
                 </ion-col>
-                <ion-col>
-                    <h2> Patient Details </h2>
-                    <view-port> 
-                        <list-view :fieldItems="this.demographics"> </list-view> 
-                    </view-port>
+            </ion-row>
+            <ion-row> 
+                <ion-col size="5"> 
+                    <div class="large-card"> 
+                        <ion-list>
+                            <ion-item button v-for="(result, index) in results" :key="index" :detail="true" @click="showDetails(result.other)">
+                                {{result.label}}
+                            </ion-item>
+                        </ion-list>
+                    </div>
+                </ion-col>
+                <ion-col size="7">
+                    <div class="large-card"> 
+                        <ion-list> 
+                            <ion-item v-for="(opt, index) in demographics" :key="index" inset="none">
+                                <ion-label> {{opt.label}} </ion-label>  
+                                <ion-label slot="end"> {{opt.value}} </ion-label>
+                            </ion-item>
+                        </ion-list>
+                    </div>
                 </ion-col>
             </ion-row>
         </ion-content>
@@ -26,7 +40,7 @@
                     New Patient
                 </ion-button>
                 <ion-button slot="end" color="success" size="large">
-                    Finish
+                    Continue
                 </ion-button>
             </ion-toolbar>
         </ion-footer>
@@ -34,41 +48,52 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import {IonRow, IonPage, IonCol, IonContent, IonButton, IonFooter, IonToolbar} from "@ionic/vue"
+import { man, woman } from 'ionicons/icons';
+import {IonRow, IonLabel, IonPage, IonCol, IonContent, IonButton, IonFooter, IonToolbar, IonList, IonItem} from "@ionic/vue"
 import { Patientservice } from "@/services/patient_service"
 import { Patient } from "@/interfaces/patient"
 import { Option } from "@/components/Forms/FieldInterface"
-import HisSelect from "@/components/FormElements/HisSelect.vue"
-import ListView from "@/components/DataViews/HisFormSummary.vue"
-import ViewPort from "@/components/DataViews/ViewPort.vue"
+import ResultCard from "@/components/DataViews/HisResultCard.vue"
 
 export default defineComponent({
-    components: { IonRow, IonPage, IonFooter, IonContent, IonButton, IonCol, IonToolbar, HisSelect, ListView, ViewPort},
+    components: {ResultCard, IonLabel, IonRow, IonPage, IonFooter, IonContent, IonButton, IonCol, IonToolbar, IonList, IonItem},
     data:() => ({
-        demographics: [
-            { label: 'Patient ID', value: ''},
-            { label: 'Name', value: ''},
-            { label: 'Gender', value:''},
-            { label: 'Birthdate', value: '' },
-            { label: 'Home District', value: ''},
-            { label: 'Home Village', value: '' },
-            { label: 'Current District', value: ''},
-            { label: 'Current T/A', value: ''}
-        ] as Array<Option>,
         gname: '' as any,
         fname: '' as any,
-        gender: '' as any
+        gender: '' as any,
+        results: [],
+        demographics: [
+            { label: 'Patient ID', value: '-'},
+            { label: 'Name', value: '-'},
+            { label: 'Gender', value:'-'},
+            { label: 'Birthdate', value: '-' },
+            { label: 'Home District', value: '-'}, 
+            { label: 'Home Village', value: '-' },
+            { label: 'Current District', value: '-'},
+            { label: 'Current T/A', value: '-'}
+        ] as Array<Option>
     }),
+    computed: {
+        resultTitle(): string {
+            return `${this.results.length} Result(s) found`
+        },
+        resultSubtitle(): string {
+            return `Search term ${this.gname} ${this.fname}`
+        },
+        genderIcon(): any {
+            return this.gender === 'M' ? man : woman
+        }
+    },
     async created() {
-        this.gname = this.$route.query.given_name
-        this.fname = this.$route.query.family_name
-        this.gender = this.$route.query.gender
+        this.gname = this.$route.query.given_name || ''
+        this.fname = this.$route.query.family_name || ''
+        this.gender = this.$route.query.gender || ''
+        this.results = await this.fetchResults(this.gname, this.fname, this.gender)
     },
     methods: {
-        async getPatientOptions(){
-            const patients = await Patientservice.searchByName(this.gname, this.fname)
+        async fetchResults(gname: string, fname: string, gender: string){
+            const patients = await Patientservice.searchByName(gname, fname, gender)
             return patients.map((item: Patient) => {
-                console.log(item)
                 const patient = new Patientservice(item)
                 return {
                     label: patient.getPatientInfoString(),
@@ -77,46 +102,54 @@ export default defineComponent({
                 }
             })
         },
-        setDemographics({other}: any) {
-            if (typeof other != 'object') return
-          
-            const patientService = other
-
+        showDetails(person: any) {
             this.demographics = [
                 {
                     label: 'Patient ID',
-                    value: patientService.getNationalID()
+                    value: person.getNationalID()
                 },
                 {
                     label: 'Name',
-                    value: patientService.getFullName()
+                    value: person.getFullName()
                 },
                 {
                     label: 'Gender',
-                    value: patientService.getGender()
+                    value: person.getGender()
                 },
                 {
                     label: 'Birthdate',
-                    value: patientService.getBirthdate()
+                    value: person.getBirthdate()
                 },
                 {
                     label: 'Home District',
-                    value: patientService.getHomeDistrict()
+                    value: person.getHomeDistrict()
                 },
                 {
                     label: 'Home Village',
-                    value: patientService.getHomeVillage()
+                    value: person.getHomeVillage()
                 },
                 {
                     label: 'Current District',
-                    value: patientService.getCurrentDistrict()
+                    value: person.getCurrentDistrict()
                 },
                 {
                     label: 'Current T/A',
-                    value: patientService.getCurrentTA()
+                    value: person.getCurrentTA()
                 }
             ]
         }
     }
 })
 </script>
+<style scoped>
+    .large-card {
+        border-radius: 15px;
+        border: 1px solid #ccc;
+        height: 70vh;
+        background-color: rgb(255, 255, 255);
+        overflow-y: scroll;
+        -webkit-box-shadow: 0px -2px 19px -2px rgba(196,190,196,1);
+        -moz-box-shadow: 0px -2px 19px -2px rgba(196,190,196,1);
+        box-shadow: 0px -2px 19px -2px rgba(196,190,196,1);
+    }
+</style>
