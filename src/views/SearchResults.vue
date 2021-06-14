@@ -64,7 +64,8 @@ export default defineComponent({
         results: [],
         selectedPerson: {} as any,
         isPersonSelected: false,
-        demographics: [
+        demographics: [] as Array<Option>,
+        defaultDemographics: [
             { label: 'Patient ID', value: '-'},
             { label: 'Name', value: '-'},
             { label: 'Gender', value:'-'},
@@ -96,6 +97,9 @@ export default defineComponent({
     watch: {
         '$route': {
             async handler({query}: any) {
+                this.selectedPerson = {}
+                this.demographics = this.defaultDemographics
+                this.isPersonSelected = false
                 this.gname = query.given_name
                 this.fname = query.family_name
                 this.gender = query.gender
