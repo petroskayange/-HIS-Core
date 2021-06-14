@@ -89,11 +89,17 @@ export default defineComponent({
            return `/patients/confirm/${this.selectedPerson.getID()}` 
         }
     },
-    async created() {
-        this.gname = this.$route.query.given_name || ''
-        this.fname = this.$route.query.family_name || ''
-        this.gender = this.$route.query.gender || ''
-        this.results = await this.fetchResults(this.gname, this.fname, this.gender)
+    watch: {
+        '$route': {
+            async handler({query}: any) {
+                this.gname = query.given_name
+                this.fname = query.family_name
+                this.gender = query.gender
+                this.results = await this.fetchResults(this.gname, this.fname, this.gender)
+            },
+            deep: true,
+            immediate: true
+        }
     },
     methods: {
         async fetchResults(gname: string, fname: string, gender: string){
