@@ -10,7 +10,7 @@
                 <ion-col size="5"> 
                     <div class="large-card"> 
                         <ion-list>
-                            <ion-item button v-for="(result, index) in results" :key="index" :detail="true" @click="showDetails(result.other)">
+                            <ion-item button v-for="(result, index) in results" :key="index" :detail="true" @click="onselect(result.other)">
                                 {{result.label}}
                             </ion-item>
                         </ion-list>
@@ -33,13 +33,13 @@
                 <ion-button color="danger" size="large" router-link="/">
                     Cancel
                 </ion-button>
-                <ion-button slot="end" color="primary" size="large" router-link="/search_patient">
+                <ion-button color="primary" size="large" router-link="/search_patient" slot="end" >
                     New Search
                 </ion-button>
-                <ion-button slot="end" color="primary" size="large">
+                <ion-button color="primary" size="large" slot="end">
                     New Patient
                 </ion-button>
-                <ion-button slot="end" color="success" size="large">
+                <ion-button v-if="isPersonSelected" color="success" size="large" slot="end">
                     Continue
                 </ion-button>
             </ion-toolbar>
@@ -62,6 +62,8 @@ export default defineComponent({
         fname: '' as any,
         gender: '' as any,
         results: [],
+        selectedPerson: {},
+        isPersonSelected: false,
         demographics: [
             { label: 'Patient ID', value: '-'},
             { label: 'Name', value: '-'},
@@ -101,6 +103,11 @@ export default defineComponent({
                     other: patient
                 }
             })
+        },
+        onselect(person: any) {
+            this.isPersonSelected = true
+            this.selectedPerson = person
+            this.showDetails(person)
         },
         showDetails(person: any) {
             this.demographics = [
