@@ -48,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
     component: SearchClient
   },
   {
-    path: '/patient_registration',
+    path: '/patient/registration',
     name: 'Patient Registration',
     component: PatientRegistration
   },
