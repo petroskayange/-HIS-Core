@@ -13,6 +13,7 @@
       <ion-row>
         <ion-col size="5">
           <div class="large-card">
+            <h3> Patients: </h3>
             <ion-list>
               <ion-item
                 button
@@ -29,6 +30,7 @@
         </ion-col>
         <ion-col size="7">
           <div class="large-card">
+            <h3> Details: </h3>
             <ion-list>
               <ion-item
                 v-for="(opt, index) in demographics"
@@ -222,6 +224,7 @@ export default defineComponent({
 </script>
 <style scoped>
 .large-card {
+  padding: 5%;
   border-radius: 15px;
   border: 1px solid #ccc;
   height: 70vh;
