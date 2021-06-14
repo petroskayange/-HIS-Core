@@ -141,7 +141,7 @@ export default defineComponent({
       return this.gender === "M" ? man : woman;
     },
     confirmationPageUrl(): string {
-      return `/patients/confirm/${this.selectedPerson.getID()}`;
+      return `/patients/confirm?person_id=${this.selectedPerson.getID()}`;
     },
     newPatientPageUrl(): string {
       const gender = this.gender === "M" ? "Male" : "Female";

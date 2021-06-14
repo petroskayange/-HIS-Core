@@ -329,11 +329,12 @@ export default defineComponent({
     };
   },
   mounted() {
+    this.patientID;
     this.fetchPatient();
   },
   computed: {
     patientID() {
-      const patientID = this.$route.params.person_id as any;
+      const patientID = this.$route.query.person_id as any;
       return parseInt(patientID);
     },
     isAdmin() {
