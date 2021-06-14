@@ -46,7 +46,7 @@ td {
   font-weight: bold;
   width: 90%;
 }
-@media only screen and (width: 1024px) {
+@media only screen and (min-width: 1024px) {
   .keyboard-btn {
     height: 57px;
     font-size: 1.3rem;
