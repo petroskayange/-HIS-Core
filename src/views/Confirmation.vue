@@ -100,7 +100,8 @@ import {
   IonCard,
   IonCardContent,
   IonCardTitle,
-  IonCardHeader
+  IonCardHeader,
+  alertController,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
@@ -165,42 +166,46 @@ export default defineComponent({
     fetchPatient: async function () {
       const response = await ApiClient.get(`/patients/${this.patientID}`);
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
+      if (!response || response.status !== 200) {
+        ProgramService.showError('Patient not found');
 
-      const data: Patient = await response.json();
-      const patient = new Patientservice(data);
-      this.patientName = patient.getFullName();
-      this.landmark = patient.getAttribute(19);
-      this.phoneNumber = patient.getAttribute(12);
-      const addresses = patient.getAddresses();
-      this.gender = data.person.gender;
-      this.birthdate = dayjs(data.person.birthdate).format("DD/MMM/YYYY");
-      this.ancestryDistrict = addresses.ancestryDistrict;
-      this.ancestryTA = addresses.ancestryTA;
-      this.ancestryVillage = addresses.ancestryVillage;
-      this.currentDistrict = addresses.currentDistrict;
-      this.currentTA = addresses.currentTA;
-      this.currentVillage = addresses.ancestryVillage;
-      this.ARVNumber = patient.getPatientIdentifier(4);
-      const ARVNumber = patient.getPatientIdentifier(4);
-      const NPID = patient.getPatientIdentifier(3);
-      this.cards.push({
-        title: "PATIENT IDENTIFIERS",
-        data: [
-          {
-            label: "ARV Number",
-            value: ARVNumber,
-          },
-          {
-            label: "NPID",
-            value: NPID,
-          },
-        ],
-      });
-      await this.fetchAlerts()
-        .then(this.fetchLabOrders)
-        .then(this.fetchProgramInfo)
-        .then(this.fetchGuardians);
+      } // NOTE: Targeting Firefox 65, can't `response?.status`
+      else {
+        const data: Patient = await response.json();
+        const patient = new Patientservice(data);
+        this.patientName = patient.getFullName();
+        this.landmark = patient.getAttribute(19);
+        this.phoneNumber = patient.getAttribute(12);
+        const addresses = patient.getAddresses();
+        this.gender = data.person.gender;
+        this.birthdate = dayjs(data.person.birthdate).format("DD/MMM/YYYY");
+        this.ancestryDistrict = addresses.ancestryDistrict;
+        this.ancestryTA = addresses.ancestryTA;
+        this.ancestryVillage = addresses.ancestryVillage;
+        this.currentDistrict = addresses.currentDistrict;
+        this.currentTA = addresses.currentTA;
+        this.currentVillage = addresses.ancestryVillage;
+        this.ARVNumber = patient.getPatientIdentifier(4);
+        const ARVNumber = patient.getPatientIdentifier(4);
+        const NPID = patient.getPatientIdentifier(3);
+        this.cards.push({
+          title: "PATIENT IDENTIFIERS",
+          data: [
+            {
+              label: "ARV Number",
+              value: ARVNumber,
+            },
+            {
+              label: "NPID",
+              value: NPID,
+            },
+          ],
+        });
+        await this.fetchAlerts()
+          .then(this.fetchLabOrders)
+          .then(this.fetchProgramInfo)
+          .then(this.fetchGuardians);
+      }
     },
     fetchAlerts: async function () {
       const data: Observation[] = await getObservation(
