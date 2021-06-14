@@ -89,7 +89,8 @@ export default defineComponent({
            return `/patients/confirm/${this.selectedPerson.getID()}` 
         },
         newPatientPageUrl(): string {
-            return `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${this.gender}`
+            const gender = this.gender === 'M' ? 'Male' : 'Female'
+            return `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${gender}`
         }
     },
     watch: {
