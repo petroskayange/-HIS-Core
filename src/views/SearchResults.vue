@@ -36,7 +36,7 @@
                 <ion-button color="primary" size="large" router-link="/search_patient" slot="end" >
                     New Search
                 </ion-button>
-                <ion-button color="primary" size="large" slot="end">
+                <ion-button color="primary" size="large" :router-link="newPatientPageUrl" slot="end">
                     New Patient
                 </ion-button>
                 <ion-button v-if="isPersonSelected" color="success" size="large" :router-link="confirmationPageUrl" slot="end">
@@ -87,6 +87,9 @@ export default defineComponent({
         },
         confirmationPageUrl(): string {
            return `/patients/confirm/${this.selectedPerson.getID()}` 
+        },
+        newPatientPageUrl(): string {
+            return `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${this.gender}`
         }
     },
     watch: {
