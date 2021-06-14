@@ -12,7 +12,14 @@ export class OrderService extends Service {
 
     static getViralLoadOrders(orders: Order[]) {
        return orders.filter(order => {
-        return order.tests.length > 0 && order.tests[0].result.length > 0;
+        //    try {
+               
+        //    } catch (error) {
+               
+        //    }
+           const result = order.tests[0].result;
+           if(!Array.isArray(result) ) return false
+            return order.tests.length > 0 && order.tests[0].result.length > 0;
        });
     }
     static formatOrders(order: Order) {
