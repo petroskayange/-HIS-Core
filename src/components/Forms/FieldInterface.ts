@@ -12,6 +12,7 @@ export interface Field {
     helpText: string;
     type: FieldType;
     group?: string;  // Categories fields with related data
+    preset?: Option;
     condition?: Function;
     validation?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;

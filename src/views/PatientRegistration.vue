@@ -20,10 +20,20 @@ export default defineComponent({
   data: () => ({
     fields: [] as Array<Field>,
     isMilitarySite: false,
+    presets: {} as any,
     form: {} as Record<string, Option> | Record<string, null>
   }),
   created(){
     this.fields = this.getFields()
+  },
+  watch: {
+    '$route': {
+        handler({query}: any) {
+            this.presets = query
+        },
+        immediate: true,
+        deep: true
+    }
   },
   methods: {
     onFinish(form: Record<string, Option> | Record<string, null>) {
@@ -35,7 +45,7 @@ export default defineComponent({
         const person: Person = await new PersonService(personPayload).create()
         if (person.person_id) {
             const attributesPayload: Array<NewAttribute> = this.resolvePersonAttributes(this.form, person.person_id)     
-            
+
             if (attributesPayload.length >= 1) {
                 await PersonAttributeService.create(attributesPayload)  
             }
@@ -110,6 +120,12 @@ export default defineComponent({
     mapToOption(listOptions: Array<string>): Array<Option> {
         return listOptions.map((item: any) => ({ label: item, value: item })) 
     },
+    getFieldPreset(attr: string) {
+        if (attr in this.presets) {
+            const val = this.presets[attr]
+            return { label: val, value: val }
+        }
+    },
     async getFacilities(): Promise<Option[]> {
         const facilities = await LocationService.getFacilities()
         return facilities.map((facility: any) => ({
@@ -152,6 +168,7 @@ export default defineComponent({
                 helpText: 'First name',
                 type: FieldType.TT_TEXT,
                 group: 'person',
+                preset: this.getFieldPreset('given_name'),
                 validation: (val: any) => Validation.isName(val),
                 options: async (form: any) => {
                     if (!form.given_name || form.given_name.value === null) return []
@@ -165,6 +182,7 @@ export default defineComponent({
                 helpText: "Last name",
                 type: FieldType.TT_TEXT,
                 group: 'person',
+                preset: this.getFieldPreset('family_name'),
                 validation: (val: any) => Validation.isName(val),
                 options: async (form: any) => {
                     if (!form.family_name || form.family_name.value === null) return []
@@ -179,6 +197,7 @@ export default defineComponent({
                 type: FieldType.TT_SELECT,
                 group: 'person',
                 requireNext: false,
+                preset: this.getFieldPreset('gender'),
                 validation: (val: any) => Validation.required(val),
                 options: () => ([
                     { 
