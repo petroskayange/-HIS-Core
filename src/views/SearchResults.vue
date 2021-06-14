@@ -23,7 +23,6 @@
                 :color="isActive(result.other) ? 'light' : ''"
                 @click="onselect(result.other)"
               >
-                
                 <ion-label> <ion-icon :icon="person" size="large"/> {{ result.label }} </ion-label>
               </ion-item>
             </ion-list>
@@ -128,7 +127,7 @@ export default defineComponent({
       return `${this.results.length} Result(s) found`;
     },
     resultSubtitle(): string {
-      return `Search term ${this.gname} ${this.fname}`;
+      return `Search term "${this.gname} ${this.fname}"`;
     },
     genderIcon(): any {
       return this.gender === "M" ? man : woman;
