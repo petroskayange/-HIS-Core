@@ -96,11 +96,11 @@ import {
   IonRow,
   IonCol,
   IonButton,
-  IonSegment,
-  IonSegmentButton,
   IonIcon,
   IonCard,
   IonCardContent,
+  IonCardTitle,
+  IonCardHeader
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
@@ -111,6 +111,7 @@ import { Observation } from "@/interfaces/observation";
 import { getObservation } from "@/services/Observations";
 import { Patientservice } from "@/services/patient_service";
 import { ProgramService } from "@/services/program_service";
+import { OrderService } from "@/services/order_service";
 import { RelationshipService } from "@/services/relationship_service";
 import dayjs from "dayjs";
 export default defineComponent({
@@ -127,6 +128,8 @@ export default defineComponent({
     IonCard,
     IonCardContent,
     IonIcon,
+    IonCardTitle,
+    IonCardHeader
   },
   data() {
     return {
@@ -224,8 +227,18 @@ export default defineComponent({
     fetchLabOrders: async function () {
       const displayData = {
         title: "Labs",
-        data: [],
+        data: [] as DataInterface[],
       };
+      await OrderService.getOrders(parseInt(this.patientID)).then((orders) => {
+        const VLOrders = OrderService.getViralLoadOrders(orders);
+        VLOrders.forEach((element) => {
+          displayData.data.push({
+            value: OrderService.formatOrders(element),
+            label: ``,
+          });
+        });
+      });
+
       this.cards.push(displayData);
     },
     fetchProgramInfo: async function () {

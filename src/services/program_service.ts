@@ -6,14 +6,14 @@ export class ProgramService extends Service {
     }
 
     static getProgramInformation(patientID: number) {
-        return super.getJson(`/programs/${sessionStorage.programID}/patients/${patientID}`);
+        return super.getJson(`/programs/${super.programID}/patients/${patientID}`);
     }
     
     static getNextTask(patientID: number) {
-        return super.getJson(`/workflows/${sessionStorage.programID}/${patientID}date=${sessionStorage.sessionDate}`);
+        return super.getJson(`/workflows/${super.programID}/${patientID}date=${super.sessionDate}`);
     }
     
     static getFastTrackStatus(patientID: number) {
-        return super.getJson(`/on_fast_track?person_id=${patientID}&date=${sessionStorage.sessionDate}`);
+        return super.getJson(`/on_fast_track?person_id=${patientID}&date=${super.sessionDate}`);
     }
 }
