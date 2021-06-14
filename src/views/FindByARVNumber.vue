@@ -45,9 +45,9 @@ export default defineComponent({
         });
         if(identifiers.length == 0) {
           //assign national health ID here
-          this.$router.push(`/patients/confirm/${data[0].patient_id}`);
+          this.$router.push(`/patients/confirm?person_id=${data[0].patient_id}`);
         }else {
-          this.$router.push(`/patients/confirm/${data[0].patient_id}`);
+          this.$router.push(`/patients/confirm?person_id=${data[0].patient_id}`);
         }
         
       }else if(data.length > 1) {

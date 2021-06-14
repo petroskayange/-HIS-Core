@@ -68,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
     component: FindByARVNumber
   },
   {
-    path: '/patients/confirm/:person_id',
+    path: '/patients/confirm',
     name: 'Patient confirmation',
     component: Confirmation
   }
