@@ -114,7 +114,7 @@ import { Patientservice } from "@/services/patient_service";
 import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
 import { RelationshipService } from "@/services/relationship_service";
-import dayjs from "dayjs";
+import HisDate from "@/utils/Date"
 export default defineComponent({
   name: "Home",
   components: {
@@ -144,7 +144,6 @@ export default defineComponent({
       ready: false,
       patientBarcode: "",
       applicationIcon: null,
-      patientID: "",
       patientName: "",
       landmark: "",
       phoneNumber: "",
@@ -159,7 +158,6 @@ export default defineComponent({
       cards: [] as any,
       ARVNumber: "",
       NPID: "",
-      dayjs,
     };
   },
   methods: {
@@ -178,7 +176,7 @@ export default defineComponent({
         this.phoneNumber = patient.getAttribute(12);
         const addresses = patient.getAddresses();
         this.gender = data.person.gender;
-        this.birthdate = dayjs(data.person.birthdate).format("DD/MMM/YYYY");
+        this.birthdate = HisDate.toStandardHisFormat(data.person.birthdate);
         this.ancestryDistrict = addresses.ancestryDistrict;
         this.ancestryTA = addresses.ancestryTA;
         this.ancestryVillage = addresses.ancestryVillage;
@@ -209,11 +207,12 @@ export default defineComponent({
     },
     fetchAlerts: async function () {
       const data: Observation[] = await getObservation(
-        parseInt(this.patientID),
+        this.patientID,
         7755
       );
 
       const sideEffects = data.filter((observation) => {
+        //1065 is the concept for yes and 1066 is the concept for no
         return observation.children[0].value_coded == 1065;
       });
 
@@ -234,7 +233,7 @@ export default defineComponent({
         title: "Labs",
         data: [] as DataInterface[],
       };
-      await OrderService.getOrders(parseInt(this.patientID)).then((orders) => {
+      await OrderService.getOrders(this.patientID).then((orders) => {
         const VLOrders = OrderService.getViralLoadOrders(orders);
         VLOrders.forEach((element) => {
           displayData.data.push({
@@ -252,7 +251,7 @@ export default defineComponent({
         data: [] as DataInterface[],
       };
       let outcome = "";
-      await ProgramService.getNextTask(parseInt(this.patientID)).then(
+      await ProgramService.getNextTask(this.patientID).then(
         (task) => {
           displayData.data.push({
             label: "Next Task",
@@ -260,7 +259,7 @@ export default defineComponent({
           });
         }
       );
-      await ProgramService.getProgramInformation(parseInt(this.patientID)).then(
+      await ProgramService.getProgramInformation(this.patientID).then(
         (task) => {
           displayData.data.push({
             label: "ART Duration",
@@ -269,7 +268,7 @@ export default defineComponent({
           outcome = task.current_outcome;
         }
       );
-      await ProgramService.getFastTrackStatus(parseInt(this.patientID)).then(
+      await ProgramService.getFastTrackStatus(this.patientID).then(
         (task) => {
           const data = task["Continue FT"] === true ? "Yes" : "No";
           displayData.data.push({
@@ -279,13 +278,11 @@ export default defineComponent({
         }
       );
       const appointMentObs: Observation[] = await getObservation(
-        parseInt(this.patientID),
+        this.patientID,
         5096
       );
       if (appointMentObs.length > 0) {
-        const nextAPPT = dayjs(appointMentObs[0].value_datetime).format(
-          "DD/MMM/YYYY"
-        );
+        const nextAPPT = HisDate.toStandardHisFormat(appointMentObs[0].value_datetime);
         displayData.data.push({
           label: "Next Appointment",
           value: nextAPPT,
@@ -308,7 +305,7 @@ export default defineComponent({
     },
     fetchGuardians: async function () {
       const relationships = RelationshipService.getGuardianDetails(
-        parseInt(this.patientID)
+        this.patientID
       ).then((relationship: any) => {
         const rel: DataInterface[] = relationship.map((r: any) => {
           return {
@@ -332,10 +329,13 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.patientID = this.$route.params.person_id as any;
     this.fetchPatient();
   },
   computed: {
+    patientID() {
+      const patientID = this.$route.params.person_id as any;
+      return parseInt(patientID);
+    },
     isAdmin() {
       const roles = JSON.parse(sessionStorage.userRoles).filter(
         (role: Role) => {

@@ -2,7 +2,7 @@ import moment from "moment";
 
 const STANDARD_DATE_FORMAT = 'YYYY-MM-DD'
 
-function toStandardHisFormat(date: string): string {
+function toStandardHisFormat(date: string | Date): string {
     return moment(date).format(STANDARD_DATE_FORMAT)
 }
 

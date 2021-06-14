@@ -1,6 +1,6 @@
 import { Order } from '@/interfaces/order';
 import { Service } from '@/services/service'
-import dayjs from "dayjs";
+import HisDate from "@/utils/Date"
 export class OrderService extends Service {
     constructor() {
         super()
@@ -18,7 +18,7 @@ export class OrderService extends Service {
     static formatOrders(order: Order) {
          const test = order.tests[0];
          const result = test.result[0];
-         const resultDate = dayjs(result.date).format('DD/MMM/YYYY');
+         const resultDate = HisDate.toStandardHisFormat(result.date);
          return `${test.name} ${result.value_modifier}${result.value} ${resultDate}`;
     }
     
