@@ -3,6 +3,7 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 export interface Option {
     label: string;
     value: string | number;
+    other?: any;
     isChecked?: boolean;
 }
 
@@ -11,6 +12,7 @@ export interface Field {
     helpText: string;
     type: FieldType;
     group?: string;  // Categories fields with related data
+    preset?: Option;
     condition?: Function;
     validation?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;

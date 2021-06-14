@@ -40,6 +40,10 @@ export default defineComponent({
             type: Object,
             required: true
         },
+        preset: {
+            type: Object as PropType<Option>,
+            required: false
+        },
         options: {
             type: Function,
             required: false,
@@ -50,6 +54,11 @@ export default defineComponent({
         clear: {
             type: Boolean
         },
+    },
+    mounted() {
+        if (this.preset) {
+            this.onselect(this.preset)
+        }
     },
     methods: {
         onselect(item: Option){

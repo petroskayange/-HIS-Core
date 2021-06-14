@@ -7,30 +7,40 @@ import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field } from "@/components/Forms/FieldInterface"
 import { Option } from "@/components/Forms/FieldInterface"
+import { PersonService } from "@/services/person_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validaton from "@/components/Forms/validations/StandardValidations"
-import {PersonService} from "@/services/person_service"
 
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
-    fields: [] as Array<Field>
+    fields: [] as Array<Field>,
+    form: {} as Record<string, Option> | Record<string, null>
   }),
   created(){
     this.fields = this.getFields()
   },
   methods: {
-    onFinish(formData: any) {
-      console.log(formData)
+    onFinish(form: Record<string, Option> | Record<string, null>) {
+      this.form = form
     },
     onSubmit() {
-      console.log("Form has been submitted");
+      const data: Record<string, string> = this.resolveData(this.form)
+      this.$router.push({path: '/patient/search_results', query: data})
+    },
+    resolveData(form: Record<string, Option> | Record<string, null>) {
+      const output: any = {} 
+      for(const name in form) {
+        const data = form[name]
+        if (data && data.value != null) output[name] = data.value
+      }
+      return output
     },
     mapToOption(listOptions: Array<string>): Array<Option> {
-        return listOptions.map((item: any) => ({
-            label: item,
-            value: item
-        })) 
+      return listOptions.map((item: any) => ({
+        label: item,
+        value: item
+      }))
     },
     getFields: function(): Array<Field> {
       return [
@@ -65,12 +75,12 @@ export default defineComponent({
           validation: (value: any) => Validaton.required(value),
           options: () => ([
             { 
-                label: 'Male',
-                value: 'M'
+              label: 'Male',
+              value: 'M'
             },
             {
-                label: 'Female',
-                value: 'F'
+              label: 'Female',
+              value: 'F'
             }
           ])
         },

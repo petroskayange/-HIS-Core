@@ -14,6 +14,10 @@ export default defineComponent({
         config: {
             type: Object as PropType<SelectConfig>,
         },
+        preset: {
+            type: Object as PropType<Option>,
+            required: true
+        },
         fdata: {
             type: Object,
             required: true
