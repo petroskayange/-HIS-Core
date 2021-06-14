@@ -22,7 +22,7 @@ export default defineComponent({
         width: 100%;
         border-radius: 10px;
         padding: 5px;
-        overflow-x: scroll;
+        overflow-y: scroll;
     }
     .full {
         height: 80vh;
