@@ -1,21 +1,21 @@
 <template>
     <ion-card>
         <ion-card-header>
-            <ion-card-title> {{title}} </ion-card-title>
-            <ion-card-subtitle>
+            <ion-card-title> 
+                <h2> {{title}} </h2>
                 <ion-icon :icon="icon" size="medium"></ion-icon> 
-                {{ subtitle }} 
-            </ion-card-subtitle>
+                {{ subtitle }}
+            </ion-card-title>
         </ion-card-header>
     </ion-card>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonCard, IonIcon, IonCardTitle, IonCardSubtitle, IonCardHeader } from "@ionic/vue"
+import { IonCard, IonIcon, IonCardTitle, IonCardHeader } from "@ionic/vue"
 export default defineComponent({
     name: "HisResultCard",
-    components: {IonCard, IonIcon, IonCardTitle, IonCardSubtitle, IonCardHeader},
+    components: {IonCard, IonIcon, IonCardTitle, IonCardHeader},
     props: {
         title: {
             required: true,

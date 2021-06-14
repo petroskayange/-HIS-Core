@@ -23,7 +23,8 @@
                 :color="isActive(result.other) ? 'light' : ''"
                 @click="onselect(result.other)"
               >
-                {{ result.label }}
+                
+                <ion-label> <ion-icon :icon="person" size="large"/> {{ result.label }} </ion-label>
               </ion-item>
             </ion-list>
           </div>
@@ -81,7 +82,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { man, woman } from "ionicons/icons";
+import { man, woman, person } from "ionicons/icons";
 import {
   IonRow,
   IonLabel,
@@ -113,6 +114,7 @@ export default defineComponent({
     IonItem,
   },
   data: () => ({
+    person,
     gname: "" as any,
     fname: "" as any,
     gender: "" as any,
