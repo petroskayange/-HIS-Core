@@ -2,19 +2,17 @@
     <div class="card"> 
         <h4> <center> {{title}} </center> </h4>
         <div v-for="(item, index) in items" :key="index"> 
-            <ion-card color="light" :style="{padding:'3%', fontWeight: 'bold', marginBottom: '10%'}"> 
-               <ion-card-title><center> {{item.label}} </center></ion-card-title>
-            </ion-card>
+            <center><ion-button color="light" class="btn"> {{item.label}} </ion-button></center>
         </div>
     </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { Option } from "@/components/Forms/FieldInterface"
-import { IonCard, IonCardTitle } from "@ionic/vue"
+import { IonButton } from "@ionic/vue"
 
 export default defineComponent({
-    components: { IonCard, IonCardTitle },
+    components: { IonButton },
     props: {
         title: {
             type: String,
@@ -28,8 +26,13 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+.btn {
+    width: 90%;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
 .card{
-  padding: 1%;
   border-radius: 6px;
   border: 1px solid #ccc;
   height: 70vh;
