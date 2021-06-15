@@ -30,7 +30,7 @@ export default defineComponent({
 <style scoped>
     #card {
       border: 1px solid #ccc;
-      border-radius: 10px;
+      border-radius: 2px;
       height: 125px;
       overflow-y: auto;
       -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
