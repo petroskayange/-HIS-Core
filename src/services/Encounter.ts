@@ -19,4 +19,8 @@ export class EncounterService extends Service {
     create() {
         return Service.postJson('/encounters', this.encounter)
     }
+
+    public static getEncountersByDate(patientId: number, date='') {
+        return super.getJson(`/encounters?paginate=false&patient_id=${patientId}&date=${date}&program_id=${super.programID}`)
+    }
 }
