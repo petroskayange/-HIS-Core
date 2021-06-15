@@ -21,6 +21,17 @@
                     </ion-col>
                     <ion-col size="10"> 
                         <ion-row> 
+                           <ion-col> 
+                               <b>Today's Date:</b> {{ currentDate }}
+                            </ion-col> 
+                            <ion-col> 
+                                <b>Next Task:</b> {{ nextTask }}
+                            </ion-col>
+                            <ion-col> 
+                                <b>Set Date:</b> {{ sessionDate }}
+                            </ion-col>
+                        </ion-row>
+                        <ion-row> 
                             <ion-col>
                                 <primary-card title="7 Activities" :items="activities"> </primary-card>
                             </ion-col>
@@ -63,6 +74,7 @@ import { defineComponent } from 'vue'
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import { person } from "ionicons/icons";
+import HisDate from "@/utils/Date"
 
 import {
   IonPage,
@@ -88,13 +100,16 @@ export default defineComponent({
         IonCol,
     },
     data: () => ({
+        currentDate: HisDate.currentDisplayDate(),
+        sessionDate: HisDate.sessionDisplayDate(),
+        nextTask: "None",
         patient: {
             icon: person,
             info: [
                 { label: "Name", value: "Andrew Mfune"},
                 { label: "Birthdate", value: "06/Feb/2021" },
                 { label: "Current Village", value: "Unknown" },
-                { label: "Phone#", value: "N/A" }
+                { label: "Phone#", value: "N/A" },
             ],
             title: 'Test Patient'
         },
