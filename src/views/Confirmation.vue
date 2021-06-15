@@ -145,16 +145,7 @@ export default defineComponent({
   },
   data() {
     return {
-      facilityName: "",
-      userLocation: "",
-      sessionDate: "",
-      userName: "",
-      APIVersion: "",
-      applicationName: "",
-      activeTab: 1,
-      ready: false,
       patientBarcode: "" as any,
-      applicationIcon: null,
       patientName: "",
       landmark: "",
       phoneNumber: "",
@@ -176,6 +167,7 @@ export default defineComponent({
     fetchPatient: async function () {
       const response = await ApiClient.get(`/patients/${this.patientID}`);
 
+      this.setOpen(true);
       if (!response || response.status !== 200) {
           this.setOpen(false);
         ProgramService.showError('Patient not found');
@@ -187,6 +179,7 @@ export default defineComponent({
       }
     },
     fetchPatientByID: async function() {
+      this.setOpen(true);
       const response = await ApiClient.get(`/search/patients/by_npid?npid=${this.patientBarcode}`);
 
       if (!response || response.status !== 200) {
@@ -363,10 +356,40 @@ export default defineComponent({
         this.cards.push(displayData);
       });
     },
+    setupconfirmation() {
+      this.resetState();
+      if(this.$route.query.person_id) {
+        const patientID = this.$route.query.person_id as any;
+        this.patientID = parseInt(patientID);
+        this.fetchPatient();
+      }else if(this.$route.query.patient_barcode) {
+        const patientBarcode = this.$route.query.patient_barcode as any;
+        this.patientBarcode = patientBarcode.replace(/-/g, "");
+        this.fetchPatientByID();
+      }
+    },
+    resetState() {
+       this.patientBarcode = "";
+        this.patientName =  "";
+        this.landmark = "";
+        this.phoneNumber = "";
+        this.currentDistrict = "";
+        this.currentTA = "";
+        this.currentVillage = "";
+        this.ancestryDistrict = "";
+        this.ancestryTA = "";
+        this.ancestryVillage = "";
+        this.gender = "";
+        this.birthdate = "";
+        this.cards =  [];
+        this.ARVNumber = "";
+        this.NPID = "";
+        this.patientID =  "";
+    }
      
   },
   setup() {
-      const isOpenRef = ref(true);
+    const isOpenRef = ref(true);
     const setOpen = (state: boolean) => isOpenRef.value = state;
 
     return { isOpenRef, setOpen,
@@ -376,15 +399,16 @@ export default defineComponent({
     };
   },
   mounted() {
-    if(this.$route.query.person_id) {
-      const patientID = this.$route.query.person_id as any;
-      this.patientID = parseInt(patientID);
-      this.fetchPatient();
-    }else if(this.$route.query.patient_barcode) {
-      const patientBarcode = this.$route.query.patient_barcode as any;
-      this.patientBarcode = patientBarcode.replace(/-/g, "");
-      this.fetchPatientByID();
-    }
+//
+  },
+   watch: {
+    $route: {
+      async handler({ query }: any) {
+       this.setupconfirmation();
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   computed: {
     isAdmin() {
