@@ -72,7 +72,7 @@
             <ion-button color="primary" size="large" router-link="/patients/search/by_arv">Find By</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large" router-link="/search_patient"
+            <ion-button color="primary" size="large" router-link="/search_patient"
               >Find or Register</ion-button
             >
           </ion-col>
@@ -111,7 +111,8 @@ import {
 import { defineComponent } from "vue";
 import { barcode } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
-import Modal from "@/components/Modal.vue";
+import Modal from "@/components/ApplicationModal.vue";
+import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
@@ -218,8 +219,8 @@ export default defineComponent({
       const modal = await modalController.create({
         component: Modal,
         cssClass: "my-custom-class",
+        backdropDismiss: false,
         componentProps: {
-          // title: 'New Title'
         },
       });
 
@@ -227,6 +228,15 @@ export default defineComponent({
       const { data } = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
       this.applicationIcon = data.applicationIcon;
+      const modal2 = await modalController.create({
+        component: ActivitiesModal,
+        cssClass: "my-custom-class",
+        backdropDismiss: false,
+        componentProps: {
+        },
+      });
+      modal2.present();
+      await modal2.onDidDismiss();
       this.loadApplicationData();
     },
   },

@@ -1,5 +1,12 @@
 <template>
+
   <ion-page>
+  <ion-loading
+    :is-open="isOpenRef"
+    cssClass="my-custom-class"
+    message="Please wait..."
+  >
+  </ion-loading>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-row>
@@ -101,9 +108,11 @@ import {
   IonCardContent,
   IonCardTitle,
   IonCardHeader,
+  IonLoading,
   alertController,
+  loadingController
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
@@ -113,6 +122,7 @@ import { getObservation } from "@/services/Observations";
 import { Patientservice } from "@/services/patient_service";
 import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
+import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
 import HisDate from "@/utils/Date"
 export default defineComponent({
@@ -130,7 +140,8 @@ export default defineComponent({
     IonCardContent,
     IonIcon,
     IonCardTitle,
-    IonCardHeader
+    IonCardHeader, 
+    IonLoading
   },
   data() {
     return {
@@ -158,6 +169,7 @@ export default defineComponent({
       cards: [] as any,
       ARVNumber: "",
       NPID: "",
+      patientID: "" as any
     };
   },
   methods: {
@@ -165,6 +177,7 @@ export default defineComponent({
       const response = await ApiClient.get(`/patients/${this.patientID}`);
 
       if (!response || response.status !== 200) {
+          this.setOpen(false);
         ProgramService.showError('Patient not found');
 
       } // NOTE: Targeting Firefox 65, can't `response?.status`
@@ -202,7 +215,9 @@ export default defineComponent({
         await this.fetchAlerts()
           .then(this.fetchLabOrders)
           .then(this.fetchProgramInfo)
-          .then(this.fetchGuardians);
+          .then(this.fetchGuardians)
+
+          this.setOpen(false);
       }
     },
     fetchAlerts: async function () {
@@ -320,30 +335,27 @@ export default defineComponent({
         this.cards.push(displayData);
       });
     },
+     
   },
   setup() {
-    return {
+      const isOpenRef = ref(true);
+    const setOpen = (state: boolean) => isOpenRef.value = state;
+
+    return { isOpenRef, setOpen,
       barcode,
       man,
       woman,
     };
   },
   mounted() {
-    this.patientID;
+
+    const patientID = this.$route.query.person_id as any;
+    this.patientID = parseInt(patientID);
     this.fetchPatient();
   },
   computed: {
-    patientID() {
-      const patientID = this.$route.query.person_id as any;
-      return parseInt(patientID);
-    },
     isAdmin() {
-      const roles = JSON.parse(sessionStorage.userRoles).filter(
-        (role: Role) => {
-          return role.role.match(/super|admin/i);
-        }
-      );
-      return roles.length > 0;
+      return UserService.isAdmin;
     },
   },
 });

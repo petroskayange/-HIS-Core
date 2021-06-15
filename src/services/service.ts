@@ -2,6 +2,7 @@ import ApiClient from "./api_client"
 
 export class Service {
     static programID = sessionStorage.programID;
+    static userRoles = sessionStorage.userRoles;
     static sessionDate = sessionStorage.sessionDate;
     static async getJson(url: string) {
         const req = await ApiClient.get(url)
