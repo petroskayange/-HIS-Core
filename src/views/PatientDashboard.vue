@@ -164,9 +164,11 @@ export default defineComponent({
             return prop in data ? data[prop]() : '-'
         },
         getPatientCardInfo(patient: any) {
+            const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
+            const birthDate = this.getProp(patient, 'getBirthdate')
             return [
                 { label: "Name", value: this.getProp(patient, 'getFullName')},
-                { label: "Birthdate", value: this.getProp(patient, 'getBirthdate')},
+                { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
                 { label: "Phone#", value: "#coming soon" },
             ]
