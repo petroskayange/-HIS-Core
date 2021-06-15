@@ -1,7 +1,7 @@
 <template>
     <ion-page> 
-        <ion-content>
-            <ion-grid>
+        <ion-header :translucent="true"> 
+            <ion-toolbar> 
                 <ion-row> 
                     <ion-col size="5"> 
                         <info-card :title="patient.title" :icon="patient.icon" :items="patient.info"/> 
@@ -13,11 +13,15 @@
                         <info-card :title="treatment.title" :icon="treatment.icon" :items="[]"/> 
                     </ion-col>
                 </ion-row>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content>
+            <ion-grid>
                 <ion-row> 
-                    <ion-col size="3">
+                    <ion-col size="2">
                         <visit-dates-card :title="visitDatesTitle" :items="visitDates"> </visit-dates-card>
                     </ion-col>
-                    <ion-col size="9"> 
+                    <ion-col size="10"> 
                         <ion-row> 
                            <ion-col> 
                                <b>Today's Date:</b> {{ currentDate }}
