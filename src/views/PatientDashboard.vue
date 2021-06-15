@@ -167,6 +167,7 @@ export default defineComponent({
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
             return [
+                { label: 'NPID', value: this.getProp(patient, 'getNationalID') },
                 { label: "Name", value: this.getProp(patient, 'getFullName')},
                 { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
