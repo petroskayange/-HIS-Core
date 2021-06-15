@@ -4,13 +4,13 @@
             <ion-toolbar> 
                 <ion-row> 
                     <ion-col size="5"> 
-                        <info-card :title="patient.title" :icon="patient.icon" :items="patient.info"/> 
+                        <info-card :items="patientCardInfo"/> 
                     </ion-col>
                     <ion-col size="5"> 
-                        <info-card :title="treatment.title" :icon="treatment.icon" :items="treatment.info"/> 
+                        <info-card :items="programCardInfo"/> 
                     </ion-col>
                     <ion-col size="2"> 
-                        <info-card :title="treatment.title" :icon="treatment.icon" :items="[]"/> 
+                        <info-card :items="[]"/> 
                     </ion-col>
                 </ion-row>
             </ion-toolbar>
@@ -76,9 +76,10 @@ import { defineComponent } from 'vue'
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
-import { person } from "ionicons/icons";
 import HisDate from "@/utils/Date"
-
+import { Patient } from "@/interfaces/patient";
+import { Patientservice } from "@/services/patient_service"
+import { ProgramService } from "@/services/program_service"
 import {
   IonPage,
   IonContent,
@@ -107,26 +108,11 @@ export default defineComponent({
         currentDate: HisDate.currentDisplayDate(),
         sessionDate: HisDate.sessionDisplayDate(),
         nextTask: "None",
-        patient: {
-            icon: person,
-            info: [
-                { label: "Name", value: "Andrew Mfune"},
-                { label: "Birthdate", value: "06/Feb/2021" },
-                { label: "Current Village", value: "Unknown" },
-                { label: "Phone#", value: "N/A" },
-            ],
-            title: 'Test Patient'
-        },
-        treatment: {
-            icon: null,
-            title: "Treatment",
-            info: [
-                { label: "ART- Start Date", value: "No Start date"},
-                { label: "ARV Number", value: "No ARV Number" },
-                { label: "File Number", value: "No filing Number Available"},
-                { label: "Current Outcome", value: "Unknown"}
-            ]
-        },
+        patientId: 0,
+        patient: {} as any,
+        patientProgram: {} as any,
+        patientCardInfo: [] as any,
+        programCardInfo: [] as any,
         visitDates: [
             { label: "20/Jun/2021", value: ""},
             { label: "20/Jun/2021", value: ""},
@@ -155,6 +141,44 @@ export default defineComponent({
         visitDatesTitle(): string {
             return `${this.visitDates.length} Visits`
         }
+    },
+    watch: {
+        "$route" : {
+            async handler({query}: any) {
+                this.patientId = parseInt(query.patient_id)
+                this.patient = await this.fetchPatient(this.patientId)
+                this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
+                this.patientCardInfo = this.getPatientCardInfo(this.patient)
+                this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+            },
+            deep: true,
+            immediate: true
+        }
+    },
+    methods: {
+        async fetchPatient(patientId: number | string){
+            const patient: Patient = await Patientservice.findByID(patientId);
+            return patient ? new Patientservice(patient): {}
+        },
+        getProp(data: any, prop: string): string {
+            return prop in data ? data[prop]() : '-'
+        },
+        getPatientCardInfo(patient: any) {
+            return [
+                { label: "Name", value: this.getProp(patient, 'getFullName')},
+                { label: "Birthdate", value: this.getProp(patient, 'getBirthdate')},
+                { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
+                { label: "Phone#", value: "#coming soon" },
+            ]
+        },
+        getProgramCardInfo(programInfo: any) {
+           return  [
+                { label: "ART- Start Date", value: programInfo.art_start_date},
+                { label: "ARV Number", value: programInfo.arv_number },
+                { label: "File Number", value: programInfo.filing_number.number},
+                { label: "Current Outcome", value: programInfo.current_outcome}
+           ]
+        }  
     }
 })
 </script>

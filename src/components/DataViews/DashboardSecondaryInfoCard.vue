@@ -13,10 +13,6 @@ import { Option } from "@/components/Forms/FieldInterface";
 export default defineComponent({
   name: "HisResultCard",
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
     icon: {
       required: false,
     },
