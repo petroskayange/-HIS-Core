@@ -153,7 +153,7 @@ export default defineComponent({
       applicationName: "",
       activeTab: 1,
       ready: false,
-      patientBarcode: "",
+      patientBarcode: "" as any,
       applicationIcon: null,
       patientName: "",
       landmark: "",
@@ -183,6 +183,35 @@ export default defineComponent({
       } // NOTE: Targeting Firefox 65, can't `response?.status`
       else {
         const data: Patient = await response.json();
+        this.parsePatient(data);
+      }
+    },
+    fetchPatientByID: async function() {
+      const response = await ApiClient.get(`/search/patients/by_npid?npid=${this.patientBarcode}`);
+
+      if (!response || response.status !== 200) {
+          this.setOpen(false);
+        ProgramService.showError('Patient not found');
+      } 
+      else {
+        const data: Patient[] = await response.json();
+
+        switch (data.length) {
+          case 0:
+            ProgramService.showError('Patient not found');
+            this.setOpen(false);
+            break;
+          case 1:
+            this.patientID = data[0].patient_id; 
+            this.parsePatient(data[0]);
+            break;
+          default:
+            console.log('duplicates');
+            break;
+        }
+      }
+    },
+    parsePatient: async function(data: Patient) {
         const patient = new Patientservice(data);
         this.patientName = patient.getFullName();
         this.landmark = patient.getAttribute(19);
@@ -218,7 +247,6 @@ export default defineComponent({
           .then(this.fetchGuardians)
 
           this.setOpen(false);
-      }
     },
     fetchAlerts: async function () {
       const data: Observation[] = await getObservation(
@@ -348,10 +376,15 @@ export default defineComponent({
     };
   },
   mounted() {
-
-    const patientID = this.$route.query.person_id as any;
-    this.patientID = parseInt(patientID);
-    this.fetchPatient();
+    if(this.$route.query.person_id) {
+      const patientID = this.$route.query.person_id as any;
+      this.patientID = parseInt(patientID);
+      this.fetchPatient();
+    }else if(this.$route.query.patient_barcode) {
+      const patientBarcode = this.$route.query.patient_barcode as any;
+      this.patientBarcode = patientBarcode.replace(/-/g, "");
+      this.fetchPatientByID();
+    }
   },
   computed: {
     isAdmin() {

@@ -10,8 +10,8 @@
               style="height: 100%"
             ></ion-icon>
           </ion-col>
-          <ion-col size="3.5" class="outlined">
-            <ion-input autofocus="true" v-model="patientBarcode"></ion-input>
+          <ion-col size="3.5" >
+            <ion-input autofocus v-model="patientBarcode" class="barcode-input" ref="scanBarcode"></ion-input>
           </ion-col>
           <ion-col size="5">
             <p>Facility name: {{ facilityName }}</p>
@@ -108,7 +108,7 @@ import {
   IonImg,
   IonThumbnail
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { barcode } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
 import Modal from "@/components/ApplicationModal.vue";
@@ -239,6 +239,13 @@ export default defineComponent({
       await modal2.onDidDismiss();
       this.loadApplicationData();
     },
+    checkForbarcode(){
+        if(this.patientBarcode.match(/.+\$$/i) != null){
+          const patientBarcode = this.patientBarcode.replaceAll(/\$/gi, '');
+          this.patientBarcode = '';
+          this.$router.push('/patients/confirm?patient_barcode='+patientBarcode);
+        }
+      },
   },
   setup() {
     return {
@@ -256,6 +263,11 @@ export default defineComponent({
         this.loadApplicationData();
       }
   },
+  watch: {
+    patientBarcode: function() {
+      this.checkForbarcode();
+    }
+  }
 });
 </script>
 
@@ -269,6 +281,7 @@ ion-button {
 
 .outlined {
   border: solid 1px grey;
+  font-size: 100%;
 }
 
 #container strong {
@@ -287,5 +300,9 @@ ion-button {
 
 #container a {
   text-decoration: none;
+}
+.barcode-input{
+  height: 100%;
+  font-size: 100%;
 }
 </style>

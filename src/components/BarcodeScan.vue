@@ -37,7 +37,7 @@ export default defineComponent({
   methods: {
       checkForbarcode(){
         if(this.barcodeText.match(/.+\$$/i) != null){
-          this.barcodeText = this.barcodeText.replace(/$/ig, '');
+          this.barcodeText = this.barcodeText.replace(/\$/ig, '');
           this.scanLocation();
         }
       },
