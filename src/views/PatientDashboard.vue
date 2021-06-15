@@ -14,12 +14,10 @@
                     </ion-col>
                 </ion-row>
                 <ion-row> 
-                    <ion-col size="2">
-                        <div class="large-card"> 
-                            <h4> Visits: </h4>
-                        </div>
+                    <ion-col size="3">
+                        <visit-dates-card :title="visitDatesTitle" :items="visitDates"> </visit-dates-card>
                     </ion-col>
-                    <ion-col size="10"> 
+                    <ion-col size="9"> 
                         <ion-row> 
                            <ion-col> 
                                <b>Today's Date:</b> {{ currentDate }}
@@ -73,6 +71,7 @@
 import { defineComponent } from 'vue'
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
+import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
 import { person } from "ionicons/icons";
 import HisDate from "@/utils/Date"
 
@@ -88,6 +87,7 @@ import {
 } from "@ionic/vue";
 export default defineComponent({
     components: {
+        VisitDatesCard,
         PrimaryCard,
         InfoCard,
         IonPage,
@@ -123,6 +123,13 @@ export default defineComponent({
                 { label: "Current Outcome", value: "Unknown"}
             ]
         },
+        visitDates: [
+            { label: "20/Jun/2021", value: ""},
+            { label: "20/Jun/2021", value: ""},
+            { label: "20/Jun/2021", value: ""},
+            { label: "20/Jun/2021", value: ""},
+            { label: "20/Jun/2021", value: ""}
+        ],
         labOrders: [
             { label: "Viral Load", value: "09:30"}
         ],
@@ -139,19 +146,11 @@ export default defineComponent({
         alerts: [
             { label: "Patient has 0 side effects", value: ""}
         ]
-    })
+    }),
+    computed: {
+        visitDatesTitle(): string {
+            return `${this.visitDates.length} Visits`
+        }
+    }
 })
 </script>
-<style scoped>
-.large-card {
-  padding: 5%;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  height: 70vh;
-  background-color: rgb(255, 255, 255);
-  overflow-y: auto;
-  -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  -moz-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-}
-</style>
