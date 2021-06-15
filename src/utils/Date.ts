@@ -15,6 +15,10 @@ function sessionDisplayDate() {
     return moment(sessionStorage.getItem('sessionDate')).format(DISPLAY_DATE_FORMAT)
 }
 
+function toStandardHisTimeFormat(date: string | Date) {
+    return moment(date).format('HH:MM')
+}
+
 function toStandardHisDisplayFormat(date: string | Date): string {
     return moment(date).format(DISPLAY_DATE_FORMAT)
 }
@@ -42,6 +46,7 @@ function stitchDate(year: number | string, month='01', day='01') {
 
 export default {
     getAgeInYears,
+    toStandardHisTimeFormat,
     toStandardHisDisplayFormat,
     sessionDisplayDate,
     currentDisplayDate,
