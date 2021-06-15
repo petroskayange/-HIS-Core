@@ -46,7 +46,7 @@
                                 <primary-card title="Alerts" :items="alerts" titleColor="#d9534f"> </primary-card>
                             </ion-col>
                             <ion-col> 
-                                <primary-card title="Medications" :items="medications" titleColor="#f0ad4e"> </primary-card>
+                                <primary-card title="Medications" :items="medicationCardItems" titleColor="#f0ad4e"> </primary-card>
                             </ion-col>
                         </ion-row>
                     </ion-col>
@@ -82,6 +82,7 @@ import { Option } from "@/components/Forms/FieldInterface"
 import { Patient } from "@/interfaces/patient";
 import { Patientservice } from "@/services/patient_service"
 import { ProgramService } from "@/services/program_service"
+import { DrugOrderService } from "@/services/drug_order_service"
 import {
   IonPage,
   IonContent,
@@ -117,16 +118,13 @@ export default defineComponent({
         patientCardInfo: [] as Array<Option>,
         programCardInfo: [] as Array<Option>,
         encounters: [] as Array<Encounter>,
+        medications: [] as any,
         visitDates: [] as Array<Option>,
         activeVisitDate: '' as string | number,
         encountersCardItems: [] as Array<Option>,
+        medicationCardItems: [] as Array<Option>,
         labOrders: [
             { label: "Viral Load", value: "09:30"}
-        ],
-        medications: [
-            {label: "Rifepentine 150mg", value: "09:00"},
-            {label: "CPT 150mg", value: "09:00"},
-            {label: "Some ARV 150mg", value: "09:00"},
         ],
         alerts: [
             { label: "Patient has 0 side effects", value: ""}
@@ -153,7 +151,9 @@ export default defineComponent({
         },
         async activeVisitDate(date: string) {
             this.encounters = await EncounterService.getEncountersByDate(this.patientId, date)
+            this.medications = await DrugOrderService.getOrderByPatient(this.patientId, date)
             this.encountersCardItems = this.getActivitiesCardInfo(this.encounters)
+            this.medicationCardItems = this.getMedicationCardInfo(this.medications)
         }
     },
     methods: {
@@ -206,6 +206,12 @@ export default defineComponent({
             return encounters.map((encounter: Encounter) => ({
                 label: encounter.type.name,
                 value: HisDate.toStandardHisTimeFormat(encounter.encounter_datetime)
+            }))
+        },
+        getMedicationCardInfo(medications: any) {
+            return medications.map((medication: any) => ({
+                label: medication.drug.name,
+                value: HisDate.toStandardHisTimeFormat(medication.order.start_date)
             }))
         }
     }
