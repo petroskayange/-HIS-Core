@@ -21,12 +21,20 @@
                     </ion-col>
                     <ion-col size="10"> 
                         <ion-row> 
-                            <ion-col> <div class="info-card"><div class="secondary-title"> 7 Activities </div> </div> </ion-col>
-                            <ion-col> <div class="info-card"> <div class="danger-title"> Lab Orders </div> </div> </ion-col>
+                            <ion-col>
+                                <primary-card title="7 Activities"> </primary-card>
+                            </ion-col>
+                            <ion-col>
+                                <primary-card title="Lab Orders" titleColor="#5cb85c"> </primary-card>
+                            </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col> <div class="info-card"> <div class="alert-title"> Alerts </div> </div> </ion-col>
-                            <ion-col> <div class="info-card"> <div class="warning-title"> Medication </div> </div> </ion-col>
+                            <ion-col> 
+                                <primary-card title="Alerts" titleColor="#d9534f"> </primary-card>
+                            </ion-col>
+                            <ion-col> 
+                                <primary-card title="Medications" titleColor="#f0ad4e"> </primary-card>
+                            </ion-col>
                         </ion-row>
                     </ion-col>
                 </ion-row>
@@ -53,6 +61,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
+import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import { person } from "ionicons/icons";
 
 import {
@@ -67,6 +76,7 @@ import {
 } from "@ionic/vue";
 export default defineComponent({
     components: {
+        PrimaryCard,
         InfoCard,
         IonPage,
         IonFooter,
@@ -102,41 +112,6 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-.title-card, .alert-title, .warning-title, .danger-title, .secondary-title {
-    padding: 8px;
-    width: 100%;
-    color: white;
-}
-
-.alert-title {
-    background-color: red;
-    font-weight: bold;
-}
-
-.secondary-title {
-    background-color: blue;
-}
-
-.warning-title {
-    background-color: orange;
-}
-
-.danger-title {
-    background-color: green;
-}
-
-.info-card {
-  width: 100%;
-  padding: 5%;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  height: 34vh;
-  background-color: rgb(255, 255, 255);
-  overflow: hidden;
-  -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  -moz-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);  
-}
 .large-card {
   padding: 5%;
   border-radius: 6px;
