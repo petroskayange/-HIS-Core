@@ -23,19 +23,19 @@
                     </ion-col>
                     <ion-col size="10"> 
                         <ion-row> 
-                           <ion-col> 
+                           <ion-col size="4"> 
                                <b>Today's Date:</b> {{ currentDate }}
                             </ion-col> 
-                            <ion-col> 
+                            <ion-col size="5"> 
                                 <b>Next Task:</b> {{ nextTask }}
                             </ion-col>
-                            <ion-col> 
+                            <ion-col size="3"> 
                                 <b>Set Date:</b> {{ sessionDate }}
                             </ion-col>
                         </ion-row>
                         <ion-row> 
                             <ion-col>
-                                <primary-card title="7 Activities" :items="activities"> </primary-card>
+                                <primary-card title="Activities" :items="activities"> </primary-card>
                             </ion-col>
                             <ion-col>
                                 <primary-card title="Lab Orders" :items="labOrders" titleColor="#5cb85c"> </primary-card>
