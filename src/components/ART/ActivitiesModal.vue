@@ -46,6 +46,7 @@ export default defineComponent({
 
       if (!response || response.status !== 200) {
         //
+        ApiClient.showMessage("Could not get user activities");
       } 
       else {
         //
