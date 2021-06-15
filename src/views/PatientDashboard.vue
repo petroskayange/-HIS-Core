@@ -113,6 +113,7 @@ export default defineComponent({
         patientProgram: {} as any,
         patientCardInfo: [] as any,
         programCardInfo: [] as any,
+        encounters: [] as any,
         visitDates: [
             { label: "20/Jun/2021", value: ""},
             { label: "20/Jun/2021", value: ""},
@@ -148,6 +149,7 @@ export default defineComponent({
                 this.patientId = parseInt(query.patient_id)
                 this.patient = await this.fetchPatient(this.patientId)
                 this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
+                this.nextTask = await this.getNextTask(this.patientId)
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
             },
@@ -162,6 +164,14 @@ export default defineComponent({
         },
         getProp(data: any, prop: string): string {
             return prop in data ? data[prop]() : '-'
+        },
+        async getNextTask(patientId: number) {
+            try {
+                const {name} = await ProgramService.getNextTask(patientId)
+                return name
+            }catch(e) {
+                return 'None'
+            }
         },
         getPatientCardInfo(patient: any) {
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
