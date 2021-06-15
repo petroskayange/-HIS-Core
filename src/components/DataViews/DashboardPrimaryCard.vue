@@ -1,7 +1,7 @@
 <template>
     <div class="card"> 
         <div class="title-card" :style="{backgroundColor: titleColor}"> {{title}} </div>
-        <ion-list inset>
+        <ion-list>
             <ion-item v-for="(item, index) in items" :key="index">
                 <ion-label> {{ item.label }} </ion-label>
                 <ion-label slot="end"> {{ item.value }} </ion-label>
@@ -36,7 +36,6 @@ export default defineComponent({
 <style scoped>
 .card {
   width: 100%;
-  padding: 5%;
   border-radius: 6px;
   border: 1px solid #ccc;
   height: 34vh;
