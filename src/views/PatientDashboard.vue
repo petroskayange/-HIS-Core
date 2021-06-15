@@ -114,13 +114,7 @@ export default defineComponent({
         patientCardInfo: [] as any,
         programCardInfo: [] as any,
         encounters: [] as any,
-        visitDates: [
-            { label: "20/Jun/2021", value: ""},
-            { label: "20/Jun/2021", value: ""},
-            { label: "20/Jun/2021", value: ""},
-            { label: "20/Jun/2021", value: ""},
-            { label: "20/Jun/2021", value: ""}
-        ],
+        visitDates: [] as any,
         labOrders: [
             { label: "Viral Load", value: "09:30"}
         ],
@@ -150,6 +144,7 @@ export default defineComponent({
                 this.patient = await this.fetchPatient(this.patientId)
                 this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
                 this.nextTask = await this.getNextTask(this.patientId)
+                this.visitDates = await this.getPatientVisitDates(this.patientId)
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
             },
@@ -164,6 +159,13 @@ export default defineComponent({
         },
         getProp(data: any, prop: string): string {
             return prop in data ? data[prop]() : '-'
+        },
+        async getPatientVisitDates(patientId: number) {
+            const dates = await Patientservice.getPatientVisits(patientId)
+            return dates.map((date: string) => ({
+                label: HisDate.toStandardHisDisplayFormat(date),
+                value: date
+            }))
         },
         async getNextTask(patientId: number) {
             try {

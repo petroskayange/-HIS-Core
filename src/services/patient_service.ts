@@ -27,6 +27,10 @@ export class Patientservice extends Service {
         return JSON.stringify(value);
     }
 
+    public static getPatientVisits(patientId: number) {
+        return super.getJson(`patients/${patientId}/visits?program_id=${super.programID}`)    
+    }
+
     getID() {
         return this.patient.patient_id
     }
