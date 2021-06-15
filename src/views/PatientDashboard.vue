@@ -3,14 +3,14 @@
         <ion-content>
             <ion-grid>
                 <ion-row> 
-                    <ion-col> 
+                    <ion-col size="5"> 
                         <info-card :title="patient.title" :icon="patient.icon" :items="patient.info"/> 
                     </ion-col>
-                    <ion-col> 
+                    <ion-col size="5"> 
                         <info-card :title="treatment.title" :icon="treatment.icon" :items="treatment.info"/> 
                     </ion-col>
-                    <ion-col> 
-                        <info-card :title="treatment.title" :icon="treatment.icon" :items="treatment.info"/> 
+                    <ion-col size="2"> 
+                        <info-card :title="treatment.title" :icon="treatment.icon" :items="[]"/> 
                     </ion-col>
                 </ion-row>
                 <ion-row> 
@@ -22,18 +22,18 @@
                     <ion-col size="10"> 
                         <ion-row> 
                             <ion-col>
-                                <primary-card title="7 Activities"> </primary-card>
+                                <primary-card title="7 Activities" :items="activities"> </primary-card>
                             </ion-col>
                             <ion-col>
-                                <primary-card title="Lab Orders" titleColor="#5cb85c"> </primary-card>
+                                <primary-card title="Lab Orders" :items="labOrders" titleColor="#5cb85c"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
                             <ion-col> 
-                                <primary-card title="Alerts" titleColor="#d9534f"> </primary-card>
+                                <primary-card title="Alerts" :items="alerts" titleColor="#d9534f"> </primary-card>
                             </ion-col>
                             <ion-col> 
-                                <primary-card title="Medications" titleColor="#f0ad4e"> </primary-card>
+                                <primary-card title="Medications" :items="medications" titleColor="#f0ad4e"> </primary-card>
                             </ion-col>
                         </ion-row>
                     </ion-col>
@@ -107,7 +107,23 @@ export default defineComponent({
                 { label: "File Number", value: "No filing Number Available"},
                 { label: "Current Outcome", value: "Unknown"}
             ]
-        }
+        },
+        labOrders: [
+            { label: "Viral Load", value: "09:30"}
+        ],
+        activities: [
+            {label: "HIV STAGING", value: "08:30"},
+            {label: "REGISTRATION", value: "08:30"},
+            {label: "LAB ORDER", value: "08:30"},
+        ],
+        medications: [
+            {label: "Rifepentine 150mg", value: "09:00"},
+            {label: "CPT 150mg", value: "09:00"},
+            {label: "Some ARV 150mg", value: "09:00"},
+        ],
+        alerts: [
+            { label: "Patient has 0 side effects", value: ""}
+        ]
     })
 })
 </script>
