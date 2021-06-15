@@ -19,7 +19,7 @@
             <ion-grid>
                 <ion-row> 
                     <ion-col size="2">
-                        <visit-dates-card :title="visitDatesTitle" :items="visitDates"> </visit-dates-card>
+                        <visit-dates-card :title="visitDatesTitle" :items="visitDates" @onselect="onActiveVisitDate"> </visit-dates-card>
                     </ion-col>
                     <ion-col size="10"> 
                         <ion-row> 
@@ -35,7 +35,7 @@
                         </ion-row>
                         <ion-row> 
                             <ion-col>
-                                <primary-card title="Activities" :items="activities"> </primary-card>
+                                <primary-card title="Activities" :items="encountersCardItems"> </primary-card>
                             </ion-col>
                             <ion-col>
                                 <primary-card title="Lab Orders" :items="labOrders" titleColor="#5cb85c"> </primary-card>
@@ -77,6 +77,8 @@ import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
 import HisDate from "@/utils/Date"
+import { Encounter } from "@/interfaces/encounter"
+import { Option } from "@/components/Forms/FieldInterface"
 import { Patient } from "@/interfaces/patient";
 import { Patientservice } from "@/services/patient_service"
 import { ProgramService } from "@/services/program_service"
@@ -90,6 +92,7 @@ import {
   IonFooter,
   IonToolbar,
 } from "@ionic/vue";
+import { EncounterService } from '@/services/Encounter'
 export default defineComponent({
     components: {
         VisitDatesCard,
@@ -110,18 +113,15 @@ export default defineComponent({
         nextTask: "None",
         patientId: 0,
         patient: {} as any,
-        patientProgram: {} as any,
-        patientCardInfo: [] as any,
-        programCardInfo: [] as any,
-        encounters: [] as any,
-        visitDates: [] as any,
+        patientProgram: {} as Array<Option>,
+        patientCardInfo: [] as Array<Option>,
+        programCardInfo: [] as Array<Option>,
+        encounters: [] as Array<Encounter>,
+        visitDates: [] as Array<Option>,
+        activeVisitDate: '' as string | number,
+        encountersCardItems: [] as Array<Option>,
         labOrders: [
             { label: "Viral Load", value: "09:30"}
-        ],
-        activities: [
-            {label: "HIV STAGING", value: "08:30"},
-            {label: "REGISTRATION", value: "08:30"},
-            {label: "LAB ORDER", value: "08:30"},
         ],
         medications: [
             {label: "Rifepentine 150mg", value: "09:00"},
@@ -150,6 +150,10 @@ export default defineComponent({
             },
             deep: true,
             immediate: true
+        },
+        async activeVisitDate(date: string) {
+            this.encounters = await EncounterService.getEncountersByDate(this.patientId, date)
+            this.encountersCardItems = this.getActivitiesCardInfo(this.encounters)
         }
     },
     methods: {
@@ -175,6 +179,9 @@ export default defineComponent({
                 return 'None'
             }
         },
+        onActiveVisitDate(data: Option) {
+            this.activeVisitDate = data.value
+        },
         getPatientCardInfo(patient: any) {
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
@@ -188,13 +195,19 @@ export default defineComponent({
         },
         getProgramCardInfo(programInfo: any) {
            return  [
-                { label: "ART- Start Date", value: programInfo.art_start_date},
-                { label: "ARV Number", value: programInfo.arv_number },
-                { label: "File Number", value: programInfo.filing_number.number},
-                { label: "Current Outcome", value: programInfo.current_outcome},
-                { label: "Current Regimen", value: programInfo.current_regimen},
+            { label: "ART- Start Date", value: programInfo.art_start_date},
+            { label: "ARV Number", value: programInfo.arv_number },
+            { label: "File Number", value: programInfo.filing_number.number},
+            { label: "Current Outcome", value: programInfo.current_outcome},
+            { label: "Current Regimen", value: programInfo.current_regimen},
            ]
-        }  
+        },
+        getActivitiesCardInfo(encounters: Array<Encounter>) {
+            return encounters.map((encounter: Encounter) => ({
+                label: encounter.type.name,
+                value: HisDate.toStandardHisTimeFormat(encounter.encounter_datetime)
+            }))
+        }
     }
 })
 </script>
