@@ -191,7 +191,8 @@ export default defineComponent({
                 { label: "ART- Start Date", value: programInfo.art_start_date},
                 { label: "ARV Number", value: programInfo.arv_number },
                 { label: "File Number", value: programInfo.filing_number.number},
-                { label: "Current Outcome", value: programInfo.current_outcome}
+                { label: "Current Outcome", value: programInfo.current_outcome},
+                { label: "Current Regimen", value: programInfo.current_regimen},
            ]
         }  
     }
