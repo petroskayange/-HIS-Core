@@ -14,7 +14,12 @@ export class Service {
 
         if (req && req.ok) return req?.json()
     }
-
+    static getSessionDate() {
+        return sessionStorage.sessionDate;
+    }
+    static getProgramID() {
+        return sessionStorage.programID;
+    }
     static async postJson(url: string, data: any, genericError='Unable to save record') {
         const req = await ApiClient.post(url, data)
     
