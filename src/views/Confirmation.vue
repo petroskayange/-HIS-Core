@@ -124,6 +124,7 @@ import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
 import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
+import { ConceptService } from "@/services/ConceptService"
 import HisDate from "@/utils/Date"
 export default defineComponent({
   name: "Home",
@@ -244,12 +245,12 @@ export default defineComponent({
     fetchAlerts: async function () {
       const data: Observation[] = await ObservationService.getObservations(
         this.patientID,
-        7755
+        ConceptService.getCachedConceptID('art side effects')
       );
 
       const sideEffects = data.filter((observation) => {
         //1065 is the concept for yes and 1066 is the concept for no
-        return observation.children[0].value_coded == 1065;
+        return observation.children[0].value_coded == ConceptService.getCachedConceptID('No');
       });
 
       const displayData = {
@@ -315,7 +316,7 @@ export default defineComponent({
       );
       const appointMentObs: Observation[] = await ObservationService.getObservations(
         this.patientID,
-        5096
+        ConceptService.getCachedConceptID('appointment date')
       );
       if (appointMentObs.length > 0) {
         const nextAPPT = HisDate.toStandardHisFormat(appointMentObs[0].value_datetime);
