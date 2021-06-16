@@ -38,7 +38,7 @@
                                 <primary-card title="Activities" :items="encountersCardItems"> </primary-card>
                             </ion-col>
                             <ion-col>
-                                <primary-card title="Lab Orders" :items="labOrders" titleColor="#5cb85c"> </primary-card>
+                                <primary-card title="Lab Orders" :items="labOrderCardItems" titleColor="#5cb85c"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
@@ -83,6 +83,7 @@ import { Patient } from "@/interfaces/patient";
 import { Patientservice } from "@/services/patient_service"
 import { ProgramService } from "@/services/program_service"
 import { DrugOrderService } from "@/services/drug_order_service"
+import { OrderService } from "@/services/order_service"
 import {
   IonPage,
   IonContent,
@@ -119,13 +120,12 @@ export default defineComponent({
         programCardInfo: [] as Array<Option>,
         encounters: [] as Array<Encounter>,
         medications: [] as any,
+        labOrders: [] as any,
         visitDates: [] as Array<Option>,
         activeVisitDate: '' as string | number,
         encountersCardItems: [] as Array<Option>,
         medicationCardItems: [] as Array<Option>,
-        labOrders: [
-            { label: "Viral Load", value: "09:30"}
-        ],
+        labOrderCardItems: [] as Array<Option>,
         alerts: [
             { label: "Patient has 0 side effects", value: ""}
         ]
@@ -152,8 +152,10 @@ export default defineComponent({
         async activeVisitDate(date: string) {
             this.encounters = await EncounterService.getEncountersByDate(this.patientId, date)
             this.medications = await DrugOrderService.getOrderByPatient(this.patientId, date)
+            this.labOrders = await OrderService.getOrders(this.patientId, date)
             this.encountersCardItems = this.getActivitiesCardInfo(this.encounters)
             this.medicationCardItems = this.getMedicationCardInfo(this.medications)
+            this.labOrderCardItems = this.getLabOrderCardInfo(this.labOrders)
         }
     },
     methods: {
@@ -212,6 +214,12 @@ export default defineComponent({
             return medications.map((medication: any) => ({
                 label: medication.drug.name,
                 value: HisDate.toStandardHisTimeFormat(medication.order.start_date)
+            }))
+        },
+        getLabOrderCardInfo(labOrders: any) {
+            return labOrders.map((labOrder: any) => ({
+                label: labOrder.specimen.name,
+                value: HisDate.toStandardHisTimeFormat(labOrder.order_date)
             }))
         }
     }
