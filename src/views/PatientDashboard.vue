@@ -192,7 +192,7 @@ export default defineComponent({
                 { label: "Name", value: this.getProp(patient, 'getFullName')},
                 { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
-                { label: "Phone#", value: "#coming soon" },
+                { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber') },
             ]
         },
         getProgramCardInfo(programInfo: any) {

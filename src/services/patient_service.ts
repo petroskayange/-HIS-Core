@@ -81,7 +81,9 @@ export class Patientservice extends Service {
     getCurrentTA() {
         return this.getAddresses().ancestryTA
     }
-
+    getPhoneNumber() {
+        return this.getAttribute(12) //get phone number
+    }
     getAttribute(personAttributeTypeID: number) {
         return getPersonAttribute(this.patient.person.person_attributes, personAttributeTypeID);
     }
