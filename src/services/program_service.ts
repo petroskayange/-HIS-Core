@@ -19,6 +19,18 @@ export class ProgramService extends Service {
     static getFastTrackStatus(patientID: number) {
         return super.getJson('/on_fast_track', {'person_id': patientID, date: super.sessionDate});
     }
+   static createPatient(personID: number) {
+     return super.postJson(`/patients/`, {
+          'program_id': super.programID,
+          'person_id': personID
+      })
+    }
+    static enrollPatient(personID: number) {
+     return super.postJson(`/patients/${personID}/programs`, {
+          'program_id': super.programID,
+          'date_enrolled': super.sessionDate
+      })
+    }
     static async showError(message: string) {
          const alert = await alertController
         .create({

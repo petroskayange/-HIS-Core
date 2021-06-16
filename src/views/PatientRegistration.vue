@@ -14,6 +14,7 @@ import {Person} from "@/interfaces/person"
 import {PersonAttribute} from "@/interfaces/personAttribute"
 import {PersonAttributeService, NewAttribute} from '@/services/person_attributes_service'
 import HisDate from "@/utils/Date"
+import { ProgramService } from "@/services/program_service";
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -49,6 +50,11 @@ export default defineComponent({
             if (attributesPayload.length >= 1) {
                 await PersonAttributeService.create(attributesPayload)  
             }
+            await ProgramService.createPatient(person.person_id)
+            .then(() => {
+                ProgramService.enrollPatient(person.person_id)
+                    .then(() => this.$router.push(`/patient/dashboard?patient_id=${person.person_id}`))
+            });
         }
         alert('Record has been Created!')
       }catch(e) {
@@ -137,28 +143,40 @@ export default defineComponent({
         const regions = await LocationService.getRegions()
         return regions.map((region: any) => ({
             label: region.name,
-            value: region.region_id
+            value: region.name,
+            other: {
+                id: region.region_id
+            }
         }))
     },
     async getDistricts(regionID: number): Promise<Option[]> {
         const districts = await LocationService.getDistricts(regionID)
         return districts.map((district: any) => ({
             label: district.name,
-            value: district.district_id
+            value: district.name,
+            other: {
+                id: district.district_id
+            }
         }))
     },
     async getTraditionalAuthorities(districtID: number): Promise<Option[]> {
         const TAs = await LocationService.getTraditionalAuthorities(districtID)
         return TAs.map((TA: any) => ({
             label: TA.name,
-            value: TA.traditional_authority_id
+            value: TA.name,
+            other: {
+                id: TA.traditional_authority_id
+            }
         }))
     },
     async getVillages(traditionalAuthorityID: number): Promise<Option[]> {
         const villages = await LocationService.getVillages(traditionalAuthorityID)
         return villages.map((village: any) => ({
             label: village.name,
-            value: village.village_id
+            value: village.name,
+            other: {
+                id: village.village_id
+            }
         }))
     },
     getFields: function(): Array<Field> {
@@ -280,7 +298,7 @@ export default defineComponent({
                 group: 'person',
                 requireNext: false,
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
-                options: (form: any) => this.getDistricts(form.home_region.value)
+                options: (form: any) => this.getDistricts(form.home_region.other.id)
             },
             {
                 id: 'home_traditional_authority',
@@ -293,7 +311,7 @@ export default defineComponent({
                 group: 'person',
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
                 validation: (val: any) => Validation.required(val),
-                options: (form: any) => this.getTraditionalAuthorities(form.home_district.value)
+                options: (form: any) => this.getTraditionalAuthorities(form.home_district.other.id)
             },
             {
                 id: 'home_village',
@@ -306,7 +324,7 @@ export default defineComponent({
                 requireNext: false,
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => !form.home_region.label.match(/foreign/i),
-                options: (form: any) => this.getVillages(form.home_traditional_authority.value)
+                options: (form: any) => this.getVillages(form.home_traditional_authority.other.id)
             },
             {
                 id: 'current_region',
@@ -324,7 +342,7 @@ export default defineComponent({
                 group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
-                options: (form: any) => this.getDistricts(form.current_region.value)
+                options: (form: any) => this.getDistricts(form.current_region.other.id)
             },
             {
                 id: 'current_traditional_authority',
@@ -333,7 +351,7 @@ export default defineComponent({
                 group: 'person',
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
-                options: (form: any) => this.getTraditionalAuthorities(form.current_district.value)
+                options: (form: any) => this.getTraditionalAuthorities(form.current_district.other.id)
             },
             {
                 id: 'current_village',
@@ -342,7 +360,7 @@ export default defineComponent({
                 requireNext: false,
                 type: FieldType.TT_SELECT,
                 validation: (val: any) => Validation.required(val),
-                options: (form: any) => this.getVillages(form.current_traditional_authority.value)
+                options: (form: any) => this.getVillages(form.current_traditional_authority.other.id)
             },
             {
                 id: 'landmark',
