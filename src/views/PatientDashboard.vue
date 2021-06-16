@@ -127,7 +127,7 @@ export default defineComponent({
         medicationCardItems: [] as Array<Option>,
         labOrderCardItems: [] as Array<Option>,
         alerts: [
-            { label: "Patient has 0 side effects", value: ""}
+            { label: "Coming soon...", value: ""}
         ]
     }),
     computed: {
