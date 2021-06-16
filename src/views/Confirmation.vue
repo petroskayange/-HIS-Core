@@ -118,7 +118,7 @@ import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
 import { Role } from "@/interfaces/role";
 import { Observation } from "@/interfaces/observation";
-import { getObservation } from "@/services/Observations";
+import { ObservationService } from "@/services/observation_service";
 import { Patientservice } from "@/services/patient_service";
 import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
@@ -242,7 +242,7 @@ export default defineComponent({
           this.setOpen(false);
     },
     fetchAlerts: async function () {
-      const data: Observation[] = await getObservation(
+      const data: Observation[] = await ObservationService.getObservations(
         this.patientID,
         7755
       );
@@ -313,7 +313,7 @@ export default defineComponent({
           });
         }
       );
-      const appointMentObs: Observation[] = await getObservation(
+      const appointMentObs: Observation[] = await ObservationService.getObservations(
         this.patientID,
         5096
       );

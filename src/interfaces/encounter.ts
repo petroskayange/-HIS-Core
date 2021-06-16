@@ -1,4 +1,4 @@
-import { Observation } from "@/services/Observations";
+import { Observation } from "./observation";
 import { Patient } from "./patient";
 import { Program } from "./program";
 import { Provider } from "./provider";
