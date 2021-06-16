@@ -43,7 +43,7 @@
                         </ion-row>
                         <ion-row> 
                             <ion-col> 
-                                <primary-card title="Alerts" :items="alerts" titleColor="#d9534f"> </primary-card>
+                                <primary-card title="Alerts" :items="alertCardItems" titleColor="#d9534f"> </primary-card>
                             </ion-col>
                             <ion-col> 
                                 <primary-card title="Medications" :items="medicationCardItems" titleColor="#f0ad4e"> </primary-card>
@@ -84,6 +84,7 @@ import { Patientservice } from "@/services/patient_service"
 import { ProgramService } from "@/services/program_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
+import PatientAlerts from "@/services/patient_alerts"
 import {
   IonPage,
   IonContent,
@@ -126,9 +127,7 @@ export default defineComponent({
         encountersCardItems: [] as Array<Option>,
         medicationCardItems: [] as Array<Option>,
         labOrderCardItems: [] as Array<Option>,
-        alerts: [
-            { label: "Coming soon...", value: ""}
-        ]
+        alertCardItems: [] as Array<Option>
     }),
     computed: {
         visitDatesTitle(): string {
@@ -143,6 +142,7 @@ export default defineComponent({
                 this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
                 this.nextTask = await this.getNextTask(this.patientId)
                 this.visitDates = await this.getPatientVisitDates(this.patientId)
+                this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
             },
@@ -221,6 +221,12 @@ export default defineComponent({
                 label: labOrder.specimen.name,
                 value: HisDate.toStandardHisTimeFormat(labOrder.order_date)
             }))
+        },
+        async getPatientAlertCardInfo(patientId: number){
+            const sideEffects = await PatientAlerts.alertSideEffects(patientId)
+            return [
+                { label: `Patient has ${sideEffects.length} side effects`, value: ''}
+            ]
         }
     }
 })

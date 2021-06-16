@@ -125,6 +125,7 @@ import { OrderService } from "@/services/order_service";
 import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
 import { ConceptService } from "@/services/concept_service"
+import PatientAlerts from "@/services/patient_alerts"
 import HisDate from "@/utils/Date"
 export default defineComponent({
   name: "Home",
@@ -243,16 +244,7 @@ export default defineComponent({
           this.setOpen(false);
     },
     fetchAlerts: async function () {
-      const data: Observation[] = await ObservationService.getObservations(
-        this.patientID,
-        ConceptService.getCachedConceptID('art side effects')
-      );
-
-      const sideEffects = data.filter((observation) => {
-        //1065 is the concept for yes and 1066 is the concept for no
-        return observation.children[0].value_coded == ConceptService.getCachedConceptID('No');
-      });
-
+      const sideEffects: Observation[] = await PatientAlerts.alertSideEffects(this.patientID)
       const displayData = {
         title: "ALERTS",
         data: [
