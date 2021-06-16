@@ -10,7 +10,7 @@
                         <info-card :items="programCardInfo"/> 
                     </ion-col>
                     <ion-col size="2"> 
-                        <info-card :items="[]"/> 
+                        <icon-card :icon="appIcon"> </icon-card>
                     </ion-col>
                 </ion-row>
             </ion-toolbar>
@@ -85,6 +85,7 @@ import { ProgramService } from "@/services/program_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
+import IconCard from "@/components/DataViews/DashboardAppIcon.vue"
 import {
   IonPage,
   IonContent,
@@ -101,6 +102,7 @@ export default defineComponent({
         VisitDatesCard,
         PrimaryCard,
         InfoCard,
+        IconCard,
         IonPage,
         IonFooter,
         IonContent,
@@ -111,6 +113,7 @@ export default defineComponent({
         IonCol,
     },
     data: () => ({
+        appIcon: ProgramService.applicationImage,
         currentDate: HisDate.currentDisplayDate(),
         sessionDate: HisDate.sessionDisplayDate(),
         nextTask: "None",
