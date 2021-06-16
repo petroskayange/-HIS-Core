@@ -356,14 +356,14 @@ export default defineComponent({
         this.cards.push(displayData);
       });
     },
-    setupconfirmation() {
+    setupconfirmation(query: any) {
       this.resetState();
-      if(this.$route.query.person_id) {
-        const patientID = this.$route.query.person_id as any;
+      if(query.person_id) {
+        const patientID = query.person_id as any;
         this.patientID = parseInt(patientID);
         this.fetchPatient();
-      }else if(this.$route.query.patient_barcode) {
-        const patientBarcode = this.$route.query.patient_barcode as any;
+      }else if(query.patient_barcode) {
+        const patientBarcode = query.patient_barcode as any;
         this.patientBarcode = patientBarcode.replace(/-/g, "");
         this.fetchPatientByID();
       }
@@ -404,7 +404,7 @@ export default defineComponent({
    watch: {
     $route: {
       async handler({ query }: any) {
-       this.setupconfirmation();
+       this.setupconfirmation(query);
       },
       deep: true,
       immediate: true,
