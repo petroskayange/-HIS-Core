@@ -6,8 +6,8 @@ export class OrderService extends Service {
         super()
     }
 
-    static getOrders(patientID: number) {
-        return super.getJson(`/lab/orders?patient_id=${patientID}`);
+    static getOrders(patientID: number, orderDate='') {
+        return super.getJson(`/lab/orders?patient_id=${patientID}&date=${orderDate}`);
     }
 
     static getViralLoadOrders(orders: Order[]) {
