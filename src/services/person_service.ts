@@ -32,11 +32,11 @@ export class PersonService extends Service{
     create(){ return Service.postJson('/people', this.person) }
 
     static searchFamilyName(name: string) {
-        return super.getJson(`/search/family_name?search_string=${name}`)
+        return super.getJson('/search/family_name', {'search_string': name})
     }
 
     static searchGivenName(name: string) {
-        return super.getJson(`/search/given_name?search_string=${name}`)
+        return super.getJson('/search/given_name', {'search_string': name})
     }
 
 }

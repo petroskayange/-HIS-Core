@@ -161,7 +161,9 @@ export default defineComponent({
   },
   methods: {
     async fetchResults(gname: string, fname: string, gender: string) {
-      const patients = await Patientservice.searchByName(gname, fname, gender);
+      const patients = await Patientservice.search({
+        'given_name': gname, 'family_name': fname, gender
+      });
       return patients.map((item: Patient) => {
         const patient = new Patientservice(item);
         return {
