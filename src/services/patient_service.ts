@@ -15,12 +15,20 @@ export class Patientservice extends Service {
         return super.getJson(`/search/patients`, params)
     }
 
+    public static async findByID(patientId: number | string) {
+        return super.getJson(`/patients/${patientId}`)
+    }
+
     public static toPatient(json: string): Patient {
         return JSON.parse(json);
     }
 
     public static patientToJson(value: Patient): string {
         return JSON.stringify(value);
+    }
+
+    public static getPatientVisits(patientId: number) {
+        return super.getJson(`patients/${patientId}/visits?program_id=${super.programID}`)    
     }
 
     getID() {
@@ -66,10 +74,16 @@ export class Patientservice extends Service {
         return this.getAddresses().ancestryVillage
     }
 
+    getCurrentVillage() {
+        return this.getAddresses().currentVillage;
+    }
+
     getCurrentTA() {
         return this.getAddresses().ancestryTA
     }
-
+    getPhoneNumber() {
+        return this.getAttribute(12) //get phone number
+    }
     getAttribute(personAttributeTypeID: number) {
         return getPersonAttribute(this.patient.person.person_attributes, personAttributeTypeID);
     }

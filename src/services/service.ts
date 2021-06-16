@@ -3,6 +3,7 @@ import Url from "@/utils/Url"
 
 export class Service {
     static programID = sessionStorage.programID;
+    static userRoles = sessionStorage.userRoles;
     static sessionDate = sessionStorage.sessionDate;
     
     static async getJson(url: string, params = {} as Record<string, string> | Record<string, number>) {

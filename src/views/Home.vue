@@ -10,8 +10,8 @@
               style="height: 100%"
             ></ion-icon>
           </ion-col>
-          <ion-col size="3.5" class="outlined">
-            <ion-input autofocus="true" v-model="patientBarcode"></ion-input>
+          <ion-col size="3.5" >
+            <ion-input autofocus v-model="patientBarcode" class="barcode-input" ref="scanBarcode"></ion-input>
           </ion-col>
           <ion-col size="5">
             <p>Facility name: {{ facilityName }}</p>
@@ -72,7 +72,7 @@
             <ion-button color="primary" size="large" router-link="/patients/search/by_arv">Find By</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large" router-link="/search_patient"
+            <ion-button color="primary" size="large" router-link="/search_patient"
               >Find or Register</ion-button
             >
           </ion-col>
@@ -108,10 +108,11 @@ import {
   IonImg,
   IonThumbnail
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { barcode } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
-import Modal from "@/components/Modal.vue";
+import Modal from "@/components/ApplicationModal.vue";
+import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
@@ -218,8 +219,8 @@ export default defineComponent({
       const modal = await modalController.create({
         component: Modal,
         cssClass: "my-custom-class",
+        backdropDismiss: false,
         componentProps: {
-          // title: 'New Title'
         },
       });
 
@@ -227,8 +228,24 @@ export default defineComponent({
       const { data } = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
       this.applicationIcon = data.applicationIcon;
+      const modal2 = await modalController.create({
+        component: ActivitiesModal,
+        cssClass: "my-custom-class",
+        backdropDismiss: false,
+        componentProps: {
+        },
+      });
+      modal2.present();
+      await modal2.onDidDismiss();
       this.loadApplicationData();
     },
+    checkForbarcode(){
+        if(this.patientBarcode.match(/.+\$$/i) != null){
+          const patientBarcode = this.patientBarcode.replaceAll(/\$/gi, '');
+          this.patientBarcode = '';
+          this.$router.push('/patients/confirm?patient_barcode='+patientBarcode);
+        }
+      },
   },
   setup() {
     return {
@@ -246,6 +263,11 @@ export default defineComponent({
         this.loadApplicationData();
       }
   },
+  watch: {
+    patientBarcode: function() {
+      this.checkForbarcode();
+    }
+  }
 });
 </script>
 
@@ -259,6 +281,7 @@ ion-button {
 
 .outlined {
   border: solid 1px grey;
+  font-size: 100%;
 }
 
 #container strong {
@@ -277,5 +300,9 @@ ion-button {
 
 #container a {
   text-decoration: none;
+}
+.barcode-input{
+  height: 100%;
+  font-size: 100%;
 }
 </style>

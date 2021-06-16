@@ -11,6 +11,7 @@ import PatientRegistration from '../views/PatientRegistration.vue'
 import SearchResults from '../views/SearchResults.vue'
 import Example from '../views/Example.vue'
 import FindByARVNumber from '../views/FindByARVNumber.vue'
+import PatientDashboard from '../views/PatientDashboard.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -46,6 +47,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/search_client',
     name: 'Search client',
     component: SearchClient
+  },
+  {
+    path: '/patient/dashboard',
+    name: 'Patient Dashboard',
+    component: PatientDashboard
   },
   {
     path: '/patient/registration',

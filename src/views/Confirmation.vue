@@ -1,5 +1,12 @@
 <template>
+
   <ion-page>
+  <ion-loading
+    :is-open="isOpenRef"
+    cssClass="my-custom-class"
+    message="Please wait..."
+  >
+  </ion-loading>
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-row>
@@ -74,7 +81,7 @@
             >
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large">Continue</ion-button>
+            <ion-button color="success" size="large" :router-link="`/patient/dashboard?patient_id=${patientID}`">Continue</ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>
@@ -101,18 +108,21 @@ import {
   IonCardContent,
   IonCardTitle,
   IonCardHeader,
+  IonLoading,
   alertController,
+  loadingController
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
 import { Role } from "@/interfaces/role";
 import { Observation } from "@/interfaces/observation";
-import { getObservation } from "@/services/Observations";
+import { ObservationService } from "@/services/observation_service";
 import { Patientservice } from "@/services/patient_service";
 import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
+import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
 import HisDate from "@/utils/Date"
 export default defineComponent({
@@ -130,20 +140,12 @@ export default defineComponent({
     IonCardContent,
     IonIcon,
     IonCardTitle,
-    IonCardHeader
+    IonCardHeader, 
+    IonLoading
   },
   data() {
     return {
-      facilityName: "",
-      userLocation: "",
-      sessionDate: "",
-      userName: "",
-      APIVersion: "",
-      applicationName: "",
-      activeTab: 1,
-      ready: false,
-      patientBarcode: "",
-      applicationIcon: null,
+      patientBarcode: "" as any,
       patientName: "",
       landmark: "",
       phoneNumber: "",
@@ -158,18 +160,51 @@ export default defineComponent({
       cards: [] as any,
       ARVNumber: "",
       NPID: "",
+      patientID: "" as any
     };
   },
   methods: {
     fetchPatient: async function () {
       const response = await ApiClient.get(`/patients/${this.patientID}`);
 
+      this.setOpen(true);
       if (!response || response.status !== 200) {
+          this.setOpen(false);
         ProgramService.showError('Patient not found');
 
       } // NOTE: Targeting Firefox 65, can't `response?.status`
       else {
         const data: Patient = await response.json();
+        this.parsePatient(data);
+      }
+    },
+    fetchPatientByID: async function() {
+      this.setOpen(true);
+      const response = await ApiClient.get(`/search/patients/by_npid?npid=${this.patientBarcode}`);
+
+      if (!response || response.status !== 200) {
+          this.setOpen(false);
+        ProgramService.showError('Patient not found');
+      } 
+      else {
+        const data: Patient[] = await response.json();
+
+        switch (data.length) {
+          case 0:
+            ProgramService.showError('Patient not found');
+            this.setOpen(false);
+            break;
+          case 1:
+            this.patientID = data[0].patient_id; 
+            this.parsePatient(data[0]);
+            break;
+          default:
+            console.log('duplicates');
+            break;
+        }
+      }
+    },
+    parsePatient: async function(data: Patient) {
         const patient = new Patientservice(data);
         this.patientName = patient.getFullName();
         this.landmark = patient.getAttribute(19);
@@ -202,11 +237,12 @@ export default defineComponent({
         await this.fetchAlerts()
           .then(this.fetchLabOrders)
           .then(this.fetchProgramInfo)
-          .then(this.fetchGuardians);
-      }
+          .then(this.fetchGuardians)
+
+          this.setOpen(false);
     },
     fetchAlerts: async function () {
-      const data: Observation[] = await getObservation(
+      const data: Observation[] = await ObservationService.getObservations(
         this.patientID,
         7755
       );
@@ -277,7 +313,7 @@ export default defineComponent({
           });
         }
       );
-      const appointMentObs: Observation[] = await getObservation(
+      const appointMentObs: Observation[] = await ObservationService.getObservations(
         this.patientID,
         5096
       );
@@ -320,30 +356,63 @@ export default defineComponent({
         this.cards.push(displayData);
       });
     },
+    setupconfirmation() {
+      this.resetState();
+      if(this.$route.query.person_id) {
+        const patientID = this.$route.query.person_id as any;
+        this.patientID = parseInt(patientID);
+        this.fetchPatient();
+      }else if(this.$route.query.patient_barcode) {
+        const patientBarcode = this.$route.query.patient_barcode as any;
+        this.patientBarcode = patientBarcode.replace(/-/g, "");
+        this.fetchPatientByID();
+      }
+    },
+    resetState() {
+       this.patientBarcode = "";
+        this.patientName =  "";
+        this.landmark = "";
+        this.phoneNumber = "";
+        this.currentDistrict = "";
+        this.currentTA = "";
+        this.currentVillage = "";
+        this.ancestryDistrict = "";
+        this.ancestryTA = "";
+        this.ancestryVillage = "";
+        this.gender = "";
+        this.birthdate = "";
+        this.cards =  [];
+        this.ARVNumber = "";
+        this.NPID = "";
+        this.patientID =  "";
+    }
+     
   },
   setup() {
-    return {
+    const isOpenRef = ref(true);
+    const setOpen = (state: boolean) => isOpenRef.value = state;
+
+    return { isOpenRef, setOpen,
       barcode,
       man,
       woman,
     };
   },
   mounted() {
-    this.patientID;
-    this.fetchPatient();
+//
+  },
+   watch: {
+    $route: {
+      async handler({ query }: any) {
+       this.setupconfirmation();
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   computed: {
-    patientID() {
-      const patientID = this.$route.query.person_id as any;
-      return parseInt(patientID);
-    },
     isAdmin() {
-      const roles = JSON.parse(sessionStorage.userRoles).filter(
-        (role: Role) => {
-          return role.role.match(/super|admin/i);
-        }
-      );
-      return roles.length > 0;
+      return UserService.isAdmin;
     },
   },
 });
