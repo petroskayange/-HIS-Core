@@ -1,7 +1,10 @@
 import { Service } from '@/services/service'
 import router from '@/router/index';
+import Modal from "@/components/ApplicationModal.vue";
+import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
 import {
   alertController,
+  modalController
 } from "@ionic/vue";
 export class ProgramService extends Service {
     constructor() {
@@ -30,6 +33,28 @@ export class ProgramService extends Service {
           'program_id': super.programID,
           'date_enrolled': super.sessionDate
       })
+    }
+    static async selectApplication() {
+      const modal = await modalController.create({
+        component: Modal,
+        cssClass: "my-custom-class",
+        backdropDismiss: false,
+        componentProps: {
+        },
+      });
+      modal.present()
+      return modal;
+    }
+    static async selectTasks() {
+      const modal = await modalController.create({
+        component: ActivitiesModal,
+        cssClass: "my-custom-class",
+        backdropDismiss: false,
+        componentProps: {
+        },
+      });
+      modal.present();
+      return modal;
     }
     static async showError(message: string) {
          const alert = await alertController

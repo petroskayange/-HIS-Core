@@ -108,14 +108,13 @@ import {
   IonImg,
   IonThumbnail
 } from "@ionic/vue";
-import { defineComponent, nextTick, onMounted, ref } from "vue";
+import { defineComponent } from "vue";
 import { barcode } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
-import Modal from "@/components/ApplicationModal.vue";
-import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
+import { ProgramService } from "@/services/program_service";
 export default defineComponent({
   name: "Home",
   components: {
@@ -216,27 +215,11 @@ export default defineComponent({
       this.fetchSessionDate();
     },
     async openModal() {
-      const modal = await modalController.create({
-        component: Modal,
-        cssClass: "my-custom-class",
-        backdropDismiss: false,
-        componentProps: {
-        },
-      });
-
-      modal.present();
-      const { data } = await modal.onDidDismiss();
+      const modal = await ProgramService.selectApplication();
+      const  {data}  = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
       this.applicationIcon = data.applicationIcon;
-      const modal2 = await modalController.create({
-        component: ActivitiesModal,
-        cssClass: "my-custom-class",
-        backdropDismiss: false,
-        componentProps: {
-        },
-      });
-      modal2.present();
-      await modal2.onDidDismiss();
+      await ProgramService.selectTasks().then(data => data.onDidDismiss)
       this.loadApplicationData();
     },
     checkForbarcode(){
