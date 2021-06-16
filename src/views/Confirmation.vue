@@ -124,7 +124,7 @@ import { ProgramService } from "@/services/program_service";
 import { OrderService } from "@/services/order_service";
 import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
-import { ConceptService } from "@/services/ConceptService"
+import { ConceptService } from "@/services/concept_service"
 import HisDate from "@/utils/Date"
 export default defineComponent({
   name: "Home",
