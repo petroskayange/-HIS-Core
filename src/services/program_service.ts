@@ -13,11 +13,11 @@ export class ProgramService extends Service {
     }
     
     static getNextTask(patientID: number) {
-        return super.getJson(`/workflows/${super.programID}/${patientID}date=${super.sessionDate}`);
+        return super.getJson(`/workflows/${super.programID}/${patientID}`, {date: super.sessionDate});
     }
     
     static getFastTrackStatus(patientID: number) {
-        return super.getJson(`/on_fast_track?person_id=${patientID}&date=${super.sessionDate}`);
+        return super.getJson('/on_fast_track', {'person_id': patientID, date: super.sessionDate});
     }
     static async showError(message: string) {
          const alert = await alertController

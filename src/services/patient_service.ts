@@ -11,8 +11,8 @@ export class Patientservice extends Service {
         this.patient = patient;
     }
 
-    public static async searchByName(givenName: string, familyName: string, gender: string) {
-        return super.getJson(`/search/patients?given_name=${givenName}&family_name=${familyName}&gender=${gender}`)
+    public static async search(params: Record<string, string>) {
+        return super.getJson(`/search/patients`, params)
     }
 
     public static toPatient(json: string): Patient {
