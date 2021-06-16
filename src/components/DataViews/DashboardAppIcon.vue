@@ -22,11 +22,11 @@ export default defineComponent({
       margin-top: 5%;
     }
     #card {
-      border: 1px solid #ccc;
+      border: 2px solid #ccc;
       height: 128px;
       overflow: hidden;
-      -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-      -moz-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-      box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
+     -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      -moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
     }
 </style>
