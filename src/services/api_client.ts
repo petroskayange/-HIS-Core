@@ -125,8 +125,7 @@ const ApiClient = (() => {
     const post = (uri: string, data: object, options = []) => execFetch(uri, { method: 'POST', body: JSON.stringify(data) }, options);
     const remove = (uri: string, data: object, options = []) => execFetch(uri, { method: 'DELETE', body: JSON.stringify(data) }, options);
     const put = (uri: string, data: object, options = []) => execFetch(uri, { method: 'PUT', body: JSON.stringify(data) }, options);
-    const setRouter = (route: any) => route = router;
-    return { get, post, put, remove, getConfig, setRouter, showMessage };
+    return { get, post, put, remove, getConfig, showMessage };
 })();
 
 export default ApiClient;

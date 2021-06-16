@@ -91,7 +91,6 @@
 import {
   IonContent,
   IonHeader,
-  modalController,
   IonFooter,
   IonPage,
   IonToolbar,
@@ -115,6 +114,7 @@ import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
 import { ProgramService } from "@/services/program_service";
+import HisDate from "@/utils/Date"
 export default defineComponent({
   name: "Home",
   components: {
@@ -180,13 +180,12 @@ export default defineComponent({
       if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
 
       const data = await response.json();
-      this.sessionDate = data.date;
+      this.sessionDate = HisDate.toStandardHisDisplayFormat(data.date);
       sessionStorage.sessionDate = data.date;
       // this.fetchLocationName(data.current_health_center_id);
     },
     async fetchAPIVersion() {
       const response = await ApiClient.get("version");
-
       if (!response || response.status !== 200) return;
 
       const data = await response.json();
