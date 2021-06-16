@@ -2,7 +2,7 @@
   <div id="card">
     <ul>
       <li v-for="(item, index) in items" :key="index"> 
-        <b> {{ item.label }}: </b> {{ item.value }}
+        {{ item.label }}: {{ item.value }}
       </li>
     </ul>
   </div>
