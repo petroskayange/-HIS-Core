@@ -19,11 +19,16 @@ export class ObservationService extends Service {
         super()
     }
 
-    public static create(data: Observation) {
+    static create(data: Observation) {
         return super.postJson('/observations', data)     
     }
-
-    public static getObservations(patientID: number, conceptID: number) {
+    
+    // Deprecated: use getObs instead
+    static getObservations(patientID: number, conceptID: number) {
         return super.getJson(`/observations?person_id=${patientID}&concept_id=${conceptID}`)
     }
+
+    static getObs(params: Record<string, string>) {
+        return super.getJson('/observations', params)
+    } 
 }
