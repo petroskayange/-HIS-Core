@@ -115,6 +115,7 @@ import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
 import { ProgramService } from "@/services/program_service";
+import { Service } from "@/services/service";
 export default defineComponent({
   name: "Home",
   components: {
@@ -208,17 +209,20 @@ export default defineComponent({
       sessionStorage.locationName = data.name;
     },
     loadApplicationData() {
+      this.fetchSessionDate();
       this.ready = true;
       this.userLocation = sessionStorage.userLocation;
       this.userName = sessionStorage.username;
       this.fetchLocationID();
-      this.fetchSessionDate();
     },
     async openModal() {
       const modal = await ProgramService.selectApplication();
       const  {data}  = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
       this.applicationIcon = data.applicationIcon;
+      sessionStorage.setItem("applicationImage", data.applicationIcon)
+      sessionStorage.setItem("applicationName", data.applicationName)
+      sessionStorage.setItem("programID", data.programID)
       await ProgramService.selectTasks().then(data => data.onDidDismiss)
       this.loadApplicationData();
     },
