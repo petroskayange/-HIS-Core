@@ -109,14 +109,11 @@ import {
   IonCardTitle,
   IonCardHeader,
   IonLoading,
-  alertController,
-  loadingController
 } from "@ionic/vue";
 import { defineComponent, ref } from "vue";
 import { barcode, man, woman } from "ionicons/icons";
 import ApiClient from "@/services/api_client";
 import { Patient } from "@/interfaces/patient";
-import { Role } from "@/interfaces/role";
 import { Observation } from "@/interfaces/observation";
 import { ObservationService } from "@/services/observation_service";
 import { Patientservice } from "@/services/patient_service";
@@ -213,7 +210,7 @@ export default defineComponent({
         this.phoneNumber = patient.getAttribute(12);
         const addresses = patient.getAddresses();
         this.gender = data.person.gender;
-        this.birthdate = HisDate.toStandardHisFormat(data.person.birthdate);
+        this.birthdate = HisDate.toStandardHisDisplayFormat(data.person.birthdate);
         this.ancestryDistrict = addresses.ancestryDistrict;
         this.ancestryTA = addresses.ancestryTA;
         this.ancestryVillage = addresses.ancestryVillage;
@@ -311,7 +308,7 @@ export default defineComponent({
         ConceptService.getCachedConceptID('appointment date')
       );
       if (appointMentObs.length > 0) {
-        const nextAPPT = HisDate.toStandardHisFormat(appointMentObs[0].value_datetime);
+        const nextAPPT = HisDate.toStandardHisDisplayFormat(appointMentObs[0].value_datetime);
         displayData.data.push({
           label: "Next Appointment",
           value: nextAPPT,
@@ -333,7 +330,7 @@ export default defineComponent({
       this.cards.push(displayData);
     },
     fetchGuardians: async function () {
-      const relationships = RelationshipService.getGuardianDetails(
+      RelationshipService.getGuardianDetails(
         this.patientID
       ).then((relationship: any) => {
         const rel: DataInterface[] = relationship.map((r: any) => {
@@ -390,9 +387,6 @@ export default defineComponent({
       man,
       woman,
     };
-  },
-  mounted() {
-//
   },
    watch: {
     $route: {

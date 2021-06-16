@@ -18,7 +18,7 @@
 <script>
 import { toastController } from '@ionic/vue';
 import { defineComponent } from 'vue';
-import {IonCol, IonGrid, IonImg, IonInput, IonRow} from "@ionic/vue";
+import {IonCol, IonGrid, IonInput, IonRow} from "@ionic/vue";
 import ApiClient from "@/services/api_client"
 
 export default defineComponent({

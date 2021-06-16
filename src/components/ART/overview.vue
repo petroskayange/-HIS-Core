@@ -37,11 +37,12 @@
 import { IonGrid, IonRow, IonCol } from "@ionic/vue";
 import { defineComponent } from "vue";
 import ApiClient from "@/services/api_client";
-import moment from "moment";
+import dayjs from "dayjs";
 
 export default defineComponent({
   data: function () {
     return {
+      dayjs,
       startDate: "",
       endDate: "",
       options: {
@@ -82,8 +83,8 @@ export default defineComponent({
     IonCol,
   },
   mounted() {
-    this.endDate = moment().subtract(1, "days").format("YYYY-MM-DD");
-    this.startDate = moment().subtract(5, "days").format("YYYY-MM-DD");
+    this.endDate = this.dayjs().subtract(1, "days").format("YYYY-MM-DD");
+    this.startDate = this.dayjs().subtract(5, "days").format("YYYY-MM-DD");
     this.getVisits();
     this.getEncounters();
   },
@@ -103,7 +104,7 @@ export default defineComponent({
         });
         this.series[0].data = [...complete];
         this.series[1].data = [...incomplete];
-        const formattedDays: any[] = days.map((x) => moment(x).format("dddd"));
+        const formattedDays: any[] = days.map((x) => this.dayjs(x).format("dddd"));
         this.options = {
           ...this.options,
           ...{
@@ -127,11 +128,11 @@ export default defineComponent({
         ],
       };
       const response = await ApiClient.post(
-        `reports/encounters?date=${moment().format("YYYY-MM-DD")}`,
+        `reports/encounters?date=${this.dayjs().format("YYYY-MM-DD")}`,
         userStats
       );
       const response2 = await ApiClient.post(
-        `reports/encounters?date=${moment().format("YYYY-MM-DD")}`,
+        `reports/encounters?date=${this.dayjs().format("YYYY-MM-DD")}`,
         facilityStats
       );
       if (
