@@ -22,7 +22,7 @@ export default defineComponent({
       margin-top: 5%;
     }
     #card {
-      border: 2px solid #ccc;
+      border: 1px solid #ccc;
       height: 128px;
       overflow: hidden;
      -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);

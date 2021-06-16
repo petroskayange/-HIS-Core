@@ -72,9 +72,8 @@ export default defineComponent({
   background-color: rgb(255, 255, 255);
   overflow: hidden;
   border-right: 2px solid #ccc;
-  -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  -moz-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
-  box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);  
-  
+-webkit-box-shadow: 4px 1px 5px 0px rgba(0,0,0,0.17);
+-moz-box-shadow: 4px 1px 5px 0px rgba(0,0,0,0.17);
+box-shadow: 4px 1px 5px 0px rgba(0,0,0,0.17);
 }
 </style>

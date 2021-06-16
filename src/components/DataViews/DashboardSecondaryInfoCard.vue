@@ -29,9 +29,9 @@ export default defineComponent({
       border-radius: 5px;
       height: 128px;
       overflow-y: auto;
-  -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
--moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      -moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
     }
     #card ul li {
       list-style: none;
