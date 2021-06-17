@@ -167,6 +167,8 @@ export default defineComponent({
             this.patientCardInfo = this.getPatientCardInfo(this.patient)
             this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
             this.programID = ProgramService.getProgramID()
+            this.currentDate = HisDate.currentDisplayDate()
+            this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
         },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
