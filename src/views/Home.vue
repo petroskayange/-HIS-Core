@@ -207,17 +207,20 @@ export default defineComponent({
       sessionStorage.locationName = data.name;
     },
     loadApplicationData() {
+      this.fetchSessionDate();
       this.ready = true;
       this.userLocation = sessionStorage.userLocation;
       this.userName = sessionStorage.username;
       this.fetchLocationID();
-      this.fetchSessionDate();
     },
     async openModal() {
       const modal = await ProgramService.selectApplication();
       const  {data}  = await modal.onDidDismiss();
       this.applicationName = data.applicationName;
       this.applicationIcon = data.applicationIcon;
+      sessionStorage.setItem("applicationImage", data.applicationIcon)
+      sessionStorage.setItem("applicationName", data.applicationName)
+      sessionStorage.setItem("programID", data.programID)
       await ProgramService.selectTasks().then(data => data.onDidDismiss)
       this.loadApplicationData();
     },

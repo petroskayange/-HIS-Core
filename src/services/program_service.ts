@@ -12,26 +12,26 @@ export class ProgramService extends Service {
     }
 
     static getProgramInformation(patientID: number) {
-        return super.getJson(`/programs/${super.programID}/patients/${patientID}`);
+        return super.getJson(`/programs/${super.getProgramID()}/patients/${patientID}`);
     }
     
     static getNextTask(patientID: number) {
-        return super.getJson(`/workflows/${super.programID}/${patientID}`, {date: super.sessionDate});
+        return super.getJson(`/workflows/${super.getProgramID()}/${patientID}`, {date: super.getSessionDate()});
     }
     
     static getFastTrackStatus(patientID: number) {
-        return super.getJson('/on_fast_track', {'person_id': patientID, date: super.sessionDate});
+        return super.getJson('/on_fast_track', {'person_id': patientID, date: super.getSessionDate()});
     }
    static createPatient(personID: number) {
      return super.postJson(`/patients/`, {
-          'program_id': super.programID,
+          'program_id': super.getProgramID(),
           'person_id': personID
       })
     }
     static enrollPatient(personID: number) {
      return super.postJson(`/patients/${personID}/programs`, {
-          'program_id': super.programID,
-          'date_enrolled': super.sessionDate
+          'program_id': super.getProgramID(),
+          'date_enrolled': super.getSessionDate()
       })
     }
     static async selectApplication() {

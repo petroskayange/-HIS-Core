@@ -49,9 +49,7 @@ export default defineComponent({
             programID: app.programID
           }
         )
-        sessionStorage.setItem("applicationImage", app.applicationIcon)
-        sessionStorage.setItem("applicationName", app.applicationName)
-        sessionStorage.setItem("programID", app.programID)
+       
       },
   },
   mounted() {

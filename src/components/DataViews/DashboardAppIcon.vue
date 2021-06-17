@@ -1,6 +1,6 @@
 <template>
   <div id="card">
-    <ion-img :src="icon" id="logo"></ion-img>
+    <ion-img v-if="icon" :src="icon" id="logo"></ion-img>
   </div>
 </template>
 <script lang="ts">

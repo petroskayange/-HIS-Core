@@ -113,9 +113,9 @@ export default defineComponent({
         IonCol,
     },
     data: () => ({
-        appIcon: ProgramService.applicationImage,
-        currentDate: HisDate.currentDisplayDate(),
-        sessionDate: HisDate.sessionDisplayDate(),
+        appIcon: '',
+        currentDate: '',
+        sessionDate: '',
         nextTask: "None",
         patientId: 0,
         patient: {} as any,
@@ -148,14 +148,17 @@ export default defineComponent({
                 this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+                this.appIcon = ProgramService.getApplicationImage() || ''
+                this.currentDate = HisDate.currentDisplayDate()
+                this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
             },
             deep: true,
             immediate: true
         },
         async activeVisitDate(date: string) {
-            this.encounters = await EncounterService.getEncountersByDate(this.patientId, date)
-            this.medications = await DrugOrderService.getOrderByPatient(this.patientId, date)
-            this.labOrders = await OrderService.getOrders(this.patientId, date)
+            this.encounters = await EncounterService.getEncounters(this.patientId, {date})
+            this.medications = await DrugOrderService.getOrderByPatient(this.patientId, {'start_date': date})
+            this.labOrders = await OrderService.getOrders(this.patientId, {date})
             this.encountersCardItems = this.getActivitiesCardInfo(this.encounters)
             this.medicationCardItems = this.getMedicationCardInfo(this.medications)
             this.labOrderCardItems = this.getLabOrderCardInfo(this.labOrders)
