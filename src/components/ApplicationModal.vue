@@ -5,8 +5,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    
-    <ion-row >
+    <ion-row>
        <ion-col v-for="app, index in apps" :key="index" size="4">
         <application-card @click="setApplication(app)" :name="app.applicationName" :details="app.applicationDescription" :programID="app.programID" :iconURL="app.applicationIcon"></application-card>
        </ion-col>
@@ -28,7 +27,7 @@ export default defineComponent({
         try {
 
             const response = await fetch('/config.json');
-
+      
             if (response.status !== 200) {
                 console.error(`Looks like there was a problem. Status Code: ${response.status}`);
                 return { status: "error" };
@@ -41,16 +40,24 @@ export default defineComponent({
             return { status: "error" };
         }
     },
+    async getAppConfig(app) {
+      const req = await fetch(`/applications/${app.applicationName}.json`)
+      return req.json()
+    },
     async setApplication(app) {
-        await modalController.dismiss(
-          {
-            applicationIcon: app.applicationIcon,
-            applicationName: app.applicationName,
-            programID: app.programID
-          }
-        )
-       
-      },
+      const config = await this.getAppConfig(app)
+
+      if (!config) throw 'Application configuration file not found. Check the public/applications'
+
+      await modalController.dismiss(
+        {
+          applicationIcon: app.applicationIcon,
+          applicationName: app.applicationName,
+          programID: app.programID,
+          config
+        }
+      )
+    },
   },
   mounted() {
     this.getApps();

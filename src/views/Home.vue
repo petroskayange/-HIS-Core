@@ -221,6 +221,7 @@ export default defineComponent({
       sessionStorage.setItem("applicationImage", data.applicationIcon)
       sessionStorage.setItem("applicationName", data.applicationName)
       sessionStorage.setItem("programID", data.programID)
+      sessionStorage.setItem("applicationConfig", JSON.stringify(data.config))
       await ProgramService.selectTasks().then(data => data.onDidDismiss)
       this.loadApplicationData();
     },
