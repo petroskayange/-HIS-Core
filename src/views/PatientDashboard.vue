@@ -58,10 +58,10 @@
                 <ion-button color="danger" size="large" router-link="/"> 
                     Cancel
                 </ion-button>
-                <ion-button color="primary" size="large" slot="end"> 
+                <ion-button color="primary" size="large" slot="end" @click="showTasks"> 
                     Tasks
                 </ion-button>
-                <ion-button color="primary" size="large" slot="end"> 
+                <ion-button color="primary" size="large" slot="end" @click="showOptions"> 
                     Printouts/Other
                 </ion-button>
                 <ion-button color="primary" size="large" slot="end" @click="changeApp"> 
@@ -86,6 +86,7 @@ import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
 import IconCard from "@/components/DataViews/DashboardAppIcon.vue"
+import TaskSelector from "@/components/DataViews/TaskSelector.vue"
 import {
   IonPage,
   IonContent,
@@ -95,6 +96,7 @@ import {
   IonCol,
   IonFooter,
   IonToolbar,
+  modalController
 } from "@ionic/vue";
 import { EncounterService } from '@/services/Encounter'
 export default defineComponent({
@@ -247,6 +249,28 @@ export default defineComponent({
             await ProgramService.selectTasks().then(data => data.onDidDismiss)
             
             if (parseInt(data.programID) != this.programID) this.init()
+        },
+        async showTasks() {
+            const {encounters} = ProgramService.getApplicationConfig()
+            const modal = await modalController.create({
+                component: TaskSelector,
+                backdropDismiss: true,
+                componentProps: {
+                    items: encounters
+                }
+            })
+            modal.present();
+        },
+        async showOptions() {
+            const {options} = ProgramService.getApplicationConfig()
+            const modal = await modalController.create({
+                component: TaskSelector,
+                backdropDismiss: true,
+                componentProps: {
+                    items: options
+                }
+            })
+            modal.present()
         }
     }
 })
