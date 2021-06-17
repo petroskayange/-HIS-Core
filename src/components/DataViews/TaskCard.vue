@@ -1,5 +1,5 @@
 <template>
-    <ion-card> 
+    <ion-card class="task-card"> 
         <ion-row> 
             <ion-col size="4">
                 <ion-thumbnail> 
@@ -8,7 +8,7 @@
             </ion-col>
             <ion-col size="8"> 
                 <ion-label>{{ title }}</ion-label> <br/>
-                <ion-label> {{ description }} </ion-label>
+                <ion-card-subtitle> {{ description }} </ion-card-subtitle>
             </ion-col>
         </ion-row>
     </ion-card>
@@ -34,3 +34,10 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+    .task-card {
+        font-weight: bold;
+        height: 70px;
+        overflow: hidden;
+    }
+</style>
