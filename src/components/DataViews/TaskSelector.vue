@@ -1,4 +1,9 @@
 <template>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>{{title}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
   <ion-grid>
     <ion-row v-for="(row, rowIndex) in turpleTaskItems" :key="rowIndex">
       <ion-col v-for="(taskItem, taskIndex) in row" :key="`task-${taskIndex}`">
@@ -18,6 +23,10 @@ import { IonGrid, IonRow, IonCol } from "@ionic/vue";
 export default defineComponent({
   components: { IonGrid, IonRow, IonCol, TaskCard },
   props: {
+    title: {
+        type: String,
+        default: 'Select Activity'
+    },
     items: {
       type: Object,
       required: true,

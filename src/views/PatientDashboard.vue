@@ -256,6 +256,7 @@ export default defineComponent({
                 component: TaskSelector,
                 backdropDismiss: true,
                 componentProps: {
+                    title: 'Select Task',
                     items: encounters
                 }
             })
