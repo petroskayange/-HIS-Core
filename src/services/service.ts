@@ -40,7 +40,7 @@ export class Service {
     static getUserRoles() {
        const roles = sessionStorage.getItem('userRoles');
        
-       if (roles) return JSON.parse(roles)
+       return roles ? JSON.parse(roles) : []
     }
 
     static setUserLocation(name: string) {
