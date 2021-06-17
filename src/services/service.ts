@@ -2,13 +2,6 @@ import ApiClient from "./api_client"
 import Url from "@/utils/Url"
 
 export class Service {
-    // TODO: remove these
-    static programID = sessionStorage.programID;
-    static userRoles = sessionStorage.userRoles;
-    static sessionDate = sessionStorage.sessionDate;
-    static applicationImage = sessionStorage.applicationImage
-    static applicationName = sessionStorage.applicationName
-
     static async getJson(url: string, params = {} as Record<string, any>) {
         const transformedUrl = `${url}?${Url.parameterizeObjToString(params)}`
         const req = await ApiClient.get(transformedUrl)
