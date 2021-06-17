@@ -113,7 +113,7 @@ export default defineComponent({
         IonCol,
     },
     data: () => ({
-        appIcon: ProgramService.applicationImage,
+        appIcon: '',
         currentDate: HisDate.currentDisplayDate(),
         sessionDate: HisDate.sessionDisplayDate(),
         nextTask: "None",
@@ -148,6 +148,7 @@ export default defineComponent({
                 this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+                this.appIcon = ProgramService.getApplicationImage() || ''
             },
             deep: true,
             immediate: true
