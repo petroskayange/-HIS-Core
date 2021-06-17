@@ -169,6 +169,7 @@ export default defineComponent({
             this.programID = ProgramService.getProgramID()
             this.currentDate = HisDate.currentDisplayDate()
             this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
+            this.appIcon = ProgramService.getApplicationImage() || ''
         },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
