@@ -28,7 +28,9 @@ export class Patientservice extends Service {
     }
 
     public static getPatientVisits(patientId: number) {
-        return super.getJson(`patients/${patientId}/visits?program_id=${super.programID}`)    
+        return super.getJson(`patients/${patientId}/visits`, {
+            'program_id': super.getProgramID()
+        })    
     }
 
     getID() {
