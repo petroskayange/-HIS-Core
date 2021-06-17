@@ -6,10 +6,13 @@ export class OrderService extends Service {
         super()
     }
 
-    static getOrders(patientID: number, orderDate='') {
-        return super.getJson('/lab/orders', {'patient_id': patientID.toString(), date: orderDate});
+    static getOrders(patientID: number, params={}) {
+        return super.getJson('/lab/orders', {
+            'patient_id': patientID,
+            ...params
+        });
     }
-  
+
     static getViralLoadOrders(orders: Order[]) {
         return orders.filter(order => {
             try {
