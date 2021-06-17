@@ -5,7 +5,11 @@ export class DrugOrderService extends Service {
         super()
     }
 
-    public static getOrderByPatient(patientId: number, date: string) {
-        return this.getJson(`/drug_orders?patient_id=${patientId}&program_id=${super.programID}&start_date=${date}&paginate=false`)
+    public static getOrderByPatient(patientId: number, params: any) {
+        return this.getJson('/drug_orders', {
+            'patient_id': patientId,
+            'program_id': super.getProgramID(),
+            ...params
+        })
     }
 }
