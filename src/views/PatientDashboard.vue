@@ -252,23 +252,19 @@ export default defineComponent({
         },
         async showTasks() {
             const {encounters} = ProgramService.getApplicationConfig()
-            const modal = await modalController.create({
-                component: TaskSelector,
-                backdropDismiss: true,
-                componentProps: {
-                    title: 'Select Task',
-                    items: encounters
-                }
-            })
-            modal.present();
+            this.openModal(encounters, 'Select Task')
         },
         async showOptions() {
             const {options} = ProgramService.getApplicationConfig()
+            this.openModal(options)
+        },
+        async openModal(items: any, title='Select Activity') {
             const modal = await modalController.create({
                 component: TaskSelector,
                 backdropDismiss: true,
                 componentProps: {
-                    items: options
+                    items,
+                    title
                 }
             })
             modal.present()
