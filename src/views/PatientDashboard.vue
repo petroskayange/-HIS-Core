@@ -64,7 +64,7 @@
                 <ion-button color="primary" size="large" slot="end"> 
                     Printouts/Other
                 </ion-button>
-                <ion-button color="primary" size="large" slot="end"> 
+                <ion-button color="primary" size="large" slot="end" @click="changeApp"> 
                     Applications
                 </ion-button>
             </ion-toolbar>
@@ -118,6 +118,7 @@ export default defineComponent({
         sessionDate: '',
         nextTask: "None",
         patientId: 0,
+        programID : 0,
         patient: {} as any,
         patientProgram: {} as Array<Option>,
         patientCardInfo: [] as Array<Option>,
@@ -141,16 +142,8 @@ export default defineComponent({
         "$route" : {
             async handler({query}: any) {
                 this.patientId = parseInt(query.patient_id)
-                this.patient = await this.fetchPatient(this.patientId)
-                this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
-                this.nextTask = await this.getNextTask(this.patientId)
-                this.visitDates = await this.getPatientVisitDates(this.patientId)
-                this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
-                this.patientCardInfo = this.getPatientCardInfo(this.patient)
-                this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
-                this.appIcon = ProgramService.getApplicationImage() || ''
-                this.currentDate = HisDate.currentDisplayDate()
-                this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
+
+                if (this.patientId) this.init()
             },
             deep: true,
             immediate: true
@@ -165,6 +158,16 @@ export default defineComponent({
         }
     },
     methods: {
+        async init() {
+            this.patient = await this.fetchPatient(this.patientId)
+            this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
+            this.nextTask = await this.getNextTask(this.patientId)
+            this.visitDates = await this.getPatientVisitDates(this.patientId)
+            this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
+            this.patientCardInfo = this.getPatientCardInfo(this.patient)
+            this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+            this.programID = ProgramService.getProgramID()
+        },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
             return patient ? new Patientservice(patient): {}
@@ -233,6 +236,14 @@ export default defineComponent({
             return [
                 { label: `Patient has ${sideEffects.length} side effects`, value: ''}
             ]
+        },
+        async changeApp() {
+            const modal = await ProgramService.selectApplication();
+            const {data}  = await modal.onDidDismiss();
+
+            await ProgramService.selectTasks().then(data => data.onDidDismiss)
+            
+            if (parseInt(data.programID) != this.programID) this.init()
         }
     }
 })
