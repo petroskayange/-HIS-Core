@@ -20,7 +20,12 @@ export class EncounterService extends Service {
         return Service.postJson('/encounters', this.encounter)
     }
 
-    public static getEncountersByDate(patientId: number, date='') {
-        return super.getJson(`/encounters?paginate=false&patient_id=${patientId}&date=${date}&program_id=${super.programID}`)
+    public static getEncounters(patientId: number, params={}) {
+        return super.getJson('/encounters', {
+            'program_id': super.getProgramID(),
+            'patient_id': patientId,  
+            paginate: false,
+            ...params
+        })
     }
 }

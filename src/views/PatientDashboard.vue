@@ -153,7 +153,7 @@ export default defineComponent({
             immediate: true
         },
         async activeVisitDate(date: string) {
-            this.encounters = await EncounterService.getEncountersByDate(this.patientId, date)
+            this.encounters = await EncounterService.getEncounters(this.patientId, {date})
             this.medications = await DrugOrderService.getOrderByPatient(this.patientId, {'start_date': date})
             this.labOrders = await OrderService.getOrders(this.patientId, date)
             this.encountersCardItems = this.getActivitiesCardInfo(this.encounters)
