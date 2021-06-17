@@ -1,4 +1,4 @@
-function parameterizeObjToString(obj: Record<string, string> | Record<string, number>) {
+function parameterizeObjToString(obj: Record<string, any>) {
     let str = ''
     for(const [key, value] of Object.entries(obj)) {
         str += `${key}=${value}&` 

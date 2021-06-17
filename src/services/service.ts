@@ -9,7 +9,7 @@ export class Service {
     static applicationImage = sessionStorage.applicationImage
     static applicationName = sessionStorage.applicationName
 
-    static async getJson(url: string, params = {} as Record<string, string> | Record<string, number>) {
+    static async getJson(url: string, params = {} as Record<string, any>) {
         const transformedUrl = `${url}?${Url.parameterizeObjToString(params)}`
         const req = await ApiClient.get(transformedUrl)
 
@@ -29,7 +29,7 @@ export class Service {
     }
 
     static getSessionDate() {
-        return sessionStorage.getItem('sessionDate');
+        return sessionStorage.getItem('sessionDate') || '';
     }
     
     static getProgramID() {
