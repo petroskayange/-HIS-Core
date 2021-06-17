@@ -64,7 +64,7 @@
                 <ion-button color="primary" size="large" slot="end"> 
                     Printouts/Other
                 </ion-button>
-                <ion-button color="primary" size="large" slot="end"> 
+                <ion-button color="primary" size="large" slot="end" @click="changeApp"> 
                     Applications
                 </ion-button>
             </ion-toolbar>
@@ -118,6 +118,7 @@ export default defineComponent({
         sessionDate: HisDate.sessionDisplayDate(),
         nextTask: "None",
         patientId: 0,
+        programID : 0,
         patient: {} as any,
         patientProgram: {} as Array<Option>,
         patientCardInfo: [] as Array<Option>,
@@ -165,6 +166,7 @@ export default defineComponent({
             this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
             this.patientCardInfo = this.getPatientCardInfo(this.patient)
             this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+            this.programID = ProgramService.programID
         },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
@@ -234,6 +236,14 @@ export default defineComponent({
             return [
                 { label: `Patient has ${sideEffects.length} side effects`, value: ''}
             ]
+        },
+        async changeApp() {
+            const modal = await ProgramService.selectApplication();
+            const {data}  = await modal.onDidDismiss();
+
+            await ProgramService.selectTasks().then(data => data.onDidDismiss)
+            
+            if (parseInt(data.programID) != this.programID) this.init()
         }
     }
 })
