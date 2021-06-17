@@ -114,8 +114,8 @@ export default defineComponent({
     },
     data: () => ({
         appIcon: '',
-        currentDate: HisDate.currentDisplayDate(),
-        sessionDate: HisDate.sessionDisplayDate(),
+        currentDate: '',
+        sessionDate: '',
         nextTask: "None",
         patientId: 0,
         patient: {} as any,
@@ -149,6 +149,8 @@ export default defineComponent({
                 this.patientCardInfo = this.getPatientCardInfo(this.patient)
                 this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
                 this.appIcon = ProgramService.getApplicationImage() || ''
+                this.currentDate = HisDate.currentDisplayDate()
+                this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
             },
             deep: true,
             immediate: true
