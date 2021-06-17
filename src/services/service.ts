@@ -26,7 +26,8 @@ export class Service {
     }
     
     static getProgramID() {
-        return sessionStorage.getItem('programID');
+        const id = sessionStorage.getItem('programID')
+        return id ? parseInt(id) : 0;
     }
     
     static getApplicationImage() {
