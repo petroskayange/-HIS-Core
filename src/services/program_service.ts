@@ -31,7 +31,7 @@ export class ProgramService extends Service {
     static enrollPatient(personID: number) {
      return super.postJson(`/patients/${personID}/programs`, {
           'program_id': super.getProgramID(),
-          'date_enrolled': super.sessionDate
+          'date_enrolled': super.getSessionDate()
       })
     }
     static async selectApplication() {
