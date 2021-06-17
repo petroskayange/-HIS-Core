@@ -141,13 +141,8 @@ export default defineComponent({
         "$route" : {
             async handler({query}: any) {
                 this.patientId = parseInt(query.patient_id)
-                this.patient = await this.fetchPatient(this.patientId)
-                this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
-                this.nextTask = await this.getNextTask(this.patientId)
-                this.visitDates = await this.getPatientVisitDates(this.patientId)
-                this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
-                this.patientCardInfo = this.getPatientCardInfo(this.patient)
-                this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+
+                if (this.patientId) this.init()
             },
             deep: true,
             immediate: true
@@ -162,6 +157,15 @@ export default defineComponent({
         }
     },
     methods: {
+        async init() {
+            this.patient = await this.fetchPatient(this.patientId)
+            this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
+            this.nextTask = await this.getNextTask(this.patientId)
+            this.visitDates = await this.getPatientVisitDates(this.patientId)
+            this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
+            this.patientCardInfo = this.getPatientCardInfo(this.patient)
+            this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+        },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
             return patient ? new Patientservice(patient): {}
