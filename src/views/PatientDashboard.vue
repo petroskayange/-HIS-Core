@@ -1,20 +1,6 @@
 <template>
     <ion-page> 
-        <ion-header :translucent="true"> 
-            <ion-toolbar> 
-                <ion-row> 
-                    <ion-col size="5"> 
-                        <info-card :items="patientCardInfo"/> 
-                    </ion-col>
-                    <ion-col size="5"> 
-                        <info-card :items="programCardInfo"/> 
-                    </ion-col>
-                    <ion-col size="2"> 
-                        <icon-card :icon="appIcon"> </icon-card>
-                    </ion-col>
-                </ion-row>
-            </ion-toolbar>
-        </ion-header>
+        <patient-header :appIcon="appIcon" :patientCardInfo="patientCardInfo" :programCardInfo="programCardInfo" />
         <ion-content>
             <ion-grid>
                 <ion-row> 
@@ -73,7 +59,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
 import HisDate from "@/utils/Date"
@@ -85,8 +70,9 @@ import { ProgramService } from "@/services/program_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
-import IconCard from "@/components/DataViews/DashboardAppIcon.vue"
 import TaskSelector from "@/components/DataViews/TaskSelector.vue"
+import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
+import { man, woman } from "ionicons/icons";
 import {
   IonPage,
   IonContent,
@@ -101,10 +87,9 @@ import {
 import { EncounterService } from '@/services/Encounter'
 export default defineComponent({
     components: {
+        PatientHeader,
         VisitDatesCard,
         PrimaryCard,
-        InfoCard,
-        IconCard,
         IonPage,
         IonFooter,
         IonContent,
@@ -201,21 +186,20 @@ export default defineComponent({
         getPatientCardInfo(patient: any) {
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
+            const genderIcon = this.getProp(patient, 'getGender') === 'M' ? man : woman
             return [
-                { label: 'NPID', value: this.getProp(patient, 'getNationalID') },
-                { label: "Name", value: this.getProp(patient, 'getFullName')},
-                { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)})`},
+                { label: "Name", value: this.getProp(patient, 'getFullName'), other: { icon: genderIcon}},
+                { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)}) (${this.getProp(patient, 'getNationalID')})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
-                { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber') },
+                { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber')}
             ]
         },
         getProgramCardInfo(programInfo: any) {
            return  [
             { label: "ART- Start Date", value: programInfo.art_start_date},
-            { label: "ARV Number", value: programInfo.arv_number },
+            { label: "ARV Number", value: `${programInfo.arv_number} | Current regimen: ${programInfo.current_regimen}` },
             { label: "File Number", value: programInfo.filing_number.number},
             { label: "Current Outcome", value: programInfo.current_outcome},
-            { label: "Current Regimen", value: programInfo.current_regimen},
            ]
         },
         getActivitiesCardInfo(encounters: Array<Encounter>) {

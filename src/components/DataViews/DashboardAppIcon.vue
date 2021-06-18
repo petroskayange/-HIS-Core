@@ -1,12 +1,14 @@
 <template>
-  <div id="card">
+  <tool-bar-medium-card>
     <ion-img v-if="icon" :src="icon" id="logo"></ion-img>
-  </div>
+  </tool-bar-medium-card>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
+import ToolBarMediumCard from "@/components/Cards/ToolbarMediumCard.vue"
 export default defineComponent({
   name: "AppIcon",
+  components: {ToolBarMediumCard},
   props: {
     icon: {
       type: String,
@@ -16,17 +18,11 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-    #logo {
-      margin: auto;
-      width: 140px;
-      margin-top: 5%;
-    }
-    #card {
-      border: 1px solid #ccc;
-      height: 128px;
-      overflow: hidden;
-     -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      -moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-    }
+  #logo {
+    object-fit: contain;
+    margin: auto;
+    margin-top: 15px;
+    width: 130px;
+    height: 80px;
+  }
 </style>
