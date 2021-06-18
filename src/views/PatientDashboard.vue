@@ -1,20 +1,6 @@
 <template>
     <ion-page> 
-        <ion-header :translucent="true"> 
-            <ion-toolbar> 
-                <ion-row> 
-                    <ion-col size="5"> 
-                        <info-card :items="patientCardInfo"/> 
-                    </ion-col>
-                    <ion-col size="5"> 
-                        <info-card :items="programCardInfo"/> 
-                    </ion-col>
-                    <ion-col size="2"> 
-                        <icon-card :icon="appIcon"> </icon-card>
-                    </ion-col>
-                </ion-row>
-            </ion-toolbar>
-        </ion-header>
+        <patient-header :appIcon="appIcon" :patientCardInfo="patientCardInfo" :programCardInfo="programCardInfo" />
         <ion-content>
             <ion-grid>
                 <ion-row> 
@@ -73,7 +59,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
 import HisDate from "@/utils/Date"
@@ -85,7 +70,7 @@ import { ProgramService } from "@/services/program_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
-import IconCard from "@/components/DataViews/DashboardAppIcon.vue"
+import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import {
   IonPage,
   IonContent,
@@ -99,10 +84,9 @@ import {
 import { EncounterService } from '@/services/Encounter'
 export default defineComponent({
     components: {
+        PatientHeader,
         VisitDatesCard,
         PrimaryCard,
-        InfoCard,
-        IconCard,
         IonPage,
         IonFooter,
         IonContent,
