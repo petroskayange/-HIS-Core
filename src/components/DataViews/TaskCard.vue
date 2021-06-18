@@ -1,16 +1,15 @@
 <template>
-    <ion-card class="task-card"> 
-        <ion-row> 
-            <ion-col size="4">
-                <ion-thumbnail> 
-                    <img :src="icon">
-                </ion-thumbnail>
-            </ion-col>
-            <ion-col size="8"> 
-                <ion-label>{{ title }}</ion-label> <br/>
-                <ion-card-subtitle> {{ description }} </ion-card-subtitle>
-            </ion-col>
-        </ion-row>
+    <ion-card class="task-card">
+        <ion-item lines="none"> 
+            <ion-thumbnail> 
+                <ion-img :src="icon"/> 
+            </ion-thumbnail>
+            <ion-label> 
+                {{ title }}
+                <br/>
+                <small>{{ description }}</small> 
+            </ion-label> 
+        </ion-item>
     </ion-card>
 </template>
 

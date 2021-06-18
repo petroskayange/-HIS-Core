@@ -57,7 +57,8 @@ export default defineComponent({
 </script>
 <style scoped>
   .selector{
+    width: 100%;
     height: 90%;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 </style>
