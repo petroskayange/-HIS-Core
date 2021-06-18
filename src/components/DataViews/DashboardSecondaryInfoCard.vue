@@ -1,6 +1,6 @@
 <template>
   <tool-bar-medium-card>
-    <ul :style="{marginLeft: '-6%'}">
+    <ul :style="{marginLeft: '-4%'}">
       <li v-for="(item, index) in items" :key="index"> 
         <b>{{ item.label }}:</b> {{ item.value }}
       </li>

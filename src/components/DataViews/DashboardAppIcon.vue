@@ -21,6 +21,8 @@ export default defineComponent({
   #logo {
     object-fit: contain;
     margin: auto;
-    width: 80%;
+    margin-top: 15px;
+    width: 130px;
+    height: 80px;
   }
 </style>
