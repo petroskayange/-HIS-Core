@@ -44,6 +44,12 @@ export class Service {
        return roles ? JSON.parse(roles) : []
     }
 
+    static getApplicationConfig() {
+        const config = sessionStorage.getItem('applicationConfig')
+
+        if (config) return JSON.parse(config)
+    }
+
     static setUserLocation(name: string) {
         sessionStorage.setItem('userLocation', name)
     }
@@ -67,4 +73,5 @@ export class Service {
     static setUserRoles(roles: any) {
         sessionStorage.setItem('userRoles', JSON.stringify(roles))
     }
+
 }
