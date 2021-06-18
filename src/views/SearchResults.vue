@@ -23,7 +23,10 @@
                 :color="isActive(result.other) ? 'light' : ''"
                 @click="onselect(result.other)"
               >
-                <ion-label> <ion-icon :icon="person" size="large"/> {{ result.label }} </ion-label>
+                <ion-avatar> 
+                  <ion-img src="/assets/images/avatar.svg"/>
+                </ion-avatar>
+                <ion-label> {{ result.label }} </ion-label>
               </ion-item>
             </ion-list>
           </div>
