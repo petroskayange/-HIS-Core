@@ -17,16 +17,17 @@ export default defineComponent({
 </script>
 <style scoped>
     #logo {
+      object-fit: contain;
       margin: auto;
-      width: 140px;
-      margin-top: 5%;
+      width: 80%;
     }
     #card {
       border: 1px solid #ccc;
-      height: 128px;
+      border-radius: 15px;
+      height: 110px;
       overflow: hidden;
-     -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      -moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+-webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+-moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
     }
 </style>

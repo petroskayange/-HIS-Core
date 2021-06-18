@@ -1,8 +1,8 @@
 <template>
   <div id="card">
-    <ul>
+    <ul :style="{marginLeft: '-6%'}">
       <li v-for="(item, index) in items" :key="index"> 
-        {{ item.label }}: {{ item.value }}
+        <b>{{ item.label }}:</b> {{ item.value }}
       </li>
     </ul>
   </div>
@@ -26,14 +26,21 @@ export default defineComponent({
 <style scoped>
     #card {
       border: 1px solid #ccc;
-      border-radius: 5px;
-      height: 128px;
-      overflow-y: auto;
-      -webkit-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      -moz-box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
-      box-shadow: 10px 10px 14px 0px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      height: 110px;
+      overflow-y: hidden;
+-webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+-moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+    }
+    b {
+      color: rgb(71, 70, 70);
     }
     #card ul li {
       list-style: none;
+      color: rgb(94, 92, 92);
+    }
+    hr.dotted {
+      border-top: 3px dotted #bbb;
     }
 </style>

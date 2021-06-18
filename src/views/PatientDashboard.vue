@@ -200,20 +200,18 @@ export default defineComponent({
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
             return [
-                { label: 'NPID', value: this.getProp(patient, 'getNationalID') },
                 { label: "Name", value: this.getProp(patient, 'getFullName')},
-                { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)})`},
+                { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)}) (${this.getProp(patient, 'getNationalID')})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
-                { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber') },
+                { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber')}
             ]
         },
         getProgramCardInfo(programInfo: any) {
            return  [
             { label: "ART- Start Date", value: programInfo.art_start_date},
-            { label: "ARV Number", value: programInfo.arv_number },
+            { label: "ARV Number", value: `${programInfo.arv_number} | Current regimen: ${programInfo.current_regimen}` },
             { label: "File Number", value: programInfo.filing_number.number},
             { label: "Current Outcome", value: programInfo.current_outcome},
-            { label: "Current Regimen", value: programInfo.current_regimen},
            ]
         },
         getActivitiesCardInfo(encounters: Array<Encounter>) {
