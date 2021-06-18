@@ -1,17 +1,19 @@
 <template>
-  <div id="card">
+  <tool-bar-medium-card>
     <ul :style="{marginLeft: '-6%'}">
       <li v-for="(item, index) in items" :key="index"> 
         <b>{{ item.label }}:</b> {{ item.value }}
       </li>
     </ul>
-  </div>
+  </tool-bar-medium-card>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Option } from "@/components/Forms/FieldInterface";
+import ToolBarMediumCard from "@/components/Cards/ToolbarMediumCard.vue"
 export default defineComponent({
   name: "HisResultCard",
+  components: {ToolBarMediumCard},
   props: {
     icon: {
       required: false,
@@ -24,23 +26,11 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-    #card {
-      border: 1px solid #ccc;
-      border-radius: 15px;
-      height: 110px;
-      overflow-y: hidden;
--webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
--moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-    }
-    b {
-      color: rgb(71, 70, 70);
-    }
-    #card ul li {
-      list-style: none;
-      color: rgb(94, 92, 92);
-    }
-    hr.dotted {
-      border-top: 3px dotted #bbb;
-    }
+  b {
+    color: rgb(71, 70, 70);
+  }
+  ul li {
+    list-style: none;
+    color: rgb(94, 92, 92);
+  }
 </style>
