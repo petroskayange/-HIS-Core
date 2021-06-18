@@ -64,7 +64,6 @@ export default defineComponent({
 .btn {
   width: 90%;
   text-align: center;
-  font-weight: bold;
   margin-bottom: 20px;
 }
 .card {
