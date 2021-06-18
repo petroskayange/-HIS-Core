@@ -2,7 +2,7 @@
   <tool-bar-medium-card>
     <ul :style="{marginLeft: '-4%'}">
       <li v-for="(item, index) in items" :key="index"> 
-        <b>{{ item.label }}:</b> {{ item.value }}
+      <ion-icon v-if="hasIcon(item)" :icon="item.other.icon"/><b>{{ item.label }}:</b> {{ item.value }}
       </li>
     </ul>
   </tool-bar-medium-card>
@@ -10,10 +10,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Option } from "@/components/Forms/FieldInterface";
+import {IonIcon} from "@ionic/vue"
 import ToolBarMediumCard from "@/components/Cards/ToolbarMediumCard.vue"
 export default defineComponent({
   name: "HisResultCard",
-  components: {ToolBarMediumCard},
+  components: {ToolBarMediumCard, IonIcon},
   props: {
     icon: {
       required: false,
@@ -23,6 +24,11 @@ export default defineComponent({
       required: true,
     },
   },
+  methods: {
+    hasIcon(item: Option) {
+      return 'other' in item && 'icon' in item.other
+    }
+  }
 });
 </script>
 <style scoped>

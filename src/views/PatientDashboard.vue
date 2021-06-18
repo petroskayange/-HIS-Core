@@ -71,6 +71,7 @@ import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
+import { man, woman } from "ionicons/icons";
 import {
   IonPage,
   IonContent,
@@ -183,8 +184,9 @@ export default defineComponent({
         getPatientCardInfo(patient: any) {
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
+            const genderIcon = this.getProp(patient, 'getGender') === 'M' ? man : woman
             return [
-                { label: "Name", value: this.getProp(patient, 'getFullName')},
+                { label: "Name", value: this.getProp(patient, 'getFullName'), other: { icon: genderIcon}},
                 { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)}) (${this.getProp(patient, 'getNationalID')})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
                 { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber')}
