@@ -210,6 +210,7 @@ export default defineComponent({
                 label: encounter.type.name,
                 value: HisDate.toStandardHisTimeFormat(encounter.encounter_datetime),
                 other: {
+                    id: encounter.encounter_id,
                     columns: ['Observation', 'Value', 'Time'],
                     getRows: async () => {
                         const data = []

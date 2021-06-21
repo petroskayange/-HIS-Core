@@ -11,6 +11,7 @@
           <ion-item
             v-for="(item, index) in items"
             :key="index"
+            :color="item.other.id === active.id ? 'light' : ''"
             @click="() => showDetails(item.other)"
             detail
           >
@@ -32,6 +33,7 @@ export default defineComponent({
   components: { HisBasicTable },
   data: () => ({
     active: {
+      id: 0,
       rows: [],
       columns: []
     } as any,
@@ -47,7 +49,8 @@ export default defineComponent({
     },
   },
   methods: {
-    async showDetails({columns, getRows}: any) {
+    async showDetails({id, columns, getRows}: any) {
+      this.active.id = id
       this.active.columns = columns;
       this.active.rows = await getRows()
     },
