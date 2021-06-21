@@ -45,6 +45,9 @@ export default defineComponent({
   -moz-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
   box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);  
 }
+.card:active {
+    transform: translateY(4px);
+}
 .title-card {
     padding: 8px;
     width: 100%;

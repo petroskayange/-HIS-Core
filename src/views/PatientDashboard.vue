@@ -21,18 +21,18 @@
                         </ion-row>
                         <ion-row> 
                             <ion-col>
-                                <primary-card title="Activities" :items="encountersCardItems" titleColor="#658afb"> </primary-card>
+                                <primary-card :title="`${encountersCardItems.length} Activities`" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
                             <ion-col>
-                                <primary-card title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b"> </primary-card>
+                                <primary-card :title="`${labOrderCardItems.length} Lab Orders`" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
                             <ion-col> 
-                                <primary-card title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
+                                <primary-card :title="`${alertCardItems.length} Alerts`" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
                             <ion-col> 
-                                <primary-card title="Medications" :items="medicationCardItems" titleColor="#fdb044"> </primary-card>
+                                <primary-card :title="`${medicationCardItems.length} Medications`" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
                     </ion-col>
@@ -67,11 +67,14 @@ import { Option } from "@/components/Forms/FieldInterface"
 import { Patient } from "@/interfaces/patient";
 import { Patientservice } from "@/services/patient_service"
 import { ProgramService } from "@/services/program_service"
+import { ObservationService } from "@/services/observation_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
 import PatientAlerts from "@/services/patient_alerts"
 import TaskSelector from "@/components/DataViews/TaskSelector.vue"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
+import EncounterView from "@/components/DataViews/EncounterView.vue"
+import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
 import {
   IonPage,
@@ -205,7 +208,23 @@ export default defineComponent({
         getActivitiesCardInfo(encounters: Array<Encounter>) {
             return encounters.map((encounter: Encounter) => ({
                 label: encounter.type.name,
-                value: HisDate.toStandardHisTimeFormat(encounter.encounter_datetime)
+                value: HisDate.toStandardHisTimeFormat(encounter.encounter_datetime),
+                other: {
+                    id: encounter.encounter_id,
+                    columns: ['Observation', 'Value', 'Time'],
+                    getRows: async () => {
+                        const data = []
+                        const { observations } = encounter
+                        for(const index in observations) {
+                            const obs =  observations[index]
+                            const concept = obs.concept.concept_names[0].name
+                            const value = await ObservationService.resolvePrimaryValue(obs)
+                            const time = HisDate.toStandardHisTimeFormat(obs.obs_datetime)
+                            data.push([concept, value, time])
+                        }
+                        return data
+                    }
+                }
             }))
         },
         getMedicationCardInfo(medications: any) {
@@ -236,22 +255,58 @@ export default defineComponent({
         },
         async showTasks() {
             const {encounters} = ProgramService.getApplicationConfig()
-            this.openModal(encounters, 'Select Task')
+            this.openModal(encounters, 'Select Task', TaskSelector)
         },
         async showOptions() {
             const {options} = ProgramService.getApplicationConfig()
-            this.openModal(options)
+            this.openModal(options, 'Select Activity', TaskSelector)
         },
-        async openModal(items: any, title='Select Activity') {
+        async openModal(items: any, title: string, component: any) {
+            const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
-                component: TaskSelector,
+                component: component,
                 backdropDismiss: true,
                 componentProps: {
                     items,
-                    title
+                    title: `${title}: ${date}`
                 }
             })
             modal.present()
+        },
+        async openTableModal(columns: any, rows: any, title: string) {
+            const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
+            const modal = await modalController.create({
+                component: CardDrilldown,
+                backdropDismiss: true,
+                componentProps: {
+                    columns,
+                    rows,
+                    title: `${title}: ${date}`
+                }
+            })
+            modal.present()
+        },
+        showAllEncounters() {
+            this.openModal(this.encountersCardItems, 'Activities', EncounterView)
+        },
+        showAllMedications() {
+            const columns = ['Medication', 'Start date', 'End date', 'Amount given']
+            const rows = this.medications.map((medication: any) => ([
+                medication.drug.name, 
+                HisDate.toStandardHisDisplayFormat(medication.order.start_date),
+                HisDate.toStandardHisDisplayFormat(medication.order.auto_expire_date),
+                medication.quantity
+            ]))
+            this.openTableModal(columns, rows, 'Medication History')
+        },
+        showAllLabOrders() {
+            const columns = ['Accession#',  'Specimen', 'Time']
+            const rows = this.labOrders.map((order: any) => ([
+                order.accession_number, 
+                order.specimen.name,
+                HisDate.toStandardHisTimeFormat(order.order_date)
+            ]))
+            this.openTableModal(columns, rows, `Lab Orders`)
         }
     }
 })

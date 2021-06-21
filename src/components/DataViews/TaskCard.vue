@@ -39,4 +39,7 @@ export default defineComponent({
         height: 70px;
         overflow: hidden;
     }
+    .task-card:active {
+        transform: translateY(4px);
+    }
 </style>
