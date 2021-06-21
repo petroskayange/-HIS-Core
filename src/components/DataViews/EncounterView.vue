@@ -4,7 +4,8 @@
       <ion-title>{{ title }}</ion-title>
     </ion-toolbar>
   </ion-header>
-    <ion-row class='content'>
+  <ion-content>
+    <ion-row>
       <ion-col size="6">
         <ion-list>
           <ion-item
@@ -21,6 +22,7 @@
         <his-basic-table :columns="active.columns" :rows="active.rows"/>
       </ion-col>
     </ion-row>
+  </ion-content>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -52,9 +54,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-  .content {
-    height: 100vh;
-    overflow: auto;
-  }
-</style>
