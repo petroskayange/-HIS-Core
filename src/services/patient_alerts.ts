@@ -7,7 +7,7 @@ async function alertSideEffects(patientId: number, typeConceptID='art side effec
         patientId, ConceptService.getCachedConceptID(typeConceptID)
     );
     return data.filter((observation) => {
-        return observation.children[0].value_coded == ConceptService.getCachedConceptID('No');
+        return observation.children[0].value_coded == ConceptService.getCachedConceptID('Yes');
     });
 }
 
