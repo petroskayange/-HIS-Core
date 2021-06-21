@@ -32,7 +32,7 @@
                                 <primary-card title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
                             <ion-col> 
-                                <primary-card title="Medications" :items="medicationCardItems" titleColor="#fdb044"> </primary-card>
+                                <primary-card title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
                     </ion-col>
@@ -74,6 +74,7 @@ import PatientAlerts from "@/services/patient_alerts"
 import TaskSelector from "@/components/DataViews/TaskSelector.vue"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/EncounterView.vue"
+import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
 import {
   IonPage,
@@ -270,11 +271,33 @@ export default defineComponent({
             })
             modal.present()
         },
+        async openTableModal(columns: any, rows: any, title: string) {
+            const modal = await modalController.create({
+                component: CardDrilldown,
+                backdropDismiss: true,
+                componentProps: {
+                    columns,
+                    rows,
+                    title
+                }
+            })
+            modal.present()
+        },
         showAllEncounters() {
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const title = `Encounter Date: ${date}`
             this.openModal(this.encountersCardItems, title, EncounterView)
-        } 
+        },
+        showAllMedications() {
+            const columns = ['Medication', 'Start date', 'End date', 'Amount given']
+            const rows = this.medications.map((medication: any) => ([
+                medication.drug.name, 
+                HisDate.toStandardHisDisplayFormat(medication.order.start_date),
+                HisDate.toStandardHisDisplayFormat(medication.order.auto_expire_date),
+                medication.quantity
+            ]))
+            this.openTableModal(columns, rows, 'Medication History')
+        }
     }
 })
 </script>
