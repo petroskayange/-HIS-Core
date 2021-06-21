@@ -24,7 +24,7 @@
                                 <primary-card title="Activities" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
                             <ion-col>
-                                <primary-card title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b"> </primary-card>
+                                <primary-card title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
@@ -261,32 +261,32 @@ export default defineComponent({
             this.openModal(options, 'Select Activity', TaskSelector)
         },
         async openModal(items: any, title: string, component: any) {
+            const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: component,
                 backdropDismiss: true,
                 componentProps: {
                     items,
-                    title
+                    title: `${title}: ${date}`
                 }
             })
             modal.present()
         },
         async openTableModal(columns: any, rows: any, title: string) {
+            const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: CardDrilldown,
                 backdropDismiss: true,
                 componentProps: {
                     columns,
                     rows,
-                    title
+                    title: `${title}: ${date}`
                 }
             })
             modal.present()
         },
         showAllEncounters() {
-            const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
-            const title = `Encounter Date: ${date}`
-            this.openModal(this.encountersCardItems, title, EncounterView)
+            this.openModal(this.encountersCardItems, 'Activities', EncounterView)
         },
         showAllMedications() {
             const columns = ['Medication', 'Start date', 'End date', 'Amount given']
@@ -297,6 +297,15 @@ export default defineComponent({
                 medication.quantity
             ]))
             this.openTableModal(columns, rows, 'Medication History')
+        },
+        showAllLabOrders() {
+            const columns = ['Accession#',  'Specimen', 'Time']
+            const rows = this.labOrders.map((order: any) => ([
+                order.accession_number, 
+                order.specimen.name,
+                HisDate.toStandardHisTimeFormat(order.order_date)
+            ]))
+            this.openTableModal(columns, rows, `Lab Orders`)
         }
     }
 })
