@@ -4,7 +4,7 @@
       <ion-title>{{ title }}</ion-title>
     </ion-toolbar>
   </ion-header>
-    <ion-row>
+    <ion-row class='content'>
       <ion-col size="6">
         <ion-list>
           <ion-item
@@ -52,3 +52,9 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+  .content {
+    height: 100vh;
+    overflow: auto;
+  }
+</style>
