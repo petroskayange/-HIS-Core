@@ -52,7 +52,6 @@ export class ObservationService extends ConceptService {
 
         if (obs.value_coded) {
             value = await super.getConceptName(obs.value_coded)
-            console.log(value)
         }
 
         if (obs.value_modifier) {
