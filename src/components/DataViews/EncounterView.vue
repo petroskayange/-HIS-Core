@@ -6,7 +6,7 @@
   </ion-header>
   <ion-content>
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="4">
         <ion-list>
           <ion-item
             v-for="(item, index) in items"
@@ -19,7 +19,7 @@
           </ion-item>
         </ion-list>
       </ion-col>
-      <ion-col size="6">
+      <ion-col size="8">
         <his-basic-table :columns="active.columns" :rows="active.rows"/>
       </ion-col>
     </ion-row>

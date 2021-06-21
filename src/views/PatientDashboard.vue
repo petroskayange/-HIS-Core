@@ -266,6 +266,7 @@ export default defineComponent({
             const modal = await modalController.create({
                 component: component,
                 backdropDismiss: true,
+                cssClass: "custom-modal",
                 componentProps: {
                     items,
                     title: `${title}: ${date}`
@@ -278,6 +279,7 @@ export default defineComponent({
             const modal = await modalController.create({
                 component: CardDrilldown,
                 backdropDismiss: true,
+                cssClass: "custom-modal",
                 componentProps: {
                     columns,
                     rows,

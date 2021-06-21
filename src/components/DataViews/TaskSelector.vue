@@ -6,7 +6,7 @@
   </ion-header>
   <ion-grid class="selector">
     <ion-row v-for="(row, rowIndex) in turpleTaskItems" :key="rowIndex">
-      <ion-col size="6" v-for="(taskItem, taskIndex) in row" :key="`task-${taskIndex}`">
+      <ion-col size="4" v-for="(taskItem, taskIndex) in row" :key="`task-${taskIndex}`">
         <task-card
           :title="taskItem.name"
           :description="taskItem.description"
@@ -33,7 +33,7 @@ export default defineComponent({
     },
     itemsPerRow: {
         type: Number,
-        default: 2
+        default: 3
     }
   },
   computed: {
