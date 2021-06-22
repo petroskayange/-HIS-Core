@@ -31,9 +31,10 @@
   </ion-footer>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import HisBasicTable from "@/components/DataViews/HisBasicTable.vue";
-import {actionSheetController} from "@ionic/vue"
+import { actionSheetController } from "@ionic/vue"
+import { Option } from "@/components/Forms/FieldInterface"
 export default defineComponent({
   components: { HisBasicTable },
   data: () => ({
@@ -51,7 +52,9 @@ export default defineComponent({
   watch: {
     items: {
       handler(items: any){
-        this.startInitialEntry(items)
+        if (items.length >= 1) {
+          this.showDetails(items[0].other)
+        } 
       },
       immediate: true,
       deep: true
@@ -63,16 +66,11 @@ export default defineComponent({
       required: true,
     },
     items: {
-      type: Array,
+      type: Object as PropType<Option[]>,
       required: true,
     },
   },
   methods: {
-    startInitialEntry(items: any) {
-      if (items.length >= 1) {
-        this.showDetails(items[0].other)
-      }
-    },
     async initiateVoidReason() {
       const actionSheet = await actionSheetController.create({
         header: 'Are you sure you want to void this Encounter?',
@@ -107,6 +105,8 @@ export default defineComponent({
       if (reason === 'cancel') return
 
       this.active.onVoid(reason)
+
+      this.active = {}
     },
     async showDetails({id, columns, getRows, onVoid}: any) {
       this.active.id = id

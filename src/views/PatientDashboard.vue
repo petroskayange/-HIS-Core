@@ -76,6 +76,7 @@ import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/EncounterView.vue"
 import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
+import _ from "lodash"
 import {
   IonPage,
   IonContent,
@@ -215,7 +216,8 @@ export default defineComponent({
                     onVoid: async (reason: any) => {
                         try {
                             await EncounterService.voidEncounter(encounter.encounter_id, reason)
-                            alert('Encounter Deleted')
+                            _.remove(this.encountersCardItems, { label: encounter.type.name })
+                            return true
                         }catch(e) {
                             return false
                         }
