@@ -108,6 +108,10 @@ export default defineComponent({
       await this.active.onVoid(reason)
 
       this.active = {}
+      
+      if (this.items.length >= 1) {
+        this.showDetails(this.items[0].other)
+      } 
     },
     async showDetails({id, columns, getRows, onVoid}: any) {
       this.active.id = id
