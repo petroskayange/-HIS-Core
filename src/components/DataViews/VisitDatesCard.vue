@@ -4,19 +4,21 @@
       <center>{{ title }}</center>
     </h4>
     <center>
-    <ion-button color="light" :disabled="!showPrevButton" @click="goPrev">
+    <ion-button color="light" mode="ios" :disabled="!showPrevButton" @click="goPrev">
       <img src="/assets/images/drop-up-arrow.svg" width="30"/>
     </ion-button>
-    <div class='dates' v-for="(item, index) in activeListItems" :key="index">
-        <ion-button
-          class="btn"
-          :color="isActive(item) ? 'primary' : 'light'"
-          @click="onselect(item)"
-        >
-          {{ item.label }}
-        </ion-button>
+    
+    <div class="dates" >
+      <ion-button
+        v-for="(item, index) in activeListItems" :key="index"
+        class="btn"
+        :color="isActive(item) ? 'primary' : 'light'"
+        @click="onselect(item)"
+      >
+        {{ item.label }}
+      </ion-button>
     </div>
-    <ion-button color="light" :disabled="!showNextButton" @click="goNext">
+    <ion-button color="light" mode="ios" :disabled="!showNextButton" @click="goNext">
       <img src="/assets/images/drop-down-arrow.svg" width="30"/>
     </ion-button>
     </center>
@@ -105,9 +107,11 @@ export default defineComponent({
   text-align: center;
 }
 .dates {
-text-align: center;
-vertical-align: middle;
-line-height: 60px;
+  margin: 0;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 70px;
+  height: 58vh;
 }
 .card {
   overflow: hidden;
