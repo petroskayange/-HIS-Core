@@ -76,6 +76,7 @@ import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/EncounterView.vue"
 import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
+import _ from "lodash"
 import {
   IonPage,
   IonContent,
@@ -212,6 +213,15 @@ export default defineComponent({
                 other: {
                     id: encounter.encounter_id,
                     columns: ['Observation', 'Value', 'Time'],
+                    onVoid: async (reason: any) => {
+                        try {
+                            await EncounterService.voidEncounter(encounter.encounter_id, reason)
+                            _.remove(this.encountersCardItems, { label: encounter.type.name })
+                            return true
+                        }catch(e) {
+                            return false
+                        }
+                    },
                     getRows: async () => {
                         const data = []
                         const { observations } = encounter
