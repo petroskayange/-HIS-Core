@@ -20,7 +20,11 @@ export class EncounterService extends Service {
         return Service.postJson('/encounters', this.encounter)
     }
 
-    public static getEncounters(patientId: number, params={}) {
+    static voidEncounter(encounterId: number, reason='Unknown') {
+        return super.void(`/encounters/${encounterId}`, {reason})
+    }
+
+    static getEncounters(patientId: number, params={}) {
         return super.getJson('/encounters', {
             'program_id': super.getProgramID(),
             'patient_id': patientId,  

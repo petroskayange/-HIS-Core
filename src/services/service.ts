@@ -17,6 +17,14 @@ export class Service {
         throw genericError
     }
 
+    static async void(url: string, reason: Record<string, string>) {
+        const req = await ApiClient.remove(url, reason)
+        
+        if (req && req.ok) return true
+
+        throw 'Unable to delete record'
+    }
+
     static getUserLocation() {
         return sessionStorage.getItem('userLocation')
     }
