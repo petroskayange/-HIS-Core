@@ -7,7 +7,7 @@
     <ion-button color="light" v-if="showPrevButton" @click="goPrev">
       <img src="/assets/images/drop-up-arrow.svg" width="30"/>
     </ion-button>
-    <div v-for="(item, index) in activeListItems" :key="index">
+    <div class='dates' v-for="(item, index) in activeListItems" :key="index">
         <ion-button
           class="btn"
           :color="isActive(item) ? 'primary' : 'light'"
@@ -103,11 +103,15 @@ export default defineComponent({
 .btn {
   width: 90%;
   text-align: center;
-  margin-bottom: 20px;
+}
+.dates {
+text-align: center;
+vertical-align: middle;
+line-height: 60px;
 }
 .card {
   overflow: hidden;
-  height: 74vh;
+  height: 100%;
   background-color: rgb(255, 255, 255);
   border-right: 1px solid #ccc;
   -webkit-box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
