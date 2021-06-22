@@ -200,7 +200,7 @@ export default defineComponent({
         getProgramCardInfo(programInfo: any) {
            return  [
             { label: "ART- Start Date", value: programInfo.art_start_date},
-            { label: "ARV Number", value: `${programInfo.arv_number} | Current regimen: ${programInfo.current_regimen}` },
+            { label: "ARV Number", value: `${programInfo.arv_number} | Regimen: ${programInfo.current_regimen}` },
             { label: "File Number", value: programInfo.filing_number.number},
             { label: "Current Outcome", value: programInfo.current_outcome},
            ]
