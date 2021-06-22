@@ -4,7 +4,7 @@
       <center>{{ title }}</center>
     </h4>
     <center>
-    <ion-button color="light" v-if="showPrevButton" @click="goPrev">
+    <ion-button color="light" :disabled="!showPrevButton" @click="goPrev">
       <img src="/assets/images/drop-up-arrow.svg" width="30"/>
     </ion-button>
     <div class='dates' v-for="(item, index) in activeListItems" :key="index">
@@ -16,7 +16,7 @@
           {{ item.label }}
         </ion-button>
     </div>
-    <ion-button color="light" v-if="showNextButton" @click="goNext">
+    <ion-button color="light" :disabled="!showNextButton" @click="goNext">
       <img src="/assets/images/drop-down-arrow.svg" width="30"/>
     </ion-button>
     </center>
