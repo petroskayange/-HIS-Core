@@ -2,7 +2,7 @@
     <ion-page> 
         <patient-header :appIcon="appIcon" :patientCardInfo="patientCardInfo" :programCardInfo="programCardInfo" />
         <ion-content>
-            <ion-grid>
+            <ion-grid class='grid-custom'>
                 <ion-row> 
                     <ion-col size="2">
                         <visit-dates-card :title="visitDatesTitle" :items="visitDates" @onselect="onActiveVisitDate"> </visit-dates-card>
@@ -313,3 +313,9 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+    .grid-custom {
+        height: 99%;
+        overflow: hidden;
+    }
+</style>
