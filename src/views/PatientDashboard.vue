@@ -212,6 +212,14 @@ export default defineComponent({
                 other: {
                     id: encounter.encounter_id,
                     columns: ['Observation', 'Value', 'Time'],
+                    onVoid: async (reason: any) => {
+                        try {
+                            await EncounterService.voidEncounter(encounter.encounter_id, reason)
+                            alert('Encounter Deleted')
+                        }catch(e) {
+                            return false
+                        }
+                    },
                     getRows: async () => {
                         const data = []
                         const { observations } = encounter
