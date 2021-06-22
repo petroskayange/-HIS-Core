@@ -13,6 +13,7 @@
     "@capacitor/core": "2.4.2",
     "@ionic/vue": "^5.4.0",
     "@ionic/vue-router": "^5.4.0",
+    "@types/lodash": "^4.14.170",
     "apexcharts": "^3.26.1",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
