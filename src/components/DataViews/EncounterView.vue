@@ -35,6 +35,7 @@ import { defineComponent, PropType } from "vue";
 import HisBasicTable from "@/components/DataViews/HisBasicTable.vue";
 import { actionSheetController } from "@ionic/vue"
 import { Option } from "@/components/Forms/FieldInterface"
+import {isEmpty} from "lodash"
 export default defineComponent({
   components: { HisBasicTable },
   data: () => ({
@@ -46,7 +47,7 @@ export default defineComponent({
   }),
   computed: {
     canVoid(): boolean {
-      return this.active.id != -1
+      return !isEmpty(this.active)
     }
   },
   watch: {
@@ -104,7 +105,7 @@ export default defineComponent({
 
       if (reason === 'cancel') return
 
-      this.active.onVoid(reason)
+      await this.active.onVoid(reason)
 
       this.active = {}
     },
