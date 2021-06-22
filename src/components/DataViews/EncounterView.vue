@@ -28,7 +28,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import HisBasicTable from "@/components/DataViews/HisBasicTable.vue";
-
 export default defineComponent({
   components: { HisBasicTable },
   data: () => ({
@@ -38,6 +37,17 @@ export default defineComponent({
       columns: []
     } as any,
   }),
+  watch: {
+    items: {
+      handler(items: any){
+        if (items.length >= 1) {
+          this.showDetails(items[0].other)
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   props: {
     title: {
       type: String,
