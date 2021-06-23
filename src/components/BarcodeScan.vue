@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import { toastController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import {IonCol, IonGrid, IonInput, IonRow} from "@ionic/vue";
+import { toastWarning } from "@/utils/Alerts"
 import ApiClient from "@/services/api_client"
 
 export default defineComponent({
@@ -44,7 +44,7 @@ export default defineComponent({
       async scanLocation() {
         const response = await ApiClient.get("locations/" + this.barcodeText, {}, {});
         if (!response || response.status !== 200) {
-          this.showMessage("Invalid location")
+          toastWarning("Invalid location")
         }else {
           const data = await response.json();
           sessionStorage.userLocation = data.name;
@@ -53,16 +53,7 @@ export default defineComponent({
       },
       loadAttributes() {
         console.log("aaa");
-      }, async showMessage(message) {
-       const toast = await toastController
-        .create({
-          message: message,
-          position: 'top',
-          animated: true,
-          duration: 2000
-        })
-      return toast.present();
-    }
+      }
   } ,
   watch: {
     barcodeText: function() {

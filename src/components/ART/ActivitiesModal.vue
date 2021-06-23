@@ -31,6 +31,7 @@ import {
   IonCheckbox,
 } from "@ionic/vue";
 import { defineComponent } from "vue";
+import { toastWarning } from "@/utils/Alerts"
 import ApiClient from "@/services/api_client";
 export default defineComponent({
   name: "Modal",
@@ -46,7 +47,7 @@ export default defineComponent({
 
       if (!response || response.status !== 200) {
         //
-        ApiClient.showMessage("Could not get user activities");
+        toastWarning("Could not get user activities");
       } 
       else {
         //
@@ -67,7 +68,7 @@ export default defineComponent({
       const response = await ApiClient.post(`/user_properties`, userActivities);
 
       if (!response || response.status !== 201) {
-        ApiClient.showMessage("Could not save activities");
+        toastWarning("Could not save activities");
         //
       } else {
         await modalController.dismiss();
