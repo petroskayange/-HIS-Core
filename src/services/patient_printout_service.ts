@@ -19,8 +19,12 @@ export class PatientPrintoutService extends PrintoutService {
         return this.printLbl(this.getLblUrl(resource, params))
     }
 
-    printNidLbl() {
+    printFilingNumberLbl() {
         return this.printPatientLbl('filing_number')
+    }
+
+    printNidLbl() {
+        return this.printPatientLbl('national_health_id')
     }
 
     printVisitSummaryLbl() {
