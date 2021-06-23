@@ -1,27 +1,32 @@
 <template>
   <div class="card">
-    <h4>
-      <center>{{ title }}</center>
-    </h4>
-    <center>
-    <ion-button color="light" mode="ios" :disabled="!showPrevButton" @click="goPrev">
-      <img src="/assets/images/drop-up-arrow.svg" width="30"/>
-    </ion-button>
+    <div class="header-section"> {{ title }} </div>
     
-    <div class="dates" >
-      <ion-button
-        v-for="(item, index) in activeListItems" :key="index"
-        class="btn"
-        :color="isActive(item) ? 'primary' : 'light'"
-        @click="onselect(item)"
-      >
-        {{ item.label }}
+    <div class="top-section"> 
+      <ion-button class="pagination-button" color="light" mode="ios" :disabled="!showPrevButton" @click="goPrev">
+        <img src="/assets/images/drop-up-arrow.svg" width="30"/>
       </ion-button>
     </div>
-    <ion-button color="light" mode="ios" :disabled="!showNextButton" @click="goNext">
-      <img src="/assets/images/drop-down-arrow.svg" width="30"/>
-    </ion-button>
-    </center>
+    
+    <div class="body-section">
+      <ion-row>
+        <ion-col size="12" v-for="(item, index) in activeListItems" :key="index"> 
+          <ion-button
+            class="pagination-button"
+            @click="onselect(item)"
+            :color="isActive(item) ? 'primary' : 'light'"
+          >
+            {{ item.label }}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+    
+    <div class="bottom-section"> 
+      <ion-button class="pagination-button" color="light" mode="ios" :disabled="!showNextButton" @click="goNext">
+        <img src="/assets/images/drop-down-arrow.svg" width="30"/>
+      </ion-button>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -102,24 +107,57 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.btn {
-  width: 90%;
-  text-align: center;
-}
-.dates {
-  margin: 0;
-  text-align: center;
-  vertical-align: middle;
-  line-height: 70px;
-  height: 58vh;
-}
 .card {
-  overflow: hidden;
+  position: relative;
+  width: 100%;
   height: 100%;
+  overflow: hidden;
   background-color: rgb(255, 255, 255);
   border-right: 1px solid #ccc;
   -webkit-box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
   -moz-box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
   box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
+}
+.date-button {
+  width: 90%;
+  text-align: center;
+}
+
+.pagination-button {
+  width: 100%;
+  text-align: center;
+}
+
+.header-section .top-section .body-section .bottom-section {
+  overflow: hidden;
+}
+
+.header-section {
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  height: 6%;
+}
+
+.top-section {
+  height: 8%;
+}
+
+.body-section {
+  position: absolute;
+  height: 60%;
+  line-height: 52px;
+  margin: auto;
+  left: 0;
+  right: 0;
+}
+
+.bottom-section {
+  position: absolute;
+  height: 12%;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 </style>
