@@ -7,7 +7,6 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { GlobalPropertyService } from "@/services/global_property_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { Patientservice } from "@/services/patient_service"
-import ApiClient from "@/services/api_client";
 import { toastWarning } from "@/utils/Alerts"
 export default defineComponent({
   components: { HisStandardForm },
@@ -43,12 +42,7 @@ export default defineComponent({
           this.$router.push(`/patients/confirm?person_id=${data[0].patient_id}`);
         }
         
-      }else if(data.length > 1) {
-        //do duplicates page here
       }
-      // const clientID = data[0]
-      // console.log(data);
-      // this.fields[0].prependValue = `${data.site_prefix}-ARV-`;
     }
   },
   data() {
