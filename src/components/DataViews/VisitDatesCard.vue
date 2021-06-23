@@ -3,7 +3,7 @@
     <div class="header-section"> {{ title }} </div>
     
     <div class="top-section"> 
-      <ion-button class="pagination-button" color="light" mode="ios" :disabled="!showPrevButton" @click="goPrev">
+      <ion-button class="pagination-button" color="light" :disabled="!showPrevButton" @click="goPrev">
         <img src="/assets/images/drop-up-arrow.svg" width="30"/>
       </ion-button>
     </div>
@@ -23,7 +23,7 @@
     </div>
     
     <div class="bottom-section"> 
-      <ion-button class="pagination-button" color="light" mode="ios" :disabled="!showNextButton" @click="goNext">
+      <ion-button class="pagination-button" color="light" :disabled="!showNextButton" @click="goNext">
         <img src="/assets/images/drop-down-arrow.svg" width="30"/>
       </ion-button>
     </div>
