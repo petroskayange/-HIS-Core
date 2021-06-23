@@ -7,7 +7,7 @@ export class GlobalPropertyService extends Service {
 
     static async get(prop: string) {
         const res = await super.getJson('global_properties', { property: prop })
-        
+        console.log(res)
         if (prop in res) return res[prop]
     }
 
@@ -23,4 +23,6 @@ export class GlobalPropertyService extends Service {
     static getSiteUUID() { return this.get('site_uuid') }
 
     static getCurrentHealthCenterId() { return this.get('current_health_center_id') }
+
+    static isMilitarySite() { return this.get('military.enabled') }
 }

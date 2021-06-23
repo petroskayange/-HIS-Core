@@ -14,6 +14,7 @@ import {Person} from "@/interfaces/person"
 import {PersonAttribute} from "@/interfaces/personAttribute"
 import {PersonAttributeService, NewAttribute} from '@/services/person_attributes_service'
 import HisDate from "@/utils/Date"
+import { GlobalPropertyService } from "@/services/global_property_service" 
 import { ProgramService } from "@/services/program_service";
 
 export default defineComponent({
@@ -24,8 +25,9 @@ export default defineComponent({
     presets: {} as any,
     form: {} as Record<string, Option> | Record<string, null>
   }),
-  created(){
+  async created(){
     this.fields = this.getFields()
+    this.isMilitarySite = await GlobalPropertyService.isMilitarySite()
   },
   watch: {
     '$route': {
