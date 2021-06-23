@@ -15,6 +15,12 @@ export class Patientservice extends Service {
         return super.getJson(`/search/patients`, params)
     }
 
+    public static findByOtherID(idType: string | number, identifier: string | number) {
+        return super.getJson('search/patients/by_identifier', {
+            'type_id': idType, identifier
+        })
+    }
+
     public static async findByID(patientId: number | string) {
         return super.getJson(`/patients/${patientId}`)
     }

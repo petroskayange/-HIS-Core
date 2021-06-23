@@ -109,6 +109,7 @@ import {
 } from "@ionic/vue";
 import { defineComponent } from "vue";
 import { barcode } from "ionicons/icons";
+import { GlobalPropertyService } from "@/services/global_property_service"
 import ApiClient from "@/services/api_client";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
@@ -155,24 +156,14 @@ export default defineComponent({
   },
   methods: {
     fetchLocationID: async function () {
-      const response = await ApiClient.get(
-        "global_properties?property=current_health_center_id"
-      );
+      const centerID = await GlobalPropertyService.getCurrentHealthCenterId()
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      this.fetchLocationName(data.current_health_center_id);
+      if (centerID) this.fetchLocationName(centerID);
     },
     fetchLocationUUID: async function () {
-      const response = await ApiClient.get(
-        "global_properties?property=site_uuid"
-      );
+      const uuid = await GlobalPropertyService.getSiteUUID()
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      sessionStorage.siteUUID = data.site_uuid;
+      if (uuid) sessionStorage.siteUUID = uuid
     },
     fetchSessionDate: async function () {
       const response = await ApiClient.get("current_time");

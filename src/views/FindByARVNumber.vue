@@ -4,8 +4,9 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
+import { GlobalPropertyService } from "@/services/global_property_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
-import ApiClient from "@/services/api_client";
+import { Patientservice } from "@/services/patient_service"
 import { toastWarning } from "@/utils/Alerts"
 export default defineComponent({
   components: { HisStandardForm },
@@ -18,23 +19,13 @@ export default defineComponent({
       console.log("Form has been submitted");
     },
     getSitePrefix: async function() {
-      const response = await ApiClient.get(
-        "global_properties?property=site_prefix"
-      );
+      const sitePrefix = await GlobalPropertyService.getSitePrefix()
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      this.fields[1].config.prependValue = `${data.site_prefix}-ARV-`;
+      if (sitePrefix) this.fields[1].config.prependValue = `${sitePrefix}-ARV-`;
     },
     fetchclient: async function(arvNumber: string) {
-      const response = await ApiClient.get(
-        `search/patients/by_identifier?type_id=4&identifier=${arvNumber}`
-      );
+      const data = await Patientservice.findByOtherID(4, arvNumber)
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
       if(data.length == 0) {
         toastWarning('Client not found')
       }else if (data.length == 1){
@@ -51,12 +42,7 @@ export default defineComponent({
           this.$router.push(`/patients/confirm?person_id=${data[0].patient_id}`);
         }
         
-      }else if(data.length > 1) {
-        //do duplicates page here
       }
-      // const clientID = data[0]
-      // console.log(data);
-      // this.fields[0].prependValue = `${data.site_prefix}-ARV-`;
     }
   },
   data() {
