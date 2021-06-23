@@ -1,8 +1,5 @@
-// import { Router } from "vue-router";
 import router from '@/router/index';
-import {
-    toastController,
-} from "@ionic/vue";
+import { toastDanger } from "@/utils/Alerts"
 const ApiClient = (() => {
     interface Config {
         protocol?: string;
@@ -14,16 +11,6 @@ const ApiClient = (() => {
         version?: string;
         source?: string;
     }
-    const showMessage =async (message: string, color = "warning", duration= 6000) => {
-        const toast = await toastController.create({
-            message: message,
-            position: "top",
-            animated: true,
-            duration: duration,
-            color: color
-        });
-        return toast.present();
-    };
     async function getConfig(): Promise<{ status: string; data?: Config | undefined; message?: string }> {
         try {
 
@@ -52,7 +39,7 @@ const ApiClient = (() => {
     async function expandPath(resourcePath: string) {
         const config = await getConfig();
         if(config.message) {
-            showMessage(config.message);
+            toastDanger(config.message);
         }
         if (config.data) {
             return {
@@ -94,19 +81,19 @@ const ApiClient = (() => {
                     return null;
                 } else if (response.status >= 500 && !noRedirectCodes.includes(response.status)) {
                     const { error, exception } = await response.json();
-                    showMessage(`${error} - ${exception}`);
+                    toastDanger(`${error} - ${exception}`);
                     return null;
                 } else {
                     return response;
                 }
             } catch (e) {
                 console.error(`Failed to fetch ${url}`, e);
-                showMessage(`Failed to fetch ${url}`);
+                toastDanger(`Failed to fetch ${url}`);
                 return null;
             }
         }
         else {
-            showMessage('could not configure services');
+            toastDanger('could not configure services');
         }
     }
     
@@ -125,7 +112,7 @@ const ApiClient = (() => {
     const post = (uri: string, data: object, options = []) => execFetch(uri, { method: 'POST', body: JSON.stringify(data) }, options);
     const remove = (uri: string, data: object, options = []) => execFetch(uri, { method: 'DELETE', body: JSON.stringify(data) }, options);
     const put = (uri: string, data: object, options = []) => execFetch(uri, { method: 'PUT', body: JSON.stringify(data) }, options);
-    return { get, post, put, remove, getConfig, showMessage };
+    return { get, post, put, remove, getConfig };
 })();
 
 export default ApiClient;

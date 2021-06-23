@@ -1,9 +1,7 @@
 import { Service } from '@/services/service'
-import router from '@/router/index';
 import Modal from "@/components/ApplicationModal.vue";
 import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
 import {
-  alertController,
   modalController
 } from "@ionic/vue";
 export class ProgramService extends Service {
@@ -55,29 +53,5 @@ export class ProgramService extends Service {
       });
       modal.present();
       return modal;
-    }
-    static async showError(message: string) {
-         const alert = await alertController
-        .create({
-          cssClass: 'my-custom-class',
-        //   header: 'Patient not found',
-          message: message,
-          backdropDismiss: false,
-          buttons: [
-            {
-              text: 'Home',
-              handler: () => {
-                router.push('/');
-              },
-            },
-            {
-              text: 'Back',
-              handler: () => {
-                router.back();
-              },
-            }
-          ],
-        });
-      await alert.present();
     }
 }

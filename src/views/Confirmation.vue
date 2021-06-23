@@ -122,6 +122,7 @@ import { OrderService } from "@/services/order_service";
 import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
 import { ConceptService } from "@/services/concept_service"
+import { alertAction } from "@/utils/Alerts"
 import PatientAlerts from "@/services/patient_alerts"
 import HisDate from "@/utils/Date"
 export default defineComponent({
@@ -163,13 +164,25 @@ export default defineComponent({
     };
   },
   methods: {
+    alertPatientNotFound() {
+      alertAction('Patient not found', [
+        {
+          text: 'Home',
+          handler: () => this.$router.push('/')
+        },
+        {
+          text: 'Back',
+          handler: () => this.$router.back()
+        }
+      ])
+    },
     fetchPatient: async function () {
       const response = await ApiClient.get(`/patients/${this.patientID}`);
 
       this.setOpen(true);
       if (!response || response.status !== 200) {
-          this.setOpen(false);
-        ProgramService.showError('Patient not found');
+        this.setOpen(false);
+        this.alertPatientNotFound();
 
       } // NOTE: Targeting Firefox 65, can't `response?.status`
       else {
@@ -182,15 +195,15 @@ export default defineComponent({
       const response = await ApiClient.get(`/search/patients/by_npid?npid=${this.patientBarcode}`);
 
       if (!response || response.status !== 200) {
-          this.setOpen(false);
-        ProgramService.showError('Patient not found');
+        this.setOpen(false);
+        this.alertPatientNotFound();
       } 
       else {
         const data: Patient[] = await response.json();
 
         switch (data.length) {
           case 0:
-            ProgramService.showError('Patient not found');
+            this.alertPatientNotFound();
             this.setOpen(false);
             break;
           case 1:

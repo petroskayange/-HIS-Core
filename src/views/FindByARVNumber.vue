@@ -6,6 +6,7 @@ import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import ApiClient from "@/services/api_client";
+import { toastWarning } from "@/utils/Alerts"
 export default defineComponent({
   components: { HisStandardForm },
   methods: {
@@ -35,7 +36,7 @@ export default defineComponent({
 
       const data = await response.json();
       if(data.length == 0) {
-        ApiClient.showMessage('Client not found');
+        toastWarning('Client not found')
       }else if (data.length == 1){
         // get all the patients identifiers, check if they have a national idd
         //if they have one go to to search page
@@ -87,8 +88,8 @@ export default defineComponent({
             return !value ? ["Value is required"] : null;
           },
           config: {
-          prepend: true,
-          prependValue: "ARV"
+            prepend: true,
+            prependValue: "ARV"
           },
           disabled: true,
         },

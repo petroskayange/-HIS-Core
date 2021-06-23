@@ -40,6 +40,7 @@ import { Option } from "@/components/Forms/FieldInterface"
 import { Field } from "./FieldInterface";
 import { defineComponent, PropType } from "vue";
 import { IonPage, IonContent } from "@ionic/vue";
+import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 export default defineComponent({
     name: "HisStandardForm",
     components: { BaseForm, IonPage, IonContent, HisFooter, HisFormSummary },
@@ -71,16 +72,16 @@ export default defineComponent({
     }),
     methods: {
         onErrors(errors: Array<string>) {
-            alert(errors.join(', '))
+            toastWarning(errors.join(', '), 3000)
         },
-        onCancel(){
-            const confirmation = confirm('Are you sure you want to cancel?') 
+        async onCancel(){
+            const confirmation = await alertConfirmation('Are you sure you want to cancel?') 
             if (confirmation) {
                 this.$router.push({path: this.cancelDestinationPath})
             }
         },
-        onClear() {
-            const confirmation = confirm('Are you sure you want to clear field data?')
+        async onClear() {
+            const confirmation = await alertConfirmation('Are you sure you want to clear field data?')
             if (confirmation) {
                 this.isClear = true
             }

@@ -115,6 +115,7 @@ import {
   toastController
 } from "@ionic/vue";
 import { defineComponent } from "vue";
+import { toastWarning } from "@/utils/Alerts"
 import keyboard from "../../components/Keyboard/qwerty.vue";
 import ApiClient from "@/services/api_client"
 export default defineComponent({
@@ -202,15 +203,6 @@ export default defineComponent({
       const nextField = this.active === "username" ? "password" : "username";
       this.focusKeyboard(nextField);
     },
-    async showMessage(message: string) {
-      const toast = await toastController.create({
-        message: message,
-        position: "top",
-        animated: true,
-        duration: 4000,
-      });
-      return toast.present();
-    },
     doLogin: async function () {
       this.busy = true;
 
@@ -236,15 +228,15 @@ export default defineComponent({
         sessionStorage.setItem("userRoles", JSON.stringify(user.roles));
         this.$router.push("/select_hc_location");
           } else if (response.status === 401) {
-            this.showMessage("Invalid username or password");
+            toastWarning("Invalid username or password");
           } else {
-            this.showMessage("An error has occured");
+            toastWarning("An error has occured");
             console.warn(`Response: ${response.status} - ${response.body}`);
           }
         }
       }
       else {
-        this.showMessage("Complete form to log in");
+        toastWarning("Complete form to log in");
       }
       this.busy = false;
     },
