@@ -5,12 +5,8 @@ export class PrintoutService extends Service {
         super()
     }
 
-    static printNationalID(patientId: number) {
-        return this.printLb(`patients/${patientId}/labels/national_health_id`, `${patientId}-printout`)
-    }
-
-    private static async printLb(url: string, name='printout') {
-        const file = await super.getText(url)
+    async printLbl(url: string, name='printout') {
+        const file = await Service.getText(url)
 
         if (!file) return
 
