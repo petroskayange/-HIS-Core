@@ -2,16 +2,22 @@ import ApiClient from "./api_client"
 import Url from "@/utils/Url"
 
 export class Service {
+    static async getText(url: string) {
+        const req = await ApiClient.get(url)
+
+        if (req && req.ok) return req?.text()
+    }
+
     static async getJson(url: string, params = {} as Record<string, any>) {
         const transformedUrl = `${url}?${Url.parameterizeObjToString(params)}`
         const req = await ApiClient.get(transformedUrl)
 
         if (req && req.ok) return req?.json()
     }
-    
+
     static async postJson(url: string, data: any, genericError='Unable to save record') {
         const req = await ApiClient.post(url, data)
-    
+
         if (req && req.ok) return req?.json()
 
         throw genericError
@@ -19,7 +25,7 @@ export class Service {
 
     static async void(url: string, reason: Record<string, string>) {
         const req = await ApiClient.remove(url, reason)
-        
+   
         if (req && req.ok) return true
 
         throw 'Unable to delete record'
