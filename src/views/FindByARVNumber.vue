@@ -4,6 +4,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
+import { GlobalPropertyService } from "@/services/global_property_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import ApiClient from "@/services/api_client";
 export default defineComponent({
@@ -17,14 +18,9 @@ export default defineComponent({
       console.log("Form has been submitted");
     },
     getSitePrefix: async function() {
-      const response = await ApiClient.get(
-        "global_properties?property=site_prefix"
-      );
+      const sitePrefix = await GlobalPropertyService.getSitePrefix()
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
-      this.fields[1].config.prependValue = `${data.site_prefix}-ARV-`;
+      if (sitePrefix) this.fields[1].config.prependValue = `${sitePrefix}-ARV-`;
     },
     fetchclient: async function(arvNumber: string) {
       const response = await ApiClient.get(
