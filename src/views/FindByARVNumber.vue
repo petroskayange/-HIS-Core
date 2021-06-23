@@ -6,6 +6,7 @@ import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { GlobalPropertyService } from "@/services/global_property_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+import { Patientservice } from "@/services/patient_service"
 import ApiClient from "@/services/api_client";
 import { toastWarning } from "@/utils/Alerts"
 export default defineComponent({
@@ -24,13 +25,8 @@ export default defineComponent({
       if (sitePrefix) this.fields[1].config.prependValue = `${sitePrefix}-ARV-`;
     },
     fetchclient: async function(arvNumber: string) {
-      const response = await ApiClient.get(
-        `search/patients/by_identifier?type_id=4&identifier=${arvNumber}`
-      );
+      const data = await Patientservice.findByOtherID(4, arvNumber)
 
-      if (!response || response.status !== 200) return; // NOTE: Targeting Firefox 65, can't `response?.status`
-
-      const data = await response.json();
       if(data.length == 0) {
         toastWarning('Client not found')
       }else if (data.length == 1){
