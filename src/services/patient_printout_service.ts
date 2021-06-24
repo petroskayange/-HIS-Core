@@ -33,7 +33,8 @@ export class PatientPrintoutService extends PrintoutService {
     }
 
     printDemographicsLbl() {
-        return this.printPatientLbl('patient_history')
+        const url = `programs/${PrintoutService.getProgramID()}/${this.baseUrl}/patient_history`
+        return this.printLbl(url)
     }
 
     printTransferOutLbl() {
