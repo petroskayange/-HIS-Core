@@ -1,6 +1,6 @@
 <template>
     <ion-page> 
-        <patient-header :appIcon="appIcon" :patientCardInfo="patientCardInfo" :programCardInfo="programCardInfo" />
+        <patient-header :appIcon="app.applicationIcon" :patientCardInfo="patientCardInfo" :programCardInfo="programCardInfo" />
         <ion-content>
             <ion-grid class='grid-custom'>
                 <ion-row> 
@@ -58,6 +58,8 @@
     </ion-page>
 </template>
 <script lang="ts">
+import HisApp from "@/apps/app_lib"
+import { AppInterface } from "@/apps/interfaces/AppInterface"
 import { defineComponent } from 'vue'
 import PrimaryCard from "@/components/DataViews/DashboardPrimaryCard.vue"
 import VisitDatesCard from "@/components/DataViews/VisitDatesCard.vue"
@@ -70,14 +72,12 @@ import { ProgramService } from "@/services/program_service"
 import { ObservationService } from "@/services/observation_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
-import PatientAlerts from "@/services/patient_alerts"
 import TaskSelector from "@/components/DataViews/TaskSelector.vue"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/EncounterView.vue"
 import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
-import { toastSuccess, toastDanger } from "@/utils/Alerts"
-
+import { toastSuccess, toastDanger } from "@/utils/Alerts";
 import _ from "lodash"
 import {
   IonPage,
@@ -106,7 +106,7 @@ export default defineComponent({
         IonCol,
     },
     data: () => ({
-        appIcon: '',
+        app: {} as AppInterface | {},
         currentDate: '',
         sessionDate: '',
         nextTask: "None",
@@ -115,7 +115,7 @@ export default defineComponent({
         patient: {} as any,
         patientProgram: {} as Array<Option>,
         patientCardInfo: [] as Array<Option>,
-        programCardInfo: [] as Array<Option>,
+        programCardInfo: [] as Array<Option> | [],
         encounters: [] as Array<Encounter>,
         medications: [] as any,
         labOrders: [] as any,
@@ -152,17 +152,17 @@ export default defineComponent({
     },
     methods: {
         async init() {
+            this.app = ProgramService.getActiveApp()
             this.patient = await this.fetchPatient(this.patientId)
             this.patientProgram = await ProgramService.getProgramInformation(this.patientId)
             this.nextTask = await this.getNextTask(this.patientId)
             this.visitDates = await this.getPatientVisitDates(this.patientId)
-            this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId)
+            this.alertCardItems = await this.getPatientAlertCardInfo(this.patientId) || []
             this.patientCardInfo = this.getPatientCardInfo(this.patient)
-            this.programCardInfo = this.getProgramCardInfo(this.patientProgram)
+            this.programCardInfo = this.getProgramCardInfo(this.patientProgram) || []
             this.programID = ProgramService.getProgramID()
             this.currentDate = HisDate.currentDisplayDate()
             this.sessionDate = HisDate.toStandardHisDisplayFormat(ProgramService.getSessionDate())
-            this.appIcon = ProgramService.getApplicationImage() || ''
         },
         async fetchPatient(patientId: number | string){
             const patient: Patient = await Patientservice.findByID(patientId);
@@ -200,13 +200,10 @@ export default defineComponent({
                 { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber')}
             ]
         },
-        getProgramCardInfo(programInfo: any) {
-           return  [
-            { label: "ART- Start Date", value: programInfo.art_start_date},
-            { label: "ARV Number", value: `${programInfo.arv_number} | Regimen: ${programInfo.current_regimen}` },
-            { label: "File Number", value: programInfo.filing_number.number},
-            { label: "Current Outcome", value: programInfo.current_outcome},
-           ]
+        getProgramCardInfo(info: any) {
+           if ('patientDashboard' in this.app) {
+             return this.app.patientDashboard?.programCardInfo(info)
+           }
         },
         getActivitiesCardInfo(encounters: Array<Encounter>) {
             return encounters.map((encounter: Encounter) => ({
@@ -252,26 +249,24 @@ export default defineComponent({
             }))
         },
         async getPatientAlertCardInfo(patientId: number){
-            const sideEffects = await PatientAlerts.alertSideEffects(patientId)
-            return [
-                { label: `Patient has ${sideEffects.length} side effects`, value: ''}
-            ]
+            if ('patientDashboard' in this.app) {
+                return this.app.patientDashboard?.alerts(patientId)
+            }
         },
         async changeApp() {
-            const modal = await ProgramService.selectApplication();
-            const {data}  = await modal.onDidDismiss();
+            const app = await HisApp.selectApplication();
 
-            await ProgramService.selectTasks().then(data => data.onDidDismiss)
-            
-            if (parseInt(data.programID) != this.programID) this.init()
+            if (app.programID != this.programID) this.init()
         },
         async showTasks() {
-            const {encounters} = ProgramService.getApplicationConfig()
-            this.openModal(encounters, 'Select Task', TaskSelector)
+            if ('tasks' in this.app) {
+                this.openModal(this.app.tasks?.encounters, 'Select Task', TaskSelector)
+            }
         },
         async showOptions() {
-            const {options} = ProgramService.getApplicationConfig()
-            this.openModal(options, 'Select Activity', TaskSelector)
+            if ('tasks' in this.app) {
+                this.openModal(this.app.tasks?.other, 'Select Activity', TaskSelector)
+            }
         },
         async openModal(items: any, title: string, component: any) {
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
@@ -281,7 +276,8 @@ export default defineComponent({
                 cssClass: "custom-modal",
                 componentProps: {
                     items,
-                    title: `${title}: ${date}`
+                    title: `${title}: ${date}`,
+                    taskParams: this.patientId
                 }
             })
             modal.present()
