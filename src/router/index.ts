@@ -12,6 +12,7 @@ import SearchResults from '../views/SearchResults.vue'
 import Example from '../views/Example.vue'
 import FindByARVNumber from '../views/FindByARVNumber.vue'
 import PatientDashboard from '../views/PatientDashboard.vue'
+import Configuration from '@/views/Configuration.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -77,6 +78,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/patients/confirm',
     name: 'Patient confirmation',
     component: Confirmation
+  }
+  ,
+  {
+    path: '/preferences',
+    name: 'Preferences',
+    component: Configuration
   }
 ]
 
