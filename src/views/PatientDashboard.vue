@@ -259,13 +259,15 @@ export default defineComponent({
             if (app.programID != this.programID) this.init()
         },
         async showTasks() {
-            if ('tasks' in this.app) {
-                this.openModal(this.app.tasks?.encounters, 'Select Task', TaskSelector)
+            if ('patientDashboard' in this.app) {
+                const { encounters } = this.app.patientDashboard.tasks
+                this.openModal(encounters, 'Select Task', TaskSelector)
             }
         },
         async showOptions() {
-            if ('tasks' in this.app) {
-                this.openModal(this.app.tasks?.other, 'Select Activity', TaskSelector)
+            if ('patientDashboard' in this.app) {
+                const  { other } = this.app.patientDashboard.tasks
+                this.openModal(other, 'Select Activity', TaskSelector)
             }
         },
         async openModal(items: any, title: string, component: any) {

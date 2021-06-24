@@ -13,11 +13,11 @@ const ART: AppInterface = {
     applicationName: 'ART',
     applicationIcon: img('aids.png'),
     applicationDescription: "Application for HIV testing",
-    tasks: {
-        encounters: ENCOUNTERS,
-        other: OTHER_TASKS
-    },
     patientDashboard: {
+        tasks: {
+            encounters: ENCOUNTERS,
+            other: OTHER_TASKS
+        },
         async alerts(patientId: number): Promise<Option[]> {
             const sideEffects = await PatientAlerts.alertSideEffects(patientId)
             return [

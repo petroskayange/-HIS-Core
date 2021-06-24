@@ -9,9 +9,10 @@ interface AlertsInterface {
     (id: number): Promise<Option[]>;
 }
 
-interface PatientDashboardConfig {
+interface PatientDashboarInterface {
     readonly alerts: AlertsInterface;
     readonly programCardInfo: ProgramCardInfoInterface;
+    readonly tasks: Record<string, TaskInterface[]>;
 }
 
 export interface ActivityInterface {
@@ -24,7 +25,6 @@ export interface AppInterface {
     readonly applicationName: string;
     readonly applicationIcon: string;
     readonly applicationDescription: string;
+    readonly patientDashboard: PatientDashboarInterface;
     activities: Array<ActivityInterface>;
-    readonly tasks?: Record<string, TaskInterface[]>;
-    readonly patientDashboard?: PatientDashboardConfig;
 }
