@@ -5,7 +5,7 @@ export class PrintoutService extends Service {
         super()
     }
 
-    async printLbl(url: string, name='printout') {
+    async printLbl(url: string, name=`printout-${Service.getSessionDate()}`) {
         const file = await Service.getText(url)
 
         if (!file) return
