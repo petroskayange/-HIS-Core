@@ -23,12 +23,12 @@
             <ion-row>
               <ion-col>
                 <p>
-                  {{ applicationName }}
+                  {{ app.applicationName }}
                 </p>
               </ion-col>
               <ion-col>
-                <ion-thumbnail v-if="applicationIcon">
-                  <ion-img :src="applicationIcon"></ion-img>
+                <ion-thumbnail v-if="app.applicationIcon">
+                  <ion-img :src="app.applicationIcon"></ion-img>
                 </ion-thumbnail>
               </ion-col>
             </ion-row>
@@ -107,6 +107,7 @@ import {
   IonImg,
   IonThumbnail
 } from "@ionic/vue";
+import HisApp from "@/apps/app_lib"
 import { defineComponent } from "vue";
 import { barcode } from "ionicons/icons";
 import { GlobalPropertyService } from "@/services/global_property_service"
@@ -114,8 +115,8 @@ import ApiClient from "@/services/api_client";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
 import Overview from "@/components/ART/overview.vue";
-import { ProgramService } from "@/services/program_service";
 import HisDate from "@/utils/Date"
+import { AppInterface } from "@/apps/interfaces/AppInterface";
 export default defineComponent({
   name: "Home",
   components: {
@@ -142,16 +143,15 @@ export default defineComponent({
   },
   data() {
     return {
+      app: {} as AppInterface,
       facilityName: "",
       userLocation: "",
       sessionDate: "",
       userName: "",
       APIVersion: "",
-      applicationName: "",
       activeTab: 1,
       ready: false,
-      patientBarcode: "",
-      applicationIcon: null,
+      patientBarcode: ""
     };
   },
   methods: {
@@ -205,40 +205,31 @@ export default defineComponent({
       this.fetchLocationID();
     },
     async openModal() {
-      const modal = await ProgramService.selectApplication();
-      const  {data}  = await modal.onDidDismiss();
-      this.applicationName = data.applicationName;
-      this.applicationIcon = data.applicationIcon;
-      sessionStorage.setItem("applicationImage", data.applicationIcon)
-      sessionStorage.setItem("applicationName", data.applicationName)
-      sessionStorage.setItem("programID", data.programID)
-      sessionStorage.setItem("applicationConfig", JSON.stringify(data.config))
-      await ProgramService.selectTasks().then(data => data.onDidDismiss)
+      const data = await HisApp.selectApplication() 
+      this.app = data
       this.loadApplicationData();
     },
     checkForbarcode(){
-        if(this.patientBarcode.match(/.+\$$/i) != null){
-          const patientBarcode = this.patientBarcode.replaceAll(/\$/gi, '');
-          this.patientBarcode = '';
-          this.$router.push('/patients/confirm?patient_barcode='+patientBarcode);
-        }
-      },
+      if(this.patientBarcode.match(/.+\$$/i) != null){
+        const patientBarcode = this.patientBarcode.replaceAll(/\$/gi, '');
+        this.patientBarcode = '';
+        this.$router.push('/patients/confirm?patient_barcode='+patientBarcode);
+      }
+    },
+  },
+  mounted(){
+    const app = HisApp.getActiveApp()
+    if (!app) {
+      this.openModal();
+    } else {
+      this.app = app
+      this.loadApplicationData();
+    }
   },
   setup() {
     return {
       barcode,
     };
-  },
-  mounted() {
-      if (
-        !Object.prototype.hasOwnProperty.call(sessionStorage, "applicationName")
-      ) {
-        this.openModal();
-      } else {
-        this.applicationName = sessionStorage.applicationName;
-        this.applicationIcon = sessionStorage.applicationImage;
-        this.loadApplicationData();
-      }
   },
   watch: {
     patientBarcode: function() {

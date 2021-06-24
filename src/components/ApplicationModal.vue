@@ -14,53 +14,33 @@
 </template>
 
 <script>
+import HisApps from "@/apps/his_apps"
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, modalController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import ApplicationCard from '@/components/ApplicationCard'
+import {toastDanger} from "@/utils/Alerts"
+import { find } from "lodash"
+
 export default defineComponent({
   name: 'Modal',
   props: {
     title: { type: String, default: '' },
   },
   methods: {
-    async getApps() {
-        try {
-
-            const response = await fetch('/config.json');
-      
-            if (response.status !== 200) {
-                console.error(`Looks like there was a problem. Status Code: ${response.status}`);
-                return { status: "error" };
-            }
-            const data = await response.json();
-            this.apps = data.apps.filter(app => app.available === "true");
-
-        } catch (err) {
-            console.log('Fetch Error :-S', err);
-            return { status: "error" };
-        }
-    },
-    async getAppConfig(app) {
-      const req = await fetch(`/applications/${app.applicationName}.json`)
-      return req.json()
-    },
-    async setApplication(app) {
-      const config = await this.getAppConfig(app)
-
-      if (!config) throw 'Application configuration file not found. Check the public/applications'
-
-      await modalController.dismiss(
-        {
-          applicationIcon: app.applicationIcon,
-          applicationName: app.applicationName,
-          programID: app.programID,
-          config
-        }
-      )
-    },
+    async setApplication(app) { await modalController.dismiss(app) },
   },
-  mounted() {
-    this.getApps();
+  async mounted() {
+    try {
+      const req = await fetch('/config.json')
+      const { apps } = await req.json()
+      this.apps = HisApps.filter((app) => {
+        const appFound = find(apps, { name :  app.applicationName})
+        return (appFound && appFound.available === true)
+      })
+    }catch(e) {
+      console.error(e)
+      toastDanger('An error occured while loading applications')
+    }
   },
   data() {
     return {
