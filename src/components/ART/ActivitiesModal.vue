@@ -8,10 +8,9 @@
     <ion-list style="height: 90%; overflow-x: auto;">
       <ion-item v-for="(entry, index) in appActivities" :key="index" color="light">
         <ion-label> {{ entry.value }} </ion-label>
-        <ion-checkbox v-model="entry.selected" slot="start" />
+        <ion-checkbox v-model="entry.selected" slot="start"/>
       </ion-item>
     </ion-list>
-    <ion-row> </ion-row>
     <ion-button @click="postActivities" :disabled="selectedActivities.length == 0">finish</ion-button>
   </ion-content>
 </template>
@@ -23,7 +22,6 @@ import {
   IonTitle,
   IonToolbar,
   IonLabel,
-  IonRow,
   modalController,
   IonList,
   IonItem,
@@ -54,7 +52,6 @@ export default defineComponent({
           this.getActivities();
         }
       },
-      deep: true,
       immediate: true
     }
   },
@@ -115,7 +112,6 @@ export default defineComponent({
     IonHeader,
     IonTitle,
     IonToolbar,
-    IonRow,
     IonLabel,
     IonList,
     IonItem,
