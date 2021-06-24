@@ -5,8 +5,8 @@
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    <ion-list style="height: 90%; overflow: scroll">
-      <ion-item v-for="(entry, index) in activities" :key="index" color="light">
+    <ion-list style="height: 90%; overflow-x: auto;">
+      <ion-item v-for="(entry, index) in appActivities" :key="index" color="light">
         <ion-label> {{ entry.value }} </ion-label>
         <ion-checkbox v-model="entry.selected" slot="start" />
       </ion-item>
@@ -15,7 +15,6 @@
     <ion-button @click="postActivities" :disabled="selectedActivities.length == 0">finish</ion-button>
   </ion-content>
 </template>
-
 <script lang="ts">
 import {
   IonContent,
@@ -42,7 +41,7 @@ export default defineComponent({
       type: Object as PropType<ActivityInterface[]>,
       required: true
     },
-    title: { 
+    title: {
       type: String, 
       default: ""
     },
@@ -100,9 +99,7 @@ export default defineComponent({
     selectedActivities(): string {
       return this.appActivities
         .filter((element) => element.selected == true)
-        .map((el) => {
-          return el.value;
-        })
+        .map((el) => el.value )
         .join(",");
     }
   },
