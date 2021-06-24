@@ -14,10 +14,13 @@
 </template>
 
 <script>
-import Apps from "@/apps/his_apps"
+import HisApps from "@/apps/his_apps"
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, modalController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import ApplicationCard from '@/components/ApplicationCard'
+import {toastDanger} from "@/utils/Alerts"
+import { find } from "lodash"
+
 export default defineComponent({
   name: 'Modal',
   props: {
@@ -26,8 +29,18 @@ export default defineComponent({
   methods: {
     async setApplication(app) { await modalController.dismiss(app) },
   },
-  mounted() {
-    this.apps = Apps
+  async mounted() {
+    try {
+      const req = await fetch('/config.json')
+      const { apps } = await req.json()
+      this.apps = HisApps.filter((app) => {
+        const appFound = find(apps, { name :  app.applicationName})
+        return (appFound && appFound.available === true)
+      })
+    }catch(e) {
+      console.error(e)
+      toastDanger('An error occured while loading applications')
+    }
   },
   data() {
     return {

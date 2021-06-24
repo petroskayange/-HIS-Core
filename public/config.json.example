@@ -3,6 +3,6 @@
 	"apiPort": "8000",
 	"apiProtocol": "http",
 	"apps": [
-		{ "app": "ART", "available": true }
+		{ "name": "ART", "available": true }
 	]
 }
