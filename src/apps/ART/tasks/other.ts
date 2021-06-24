@@ -10,8 +10,8 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     id: "npid",
     name: "National Health ID (Print)",
     description: "Print Patient National Health ID",
-    action(patientId: number) {
-      const lbl = new PatientPrintoutService(patientId)
+    action({ patient }: any) {
+      const lbl = new PatientPrintoutService(patient.getID())
       return lbl.printNidLbl()
     },
     icon: img("barcode.png")
@@ -27,8 +27,8 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     id: "demographics",
     name: "Demographics (Print)",
     description: "Print Patient Demographics",
-    action: (patientId: number) => {
-      const lbl = new PatientPrintoutService(patientId)
+    action: ({ patient }: any) => {
+      const lbl = new PatientPrintoutService(patient.getID())
       return lbl.printDemographicsLbl()
     },
     icon: img("print.png")
@@ -58,8 +58,8 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     id: "f_number",
     name: "Filing Number (Print)",
     description: "Print Patient Filing Number",
-    action(patientId: number) {
-      const lbl = new PatientPrintoutService(patientId)
+    action({ patient }: any) {
+      const lbl = new PatientPrintoutService(patient.getID())
       return lbl.printFilingNumberLbl()
     },
     icon: img("folder.png")
@@ -68,9 +68,9 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     id: "visit_summary",
     name: "Visit Summary (Print)",
     description: "Print Patient Visit Summary",
-    action(patientId: number) {
-      const lbl = new PatientPrintoutService(patientId)
-      return lbl.printVisitSummaryLbl()
+    action({ patient, visitDate }: any) {
+      const lbl = new PatientPrintoutService(patient.getID())
+      return lbl.printVisitSummaryLbl(visitDate)
     },
     icon: img("folder.png")
   },

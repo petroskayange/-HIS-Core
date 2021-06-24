@@ -12,7 +12,7 @@ export class PatientPrintoutService extends PrintoutService {
 
     getLblUrl(resource: string, params = {} as Record<string, string>) {
         const urlParams = Url.parameterizeObjToString(params)
-        return `${this.baseUrl}/${resource}?${urlParams}`
+        return `${this.baseUrl}${resource}${urlParams ? '?' + urlParams : ''}`
     }
 
     printPatientLbl(resource: string, params = {} as Record<string, string>) {
@@ -27,8 +27,9 @@ export class PatientPrintoutService extends PrintoutService {
         return this.printPatientLbl('national_health_id')
     }
 
-    printVisitSummaryLbl() {
-        return this.printPatientLbl('visits', { date: PrintoutService.getSessionDate()})
+    printVisitSummaryLbl(date = PrintoutService.getSessionDate() ) {
+        const url = `programs/${PrintoutService.getProgramID()}/${this.baseUrl}/visits?date=${date}`
+        return this.printLbl(url)
     }
 
     printDemographicsLbl() {

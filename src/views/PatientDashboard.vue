@@ -279,7 +279,7 @@ export default defineComponent({
                 componentProps: {
                     items,
                     title: `${title}: ${date}`,
-                    taskParams: this.patientId
+                    taskParams: { patient: this.patient, visitDate: this.activeVisitDate}
                 }
             })
             modal.present()
