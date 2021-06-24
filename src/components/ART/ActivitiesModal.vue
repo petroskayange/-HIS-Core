@@ -30,13 +30,34 @@ import {
   IonItem,
   IonCheckbox,
 } from "@ionic/vue";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 import { toastWarning } from "@/utils/Alerts"
 import ApiClient from "@/services/api_client";
+import { ActivityInterface } from "@/apps/interfaces/AppInterface"
+
 export default defineComponent({
   name: "Modal",
   props: {
-    title: { type: String, default: "" },
+    activities: {
+      type: Object as PropType<ActivityInterface[]>,
+      required: true
+    },
+    title: { 
+      type: String, 
+      default: ""
+    },
+  },
+  watch: {
+    activities: {
+      handler(activities: Array<ActivityInterface>){
+        if (activities) {
+          this.appActivities = [...activities]
+          this.getActivities();
+        }
+      },
+      deep: true,
+      immediate: true
+    }
   },
   methods: {
     async getActivities() {
@@ -52,7 +73,7 @@ export default defineComponent({
       else {
         //
         const data: any = await response.json();
-        this.activities = this.activities.map((el) => {
+        this.appActivities = this.appActivities.map((el) => {
           if (data.property_value.search(el.value) >= 0) {
             el.selected = true;
           }
@@ -77,7 +98,7 @@ export default defineComponent({
   },
   computed: {
     selectedActivities(): string {
-      return this.activities
+      return this.appActivities
         .filter((element) => element.selected == true)
         .map((el) => {
           return el.value;
@@ -85,23 +106,10 @@ export default defineComponent({
         .join(",");
     }
   },
-  mounted() {
-    this.getActivities();
-  },
   data() {
     return {
       content: "Content",
-      activities: [
-        { value: "ART adherence", selected: false },
-        { value: "HIV clinic consultations", selected: false },
-        { value: "HIV first visits", selected: false },
-        { value: "HIV reception visits", selected: false },
-        { value: "HIV staging visits", selected: false },
-        { value: "Manage Appointments", selected: false },
-        { value: "Drug Dispensations", selected: false },
-        { value: "Prescriptions", selected: false },
-        { value: "Vitals", selected: false },
-      ],
+      appActivities: [] as Array<ActivityInterface>
     };
   },
   components: {
