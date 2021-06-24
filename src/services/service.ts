@@ -1,5 +1,7 @@
 import ApiClient from "./api_client"
 import Url from "@/utils/Url"
+import HisApp from "@/apps/app_lib"
+import { AppInterface } from "@/apps/interfaces/AppInterface"
 
 export class Service {
     static async getText(url: string) {
@@ -31,6 +33,10 @@ export class Service {
         throw 'Unable to delete record'
     }
 
+    static getActiveApp(): AppInterface | {} { 
+        return HisApp.getActiveApp() || {}
+    }
+
     static getUserLocation() {
         return sessionStorage.getItem('userLocation')
     }
@@ -40,16 +46,11 @@ export class Service {
     }
     
     static getProgramID() {
-        const id = sessionStorage.getItem('programID')
-        return id ? parseInt(id) : 0;
-    }
-    
-    static getApplicationImage() {
-        return sessionStorage.getItem('applicationImage')
-    }
-
-    static getApplicationName() {
-        return sessionStorage.getItem('applicationName')
+        const app = this.getActiveApp()
+        
+        if ('programID' in app) return app.programID
+        
+        return 0;
     }
     
     static getUserRoles() {
@@ -57,35 +58,4 @@ export class Service {
        
        return roles ? JSON.parse(roles) : []
     }
-
-    static getApplicationConfig() {
-        const config = sessionStorage.getItem('applicationConfig')
-
-        if (config) return JSON.parse(config)
-    }
-
-    static setUserLocation(name: string) {
-        sessionStorage.setItem('userLocation', name)
-    }
-    
-    static setSessionDate(date: string) {
-        sessionStorage.setItem('sessionDate', date);
-    }
-    
-    static setProgramID(id: string) {
-        sessionStorage.setItem('programID', id);
-    }
-    
-    static setApplicationImage(url: string) {
-        sessionStorage.setItem('applicationImage', url)
-    }
-
-    static setApplicationName(name: string) {
-        sessionStorage.setItem('applicationName', name)
-    }
-    
-    static setUserRoles(roles: any) {
-        sessionStorage.setItem('userRoles', JSON.stringify(roles))
-    }
-
 }
