@@ -41,7 +41,7 @@
         </ion-content>
         <ion-footer> 
             <ion-toolbar color="dark">
-                <ion-button color="danger" size="large" router-link="/"> 
+                <ion-button color="danger" size="large" @click="onCancel"> 
                     Cancel
                 </ion-button>
                 <ion-button color="primary" size="large" slot="end" @click="showTasks"> 
@@ -77,7 +77,7 @@ import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/EncounterView.vue"
 import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
 import { man, woman } from "ionicons/icons";
-import { toastSuccess, toastDanger } from "@/utils/Alerts";
+import { toastSuccess, toastDanger, alertConfirmation } from "@/utils/Alerts";
 import _ from "lodash"
 import {
   IonPage,
@@ -319,6 +319,11 @@ export default defineComponent({
                 HisDate.toStandardHisTimeFormat(order.order_date)
             ]))
             this.openTableModal(columns, rows, `Lab Orders`)
+        },
+        async onCancel() {
+            const confirmation = await alertConfirmation('Are you sure you want to cancel?')
+            
+            if (confirmation) return this.$router.push({path: '/'})
         }
     }
 })
