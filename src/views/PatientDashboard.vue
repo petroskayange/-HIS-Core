@@ -72,10 +72,10 @@ import { ProgramService } from "@/services/program_service"
 import { ObservationService } from "@/services/observation_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
-import TaskSelector from "@/components/DataViews/TaskSelector.vue"
+import TaskSelector from "@/components/DataViews/TaskSelectorModal.vue"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
-import EncounterView from "@/components/DataViews/EncounterView.vue"
-import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
+import EncounterView from "@/components/DataViews/DashboardEncounterModal.vue"
+import CardDrilldown from "@/components/DataViews/DashboardTableModal.vue"
 import { man, woman } from "ionicons/icons";
 import { toastSuccess, toastDanger, alertConfirmation } from "@/utils/Alerts";
 import _ from "lodash"
@@ -274,7 +274,7 @@ export default defineComponent({
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: component,
-                backdropDismiss: true,
+                backdropDismiss: false,
                 cssClass: "custom-modal",
                 componentProps: {
                     items,
@@ -288,7 +288,7 @@ export default defineComponent({
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: CardDrilldown,
-                backdropDismiss: true,
+                backdropDismiss: false,
                 cssClass: "custom-modal",
                 componentProps: {
                     columns,
