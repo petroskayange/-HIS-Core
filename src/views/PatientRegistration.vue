@@ -237,12 +237,13 @@ export default defineComponent({
                 validation(val: any) {
                     const minYr = HisDate.getYearFromAge(100)
                     const maxYr = HisDate.getCurrentYear()
+                    const notNum = Validation.isNumber(val)
                     const noYear = Validation.required(val)
                     const notInRange = Validation.rangeOf(val, minYr, maxYr)
 
                     if (val.label.match(/Unknown/i)) return
 
-                    return noYear || notInRange
+                    return notNum || noYear || notInRange
                 }
             },
             {
