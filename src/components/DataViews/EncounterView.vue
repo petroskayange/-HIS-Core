@@ -20,7 +20,9 @@
         </ion-list>
       </ion-col>
       <ion-col size="8">
+        <div class='tb'>
         <his-basic-table :columns="active.columns" :rows="active.rows"/>
+        </div>
       </ion-col>
     </ion-row>
   </ion-content>
@@ -122,3 +124,9 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+  .tb {
+    height: 480px;
+    overflow-y: auto;
+  }
+</style>
