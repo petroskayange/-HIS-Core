@@ -8,7 +8,7 @@ export class GlobalPropertyService extends Service {
     static async get(prop: string) {
         const res = await super.getJson('global_properties', { property: prop })
 
-        if (prop in res) return res[prop]
+        if (res && prop in res) return res[prop]
     }
 
     static set(prop: string, val: string | number) {
