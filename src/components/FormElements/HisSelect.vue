@@ -1,7 +1,7 @@
 <template>
     <div>
         <view-port :showFull="!showKeyboard">
-            <his-text-input :value="selected" /> 
+            <his-text-input :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" /> 
             <ion-list>
                 <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
                     <ion-label> {{item.label}} </ion-label>
