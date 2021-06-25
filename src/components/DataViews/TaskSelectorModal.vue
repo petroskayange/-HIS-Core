@@ -59,6 +59,7 @@ export default defineComponent({
       if (taskItem.url) {
         this.$router.push({ path: taskItem.url })
       }
+      this.closeModal()
     }
   },
   computed: {
