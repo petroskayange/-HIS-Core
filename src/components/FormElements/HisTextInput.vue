@@ -10,7 +10,7 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
-        <ion-list v-if="listData.length > 0">
+        <ion-list v-if="listData.length > 0" :style="{overflowX: 'auto', height: '90%'}">
             <ion-item button v-for="(item, index) in listData" :key="index" @click="onselect(item)"> 
                 <ion-label> {{item.label}} </ion-label>
             </ion-item>
