@@ -1,6 +1,6 @@
 <template>
     <view-port>
-        <base-input :value="value"/>
+        <base-input :value="value" @onValue="onKbValue"/>
     </view-port>
     <his-keyboard :kbConfig="keyboard" :onKeyPress="keypress" :disabled="false"> </his-keyboard>
 </template>
@@ -24,12 +24,17 @@ export default defineComponent({
         }
     },
     methods: {
+        onKbValue(text: any) { 
+            this.value = text
+        },
         async keypress(text: any){
             this.value = handleVirtualInput(text, this.value)
-            this.$emit('onValue', { label: this.value, value: this.value })
         }
     },
     watch: {
+        value(value: number){
+            this.$emit('onValue', { label: value, value })
+        },
         clear(val: boolean){
             if (val) {
                 this.value = ''

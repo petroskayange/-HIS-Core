@@ -61,6 +61,12 @@ export default defineComponent({
             this.selected = ''
             this.$emit('onClear')
         },
+        onKbValue(text: any, filtered = true) {
+            if (!filtered) return
+
+            this.filter = text
+            this.selected = this.filter
+        },
         keypress(text: any){
             if (!this.filter) this.selected = ''
 

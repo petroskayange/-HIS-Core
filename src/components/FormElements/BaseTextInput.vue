@@ -1,23 +1,28 @@
 <template>
   <ion-input
+    ref="input"
+    class="input_display"
     v-model="text"
     :type="type"
-    class="input_display"
     :disabled="disabled"
+    autocapitalize="sentences"
   />
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { IonInput, IonGrid, IonRow, IonCol } from "@ionic/vue";
+import { IonInput } from "@ionic/vue";
 export default defineComponent({
   name: "HisInput",
   components: { IonInput },
-  data:()=>({
+  data:() => ({
     text: '' as string | number
   }),
   watch: {
     value(val: number | string) {
       this.text = val
+    },
+    text(text: string | number) {
+      this.$emit('onValue', text)
     }
   },
   props: {
