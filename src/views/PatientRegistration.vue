@@ -16,12 +16,10 @@ import {PersonAttributeService, NewAttribute} from '@/services/person_attributes
 import HisDate from "@/utils/Date"
 import { GlobalPropertyService } from "@/services/global_property_service" 
 import { ProgramService } from "@/services/program_service";
-import { Service } from "@/services/service";
 import { EncounterService } from "@/services/Encounter";
 import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
-import { PrintoutService } from "@/services/printout_service";
 import { PatientPrintoutService } from "@/services/patient_printout_service";
 
 export default defineComponent({
@@ -34,7 +32,7 @@ export default defineComponent({
   }),
   computed: {
       showPatientType() {
-          return Service.getProgramID() == 1
+          return ProgramService.getProgramID() == 1
       }
   },
   async created(){
@@ -159,6 +157,7 @@ export default defineComponent({
     },
     createRegistrationOs(encounter: Encounter, patientType: string) {
         let ans: number;
+        const typeOfPatientConcept = ConceptService.getCachedConceptID('Type of patient');
         if(this.showPatientType == true) {
             ans  = ConceptService.getCachedConceptID(patientType)
         }else{
@@ -167,7 +166,7 @@ export default defineComponent({
         const obs = {
             'encounter_id': encounter.encounter_id,
             observations: [
-                {'concept_id': 3289, 'value_coded': ans}
+                {'concept_id': typeOfPatientConcept, 'value_coded': ans}
             ]
         };
         return ObservationService.create(obs);

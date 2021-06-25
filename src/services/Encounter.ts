@@ -33,11 +33,4 @@ export class EncounterService extends Service {
         })
     }
 
-    static getSessionDate() {
-        return super.getSessionDate();
-    }
-
-    static getProgramID() {
-        return super.getProgramID()
-    }
 }
