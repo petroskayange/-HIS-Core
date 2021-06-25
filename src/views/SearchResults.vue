@@ -62,9 +62,9 @@
           New Search
         </ion-button>
         <ion-button
+          @click="onRegisterAsNew"
           color="primary"
           size="large"
-          :router-link="newPatientPageUrl"
           slot="end"
         >
           New Patient
@@ -100,7 +100,7 @@ import {
 import { Patientservice } from "@/services/patient_service";
 import { Patient } from "@/interfaces/patient";
 import ResultCard from "@/components/DataViews/HisResultCard.vue";
-
+import { alertConfirmation } from "@/utils/Alerts"
 export default defineComponent({
   components: {
     ResultCard,
@@ -137,11 +137,7 @@ export default defineComponent({
     },
     confirmationPageUrl(): string {
       return `/patients/confirm?person_id=${this.selectedPerson.getID()}`;
-    },
-    newPatientPageUrl(): string {
-      const gender = this.gender === "M" ? "Male" : "Female";
-      return `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${gender}`;
-    },
+    }
   },
   watch: {
     $route: {
@@ -175,6 +171,15 @@ export default defineComponent({
           other: patient,
         };
       });
+    },
+    async onRegisterAsNew() {
+      const confirmation = await alertConfirmation('Do you want to register person as new patient?', `Register ${this.gname} ${this.fname}`)
+
+      if (confirmation) {
+        const gender = this.gender === "M" ? "Male" : "Female";
+        const path = `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${gender}`;
+        this.$router.push({path})
+      }
     },
     isActive(person: any): boolean {
         try {
