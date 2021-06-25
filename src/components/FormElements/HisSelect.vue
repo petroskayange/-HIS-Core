@@ -2,7 +2,7 @@
     <div>
         <view-port :showFull="!showKeyboard">
             <his-text-input :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" /> 
-            <ion-list>
+            <ion-list :style="{overflowX: 'auto', height: '90%'}">
                 <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
                     <ion-label> {{item.label}} </ion-label>
                 </ion-item>

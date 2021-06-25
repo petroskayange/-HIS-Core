@@ -17,12 +17,15 @@ export default defineComponent({
 </script>
 <style scoped>
     #view-port {
-        border: 2px solid #ccc;
-        background: #F0F0F0;
+        border: 1px solid #ccc;
+        background: #f8f8f8;
         width: 100%;
         border-radius: 10px;
         padding: 5px;
-        overflow-y: scroll;
+        overflow: hidden;
+      -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+      -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+      box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
     }
     .full {
         height: 80vh;
