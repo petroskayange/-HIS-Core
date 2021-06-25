@@ -173,18 +173,20 @@ export default defineComponent({
       });
     },
     async onRegisterAsNew() {
-      const confirmation = await alertConfirmation('Do you want to register person as new patient?', `Register ${this.gname} ${this.fname}`)
+      const confirmation = await alertConfirmation(
+        'Do you want to register person as new patient?', 
+        `Register ${this.gname} ${this.fname}`
+      )
 
       if (confirmation) {
         const gender = this.gender === "M" ? "Male" : "Female";
-        const path = `/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${gender}`;
-        this.$router.push({path})
+        this.$router.push(`/patient/registration?given_name=${this.gname}&family_name=${this.fname}&gender=${gender}`)
       }
     },
     isActive(person: any): boolean {
-        try {
-            return person.getID() === this.selectedPerson.getID()
-        }catch (e) { return false}
+      try {
+        return person.getID() === this.selectedPerson.getID()
+      }catch (e) { return false}
     },
     onselect(person: any) {
       this.isPersonSelected = true;
