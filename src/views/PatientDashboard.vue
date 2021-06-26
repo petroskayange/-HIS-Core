@@ -192,9 +192,9 @@ export default defineComponent({
         getPatientCardInfo(patient: any) {
             const {toStandardHisDisplayFormat, getAgeInYears} = HisDate
             const birthDate = this.getProp(patient, 'getBirthdate')
-            const genderIcon = this.getProp(patient, 'getGender') === 'M' ? man : woman
+            const gender = this.getProp(patient, 'getGender')
             return [
-                { label: "Name", value: this.getProp(patient, 'getFullName'), other: { icon: genderIcon}},
+                { label: "Name", value: `${this.getProp(patient, 'getFullName')} (${gender})`},
                 { label: "Birthdate", value: `${toStandardHisDisplayFormat(birthDate)} (${getAgeInYears(birthDate)}) (${this.getProp(patient, 'getNationalID')})`},
                 { label: "Current Village", value: this.getProp(patient, 'getCurrentVillage')},
                 { label: "Phone#", value: this.getProp(patient, 'getPhoneNumber')}
