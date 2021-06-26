@@ -4,7 +4,10 @@
         <ion-list>
             <ion-item v-for="(item, index) in items" :key="index">
                 <ion-label> {{ item.label }} </ion-label>
-                <ion-label slot="end"> {{ item.value }} </ion-label>
+                <ion-chip v-if="item.value" slot='end'>
+                  <ion-icon :icon="time"></ion-icon>
+                    <ion-label>{{ item.value }}</ion-label>
+                </ion-chip>
             </ion-item>
         </ion-list>
     </div>
@@ -14,9 +17,13 @@
 import { defineComponent, PropType } from 'vue'
 import { IonLabel, IonList, IonItem } from "@ionic/vue";
 import { Option } from "@/components/Forms/FieldInterface"
+import { time } from "ionicons/icons";
 
 export default defineComponent({
     components: {IonLabel, IonList, IonItem},
+    data: () => ({
+        time
+    }),
     props: {
         title: {
             type: String,
