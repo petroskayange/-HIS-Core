@@ -1,4 +1,9 @@
 .custom-modal .modal-wrapper {
     width: 90%;
     height: 80%;
-  }
+}
+
+.view-port-content {
+    overflow-x: auto;
+    height: 90%;
+}
