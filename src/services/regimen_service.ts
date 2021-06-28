@@ -5,8 +5,8 @@ export class RegimenService extends Service {
         super()
     }
 
-    static getRegimens() {
-        return this.getJson(`programs/${this.getProgramID()}/regimens`)
+    static getRegimens(patientId: number) {
+        return this.getJson(`programs/${this.getProgramID()}/regimens`, {'patient_id': patientId})
     }
 
     static getCustomIngridients() {
