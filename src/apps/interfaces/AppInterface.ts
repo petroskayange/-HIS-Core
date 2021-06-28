@@ -1,5 +1,6 @@
 import { Option } from "@/components/Forms/FieldInterface";
 import { TaskInterface } from "./TaskInterface";
+import { RouteRecordRaw } from 'vue-router';
 
 interface ProgramCardInfoInterface {
     (programInfo: any): Array<Option>;
@@ -25,6 +26,7 @@ export interface AppInterface {
     readonly applicationName: string;
     readonly applicationIcon: string;
     readonly applicationDescription: string;
+    readonly appRoutes: Array<RouteRecordRaw>;
     readonly patientDashboard: PatientDashboarInterface;
     activities: Array<ActivityInterface>;
 }

@@ -3,7 +3,7 @@ import { ENCOUNTERS } from "./tasks/encounters";
 import { OTHER_TASKS } from "./tasks/other";
 import { AppInterface } from "../interfaces/AppInterface";
 import PatientAlerts from "@/services/patient_alerts";
-
+import appRoutes from "./routes"
 const BASE_URL_PATH = '/assets/images/'
 
 function img(image: string) { return `${BASE_URL_PATH}${image}` }
@@ -13,6 +13,7 @@ const ART: AppInterface = {
     applicationName: 'ART',
     applicationIcon: img('aids.png'),
     applicationDescription: "Application for HIV testing",
+    appRoutes,
     patientDashboard: {
         tasks: {
             encounters: ENCOUNTERS,

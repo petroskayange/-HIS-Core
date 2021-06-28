@@ -52,13 +52,9 @@ export default defineComponent({
       await modalController.dismiss({})
     },
     doTask(taskItem: TaskInterface) {
-      if (taskItem.action) {
-        taskItem.action(this.taskParams)
-      }
-
-      if (taskItem.url) {
-        this.$router.push({ path: taskItem.url })
-      }
+      if (taskItem.action) return taskItem.action(this.taskParams)
+      
+      this.$router.push({ name: taskItem.name })
       this.closeModal()
     }
   },
