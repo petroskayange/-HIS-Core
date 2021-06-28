@@ -1,10 +1,16 @@
 <template>
     <div class="card"> 
-        <div class="title-card" :style="{backgroundColor: titleColor}"> {{title}} </div>
+        <div class="title-card" :style="{backgroundColor: titleColor}">
+            <ion-badge color="light">{{ counter }}</ion-badge>
+            {{title}} 
+        </div>
         <ion-list>
             <ion-item v-for="(item, index) in items" :key="index">
                 <ion-label> {{ item.label }} </ion-label>
-                <ion-label slot="end"> {{ item.value }} </ion-label>
+                <ion-chip v-if="item.value" slot='end'>
+                  <ion-icon :icon="time"></ion-icon>
+                    <ion-label>{{ item.value }}</ion-label>
+                </ion-chip>
             </ion-item>
         </ion-list>
     </div>
@@ -14,10 +20,18 @@
 import { defineComponent, PropType } from 'vue'
 import { IonLabel, IonList, IonItem } from "@ionic/vue";
 import { Option } from "@/components/Forms/FieldInterface"
+import { time } from "ionicons/icons";
 
 export default defineComponent({
     components: {IonLabel, IonList, IonItem},
+    data: () => ({
+        time
+    }),
     props: {
+        counter: {
+            type: Number,
+            required: false
+        },
         title: {
             type: String,
             required: true
