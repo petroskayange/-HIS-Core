@@ -1,3 +1,7 @@
+body {
+ font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+}
+
 .custom-modal .modal-wrapper {
     width: 90%;
     height: 80%;
