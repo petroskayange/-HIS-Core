@@ -13,8 +13,10 @@ export default defineComponent({
     #card {
       border: 1px solid #ccc;
       border-radius: 15px;
-      height: 110px;
-      overflow-y: hidden;
+      padding: 0px;
+      height: 90px;
+      font-size: 0.8em;
+      overflow: hidden;
       -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);

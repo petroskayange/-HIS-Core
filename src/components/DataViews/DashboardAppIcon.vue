@@ -19,9 +19,8 @@ export default defineComponent({
 </script>
 <style scoped>
   #logo {
-    object-fit: contain;
     margin: auto;
-    margin-top: 15px;
+    padding-top: 1em;
     width: 130px;
     height: 80px;
   }
