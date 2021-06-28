@@ -20,18 +20,18 @@
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col md="6" sm="12">
+                            <ion-col size="6" md="6" sm="12">
                                 <primary-card :counter="encountersCardItems.length" title="Activities" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
-                            <ion-col md="6" sm="12">
+                            <ion-col size="6" md="6" sm="12">
                                 <primary-card :counter="labOrderCardItems.length" title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col md="6" sm="12"> 
+                            <ion-col size="6" md="6" sm="12"> 
                                 <primary-card :counter="alertCardItems.length" title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
-                            <ion-col md="6" sm="12"> 
+                            <ion-col size="6" md="6" sm="12"> 
                                 <primary-card :counter="medicationCardItems.length" title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
