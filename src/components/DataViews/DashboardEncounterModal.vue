@@ -20,20 +20,23 @@
         </ion-list>
       </ion-col>
       <ion-col size="8">
+        <div class='tb'>
         <his-basic-table :columns="active.columns" :rows="active.rows"/>
+        </div>
       </ion-col>
     </ion-row>
   </ion-content>
   <ion-footer>
     <ion-toolbar> 
       <ion-button color="danger" @click="voidActiveItem" :disabled="!canVoid" slot="end"> Void </ion-button>
+      <ion-button @click="closeModal" slot="end"> Close </ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import HisBasicTable from "@/components/DataViews/HisBasicTable.vue";
-import { actionSheetController } from "@ionic/vue"
+import { actionSheetController, modalController } from "@ionic/vue"
 import { Option } from "@/components/Forms/FieldInterface"
 import {isEmpty} from "lodash"
 export default defineComponent({
@@ -72,6 +75,9 @@ export default defineComponent({
     },
   },
   methods: {
+    async closeModal() {
+      await modalController.dismiss({})
+    },
     async initiateVoidReason() {
       const actionSheet = await actionSheetController.create({
         header: 'Are you sure you want to void this Encounter?',
@@ -122,3 +128,9 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+  .tb {
+    height: 480px;
+    overflow-y: auto;
+  }
+</style>

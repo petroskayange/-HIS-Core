@@ -32,4 +32,5 @@ export class EncounterService extends Service {
             ...params
         })
     }
+
 }

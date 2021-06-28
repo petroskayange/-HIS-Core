@@ -6,11 +6,11 @@
                     <p>{{config.prependValue}}</p>
                 </ion-col>
                 <ion-col size-md="">
-                    <base-input :value="value"/>
+                    <base-input :value="value" @onValue="onKbValue"/>
                 </ion-col>
             </ion-row>
         </ion-grid>
-        <ion-list v-if="listData.length > 0">
+        <ion-list v-if="listData.length > 0" class='view-port-content'>
             <ion-item button v-for="(item, index) in listData" :key="index" @click="onselect(item)"> 
                 <ion-label> {{item.label}} </ion-label>
             </ion-item>
@@ -65,12 +65,17 @@ export default defineComponent({
             this.value = item.label
             this.$emit('onValue', item)
         },
+        onKbValue(text: any) {
+            this.value = text
+        },
         async keypress(text: any){
             this.value = handleVirtualInput(text, this.value)
-            this.$emit('onValue', { label: this.value, value: this.value })
         }
     },
     watch: {
+        value(value: any) {
+            this.$emit('onValue', { label: this.value, value: value })
+        },
         fdata: {
             async handler(data: any) {
               if (this.options) {

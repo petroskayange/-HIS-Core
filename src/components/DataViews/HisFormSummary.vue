@@ -1,6 +1,6 @@
 <template>
   <view-port>
-  <ion-list inset>
+  <ion-list :style="{overflowX: 'auto', height: '90%'}">
     <ion-item v-for="(item, index) in fieldItems" :key="index">
       <ion-label> {{item.label}} </ion-label>
       <ion-label slot="end"> {{item.value}} </ion-label>

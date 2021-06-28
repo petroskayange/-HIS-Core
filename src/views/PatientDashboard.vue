@@ -20,19 +20,19 @@
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col>
-                                <primary-card :title="`${encountersCardItems.length} Activities`" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
+                            <ion-col md="6" sm="12">
+                                <primary-card :counter="encountersCardItems.length" title="Activities" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
-                            <ion-col>
-                                <primary-card :title="`${labOrderCardItems.length} Lab Orders`" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
+                            <ion-col md="6" sm="12">
+                                <primary-card :counter="labOrderCardItems.length" title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col> 
-                                <primary-card :title="`${alertCardItems.length} Alerts`" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
+                            <ion-col md="6" sm="12"> 
+                                <primary-card :counter="alertCardItems.length" title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
-                            <ion-col> 
-                                <primary-card :title="`${medicationCardItems.length} Medications`" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
+                            <ion-col md="6" sm="12"> 
+                                <primary-card :counter="medicationCardItems.length" title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
                     </ion-col>
@@ -41,7 +41,7 @@
         </ion-content>
         <ion-footer> 
             <ion-toolbar color="dark">
-                <ion-button color="danger" size="large" router-link="/"> 
+                <ion-button color="danger" size="large" @click="onCancel"> 
                     Cancel
                 </ion-button>
                 <ion-button color="primary" size="large" slot="end" @click="showTasks"> 
@@ -72,12 +72,12 @@ import { ProgramService } from "@/services/program_service"
 import { ObservationService } from "@/services/observation_service"
 import { DrugOrderService } from "@/services/drug_order_service"
 import { OrderService } from "@/services/order_service"
-import TaskSelector from "@/components/DataViews/TaskSelector.vue"
+import TaskSelector from "@/components/DataViews/TaskSelectorModal.vue"
 import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
-import EncounterView from "@/components/DataViews/EncounterView.vue"
-import CardDrilldown from "@/components/DataViews/DashboardCardDrillDown.vue"
+import EncounterView from "@/components/DataViews/DashboardEncounterModal.vue"
+import CardDrilldown from "@/components/DataViews/DashboardTableModal.vue"
 import { man, woman } from "ionicons/icons";
-import { toastSuccess, toastDanger } from "@/utils/Alerts";
+import { toastSuccess, toastDanger, alertConfirmation } from "@/utils/Alerts";
 import _ from "lodash"
 import {
   IonPage,
@@ -274,7 +274,7 @@ export default defineComponent({
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: component,
-                backdropDismiss: true,
+                backdropDismiss: false,
                 cssClass: "custom-modal",
                 componentProps: {
                     items,
@@ -288,7 +288,7 @@ export default defineComponent({
             const date = HisDate.toStandardHisDisplayFormat(this.activeVisitDate.toString())
             const modal = await modalController.create({
                 component: CardDrilldown,
-                backdropDismiss: true,
+                backdropDismiss: false,
                 cssClass: "custom-modal",
                 componentProps: {
                     columns,
@@ -319,6 +319,11 @@ export default defineComponent({
                 HisDate.toStandardHisTimeFormat(order.order_date)
             ]))
             this.openTableModal(columns, rows, `Lab Orders`)
+        },
+        async onCancel() {
+            const confirmation = await alertConfirmation('Are you sure you want to cancel?')
+            
+            if (confirmation) return this.$router.push({path: '/'})
         }
     }
 })

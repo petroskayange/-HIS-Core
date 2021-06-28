@@ -16,9 +16,3 @@ export default defineComponent({
   }
 });
 </script>
-<style>
-  .custom-modal .modal-wrapper {
-    width: 90%;
-    height: 80%;
-  }
-</style>

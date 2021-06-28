@@ -16,11 +16,16 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <ion-footer>
+    <ion-toolbar> 
+      <ion-button @click="closeModal" slot="end"> Close </ion-button>
+    </ion-toolbar>
+  </ion-footer>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import TaskCard from "@/components/DataViews/TaskCard.vue";
-import { IonGrid, IonRow, IonCol } from "@ionic/vue"; 
+import { IonGrid, IonRow, IonCol, modalController } from "@ionic/vue"; 
 import { TaskInterface } from "@/apps/interfaces/TaskInterface";
 export default defineComponent({
   components: { IonGrid, IonRow, IonCol, TaskCard },
@@ -43,6 +48,9 @@ export default defineComponent({
     }
   },
   methods: {
+    async closeModal() {
+      await modalController.dismiss({})
+    },
     doTask(taskItem: TaskInterface) {
       if (taskItem.action) {
         taskItem.action(this.taskParams)
@@ -51,6 +59,7 @@ export default defineComponent({
       if (taskItem.url) {
         this.$router.push({ path: taskItem.url })
       }
+      this.closeModal()
     }
   },
   computed: {

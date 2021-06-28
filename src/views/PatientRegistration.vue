@@ -16,6 +16,11 @@ import {PersonAttributeService, NewAttribute} from '@/services/person_attributes
 import HisDate from "@/utils/Date"
 import { GlobalPropertyService } from "@/services/global_property_service" 
 import { ProgramService } from "@/services/program_service";
+import { EncounterService } from "@/services/Encounter";
+import { Encounter } from "@/interfaces/encounter";
+import { ConceptService } from "@/services/concept_service";
+import { ObservationService } from "@/services/observation_service";
+import { PatientPrintoutService } from "@/services/patient_printout_service";
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -25,6 +30,11 @@ export default defineComponent({
     presets: {} as any,
     form: {} as Record<string, Option> | Record<string, null>
   }),
+  computed: {
+      showPatientType() {
+          return ProgramService.getProgramID() == 1
+      }
+  },
   async created(){
     this.fields = this.getFields()
     this.isMilitarySite = await GlobalPropertyService.isMilitarySite()
@@ -55,7 +65,14 @@ export default defineComponent({
             await ProgramService.createPatient(person.person_id)
             .then(() => {
                 ProgramService.enrollPatient(person.person_id)
-                    .then(() => this.$router.push(`/patient/dashboard?patient_id=${person.person_id}`))
+                .then(() => {
+                    this.createRegistrationEncounter(person.person_id)
+                    .then((data: Encounter) => {
+                        this.createRegistrationOs(data, personPayload.patient_type? personPayload.patient_type : 'New patient')
+                        .then(() => new PatientPrintoutService(person.person_id).printNidLbl())
+                        .then(() => this.$router.push(`/patient/dashboard?patient_id=${person.person_id}`))
+                    })
+                })
             });
         }
         alert('Record has been Created!')
@@ -127,6 +144,32 @@ export default defineComponent({
     },
     mapToOption(listOptions: Array<string>): Array<Option> {
         return listOptions.map((item: any) => ({ label: item, value: item })) 
+    },
+    createRegistrationEncounter(patientID: number) {
+        return new EncounterService({
+            'encounter_type_name': 'REGISTRATION',
+            'encounter_type_id': 5,
+            'patient_id': patientID,
+            'program_id': EncounterService.getProgramID(),
+            'encounter_datetime': EncounterService.getSessionDate()
+        }).create();
+        
+    },
+    createRegistrationOs(encounter: Encounter, patientType: string) {
+        let ans: number;
+        const typeOfPatientConcept = ConceptService.getCachedConceptID('Type of patient');
+        if(this.showPatientType == true) {
+            ans  = ConceptService.getCachedConceptID(patientType)
+        }else{
+            ans  = ConceptService.getCachedConceptID('New patient')
+        }
+        const obs = {
+            'encounter_id': encounter.encounter_id,
+            observations: [
+                {'concept_id': typeOfPatientConcept, 'value_coded': ans}
+            ]
+        };
+        return ObservationService.create(obs);
     },
     getFieldPreset(attr: string) {
         if (attr in this.presets) {
@@ -237,12 +280,13 @@ export default defineComponent({
                 validation(val: any) {
                     const minYr = HisDate.getYearFromAge(100)
                     const maxYr = HisDate.getCurrentYear()
+                    const notNum = Validation.isNumber(val)
                     const noYear = Validation.required(val)
                     const notInRange = Validation.rangeOf(val, minYr, maxYr)
 
                     if (val.label.match(/Unknown/i)) return
 
-                    return noYear || notInRange
+                    return notNum || noYear || notInRange
                 }
             },
             {
@@ -400,6 +444,7 @@ export default defineComponent({
                 helpText: 'Type of patient',
                 group: 'person',
                 type: FieldType.TT_SELECT,
+                condition: (form: any) => this.showPatientType,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'New patient',
@@ -412,7 +457,7 @@ export default defineComponent({
                 type: FieldType.TT_SELECT,
                 group: 'person',
                 validation: (val: any) => Validation.required(val),
-                condition: (form: any) => form.patient_type.label === 'External consultation',  
+                condition: (form: any) => this.showPatientType && form.patient_type.label === 'External consultation',  
                 options: () => this.getFacilities()
             },
             {
