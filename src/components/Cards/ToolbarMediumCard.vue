@@ -15,7 +15,7 @@ export default defineComponent({
       border-radius: 15px;
       height: 87px;
       font-size: 0.8em;
-      overflow-y: hidden;
+      overflow: hidden;
       -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
