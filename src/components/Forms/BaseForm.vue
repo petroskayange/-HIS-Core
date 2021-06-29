@@ -86,28 +86,30 @@ export default defineComponent({
       return field.requireNext ? true : false;
     },
     isCondition(field: Field): boolean {
-      if (field.condition) {
-        return field.condition(this.formData);
-      }
+      if (field.condition) return field.condition(this.formData);
+
       return true;
     },
     validate(value: string, field: Field): null | Array<string> {
-      if (field.validation) {
-        return field.validation(value, this.formData);
-      }
+      if (field.validation) return field.validation(value, this.formData);
+
       return null;
+    },
+    emitActiveFieldValidationErrors(){
+      const errors: null | Array<string> = this.validate(
+        this.getValue(this.activeField), this.activeField
+      );
+
+      if (errors) {
+        this.$emit("onErrors", errors);
+        return true
+      }
     },
     onNext(skipValidation = false): void {
       const totalFields = this.fields.length;
       const nextIndex = this.activeIndex + 1;
 
-      if (!skipValidation) {
-        const errors: null | Array<string> = this.validate(
-          this.getValue(this.activeField), this.activeField
-        );
-  
-        if (errors) return this.$emit("onErrors", errors);
-      }
+      if (!skipValidation && this.emitActiveFieldValidationErrors()) return
 
       if (nextIndex >= totalFields) return this.onFinish();
 
@@ -136,6 +138,8 @@ export default defineComponent({
     },
     onValue(value: string | number | Option | Array<Option>): void {
       this.setValue(value, this.activeField);
+
+      if (this.fields.length === 1) return this.emitNext() 
 
       if (!this.isRequireNext(this.activeField)) this.onNext(), this.emitNext();
     },
