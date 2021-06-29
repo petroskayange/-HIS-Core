@@ -41,8 +41,8 @@ export default defineComponent({
         onFinish(form: Record<string, Option> | Record<string, null>) {
             this.form = form
         },
-        onsubmit() {
-            console.log('Yay!')
+        onSubmit() {
+            console.log(this.form)
         },
         getDateInterval(days: number) {
             const dateObj = new Date(RegimenService.getSessionDate())
@@ -102,19 +102,19 @@ export default defineComponent({
                     condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: () =>[
-                        { label: '2 weeks', value: this.getDateInterval(14)},
-                        { label: '1 month', value: this.getDateInterval(28)},
-                        { label: '2 months', value: this.getDateInterval(56)},
-                        { label: '3 months', value: this.getDateInterval(84)},
-                        { label: '4 months', value: this.getDateInterval(112)},
-                        { label: '5 months', value: this.getDateInterval(140)},
-                        { label: '6 months', value: this.getDateInterval(168)},
-                        { label: '7 months', value: this.getDateInterval(196)},
-                        { label: '8 months', value: this.getDateInterval(224)},
-                        { label: '9 months', value: this.getDateInterval(252)},
-                        { label: '10 months', value: this.getDateInterval(280)},
-                        { label: '11 months', value: this.getDateInterval(308)},                        
-                        { label: '12 months', value: this.getDateInterval(336)},
+                        { label: '2 weeks', value: 14},
+                        { label: '1 month', value: 28},
+                        { label: '2 months', value: 56},
+                        { label: '3 months', value: 84},
+                        { label: '4 months', value: 112},
+                        { label: '5 months', value: 140},
+                        { label: '6 months', value: 168},
+                        { label: '7 months', value: 196},
+                        { label: '8 months', value: 224},
+                        { label: '9 months', value: 252},
+                        { label: '10 months', value: 280},
+                        { label: '11 months', value: 308},                        
+                        { label: '12 months', value: 336},
                     ]
                 }
             ]
