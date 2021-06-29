@@ -60,6 +60,7 @@ export default defineComponent({
         }
     },
     data:()=>({
+      formData: {} as any,
       summaryData: [] as Array<Option> | Array<Option[]>,
       showSummary: false,
       showClearBtn: true,
@@ -70,7 +71,16 @@ export default defineComponent({
       isNext: false,
       isPrev: false,
     }),
+    created() {
+        if (this.hasOneFieldOnly() && this.skipSummary) {
+            this.showFinishBtn = true
+            this.showNextBtn = false
+        }
+    },
     methods: {
+        hasOneFieldOnly() {
+            return this.fields.length === 1
+        },
         onErrors(errors: Array<string>) {
             toastWarning(errors.join(', '), 3000)
         },
@@ -109,13 +119,20 @@ export default defineComponent({
             }
         },
         onSubmit(): void {
+            if (this.hasOneFieldOnly() && this.skipSummary) {
+                this.$emit('onFinish', this.formData)
+                this.$emit('onSubmit')
+                return
+            }
+
             if (!this.skipSummary) return this.$emit('onSubmit')
 
             this.isNext = true
         },
-        updateNext({ field, index }: any): void {
+        updateNext({ field, index, formData }: any): void {
             this.isNext = false
-            
+            this.formData = formData
+
             if (index >= 1) this.showPrevBtn = true
             
             if (this.skipSummary && index +1 >= this.fields.length) {

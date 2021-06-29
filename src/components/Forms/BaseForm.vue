@@ -52,7 +52,7 @@ export default defineComponent({
     clear(val: boolean) {
       if (val) {
         this.isClear = true
-        this.setValue(null, this.activeField)
+        this.setActiveFieldValue(null)
         this.$emit("onClear")
       }
     },
@@ -74,49 +74,47 @@ export default defineComponent({
       this.formData = {};
       fields.forEach((field) => (this.formData[field.id] = null));
     },
-    getValue(field: Field): any {
-      return this.formData[field.id];
+    getActiveFieldValue(): any {
+      return this.formData[this.activeField.id];
     },
-    setValue(value: any, field: Field): void {
-      this.formData[field.id] = value;
+    setActiveFieldValue(value: any): void {
+      this.formData[this.activeField.id] = value;
     },
-    isRequireNext(field: Field): boolean {
-      if (!("requireNext" in field)) return true;
+    activeFieldRequiresNext(): boolean {
+      if (!("requireNext" in this.activeField)) return true;
 
-      return field.requireNext ? true : false;
+      return this.activeField.requireNext ? true : false;
     },
-    isCondition(field: Field): boolean {
-      if (field.condition) {
-        return field.condition(this.formData);
-      }
+    activeFieldConditionPassed(): boolean {
+      if (this.activeField.condition) 
+        return this.activeField.condition(this.formData);
       return true;
     },
-    validate(value: string, field: Field): null | Array<string> {
-      if (field.validation) {
-        return field.validation(value, this.formData);
+    emitActiveFieldValidationErrors(){
+      if (!this.activeField.validation) return
+
+      const val = this.getActiveFieldValue()
+      const errors = this.activeField.validation(val, this.formData)
+
+      if (errors) {
+        this.$emit("onErrors", errors);
+        return true
       }
-      return null;
     },
     onNext(skipValidation = false): void {
       const totalFields = this.fields.length;
       const nextIndex = this.activeIndex + 1;
 
-      if (!skipValidation) {
-        const errors: null | Array<string> = this.validate(
-          this.getValue(this.activeField), this.activeField
-        );
-  
-        if (errors) return this.$emit("onErrors", errors);
-      }
+      if (!skipValidation && this.emitActiveFieldValidationErrors()) return
 
       if (nextIndex >= totalFields) return this.onFinish();
 
       this.setActiveField(nextIndex);
 
-      if (!this.isCondition(this.activeField)) {
-        this.setValue(null, this.activeField);
-        return this.onNext(true);
-      }
+      if (this.activeFieldConditionPassed()) return
+      
+      this.setActiveFieldValue(null);
+      this.onNext(true);
     },
     onPrev(): void {
       const prevIndex = this.activeIndex - 1;
@@ -125,19 +123,21 @@ export default defineComponent({
 
       this.setActiveField(prevIndex);
 
-      if (!this.isCondition(this.activeField)) {
-        this.setValue(null, this.activeField);
-        return this.onPrev();
-      }
+      if (this.activeFieldConditionPassed()) return 
+
+      this.setActiveFieldValue(null);
+      this.onPrev();
     },
     setActiveField(index: number) {
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
     },
     onValue(value: string | number | Option | Array<Option>): void {
-      this.setValue(value, this.activeField);
+      this.setActiveFieldValue(value);
 
-      if (!this.isRequireNext(this.activeField)) this.onNext(), this.emitNext();
+      if (this.fields.length === 1) return this.emitNext() 
+
+      if (!this.activeFieldRequiresNext()) this.onNext(), this.emitNext();
     },
     emitNext() {
       this.$emit("onNext", {
