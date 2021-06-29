@@ -9,7 +9,6 @@ import { RegimenService } from "@/services/regimen_service"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations"
-
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
@@ -54,16 +53,16 @@ export default defineComponent({
                     helpText: 'Select regimen type',
                     type: FieldType.TT_SELECT,
                     requireNext: false,
-                    options: () => this.mapToOption([
-                        'ARV(s)',
-                        'Custom Regimen'
-                    ])
+                    options: () => [
+                        { label: 'ARV(s)', value: 'arv'},
+                        { label: 'Custom Regimen', value: 'custom'}
+                    ]
                 },
                 {
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_SELECT,
-                    condition: (form: any) => form.regimen_type.label === 'ARV(s)',
+                    condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const regimenCategories = await RegimenService.getRegimens(this.patient.patient_id)
@@ -71,7 +70,7 @@ export default defineComponent({
                         for(const index in regimenCategories) {
                             const regimens = regimenCategories[index]
                             const label = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
-                            options.push({ label, value: index, other: { regimens } })
+                            options.push({ label, value: index, isChecked: false, other: { regimens } })
                         }
                         return options
                     }
@@ -80,7 +79,7 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: (form: any) => form.regimen_type.label.match('Custom Regimen'),
+                    condition: (form: any) => form.regimen_type.value.match(/custom/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await RegimenService.getCustomIngridients()
@@ -88,7 +87,32 @@ export default defineComponent({
                             label: drug.name,
                             value: drug.drug_id
                         }))
+                    },
+                    config: {
+                        showKeyboard: true
                     }
+                },
+                {
+                    id: 'prescription_interval',
+                    helpText: 'Interval to next visit',
+                    type: FieldType.TT_SELECT,
+                    condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
+                    validation: (val: Option) => Validation.required(val),
+                    options: () => this.mapToOption([
+                        '2 weeks',
+                        '1 month',
+                        '2 months',
+                        '3 months',
+                        '4 months',
+                        '5 months',
+                        '6 months',
+                        '7 months',
+                        '8 months',
+                        '9 months',
+                        '10 months',
+                        '11 months',
+                        '12 months',
+                    ])
                 }
             ]
         }
