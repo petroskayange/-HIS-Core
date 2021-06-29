@@ -102,8 +102,9 @@ export default defineComponent({
       }
     },
     onNext(skipValidation = false): void {
+      const originalIndex = this.activeIndex
       const totalFields = this.fields.length;
-      const nextIndex = this.activeIndex + 1;
+      const nextIndex = originalIndex + 1;
 
       if (!skipValidation && this.emitActiveFieldValidationErrors()) return
 
@@ -111,10 +112,15 @@ export default defineComponent({
 
       this.setActiveField(nextIndex);
 
-      if (this.activeFieldConditionPassed()) return
-      
-      this.setActiveFieldValue(null);
-      this.onNext(true);
+      if (!this.activeFieldConditionPassed()) {
+        this.setActiveFieldValue(null);
+        // Rivert to previous field if this is the last field and finish
+        if (nextIndex + 1 >= totalFields) {
+          this.setActiveField(originalIndex)
+          return this.onFinish()
+        }
+        this.onNext(true);
+      } 
     },
     onPrev(): void {
       const prevIndex = this.activeIndex - 1;
