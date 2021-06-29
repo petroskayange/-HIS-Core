@@ -16,7 +16,7 @@ import {PersonAttributeService, NewAttribute} from '@/services/person_attributes
 import HisDate from "@/utils/Date"
 import { GlobalPropertyService } from "@/services/global_property_service" 
 import { ProgramService } from "@/services/program_service";
-import { EncounterService } from "@/services/Encounter";
+import { EncounterService } from "@/services/encounter_service";
 import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
@@ -146,14 +146,10 @@ export default defineComponent({
         return listOptions.map((item: any) => ({ label: item, value: item })) 
     },
     createRegistrationEncounter(patientID: number) {
-        return new EncounterService({
-            'encounter_type_name': 'REGISTRATION',
-            'encounter_type_id': 5,
-            'patient_id': patientID,
-            'program_id': EncounterService.getProgramID(),
-            'encounter_datetime': EncounterService.getSessionDate()
-        }).create();
-        
+        return EncounterService.create({
+            'encounter_type_id': 5, //TODO: get key from api or reference dictionary using name
+            'patient_id': patientID
+        })
     },
     createRegistrationOs(encounter: Encounter, patientType: string) {
         let ans: number;

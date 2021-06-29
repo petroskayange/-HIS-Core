@@ -90,7 +90,7 @@ import {
   IonToolbar,
   modalController
 } from "@ionic/vue";
-import { EncounterService } from '@/services/Encounter'
+import { EncounterService } from '@/services/encounter_service'
 export default defineComponent({
     components: {
         PatientHeader,
