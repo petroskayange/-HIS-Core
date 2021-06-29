@@ -3,7 +3,7 @@
       <view-port :showFull="!showKeyboard">
       <his-text-input :value="selected" :disabled="false"/> 
       <ion-list class='view-port-content'>
-        <ion-item v-for="(entry, index) in filtered" :key="index" color="light">
+        <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
           <ion-label> {{ entry.label }} </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
