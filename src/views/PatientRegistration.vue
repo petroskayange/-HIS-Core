@@ -70,7 +70,7 @@ export default defineComponent({
                     .then((data: Encounter) => {
                         this.createRegistrationOs(data, personPayload.patient_type? personPayload.patient_type : 'New patient')
                         .then(() => new PatientPrintoutService(person.person_id).printNidLbl())
-                        .then(() => this.$router.push(`/patient/dashboard?patient_id=${person.person_id}`))
+                        .then(() => this.$router.push(`/patient/dashboard/${person.person_id}`))
                     })
                 })
             });
