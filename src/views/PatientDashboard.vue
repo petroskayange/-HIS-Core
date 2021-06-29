@@ -133,8 +133,10 @@ export default defineComponent({
     },
     watch: {
         "$route" : {
-            async handler({query}: any) {
-                this.patientId = parseInt(query.patient_id)
+            async handler({params}: any) {
+                if (!params) return
+                
+                this.patientId = parseInt(params.id)
 
                 if (this.patientId) this.init()
             },
