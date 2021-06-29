@@ -9,6 +9,7 @@ import { RegimenService } from "@/services/regimen_service"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations"
+import HisDate from "@/utils/Date"
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
@@ -43,8 +44,10 @@ export default defineComponent({
         onsubmit() {
             console.log('Yay!')
         },
-        mapToOption(listOptions: Array<string>): Array<Option> {
-          return listOptions.map((item: any) => ({ label: item, value: item })) 
+        getDateInterval(days: number) {
+            const dateObj = new Date(RegimenService.getSessionDate())
+            dateObj.setDate(dateObj.getDate() + days)
+            return HisDate.toStandardHisFormat(dateObj)
         },
         getFields(): Array<Field> {
             return [
@@ -93,26 +96,26 @@ export default defineComponent({
                     }
                 },
                 {
-                    id: 'prescription_interval',
+                    id: 'drug_end_date',
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_SELECT,
                     condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
-                    options: () => this.mapToOption([
-                        '2 weeks',
-                        '1 month',
-                        '2 months',
-                        '3 months',
-                        '4 months',
-                        '5 months',
-                        '6 months',
-                        '7 months',
-                        '8 months',
-                        '9 months',
-                        '10 months',
-                        '11 months',
-                        '12 months',
-                    ])
+                    options: () =>[
+                        { label: '2 weeks', value: this.getDateInterval(14)},
+                        { label: '1 month', value: this.getDateInterval(28)},
+                        { label: '2 months', value: this.getDateInterval(56)},
+                        { label: '3 months', value: this.getDateInterval(84)},
+                        { label: '4 months', value: this.getDateInterval(112)},
+                        { label: '5 months', value: this.getDateInterval(140)},
+                        { label: '6 months', value: this.getDateInterval(168)},
+                        { label: '7 months', value: this.getDateInterval(196)},
+                        { label: '8 months', value: this.getDateInterval(224)},
+                        { label: '9 months', value: this.getDateInterval(252)},
+                        { label: '10 months', value: this.getDateInterval(280)},
+                        { label: '11 months', value: this.getDateInterval(308)},                        
+                        { label: '12 months', value: this.getDateInterval(336)},
+                    ]
                 }
             ]
         }
