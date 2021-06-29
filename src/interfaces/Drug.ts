@@ -1,4 +1,4 @@
-export interface DrugOrder{
+export interface DrugInterface{
     drug_inventory_id: number;
     dose: string;
     equivalent_daily_dose: string;
