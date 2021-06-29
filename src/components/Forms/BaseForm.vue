@@ -90,15 +90,11 @@ export default defineComponent({
 
       return true;
     },
-    validate(value: string, field: Field): null | Array<string> {
-      if (field.validation) return field.validation(value, this.formData);
-
-      return null;
-    },
     emitActiveFieldValidationErrors(){
-      const errors: null | Array<string> = this.validate(
-        this.getValue(this.activeField), this.activeField
-      );
+      if (!this.activeField.validation) return
+
+      const val = this.getValue(this.activeField)
+      const errors = this.activeField.validation(val, this.formData)
 
       if (errors) {
         this.$emit("onErrors", errors);
