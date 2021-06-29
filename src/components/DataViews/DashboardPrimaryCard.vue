@@ -5,7 +5,7 @@
             {{title}} 
         </div>
         <ion-list>
-            <ion-item v-for="(item, index) in items" :key="index">
+            <ion-item v-for="(item, index) in items" :key="index" :style="{fontSize: '0.8em'}">
                 <ion-label> {{ item.label }} </ion-label>
                 <ion-chip v-if="item.value" slot='end'>
                   <ion-icon :icon="time"></ion-icon>
