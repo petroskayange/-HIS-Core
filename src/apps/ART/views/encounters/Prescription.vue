@@ -13,11 +13,23 @@ import Validation from "@/components/Forms/validations/StandardValidations"
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
+        patient: {} as any,
         fields: [] as Array<Field>,
         form: {} as Record<string, Option> | Record<string, null>
     }),
-    created() {
-        this.fields = this.getFields()
+    watch: {
+        '$route': {
+            handler(route: any){
+                if (!route || !route.params.p) return
+
+                const { patient } = JSON.parse(route.params.p.toString())
+                
+                this.patient = patient
+                this.fields = this.getFields()
+            },
+            immediate: true,
+            deep: true
+        }
     },
     methods: {
         onFinish(form: Record<string, Option> | Record<string, null>) {
@@ -48,7 +60,7 @@ export default defineComponent({
                     condition: (form: any) => form.regimen_type.label === 'ARV(s)',
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
-                        const regimenCategories = await RegimenService.getRegimens(728)
+                        const regimenCategories = await RegimenService.getRegimens(this.patient.patient_id)
                         const options = []
                         for(const index in regimenCategories) {
                             const regimens = regimenCategories[index]

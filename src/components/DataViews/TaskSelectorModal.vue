@@ -43,7 +43,7 @@ export default defineComponent({
       default: 3
     },
     taskParams: {
-      type: Object as PropType<any>,
+      type: Object,
       required: false
     }
   },
@@ -54,7 +54,9 @@ export default defineComponent({
     doTask(taskItem: TaskInterface) {
       if (taskItem.action) return taskItem.action(this.taskParams)
       
-      this.$router.push({ name: taskItem.name })
+      const params = { p: JSON.stringify(this.taskParams)}
+
+      this.$router.push({ name: taskItem.name, params })
       this.closeModal()
     }
   },
