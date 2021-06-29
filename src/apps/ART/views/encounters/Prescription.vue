@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -17,9 +17,15 @@ export default defineComponent({
         fields: [] as Array<Field>,
         form: {} as Record<string, Option> | Record<string, null>
     }),
+    computed: {
+        cancelDestination(): string {
+            return `/patient/dashboard/${this.patient.patient_id}`
+        } 
+    },
     watch: {
         '$route': {
             handler(route: any){
+                console.log(route)
                 if (!route || !route.params.p) return
 
                 const { patient } = JSON.parse(route.params.p.toString())
