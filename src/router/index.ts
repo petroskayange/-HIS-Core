@@ -13,7 +13,20 @@ import Example from '../views/Example.vue'
 import FindByARVNumber from '../views/FindByARVNumber.vue'
 import PatientDashboard from '../views/PatientDashboard.vue'
 import Configuration from '@/views/Configuration.vue'
+import HisApps from '@/apps/his_apps';
+
+const HIS_APP_ROUTES = (() => {
+  let routes: Array<RouteRecordRaw> = []
+  HisApps.forEach(app => {
+    if (app.appRoutes) {
+      routes = [...routes, ...app.appRoutes]
+    }
+  })
+  return routes
+})()
+
 const routes: Array<RouteRecordRaw> = [
+  ...HIS_APP_ROUTES,
   {
     path: '/',
     redirect: '/home'
