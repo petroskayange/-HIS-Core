@@ -10,6 +10,13 @@ export class DrugOrderService extends Service {
         return this.postJson('drug_orders', orders)
     }
 
+    static getLastDrugsReceived() {
+        return this.getJson('last_drugs_received', {
+            'date': this.getSessionDate(),
+            'program_id': this.getProgramID()
+        })
+    }
+
     static getOrderByPatient(patientId: number, params: any) {
         return this.getJson('/drug_orders', {
             'patient_id': patientId,
