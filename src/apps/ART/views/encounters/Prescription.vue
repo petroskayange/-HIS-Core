@@ -12,6 +12,7 @@ import Validation from "@/components/Forms/validations/StandardValidations"
 import { PrescriptionService } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DrugInterface } from '@/interfaces/Drug'
+import { isArray, isEmpty } from "lodash"
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
@@ -49,7 +50,7 @@ export default defineComponent({
             const prescription = new PrescriptionService(this.patient.patient_id)
             const formData = this.resolveData(this.form)
             let drugs: Array<DrugInterface> = []
-            
+ 
             const encounter = await prescription.createTreatmentEncounter()
 
             prescription.setNextVisitInterval(parseInt(formData.next_visit_interval))
@@ -62,11 +63,26 @@ export default defineComponent({
                drugs = this.resolveArvRegimenDrugs(prescription, formData.arv_regimens.other.regimens)
             }
 
+            if (formData.regimen_type.match(/custom/, 'i')) {
+                drugs = this.resolveCustomDrugs(prescription, formData.custom_regimen)
+            }
+
             if(prescription.createDrugOrder(drugs)) {
                toastSuccess('Drug order has been created')
                return this.$router.push({path: this.getCancelDestination()}) 
             }
             toastWarning('Unable to create drug orders!')
+        },
+        resolveCustomDrugs(prescription: any, drugValues: any) {
+            return drugValues.map(({other}: any) => {
+                return prescription.mapRegimenToDrug({
+                    'drug_id': other.drug_id,
+                    'drug_name': other.name,
+                    'units': other.units,
+                    'am': 0,  //TODO: Get these from custom values
+                    'pm': 0 //TODO: Get these from custom values
+                })
+            })
         },
         resolveArvRegimenDrugs(prescriptionObj: any, regimens: Array<RegimenInterface>) {
             return regimens.map((regimen: RegimenInterface) => {
@@ -77,9 +93,11 @@ export default defineComponent({
             const output: any = {}
             for(const name in form) {
                 const data = form[name]
-                const filter = this.fields.filter(item => item.id === name)
-
-                if (filter.length <= 0) continue 
+                
+                if (isArray(data) && !isEmpty(data)) {
+                    output[name] = data
+                    continue
+                }
 
                 if (data && data.value != null) {
                     if ('other' in data) {
@@ -130,7 +148,8 @@ export default defineComponent({
                         const drugs = await RegimenService.getCustomIngridients()
                         return drugs.map((drug: any ) => ({
                             label: drug.name,
-                            value: drug.drug_id
+                            value: drug.drug_id,
+                            other: { ...drug }
                         }))
                     },
                     config: {
@@ -141,7 +160,6 @@ export default defineComponent({
                     id: 'next_visit_interval',
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_SELECT,
-                    condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: () =>[
                         { label: '2 weeks', value: 14 },
