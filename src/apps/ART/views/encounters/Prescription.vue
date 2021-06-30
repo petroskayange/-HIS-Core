@@ -9,7 +9,9 @@ import { RegimenService } from "@/services/regimen_service"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations"
-import HisDate from "@/utils/Date"
+import { PrescriptionService } from "@/apps/ART/services/prescription_service"
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { DrugInterface } from '@/interfaces/Drug'
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
@@ -25,7 +27,6 @@ export default defineComponent({
     watch: {
         '$route': {
             handler(route: any){
-                console.log(route)
                 if (!route || !route.params.p) return
 
                 const { patient } = JSON.parse(route.params.p.toString())
@@ -41,13 +42,52 @@ export default defineComponent({
         onFinish(form: Record<string, Option> | Record<string, null>) {
             this.form = form
         },
-        onSubmit() {
-            console.log(this.form)
+        async onSubmit() {
+            const prescription = new PrescriptionService(this.patient.patient_id)
+            const formData = this.resolveData(this.form)
+            let isRegimenCreated = false
+            
+            const encounter = await prescription.createTreatmentEncounter()
+
+            if (!encounter) {
+                return toastWarning('Unable to create treatment encounter')
+            }
+
+            if (formData.regimen_type.match(/arv/, 'i')) {
+               isRegimenCreated  = this.createArvRegimenOrder(prescription, formData)
+            }
+
+            if (isRegimenCreated) {
+                return toastSuccess('Drug Order has been successful')
+            }
+
+            toastWarning('Unable to create order')
         },
-        getDateInterval(days: number) {
-            const dateObj = new Date(RegimenService.getSessionDate())
-            dateObj.setDate(dateObj.getDate() + days)
-            return HisDate.toStandardHisFormat(dateObj)
+        createArvRegimenOrder(prescriptionObj: any, formData: any) {
+            prescriptionObj.setNextVisitInterval(parseInt(formData.next_visit_interval))
+            const regimens: Array<RegimenInterface> = formData.arv_regimens.other.regimens
+            const drugs: Array<DrugInterface> = regimens.map((regimen: RegimenInterface) => {
+                return prescriptionObj.mapRegimenToDrug(regimen)
+            })
+            return prescriptionObj.createDrugOrder(drugs) ? true : false
+        },
+        resolveData(form: Record<string, Option> | Record<string, null>) {
+            const output: any = {}
+            for(const name in form) {
+                const data = form[name]
+                const filter = this.fields.filter(item => item.id === name)
+
+                if (filter.length <= 0) continue 
+
+                if (data && data.value != null) {
+                    if ('other' in data) {
+                        output[name] = data
+                        continue
+                    }
+                    output[name] = data.value
+                } 
+            }
+            return output
         },
         getFields(): Array<Field> {
             return [
@@ -73,7 +113,7 @@ export default defineComponent({
                         for(const index in regimenCategories) {
                             const regimens = regimenCategories[index]
                             const label = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
-                            options.push({ label, value: index, isChecked: false, other: { regimens } })
+                            options.push({ label, value: index, other: { regimens } })
                         }
                         return options
                     }
@@ -96,25 +136,25 @@ export default defineComponent({
                     }
                 },
                 {
-                    id: 'drug_end_date',
+                    id: 'next_visit_interval',
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_SELECT,
                     condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: () =>[
-                        { label: '2 weeks', value: 14},
-                        { label: '1 month', value: 28},
-                        { label: '2 months', value: 56},
-                        { label: '3 months', value: 84},
-                        { label: '4 months', value: 112},
-                        { label: '5 months', value: 140},
-                        { label: '6 months', value: 168},
-                        { label: '7 months', value: 196},
-                        { label: '8 months', value: 224},
-                        { label: '9 months', value: 252},
-                        { label: '10 months', value: 280},
-                        { label: '11 months', value: 308},                        
-                        { label: '12 months', value: 336},
+                        { label: '2 weeks', value: 14 },
+                        { label: '1 month', value: 28 },
+                        { label: '2 months', value: 56 },
+                        { label: '3 months', value: 84 },
+                        { label: '4 months', value: 112 },
+                        { label: '5 months', value: 140 },
+                        { label: '6 months', value: 168 },
+                        { label: '7 months', value: 196 },
+                        { label: '8 months', value: 224 },
+                        { label: '9 months', value: 252 },
+                        { label: '10 months', value: 280 },
+                        { label: '11 months', value: 308 },                        
+                        { label: '12 months', value: 336 },
                     ]
                 }
             ]
