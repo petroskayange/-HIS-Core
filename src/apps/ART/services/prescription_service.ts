@@ -3,7 +3,7 @@ import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
 import { EncounterService } from "@/services/encounter_service";
-import { Observation, ObservationService } from "@/services/observation_service";
+import { Observation, ObservationService, ObsValue } from "@/services/observation_service";
 import { Service } from "@/services/service";
 import { isEmpty } from "lodash";
 import HisDate from "@/utils/Date"
@@ -12,13 +12,15 @@ export class PrescriptionService extends Service {
     patientID: number;
     encounterID: number;
     nextVisitInterval: number;
-    fastTrack: boolean
+    fastTrack: boolean;
+    received3HP: boolean;
     constructor(patientID: number) {
         super()
         this.patientID = patientID
         this.encounterID = 0
         this.nextVisitInterval = 0
         this.fastTrack = false
+        this.received3HP = false
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -27,6 +29,21 @@ export class PrescriptionService extends Service {
 
     setEncounterID(encounterID: number) {
         this.encounterID = encounterID
+    }
+
+    async set3HpStatus() {
+        const orders = await ConceptService.getConceptID('Medication orders')
+        const req = await ObservationService.getObs({
+            'person_id': this.patientID, 'concept_id': orders
+        })
+        
+        if (!req) return
+
+        const rifapentine = await ConceptService.getConceptID('Rifapentine')
+
+        const receipt = req.filter((obs: ObsValue) => obs.value_coded === rifapentine)
+
+        if (!isEmpty(receipt)) this.received3HP = true
     }
 
     async isFastTrack() {
@@ -68,7 +85,10 @@ export class PrescriptionService extends Service {
         return `${drugName} :- Morning: ${morningTabs} ${units}, Evening: ${eveningTabs} ${units}`
     }
 
-    getDrugFrequency(): string {
+    getDrugFrequency(drugName: string): string {
+        if (this.received3HP && drugName.match(/Rifapentine|Isoniazid/i)) {
+            return 'Weekly (QW)'
+        }
         return 'Daily (QOD)'
     }
 
@@ -81,7 +101,7 @@ export class PrescriptionService extends Service {
             'units': regimen.units,
             'instructions': this.getInstructions(regimen.drug_name, regimen.am, regimen.pm, regimen.units),
             'dose': this.calculateDosage(regimen.am, regimen.pm),
-            'frequency': this.getDrugFrequency()
+            'frequency': this.getDrugFrequency(regimen.drug_name)
         }
     }
 
