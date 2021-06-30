@@ -60,6 +60,20 @@ export class PrescriptionService extends Service {
         return DrugOrderService.getLastDrugsReceived(this.patientID)
     }
 
+    calculatePillsPerDay(am: number, noon: number, pm: number) {
+        return parseFloat(am.toString()) + noon + pm
+    }
+
+    estimatePackSizeTillNextVisitInterval(pillsPerDay: number, packSize=0) {
+        const packs = (pillsPerDay * this.nextVisitInterval) / packSize
+        
+        let roundedPacks = Math.round(packs)
+
+        if (roundedPacks <= 0) roundedPacks += 1
+
+        return roundedPacks
+    }
+
     calculateDosage(morningTabs: number, eveningTabs: number): number {
         let dose = 0
         if (eveningTabs === 0) dose = morningTabs
