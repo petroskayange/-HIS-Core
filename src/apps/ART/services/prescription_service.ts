@@ -90,7 +90,7 @@ export class PrescriptionService extends Service {
         return morningTabs + eveningTabs
     }
 
-    calcAutoExpireDateFromNextVisitInterval() {
+    calculateDateFromInterval() {
         const dateObj = new Date(Service.getSessionDate())
         dateObj.setDate(dateObj.getDate() + this.nextVisitInterval)
         return HisDate.toStandardHisFormat(dateObj)
@@ -112,7 +112,7 @@ export class PrescriptionService extends Service {
             'drug_inventory_id': regimen.drug_id,
             'equivalent_daily_dose': this.calculateEquivalentDosage(regimen.am, regimen.pm),
             'start_date': Service.getSessionDate(),
-            'auto_expire_date': this.calcAutoExpireDateFromNextVisitInterval(), 
+            'auto_expire_date': this.calculateDateFromInterval(), 
             'units': regimen.units,
             'instructions': this.getInstructions(regimen.drug_name, regimen.am, regimen.pm, regimen.units),
             'dose': this.calculateDosage(regimen.am, regimen.pm),
