@@ -1,6 +1,5 @@
 import { DrugInterface } from "@/interfaces/Drug";
 import { Encounter } from "@/interfaces/encounter";
-import { RegimenInterface } from "@/interfaces/Regimen";
 import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
 import { EncounterService } from "@/services/encounter_service";
@@ -37,6 +36,10 @@ export class PrescriptionService extends Service {
             'person_id': this.patientID, 'concept_id': fastTrack
         })
         return !isEmpty(req) ? req[0].value_coded === yes : null 
+    }
+
+    async getFastTrackMedications() {
+        return DrugOrderService.getLastDrugsReceived(this.patientID)
     }
 
     calculateDosage(morningTabs: number, eveningTabs: number): number {
