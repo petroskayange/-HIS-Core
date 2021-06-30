@@ -21,7 +21,7 @@ export default defineComponent({
     }),
     computed: {
         cancelDestination(): string {
-            return `/patient/dashboard/${this.patient.patient_id}`
+            return this.getCancelDestination()
         } 
     },
     watch: {
@@ -39,37 +39,39 @@ export default defineComponent({
         }
     },
     methods: {
+        getCancelDestination() {
+            return `/patient/dashboard/${this.patient.patient_id}`
+        },
         onFinish(form: Record<string, Option> | Record<string, null>) {
             this.form = form
         },
         async onSubmit() {
             const prescription = new PrescriptionService(this.patient.patient_id)
             const formData = this.resolveData(this.form)
-            let isRegimenCreated = false
+            let drugs: Array<DrugInterface> = []
             
             const encounter = await prescription.createTreatmentEncounter()
 
+            prescription.setNextVisitInterval(parseInt(formData.next_visit_interval))
+            
             if (!encounter) {
                 return toastWarning('Unable to create treatment encounter')
             }
-
+            
             if (formData.regimen_type.match(/arv/, 'i')) {
-               isRegimenCreated  = this.createArvRegimenOrder(prescription, formData)
+               drugs = this.resolveArvRegimenDrugs(prescription, formData.arv_regimens.other.regimens)
             }
 
-            if (isRegimenCreated) {
-                return toastSuccess('Drug Order has been successful')
+            if(prescription.createDrugOrder(drugs)) {
+               toastSuccess('Drug order has been created')
+               return this.$router.push({path: this.getCancelDestination()}) 
             }
-
-            toastWarning('Unable to create order')
+            toastWarning('Unable to create drug orders!')
         },
-        createArvRegimenOrder(prescriptionObj: any, formData: any) {
-            prescriptionObj.setNextVisitInterval(parseInt(formData.next_visit_interval))
-            const regimens: Array<RegimenInterface> = formData.arv_regimens.other.regimens
-            const drugs: Array<DrugInterface> = regimens.map((regimen: RegimenInterface) => {
+        resolveArvRegimenDrugs(prescriptionObj: any, regimens: Array<RegimenInterface>) {
+            return regimens.map((regimen: RegimenInterface) => {
                 return prescriptionObj.mapRegimenToDrug(regimen)
             })
-            return prescriptionObj.createDrugOrder(drugs) ? true : false
         },
         resolveData(form: Record<string, Option> | Record<string, null>) {
             const output: any = {}
