@@ -1,11 +1,12 @@
+import { DrugOrderInterface } from "@/interfaces/DrugOrder";
 import { Service } from "./service";
-import { DrugInterface } from "@/interfaces/Drug";
+
 export class DrugOrderService extends Service {
     constructor() {
         super()
     }
 
-    static create(orders: DrugInterface) {
+    static create(orders: DrugOrderInterface) {
         return this.postJson('drug_orders', orders)
     }
 
