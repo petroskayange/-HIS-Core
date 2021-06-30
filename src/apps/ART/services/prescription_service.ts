@@ -46,13 +46,14 @@ export class PrescriptionService extends Service {
         if (!isEmpty(receipt)) this.received3HP = true
     }
 
-    async isFastTrack() {
+    async setFastTrackStatus() {
         const fastTrack = await ConceptService.getConceptID('Fast track')
         const yes = await ConceptService.getConceptID('yes')
         const req = await ObservationService.getObs({
             'person_id': this.patientID, 'concept_id': fastTrack
         })
-        return !isEmpty(req) ? req[0].value_coded === yes : null 
+
+        if (!isEmpty(req) && req[0].value_coded === yes) this.fastTrack = true
     }
 
     async getFastTrackMedications() {
