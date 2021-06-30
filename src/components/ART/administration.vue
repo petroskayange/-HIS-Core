@@ -34,6 +34,7 @@
               :key="index"
               :title="innerreport.name"
               :description="innerreport.name"
+              @click="goTo(innerreport)"
               :icon="'/assets/images/sys-setting.png'"
             >
             </task-card>
@@ -46,11 +47,14 @@
 
 <script>
 import { defineComponent } from "vue";
-import { IonButton } from "@ionic/vue";
+import { IonButton, IonGrid, IonRow, IonCol } from "@ionic/vue";
 import TaskCard from "@/components/DataViews/TaskCard.vue";
 export default defineComponent({
   components: {
     IonButton,
+    IonGrid,
+    IonRow, 
+    IonCol,
     "task-card": TaskCard,
   },
   data() {
@@ -94,17 +98,37 @@ export default defineComponent({
         ],
         'System Preferences': [
           {
-            name: "Cohort / disaggregated",
-            route: "/",
+            name: "Ask pills remaining at home",
+            value: "ask_pills_remaining_at_home"
           },
           {
-            name: "Survival analysis",
-            route: "/",
+            name: "Activate Filing Numbers",
+            value: "use_filing_numbers"
           },
           {
-            name: "TPT new initiations",
-            route: "/",
+            name: "Activate extended labs",
+            value: "extended_labs"
           },
+          {
+            name: "Activate drug management",
+            value: "activate_drug_management"
+          },
+          {
+            name: "Activate Hypertension screening",
+            value: "aactivate.htn.enhancement"
+          },
+          {
+            name: "Activate fast track",
+            value: "ask_pills_remaining_at_home"
+          },
+          {
+            name: "Is this a military site",
+            value: "military_site"
+          },
+          {
+            name: "Activate 3HP auto select",
+            value: "activate_3hp_auto_select"
+          }
         ],
         'Data Management': [
           {
@@ -126,11 +150,16 @@ export default defineComponent({
   },
   methods: {
     showReports(report) {
-      this.activeReports = [...this.reports[report]];
+      this.activeReports = [...this.reports[report] ];
     },
-  },
-  mounted() {
-    //
+    goTo(report) {
+      if(report.value) {
+      this.$router.push({path: '/preferences', query: {
+        label: report.name,
+        property: report.value
+      }})
+      }
+    }
   },
 });
 </script>

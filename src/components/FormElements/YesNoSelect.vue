@@ -2,21 +2,23 @@
   <div>
     <view-port :showFull="false">
       <ion-grid>
-          <ion-row button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
+        <ion-row button v-for="(item, index) in filtered" :key="index">
           <ion-col size="6">
-            <h1>{{item.label}}</h1>
+            <h1>{{ item.label }}</h1>
           </ion-col>
           <ion-col size="6">
             <ion-segment
               mode="ios"
               @ionChange="segmentChanged($event)"
-              v-model="entry.isChecked"
+              v-model="value"
             >
-              <ion-segment-button value="sunny" class="yes-no">
-                <ion-label>Yes</ion-label>
-              </ion-segment-button>
-              <ion-segment-button value="rainy">
-                <ion-label>No</ion-label>
+              <ion-segment-button
+                class="yes-no"
+                v-for="(option, idx) in item.values"
+                :key="idx"
+                :value="option.value"
+              >
+                <ion-label>{{ option.label }}</ion-label>
               </ion-segment-button>
             </ion-segment>
           </ion-col>
@@ -59,10 +61,13 @@ export default defineComponent({
     clear(val: boolean) {
       if (val) this.clearSelection();
     },
+    value(value: any) {
+      this.$emit('onValue', { label: this.filtered[0].label, value: value })
+    }
   },
   data() {
     return {
-      values: {},
+      value: null as any,
     };
   },
   async activated() {
@@ -70,19 +75,18 @@ export default defineComponent({
   },
   async mounted() {
     this.listData = await this.options(this.fdata);
-    if (this.preset) {
-      this.onselect(this.preset);
+    if(this.preset) {
+      this.value = this.preset;
     }
   },
   methods: {
-    onselect(item: Option): void {
-      this.selected = item.label;
-      this.$emit("onValue", item);
+    onselect(data: any): void {
+      this.$emit("onValue", data);
     },
     segmentChanged(ev: CustomEvent) {
-      console.log("Segment changed", ev);
+      this.onselect(ev.detail.value);
     },
-  },
+  }
 });
 </script>
 <style scoped>
