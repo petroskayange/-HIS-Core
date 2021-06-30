@@ -1,21 +1,25 @@
 import { DrugInterface } from "@/interfaces/Drug";
 import { Encounter } from "@/interfaces/encounter";
 import { RegimenInterface } from "@/interfaces/Regimen";
+import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
 import { EncounterService } from "@/services/encounter_service";
 import { Observation, ObservationService } from "@/services/observation_service";
 import { Service } from "@/services/service";
+import { isEmpty } from "lodash";
 import HisDate from "@/utils/Date"
 
 export class PrescriptionService extends Service {
     patientID: number;
     encounterID: number;
     nextVisitInterval: number;
+    fastTrack: boolean
     constructor(patientID: number) {
         super()
         this.patientID = patientID
         this.encounterID = 0
         this.nextVisitInterval = 0
+        this.fastTrack = false
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -24,6 +28,15 @@ export class PrescriptionService extends Service {
 
     setEncounterID(encounterID: number) {
         this.encounterID = encounterID
+    }
+
+    async isFastTrack() {
+        const fastTrack = await ConceptService.getConceptID('Fast track')
+        const yes = await ConceptService.getConceptID('yes')
+        const req = await ObservationService.getObs({
+            'person_id': this.patientID, 'concept_id': fastTrack
+        })
+        return !isEmpty(req) ? req[0].value_coded === yes : null 
     }
 
     calculateDosage(morningTabs: number, eveningTabs: number): number {
