@@ -10,10 +10,16 @@ import HisDate from "@/utils/Date"
 export class PrescriptionService extends Service {
     patientID: number;
     encounterID: number;
+    nextVisitInterval: number;
     constructor(patientID: number) {
         super()
         this.patientID = patientID
         this.encounterID = 0
+        this.nextVisitInterval = 0
+    }
+
+    setNextVisitInterval(nextVisitInterval: number) {
+        this.nextVisitInterval = nextVisitInterval
     }
 
     setEncounterID(encounterID: number) {
@@ -36,9 +42,9 @@ export class PrescriptionService extends Service {
         return morningTabs + eveningTabs
     }
 
-    calculateAutoExpireDate(numberOfDays: number) {
+    calcAutoExpireDateFromNextVisitInterval() {
         const dateObj = new Date(Service.getSessionDate())
-        dateObj.setDate(dateObj.getDate() + numberOfDays)
+        dateObj.setDate(dateObj.getDate() + this.nextVisitInterval)
         return HisDate.toStandardHisFormat(dateObj)
     }
 
@@ -50,12 +56,12 @@ export class PrescriptionService extends Service {
         return 'Daily (QOD)'
     }
 
-    mapRegimenToDrug(regimen: RegimenInterface, nextAppointmentInDays: number): DrugInterface {
+    mapRegimenToDrug(regimen: RegimenInterface): DrugInterface {
         return {
             'drug_inventory_id': regimen.drug_id,
             'equivalent_daily_dose': this.calculateEquivalentDosage(regimen.am, regimen.pm),
             'start_date': Service.getSessionDate(),
-            'auto_expire_date': this.calculateAutoExpireDate(nextAppointmentInDays), 
+            'auto_expire_date': this.calcAutoExpireDateFromNextVisitInterval(), 
             'units': regimen.units,
             'instructions': this.getInstructions(regimen.drug_name, regimen.am, regimen.pm, regimen.units),
             'dose': this.calculateDosage(regimen.am, regimen.pm),
