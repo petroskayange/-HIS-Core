@@ -64,7 +64,7 @@ export class ObservationService extends ConceptService {
         return super.getJson(`/observations?person_id=${patientID}&concept_id=${conceptID}`)
     }
 
-    static getObs(params: Record<string, string>) {
+    static getObs(params: Record<string, string | number>) {
         return super.getJson('/observations', params)
     }
 
