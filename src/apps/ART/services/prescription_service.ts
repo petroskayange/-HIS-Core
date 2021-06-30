@@ -56,7 +56,7 @@ export class PrescriptionService extends Service {
         return 'Daily (QOD)'
     }
 
-    mapRegimenToDrug(regimen: RegimenInterface): DrugInterface {
+    mapRegimenToDrug(regimen: any): DrugInterface {
         return {
             'drug_inventory_id': regimen.drug_id,
             'equivalent_daily_dose': this.calculateEquivalentDosage(regimen.am, regimen.pm),
