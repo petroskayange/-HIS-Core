@@ -14,6 +14,7 @@ export class PrescriptionService extends Service {
     nextVisitInterval: number;
     fastTrack: boolean;
     received3HP: boolean;
+    regimenExtras: Array<Record<string, any>>;
     constructor(patientID: number) {
         super()
         this.patientID = patientID
@@ -21,6 +22,7 @@ export class PrescriptionService extends Service {
         this.nextVisitInterval = 0
         this.fastTrack = false
         this.received3HP = false
+        this.regimenExtras = []
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -55,10 +57,20 @@ export class PrescriptionService extends Service {
 
         if (!isEmpty(req) && req[0].value_coded === yes) this.fastTrack = true
     }
+    
+    async loadRegimenExtras(date=Service.getSessionDate()) {
+        const meds = await Service.getJson(
+            `programs/${Service.getProgramID()}/patients/${this.patientID}/dosages`,
+            {date}
+        )
+        if (meds) this.regimenExtras = Object.values(meds)
+    }
 
     async getFastTrackMedications() {
         return DrugOrderService.getLastDrugsReceived(this.patientID)
     }
+
+    getRegimenExtras() { return this.regimenExtras }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
         return parseFloat(am.toString()) + noon + pm

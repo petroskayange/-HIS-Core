@@ -29,7 +29,7 @@ export default defineComponent({
     },
     watch: {
         '$route': {
-            handler(route: any){
+            async handler(route: any){
                 if (!route || !route.params.p) return
 
                 const { patient } = JSON.parse(route.params.p.toString())
@@ -37,6 +37,7 @@ export default defineComponent({
                 this.patient = patient
                 this.fields = this.getFields()
                 this.prescription = new PrescriptionService(this.patient.patient_id)
+                await this.prescription.loadRegimenExtras()
             },
             immediate: true,
             deep: true
@@ -51,7 +52,7 @@ export default defineComponent({
         },
         async onSubmit() {
             const formData = this.resolveData(this.form)
-            let drugs: Array<DrugInterface> = []
+            let drugs: Array<DrugInterface> = this.prescription.getRegimenExtras()
  
             const encounter = await this.prescription.createTreatmentEncounter()
 
@@ -61,11 +62,11 @@ export default defineComponent({
                 return toastWarning('Unable to create treatment encounter')
             }
             
-            if (this.hasArtRegimen(formData)) {
-               drugs = this.resolveArvRegimenDrugs(formData.arv_regimens.other.regimens)
+            if (this.hasArtRegimen(this.form)) {
+               drugs = this.resolveArvRegimenDrugs([...drugs, ...formData.arv_regimens.other.regimens])
             }
 
-            if (this.hasCustomRegimen(formData)) {
+            if (this.hasCustomRegimen(this.form)) {
                 drugs = this.resolveCustomDrugs(formData.custom_regimen)
             }
 
@@ -87,16 +88,16 @@ export default defineComponent({
             })
         },
         getDosageTableOptions(formData: any) {
-            let regimens: Array<RegimenInterface> = []
+            let regimens: Array<RegimenInterface> = this.prescription.getRegimenExtras()
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
 
             if (this.hasArtRegimen(formData)) {
-                regimens = formData.arv_regimens.other.regimens
+                regimens = [...regimens, ...formData.arv_regimens.other.regimens]
             }
 
             const rows = regimens.map((regimen: RegimenInterface) => {
                 return [
-                    regimen.alternative_drug_name,
+                    regimen.alternative_drug_name || regimen.drug_name,
                     regimen.units,
                     regimen.am,
                     regimen.noon,
@@ -115,7 +116,7 @@ export default defineComponent({
         getDrugEstimates(formData: any, interval: number) {
             let regimens: Array<RegimenInterface> = []
             this.prescription.setNextVisitInterval(interval)
-            
+
             const nextAppointment = this.prescription.calculateDateFromInterval()
 
             if (this.hasArtRegimen(formData)) {
@@ -127,7 +128,7 @@ export default defineComponent({
                 const pillsPerDay = this.prescription.calculatePillsPerDay(regimen.am, regimen.noon, regimen.pm)
                 const estimatedPackSize = this.prescription.estimatePackSize(pillsPerDay, packSize)     
                 return {
-                    label: regimen.alternative_drug_name,
+                    label: regimen.alternative_drug_name || regimen.drug_name,
                     value: estimatedPackSize
                 } 
             })
