@@ -107,10 +107,10 @@ export default defineComponent({
             })
 
             return {
-                label: 'Medication runout',
+                label: 'Medication run-out date:',
                 value: HisDate.toStandardHisDisplayFormat(nextAppointment),
                 other: {
-                    label: "Estimated packs",
+                    label: "Estimated packs/tins:",
                     value: drugPacks
                 }
             }
