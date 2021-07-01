@@ -85,6 +85,33 @@ export default defineComponent({
                 })
             })
         },
+        getDosageTableOptions(formData: any) {
+            let regimens: Array<RegimenInterface> = []
+            const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
+            const prescription = new PrescriptionService(this.patient.patient_id)
+
+            if (formData.regimen_type.value.match(/arv/, 'i')) {
+                regimens = formData.arv_regimens.other.regimens
+            }
+
+            const rows = regimens.map((regimen: RegimenInterface) => {
+                return [
+                    regimen.drug_name,
+                    regimen.units,
+                    regimen.am,
+                    regimen.noon,
+                    regimen.pm,
+                    prescription.getDrugFrequency(regimen.drug_name)
+                ]              
+            })
+            return [
+                { 
+                    label: 'Selected Medication', 
+                    value:'Table', 
+                    other: { columns, rows }
+                }      
+            ]
+        },
         getDrugEstimates(formData: any, interval: number) {
             let regimens: Array<RegimenInterface> = []
             const prescription = new PrescriptionService(this.patient.patient_id)
@@ -186,6 +213,12 @@ export default defineComponent({
                     config: {
                         showKeyboard: true
                     }
+                },
+                {
+                    id: 'selected_meds',
+                    helpText: 'Selected medication',
+                    type: FieldType.TT_TABLE_VIEWER,
+                    options: (fdata: any) => this.getDosageTableOptions(fdata)
                 },
                 {
                     id: 'next_visit_interval',
