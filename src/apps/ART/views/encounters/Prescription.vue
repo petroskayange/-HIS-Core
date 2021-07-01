@@ -13,6 +13,7 @@ import { PrescriptionService } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DrugInterface } from '@/interfaces/Drug'
 import { isArray, isEmpty } from "lodash"
+import HisDate from "@/utils/Date"
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
@@ -83,6 +84,35 @@ export default defineComponent({
                     'pm': 0 //TODO: Get these from custom values
                 })
             })
+        },
+        getDrugEstimates(formData: any, interval: number) {
+            let regimens: Array<RegimenInterface> = []
+            const prescription = new PrescriptionService(this.patient.patient_id)
+            prescription.setNextVisitInterval(interval)
+            
+            const nextAppointment = prescription.calculateDateFromInterval()
+
+            if (formData.regimen_type.value.match(/arv/, 'i')) {
+                regimens = formData.arv_regimens.other.regimens
+            }
+
+            const drugPacks = regimens.map((regimen: RegimenInterface) => {
+                const pillsPerDay = prescription.calculatePillsPerDay(regimen.am, regimen.noon, regimen.pm)
+                const estimatedPackSize = prescription.estimatePackSize(pillsPerDay, 30)     
+                return {
+                    label: regimen.drug_name,
+                    value: estimatedPackSize
+                } 
+            })
+
+            return {
+                label: 'Medication runout',
+                value: HisDate.toStandardHisDisplayFormat(nextAppointment),
+                other: {
+                    label: "Estimated packs",
+                    value: drugPacks
+                }
+            }
         },
         resolveArvRegimenDrugs(prescriptionObj: any, regimens: Array<RegimenInterface>) {
             return regimens.map((regimen: RegimenInterface) => {
@@ -161,21 +191,28 @@ export default defineComponent({
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_NEXT_VISIT_INTERVAL_SELECTION,
                     validation: (val: Option) => Validation.required(val),
-                    options: () =>[
-                        { label: '2 weeks', value: 14 },
-                        { label: '1 month', value: 28 },
-                        { label: '2 months', value: 56 },
-                        { label: '3 months', value: 84 },
-                        { label: '4 months', value: 112 },
-                        { label: '5 months', value: 140 },
-                        { label: '6 months', value: 168 },
-                        { label: '7 months', value: 196 },
-                        { label: '8 months', value: 224 },
-                        { label: '9 months', value: 252 },
-                        { label: '10 months', value: 280 },
-                        { label: '11 months', value: 308 },                        
-                        { label: '12 months', value: 336 },
-                    ]
+                    options: (fdata: any) => {
+                        const intervals = [
+                            { label: '2 weeks', value: 14 },
+                            { label: '1 month', value: 28 },
+                            { label: '2 months', value: 56 },
+                            { label: '3 months', value: 84 },
+                            { label: '4 months', value: 112 },
+                            { label: '5 months', value: 140 },
+                            { label: '6 months', value: 168 },
+                            { label: '7 months', value: 196 },
+                            { label: '8 months', value: 224 },
+                            { label: '9 months', value: 252 },
+                            { label: '10 months', value: 280 },
+                            { label: '11 months', value: 308 },                        
+                            { label: '12 months', value: 336 },
+                        ]
+                        return intervals.map(interval => ({
+                            ...interval, 
+                            other: { ...this.getDrugEstimates(fdata, interval.value) }
+                            })
+                        )
+                    }
                 }
             ]
         }

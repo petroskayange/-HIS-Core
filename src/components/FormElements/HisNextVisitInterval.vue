@@ -14,8 +14,22 @@
                             </ion-col>
                         </ion-row>
                     </ion-col>
-                    <ion-col size="8"> 
-
+                    <ion-col size="8">
+                        <ion-card :style="{height: '65vh'}">
+                            <ion-card-content v-if="active.label">
+                                <h3> {{ active.other.label }} </h3>
+                                <ion-item>
+                                   <ion-label> {{ active.other.value }} </ion-label>
+                                </ion-item>
+                                <h3> {{ active.other.other.label }} </h3>
+                                <ion-list> 
+                                    <ion-item v-for="(item, index) in active.other.other.value" :key="index"> 
+                                       <ion-label> {{ item.label }} </ion-label>
+                                       <ion-label slot="end"> {{ item.value }} </ion-label>
+                                    </ion-item>
+                                </ion-list>  
+                            </ion-card-content>
+                        </ion-card>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -32,6 +46,9 @@ import Transformer from '@/utils/Transformers'
 export default defineComponent({
     components: { RegimenCard, ViewPort },
     mixins: [SelectMixin],
+    data: ()=>({
+        active: {} as Option
+    }),
     watch: {
         clear(val: boolean){
             if (val) this.clearSelection()
@@ -51,6 +68,7 @@ export default defineComponent({
         },
         onselect(item: Option): void {
             this.selected = item.label
+            this.active = item
             this.$emit('onValue', item)
         }
     }

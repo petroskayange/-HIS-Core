@@ -64,7 +64,7 @@ export class PrescriptionService extends Service {
         return parseFloat(am.toString()) + noon + pm
     }
 
-    estimatePackSizeTillNextVisitInterval(pillsPerDay: number, packSize=0) {
+    estimatePackSize(pillsPerDay: number, packSize=0) {
         const packs = (pillsPerDay * this.nextVisitInterval) / packSize
         
         let roundedPacks = Math.round(packs)
