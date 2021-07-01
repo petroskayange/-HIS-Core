@@ -1,19 +1,19 @@
 <template>
-    <table>
-        <thead>
-            <tr> 
+    <table class="his-table">
+        <!-- <thead> -->
+            <tr>
                 <th v-for="(column, hIndex) in columns" :key="hIndex"> 
                     {{ column }}
                 </th>
             </tr>
-        </thead>
-        <tbody>
+        <!-- </thead> -->
+        <!-- <tbody> -->
             <tr v-for="(dataItems, rIndex) in rows" :key="rIndex">
                 <td v-for="(item, dIndex) in dataItems" :key="dIndex"> 
                     {{ item }}
                 </td>
             </tr>
-        </tbody>
+        <!-- </tbody> -->
         </table>
 </template>
 <script lang="ts">
@@ -31,19 +31,3 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-td,
-th {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #f8f8f8;
-}
-</style>

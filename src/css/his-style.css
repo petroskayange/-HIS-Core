@@ -25,6 +25,20 @@
    background-color: rgb(235, 235, 235);
 }
 
+.his-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.his-table > tr > td, th {
+    text-align: left;
+    padding: 1em;
+}
+
+.his-table > tr:nth-child(even) {
+    background-color: #f8f8f8;
+}
+
 .his-card {
     font-size: 1em;
     background: var(--his-card-primary-color);

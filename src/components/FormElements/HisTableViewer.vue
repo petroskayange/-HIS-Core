@@ -36,3 +36,8 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+    .view-port-content {
+        background: white !important;
+    }
+</style>
