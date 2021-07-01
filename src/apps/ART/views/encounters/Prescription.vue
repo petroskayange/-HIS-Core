@@ -96,7 +96,7 @@ export default defineComponent({
 
             const rows = regimens.map((regimen: RegimenInterface) => {
                 return [
-                    regimen.drug_name,
+                    regimen.alternative_drug_name,
                     regimen.units,
                     regimen.am,
                     regimen.noon,
@@ -127,7 +127,7 @@ export default defineComponent({
                 const pillsPerDay = this.prescription.calculatePillsPerDay(regimen.am, regimen.noon, regimen.pm)
                 const estimatedPackSize = this.prescription.estimatePackSize(pillsPerDay, packSize)     
                 return {
-                    label: regimen.drug_name,
+                    label: regimen.alternative_drug_name,
                     value: estimatedPackSize
                 } 
             })
