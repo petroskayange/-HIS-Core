@@ -38,6 +38,7 @@ export default defineComponent({
                 this.fields = this.getFields()
                 this.prescription = new PrescriptionService(this.patient.patient_id)
                 await this.prescription.loadRegimenExtras()
+                await this.prescription.load3HpStatus()
             },
             immediate: true,
             deep: true

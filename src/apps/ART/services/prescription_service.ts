@@ -33,7 +33,7 @@ export class PrescriptionService extends Service {
         this.encounterID = encounterID
     }
 
-    async set3HpStatus() {
+    async load3HpStatus() {
         const orders = await ConceptService.getConceptID('Medication orders')
         const req = await ObservationService.getObs({
             'person_id': this.patientID, 'concept_id': orders
@@ -48,7 +48,7 @@ export class PrescriptionService extends Service {
         if (!isEmpty(receipt)) this.received3HP = true
     }
 
-    async setFastTrackStatus() {
+    async loadFastTrackStatus() {
         const fastTrack = await ConceptService.getConceptID('Fast track')
         const yes = await ConceptService.getConceptID('yes')
         const req = await ObservationService.getObs({
