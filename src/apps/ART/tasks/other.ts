@@ -110,3 +110,99 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     icon: img("patient-type.png")
   }
 ]
+export const PREFERENCES = {
+        'Drug Management': [
+          {
+            name: "Enter Receipts",
+            component: "@/components/ART/Settings.vue",
+          },
+          {
+            name: "Enter Product relocation/Disposal",
+            component: "@/components/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            name: "Enter verified physical stock count",
+            component: "@/components/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            name: "Print Barcode",
+            component: "@/components/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            name: "Audit Trail",
+            component: "@/components/ART/Settings.vue",
+            route: "/",
+          },
+        ],
+        'User Management': [
+          {
+            name: "Cohort / disaggregated",
+            component: "@/components/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            component: "@/components/ART/Settings.vue",
+            name: "Survival analysis",
+            route: "/",
+          },
+          {
+            component: "@/components/ART/Settings.vue",
+            name: "TPT new initiations",
+            route: "/",
+          },
+        ],
+        'System Preferences': [
+          {
+            name: "Ask pills remaining at home",
+            value: "ask_pills_remaining_at_home"
+          },
+          {
+            name: "Activate Filing Numbers",
+            value: "use_filing_numbers"
+          },
+          {
+            name: "Activate extended labs",
+            value: "extended_labs"
+          },
+          {
+            name: "Activate drug management",
+            value: "activate_drug_management"
+          },
+          {
+            name: "Activate Hypertension screening",
+            value: "aactivate.htn.enhancement"
+          },
+          {
+            name: "Activate fast track",
+            value: "ask_pills_remaining_at_home"
+          },
+          {
+            name: "Is this a military site",
+            value: "military_site"
+          },
+          {
+            name: "Activate 3HP auto select",
+            value: "activate_3hp_auto_select"
+          }
+        ],
+        'Data Management': [
+          {
+            name: "Cohort / disaggregated",
+            component: "/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            name: "Survival analysis",
+            component: "/ART/Settings.vue",
+            route: "/",
+          },
+          {
+            name: "TPT new initiations",
+            component: "/ART/Settings.vue",
+            route: "/",
+          },
+        ],
+      }
