@@ -56,7 +56,7 @@ export default defineComponent({
  
             const encounter = await this.prescription.createTreatmentEncounter()
 
-            this.prescription.setNextVisitInterval(parseInt(formData.next_visit_interval))
+            this.prescription.setNextVisitInterval(formData.next_visit_interval.value)
             
             if (!encounter) {
                 return toastWarning('Unable to create treatment encounter')
