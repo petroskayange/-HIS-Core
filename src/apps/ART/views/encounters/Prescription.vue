@@ -70,7 +70,9 @@ export default defineComponent({
                 drugs = this.resolveCustomDrugs(formData.custom_regimen)
             }
 
-            if(this.prescription.createDrugOrder(drugs)) {
+            const drugOrder = await this.prescription.createDrugOrder(drugs) 
+            
+            if(drugOrder) {
                toastSuccess('Drug order has been created')
                return this.$router.push({path: this.getCancelDestination()}) 
             }
