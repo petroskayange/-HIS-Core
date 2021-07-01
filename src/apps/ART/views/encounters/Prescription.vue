@@ -97,8 +97,9 @@ export default defineComponent({
             }
 
             const drugPacks = regimens.map((regimen: RegimenInterface) => {
+                const packSize = prescription.getDrugPackSize(regimen)
                 const pillsPerDay = prescription.calculatePillsPerDay(regimen.am, regimen.noon, regimen.pm)
-                const estimatedPackSize = prescription.estimatePackSize(pillsPerDay, 30)     
+                const estimatedPackSize = prescription.estimatePackSize(pillsPerDay, packSize)     
                 return {
                     label: regimen.drug_name,
                     value: estimatedPackSize

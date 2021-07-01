@@ -96,6 +96,15 @@ export class PrescriptionService extends Service {
         return HisDate.toStandardHisFormat(dateObj)
     }
 
+    getDrugPackSize(drug: any) {
+        if (drug.pack_size) return drug.pack_size
+        try{
+            return drug.barcodes[0].tabs
+        }catch(e) {
+            return 30
+        }
+    }
+
     getInstructions(drugName: string, morningTabs: number, eveningTabs: number, units: string): string {
         return `${drugName} :- Morning: ${morningTabs} ${units}, Evening: ${eveningTabs} ${units}`
     }

@@ -9,6 +9,6 @@ export interface RegimenInterface {
     units: string;
     concept_name: string;
     pack_size: number;
-    barcodes?: Array<string>;
+    barcodes: Array<Record<string, any>>;
     regimen_category: string;
 }
