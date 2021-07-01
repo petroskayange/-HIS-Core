@@ -159,7 +159,7 @@ export default defineComponent({
                 {
                     id: 'next_visit_interval',
                     helpText: 'Interval to next visit',
-                    type: FieldType.TT_SELECT,
+                    type: FieldType.TT_NEXT_VISIT_INTERVAL_SELECTION,
                     validation: (val: Option) => Validation.required(val),
                     options: () =>[
                         { label: '2 weeks', value: 14 },

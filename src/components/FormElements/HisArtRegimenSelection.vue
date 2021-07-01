@@ -49,11 +49,6 @@ export default defineComponent({
 })
 </script>
 <style scoped>
- .regimen-card {
-    height: 50px;
-    margin: 1%;
-    text-align: center;
- }
 .view-port-content {
     height: 100%;
 }

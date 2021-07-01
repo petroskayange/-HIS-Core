@@ -4,6 +4,7 @@ import TextInput from "@/components/FormElements/HisTextInput.vue"
 import NumberInput from "@/components/FormElements/HisNumberInput.vue"
 import MonthlyDays from "@/components/FormElements/HisMonthlyDays.vue"
 import ArtRegimenSelection from "@/components/FormElements/HisArtRegimenSelection.vue"
+import NextVisitInterval from "@/components/FormElements/HisNextVisitInterval.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
     TT_MONTHLY_DAYS="monthly-days",
@@ -12,7 +13,8 @@ export enum FieldType {
     TT_DATETIME="datetime",
     TT_SELECT="single-select",
     TT_MULTIPLE_SELECT="multiple-select",
-    TT_ART_REGIMEN_SELECTION="art-regimen-selection"
+    TT_ART_REGIMEN_SELECTION="art-regimen-selection",
+    TT_NEXT_VISIT_INTERVAL_SELECTION="next-visit-interval"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -21,5 +23,6 @@ export const BaseFormComponents = {
     MultipleSelect,
     NumberInput,
     MonthlyDays,
-    ArtRegimenSelection
+    ArtRegimenSelection,
+    NextVisitInterval
 }
