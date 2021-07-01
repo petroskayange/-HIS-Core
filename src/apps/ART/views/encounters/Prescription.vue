@@ -61,11 +61,11 @@ export default defineComponent({
                 return toastWarning('Unable to create treatment encounter')
             }
             
-            if (formData.regimen_type.match(/arv/, 'i')) {
+            if (this.hasArtRegimen(formData)) {
                drugs = this.resolveArvRegimenDrugs(formData.arv_regimens.other.regimens)
             }
 
-            if (formData.regimen_type.match(/custom/, 'i')) {
+            if (this.hasCustomRegimen(formData)) {
                 drugs = this.resolveCustomDrugs(formData.custom_regimen)
             }
 
@@ -90,7 +90,7 @@ export default defineComponent({
             let regimens: Array<RegimenInterface> = []
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
 
-            if (formData.regimen_type.value.match(/arv/, 'i')) {
+            if (this.hasArtRegimen(formData)) {
                 regimens = formData.arv_regimens.other.regimens
             }
 
@@ -118,7 +118,7 @@ export default defineComponent({
             
             const nextAppointment = this.prescription.calculateDateFromInterval()
 
-            if (formData.regimen_type.value.match(/arv/, 'i')) {
+            if (this.hasArtRegimen(formData)) {
                 regimens = formData.arv_regimens.other.regimens
             }
 
@@ -166,6 +166,12 @@ export default defineComponent({
             }
             return output
         },
+        hasArtRegimen(formData: any) {
+            return formData.regimen_type.value.match(/arv/, 'i')
+        },
+        hasCustomRegimen(formData: any) {
+            return formData.regimen_type.value.match(/custom/, 'i')
+        },
         getFields(): Array<Field> {
             return [
                 {
@@ -182,7 +188,7 @@ export default defineComponent({
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
-                    condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
+                    condition: (form: any) => this.hasArtRegimen(form),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const regimenCategories = await RegimenService.getRegimens(this.patient.patient_id)
@@ -199,7 +205,7 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: (form: any) => form.regimen_type.value.match(/custom/,'i'),
+                    condition: (form: any) => this.hasCustomRegimen(form),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await RegimenService.getCustomIngridients()
