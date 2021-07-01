@@ -1,3 +1,40 @@
+:root {
+    --his-card-primary-color: white;
+    --his-card-primary-padding: 1em;
+    --his-card-primary-border-radius: 6px;
+    --his-card-primary-border: 1px solid #ccc;
+    --his-card-primary-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);  
+    --his-card-primary-shadow-webkit: 0px -2px 19px -2px rgba(196, 190, 196, 1);
+    --his-card-primary-shadow-moz: 0px -2px 19px -2px rgba(196, 190, 196, 1);
+}
+
+.inactive-card-color {
+    background: var(--his-card-primary-color) !important;
+}
+
+.active-card-color {
+    border-color: rgb(83,155,253) !important;
+    background: rgb(249,252,255) !important;
+    box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
+    -webkit-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
+    -moz-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
+}
+
+.clickable:active {
+   transform: translateY(4px);
+   background-color: rgb(235, 235, 235);
+}
+
+.his-card {
+    font-size: 1em;
+    background: var(--his-card-primary-color);
+    padding: var(--his-card-primary-padding);
+    border-radius: var(--his-card-primary-border-radius);
+    -webkit-box-shadow: var(--his-card-primary-shadow-webkit);
+    -moz-box-shadow: var(--his-card-primary-shadow-moz);
+    box-shadow: var(--his-card-primary-shadow);
+}
+
 body {
  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
 }
