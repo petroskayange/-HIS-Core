@@ -332,7 +332,12 @@ export default defineComponent({
 </script>
 <style scoped>
     .grid-custom {
-        height: 99%;
-        overflow: hidden;
+        overflow-y: auto;
+    }
+    @media only screen and (width: 1024px) {
+         .grid-custom {
+            height: 99%;
+            overflow: hidden;
+        }   
     }
 </style>
