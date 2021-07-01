@@ -124,7 +124,7 @@ export default defineComponent({
                 {
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
-                    type: FieldType.TT_SELECT,
+                    type: FieldType.TT_ART_REGIMEN_SELECTION,
                     condition: (form: any) => form.regimen_type.value.match(/arv/,'i'),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
@@ -132,8 +132,8 @@ export default defineComponent({
                         const options = []
                         for(const index in regimenCategories) {
                             const regimens = regimenCategories[index]
-                            const label = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
-                            options.push({ label, value: index, other: { regimens } })
+                            const drug = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
+                            options.push({ label: drug, value: index, other: { regimens } })
                         }
                         return options
                     }
