@@ -48,11 +48,14 @@ export default defineComponent({
     components: { RegimenCard, ViewPort },
     mixins: [SelectMixin],
     data: ()=>({
-        active: {} as Option
+        active: {} as Option | {}
     }),
     watch: {
         clear(val: boolean){
-            if (val) this.clearSelection()
+            if (val) {
+                this.active = {}
+                this.clearSelection()
+            } 
         }
     },
     async activated() {
