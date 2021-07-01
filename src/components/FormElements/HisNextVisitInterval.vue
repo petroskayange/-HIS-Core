@@ -7,6 +7,7 @@
                         <ion-row v-for="(row, rowIndex) in listData" :key="rowIndex"> 
                             <ion-col size="6" v-for="(item, itemIndex) in row" :key="itemIndex"> 
                                 <regimen-card
+                                    :showTitle="config.showRegimenCardTitle"
                                     :label="item.label" 
                                     :value="item.value"
                                     @onclick="onselect(item)"

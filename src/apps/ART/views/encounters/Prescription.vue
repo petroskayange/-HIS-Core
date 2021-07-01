@@ -213,6 +213,9 @@ export default defineComponent({
                             other: { ...this.getDrugEstimates(fdata, interval.value) }
                             })
                         )
+                    },
+                    config: {
+                        showRegimenCardTitle: false
                     }
                 }
             ]
