@@ -22,10 +22,10 @@
                                    <ion-label> {{ active.other.value }} </ion-label>
                                 </ion-item>
                                 <h3> {{ active.other.other.label }} </h3>
-                                <ion-list> 
+                                <ion-list>
                                     <ion-item v-for="(item, index) in active.other.other.value" :key="index"> 
                                        <ion-label> {{ item.label }} </ion-label>
-                                       <ion-label slot="end"> {{ item.value }} </ion-label>
+                                       <ion-chip color="primary" slot="end"> {{ item.value }} </ion-chip>
                                     </ion-item>
                                 </ion-list>  
                             </ion-card-content>
