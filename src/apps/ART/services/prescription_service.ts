@@ -171,18 +171,4 @@ export class PrescriptionService extends RegimenService {
         )
         return ObservationService.saveObs(encounterID, regimenSwitch)
     }
-
-    async createAppointmentObs(reason: string, encounterID=this.encounterID): Promise<Observation> {
-        const appointment = await ObservationService.buildValueCoded(
-            'Appointment type', reason
-        )
-        return ObservationService.saveObs(encounterID, appointment)
-    }
-
-    async createFastTrackAssessmentObs(fastTrackAnswer: string, encounterID=this.encounterID): Promise<Observation> {
-        const fastTrack =  await ObservationService.buildValueCoded(
-           'Assess for fast track', fastTrackAnswer
-        )
-        return ObservationService.saveObs(encounterID, fastTrack)
-    }
 }
