@@ -1,39 +1,27 @@
 
 <template>
-  <component :is="component" :slotData="slotData"></component>
+  <component :is="component"></component>
 </template>
 <script lang="ts">
 import { defineAsyncComponent, defineComponent, ref, computed } from "vue";
-
+import { HIS_APP_COMPONENTS } from "@/utils/Preferences"
 export default defineComponent({
-  props: {
-    collectionName: String,
-  },
-  methods: {
-    doStuff() {
-      this.name("@/componenents/ART/overview.vue");
-    },
-  },
-  created() {
-      this.component = () => import('@/componenents/ART/overview.vue');
+  components: {
+    ...HIS_APP_COMPONENTS
   },
   data() {
     return {
       component: null as any
     }
   },
-  setup() {
-    const isShow = ref(false);
-    const name = computed((name: string) =>
-      isShow.value ? defineAsyncComponent(() => import(name)) : ""
-    );
-
-    const onClick = () => {
-      isShow.value = true;
-    };
-    return {
-      name,
-    };
-  },
+  watch: {
+    '$route': {
+        handler({query}: any) {
+          this.component = query.name
+        },
+        immediate: true,
+        deep: true
+    }
+  }
 });
 </script>

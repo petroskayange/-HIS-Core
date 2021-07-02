@@ -13,6 +13,7 @@ import Example from '../views/Example.vue'
 import FindByARVNumber from '../views/FindByARVNumber.vue'
 import PatientDashboard from '../views/PatientDashboard.vue'
 import Configuration from '@/views/Configuration.vue'
+import Settings from '@/components/ART/Settings.vue'
 import HisApps from '@/apps/his_apps';
 
 const HIS_APP_ROUTES = (() => {
@@ -97,6 +98,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preferences',
     name: 'Preferences',
     component: Configuration
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: Settings
   }
 ]
 

@@ -114,42 +114,42 @@ export const PREFERENCES = {
         'Drug Management': [
           {
             name: "Enter Receipts",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
           },
           {
             name: "Enter Product relocation/Disposal",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
             name: "Enter verified physical stock count",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
             name: "Print Barcode",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
             name: "Audit Trail",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
         ],
         'User Management': [
           {
             name: "Cohort / disaggregated",
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             name: "Survival analysis",
             route: "/",
           },
           {
-            component: "@/components/ART/Settings.vue",
+            component: "site-code",
             name: "TPT new initiations",
             route: "/",
           },
@@ -191,17 +191,17 @@ export const PREFERENCES = {
         'Data Management': [
           {
             name: "Cohort / disaggregated",
-            component: "/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
             name: "Survival analysis",
-            component: "/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
           {
             name: "TPT new initiations",
-            component: "/ART/Settings.vue",
+            component: "site-code",
             route: "/",
           },
         ],

@@ -81,8 +81,7 @@ export default defineComponent({
           },
         });
       } else {
-        // this.$router.addRoute({ path: '/about', component: `@/components${preference.component}` })
-        // this.$router.push('/about');
+        this.$router.push(`/settings?name=${preference.component}`);
       }
     },
     async init() {

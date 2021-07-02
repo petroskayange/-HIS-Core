@@ -4,6 +4,7 @@ import { OTHER_TASKS, PREFERENCES } from "./tasks/other";
 import { AppInterface } from "../interfaces/AppInterface";
 import PatientAlerts from "@/services/patient_alerts";
 import appRoutes from "./routes"
+import {BasePrefernceComponents} from '@/apps/ART/preferences'
 const BASE_URL_PATH = '/assets/images/'
 
 function img(image: string) { return `${BASE_URL_PATH}${image}` }
@@ -45,6 +46,8 @@ const ART: AppInterface = {
         { value: "Prescriptions", selected: false },
         { value: "Vitals", selected: false }
     ],
-    preferences: PREFERENCES 
+    preferences: PREFERENCES,
+    preferenceComponents: BasePrefernceComponents
+
 }
 export default ART 
