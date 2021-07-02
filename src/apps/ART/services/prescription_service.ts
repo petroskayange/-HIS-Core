@@ -4,11 +4,11 @@ import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
 import { EncounterService } from "@/services/encounter_service";
 import { Observation, ObservationService, ObsValue } from "@/services/observation_service";
-import { Service } from "@/services/service";
 import { isEmpty } from "lodash";
 import HisDate from "@/utils/Date"
+import { RegimenService } from "@/services/regimen_service";
 
-export class PrescriptionService extends Service {
+export class PrescriptionService extends RegimenService {
     patientID: number;
     encounterID: number;
     nextVisitInterval: number;
@@ -32,6 +32,10 @@ export class PrescriptionService extends Service {
     setEncounterID(encounterID: number) {
         this.encounterID = encounterID
     }
+
+    getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
+
+    getCustomIngridients() { return RegimenService.getCustomIngridients() }
 
     async load3HpStatus() {
         const orders = await ConceptService.getConceptID('Medication orders')
@@ -58,9 +62,9 @@ export class PrescriptionService extends Service {
         if (!isEmpty(req) && req[0].value_coded === yes) this.fastTrack = true
     }
     
-    async loadRegimenExtras(date=Service.getSessionDate()) {
-        const meds = await Service.getJson(
-            `programs/${Service.getProgramID()}/patients/${this.patientID}/dosages`,
+    async loadRegimenExtras(date=RegimenService.getSessionDate()) {
+        const meds = await RegimenService.getJson(
+            `programs/${RegimenService.getProgramID()}/patients/${this.patientID}/dosages`,
             {date}
         )
         if (meds) this.regimenExtras = Object.values(meds)
@@ -103,7 +107,7 @@ export class PrescriptionService extends Service {
     }
 
     calculateDateFromInterval() {
-        const dateObj = new Date(Service.getSessionDate())
+        const dateObj = new Date(RegimenService.getSessionDate())
         dateObj.setDate(dateObj.getDate() + this.nextVisitInterval)
         return HisDate.toStandardHisFormat(dateObj)
     }
@@ -132,7 +136,7 @@ export class PrescriptionService extends Service {
         return {
             'drug_inventory_id': regimen.drug_id,
             'equivalent_daily_dose': this.calculateEquivalentDosage(regimen.am, regimen.pm),
-            'start_date': Service.getSessionDate(),
+            'start_date': RegimenService.getSessionDate(),
             'auto_expire_date': this.calculateDateFromInterval(), 
             'units': regimen.units,
             'instructions': this.getInstructions(regimen.drug_name, regimen.am, regimen.pm, regimen.units),

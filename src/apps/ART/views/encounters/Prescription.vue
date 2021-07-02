@@ -5,7 +5,6 @@
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
-import { RegimenService } from "@/services/regimen_service"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations"
@@ -195,7 +194,7 @@ export default defineComponent({
                     condition: (form: any) => this.hasArtRegimen(form),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
-                        const regimenCategories = await RegimenService.getRegimens(this.patient.patient_id)
+                        const regimenCategories = await this.prescription.getPatientRegimens()
                         const options = []
                         for(const index in regimenCategories) {
                             const regimens = regimenCategories[index]
@@ -212,7 +211,7 @@ export default defineComponent({
                     condition: (form: any) => this.hasCustomRegimen(form),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
-                        const drugs = await RegimenService.getCustomIngridients()
+                        const drugs = await this.prescription.getCustomIngridients()
                         return drugs.map((drug: any ) => ({
                             label: drug.name,
                             value: drug.drug_id,
