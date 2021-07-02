@@ -132,16 +132,16 @@ export class PrescriptionService extends RegimenService {
         return 'Daily (QOD)'
     }
 
-    mapRegimenToDrug(regimen: any): DrugInterface {
+    toOrderObj(id: number, name: string, units: string, am=0, pm=0): DrugInterface {
         return {
-            'drug_inventory_id': regimen.drug_id,
-            'equivalent_daily_dose': this.calculateEquivalentDosage(regimen.am, regimen.pm),
+            'drug_inventory_id': id,
+            'equivalent_daily_dose': this.calculateEquivalentDosage(am, pm),
             'start_date': RegimenService.getSessionDate(),
             'auto_expire_date': this.calculateDateFromInterval(), 
-            'units': regimen.units,
-            'instructions': this.getInstructions(regimen.drug_name, regimen.am, regimen.pm, regimen.units),
-            'dose': this.calculateDosage(regimen.am, regimen.pm),
-            'frequency': this.getDrugFrequency(regimen.drug_name)
+            'units': units,
+            'instructions': this.getInstructions(name, am, pm, units),
+            'dose': this.calculateDosage(am, pm),
+            'frequency': this.getDrugFrequency(name)
         }
     }
 

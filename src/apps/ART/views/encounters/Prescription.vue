@@ -78,17 +78,6 @@ export default defineComponent({
             }
             toastWarning('Unable to create drug orders!')
         },
-        resolveCustomDrugs(drugValues: any) {
-            return drugValues.map(({other}: any) => {
-                return this.prescription.mapRegimenToDrug({
-                    'drug_id': other.drug_id,
-                    'drug_name': other.name,
-                    'units': other.units,
-                    'am': 0,  //TODO: Get these from custom values
-                    'pm': 0 //TODO: Get these from custom values
-                })
-            })
-        },
         getDosageTableOptions(formData: any) {
             let regimens: Array<RegimenInterface> = this.prescription.getRegimenExtras()
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
@@ -144,9 +133,24 @@ export default defineComponent({
                 }
             }
         },
+        resolveCustomDrugs(drugValues: any) {
+            return drugValues.map(({other}: any) => {
+                return this.prescription.toOrderObj(
+                    other.drug_id, 
+                    other.name, 
+                    other.units
+                )
+            })
+        },
         resolveArvRegimenDrugs(regimens: Array<RegimenInterface>) {
             return regimens.map((regimen: RegimenInterface) => {
-                return this.prescription.mapRegimenToDrug(regimen)
+                return this.prescription.toOrderObj(
+                    regimen.drug_id, 
+                    regimen.drug_name,
+                    regimen.units, 
+                    regimen.am, 
+                    regimen.pm
+                )
             })
         },
         resolveData(form: Record<string, Option> | Record<string, null>) {
