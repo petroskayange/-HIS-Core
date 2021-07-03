@@ -67,6 +67,13 @@ export default defineComponent({
             if(clear) this.onClear(); this.$emit('onClear');
         },
         immediate: true
+    },
+    listData: {
+        handler() {
+            this.$emit('onValue', this.listData)
+        },
+        deep: true,
+        immediate: true
     }
   },
   async activated() {
@@ -99,8 +106,6 @@ export default defineComponent({
             }
         })
         modal.present()
-        await modal.onDidDismiss()
-        this.$emit('onValue', this.listData)
     }
   }
 })
