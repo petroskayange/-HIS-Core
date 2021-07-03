@@ -63,11 +63,11 @@ export default defineComponent({
             }
             
             if (this.hasArtRegimen(this.form)) {
-               drugs = this.resolveArvRegimenDrugs([...drugs, ...formData.arv_regimens.other.regimens])
+               drugs = this.resolveDrugs([...drugs, ...formData.arv_regimens.other.regimens])
             }
 
             if (this.hasCustomRegimen(this.form)) {
-                drugs = this.resolveCustomDrugs(formData.custom_regimen)
+                drugs = this.resolveDrugs(formData.custom_dosage.map((drug: Option) =>  drug.other))
             }
 
             const drugOrder = await this.prescription.createDrugOrder(drugs) 
@@ -137,23 +137,15 @@ export default defineComponent({
                 }
             }
         },
-        resolveCustomDrugs(drugValues: any) {
-            return drugValues.map(({other}: any) => {
-                return this.prescription.toOrderObj(
-                    other.drug_id, 
-                    other.name, 
-                    other.units
-                )
-            })
-        },
-        resolveArvRegimenDrugs(regimens: Array<RegimenInterface>) {
-            return regimens.map((regimen: RegimenInterface) => {
+        resolveDrugs(regimens: Array<RegimenInterface>) {
+            return regimens.map((regimen: any) => {
                 return this.prescription.toOrderObj(
                     regimen.drug_id, 
                     regimen.drug_name,
                     regimen.units, 
                     regimen.am, 
-                    regimen.pm
+                    regimen.pm,
+                    regimen.frequency || ''
                 )
             })
         },
@@ -232,7 +224,7 @@ export default defineComponent({
                 },
                 {
                     id: 'custom_dosage',
-                    helpText: 'Dosage settings',
+                    helpText: 'Custom dose',
                     type: FieldType.TT_DOSAGE_INPUT,
                     condition: (form: any) => this.hasCustomRegimen(form),
                     validation: (val: Option) => Validation.required(val),
