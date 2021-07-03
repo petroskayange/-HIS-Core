@@ -86,6 +86,10 @@ export default defineComponent({
                 regimens = [...regimens, ...formData.arv_regimens.other.regimens]
             }
 
+            if (this.hasCustomRegimen(formData)) {
+                regimens = formData.custom_dosage.map((regimen: Option) => regimen.other)
+            }
+
             const rows = regimens.map((regimen: RegimenInterface) => {
                 return [
                     regimen.alternative_drug_name || regimen.drug_name,
@@ -237,10 +241,13 @@ export default defineComponent({
                             label: regimen.label,
                             value: regimen.value,
                             other: {
-                                am: 0,
-                                noon: 0,
-                                pm: 0,
-                                frequency: 'Daily (QOD)'
+                                'drug_id': regimen.other.drug_id,
+                                'drug_name': regimen.label,
+                                'units': regimen.other.units,
+                                'am': 0,
+                                'noon': 0,
+                                'pm': 0,
+                                'frequency': 'Daily (QOD)'
                             }
                         }))
                     }
