@@ -99,6 +99,8 @@ export default defineComponent({
             }
         })
         modal.present()
+        await modal.onDidDismiss()
+        this.$emit('onValue', this.listData)
     }
   }
 })
