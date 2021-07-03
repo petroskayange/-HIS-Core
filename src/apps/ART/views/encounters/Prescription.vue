@@ -118,6 +118,10 @@ export default defineComponent({
                 regimens = formData.arv_regimens.other.regimens
             }
 
+            if (this.hasCustomRegimen(formData)) {
+                regimens = formData.custom_dosage.map((drug: Option) => drug.other)
+            }
+
             const drugPacks = regimens.map((regimen: RegimenInterface) => {
                 const packSize = this.prescription.getDrugPackSize(regimen)
                 const pillsPerDay = this.prescription.calculatePillsPerDay(regimen.am, regimen.noon, regimen.pm)
@@ -235,6 +239,7 @@ export default defineComponent({
                             other: {
                                 'drug_id': regimen.other.drug_id,
                                 'drug_name': regimen.label,
+                                'barcodes': regimen.other.barcodes,
                                 'units': regimen.other.units,
                                 'am': 0,
                                 'noon': 0,
