@@ -23,6 +23,9 @@ export default defineComponent({
         title: {
             type: String
         },
+        preset: {
+            type: String
+        },
         onKeyPress: {
             type: Function,
             required: true,
@@ -32,6 +35,15 @@ export default defineComponent({
         value: '0',
         keypad: DEFAULT_KEYPAD
     }),
+    watch: {
+        preset: { 
+            handler(value: string | number) {
+                if (!value) return
+                this.value = value.toString()
+            },
+            immediate: true
+        }
+    },
     methods: {
         async keypress(key: any) {
             if (key.match(/done/i)) {
