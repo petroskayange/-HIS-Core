@@ -227,6 +227,14 @@ export default defineComponent({
                     }
                 },
                 {
+                    id: 'custom_dosage',
+                    helpText: 'Dosage settings',
+                    type: FieldType.TT_DOSAGE_INPUT,
+                    condition: (form: any) => this.hasCustomRegimen(form),
+                    validation: (val: Option) => Validation.required(val),
+                    options: (fdata: any) => fdata.custom_regimen
+                },
+                {
                     id: 'selected_meds',
                     helpText: 'Selected medication',
                     type: FieldType.TT_TABLE_VIEWER,

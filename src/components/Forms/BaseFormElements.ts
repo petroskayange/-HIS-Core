@@ -6,6 +6,7 @@ import MonthlyDays from "@/components/FormElements/HisMonthlyDays.vue"
 import ArtRegimenSelection from "@/components/FormElements/HisArtRegimenSelection.vue"
 import NextVisitInterval from "@/components/FormElements/HisNextVisitInterval.vue"
 import TableViewer from "@/components/FormElements/HisTableViewer.vue"
+import DosageInput from "@/components/FormElements/HisDosageInput.vue"
 
 // Reference names for BaseFormComponents
 export enum FieldType {
@@ -17,7 +18,8 @@ export enum FieldType {
     TT_MULTIPLE_SELECT="multiple-select",
     TT_ART_REGIMEN_SELECTION="art-regimen-selection",
     TT_NEXT_VISIT_INTERVAL_SELECTION="next-visit-interval",
-    TT_TABLE_VIEWER="table-viewer"
+    TT_TABLE_VIEWER="table-viewer",
+    TT_DOSAGE_INPUT="dosage-input"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -28,5 +30,6 @@ export const BaseFormComponents = {
     MonthlyDays,
     ArtRegimenSelection,
     NextVisitInterval,
-    TableViewer
+    TableViewer,
+    DosageInput
 }
