@@ -90,14 +90,14 @@ export default defineComponent({
                 regimens = formData.custom_dosage.map((regimen: Option) => regimen.other)
             }
 
-            const rows = regimens.map((regimen: RegimenInterface) => {
+            const rows = regimens.map((regimen: any) => {
                 return [
                     regimen.alternative_drug_name || regimen.drug_name,
                     regimen.units,
                     regimen.am,
                     regimen.noon,
                     regimen.pm,
-                    this.prescription.getDrugFrequency(regimen.drug_name)
+                    regimen.frequency || this.prescription.getDrugFrequency(regimen.drug_name)
                 ]              
             })
             return [
