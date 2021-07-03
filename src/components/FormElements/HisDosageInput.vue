@@ -71,6 +71,7 @@ export default defineComponent({
             backdropDismiss: false,
             cssClass: 'keypad-modal',
             componentProps: {
+                title: item.label,
                 onKeyPress(val: string){
                     item.other[prop] = val
                 }

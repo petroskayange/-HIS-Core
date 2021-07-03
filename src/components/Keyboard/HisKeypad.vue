@@ -1,4 +1,9 @@
 <template>
+    <ion-header> 
+        <ion-toolbar> 
+            <ion-title> {{ title || 'keypad'}} </ion-title>
+        </ion-toolbar>
+    </ion-header>
     <ion-content> 
         <div class="keypad">
             <ion-input :value="value" :disabled="true" class='keypad-input'/> 
@@ -15,6 +20,9 @@ import { modalController } from '@ionic/core'
 export default defineComponent({
     components: { BaseKeyboard },
     props: {
+        title: {
+            type: String
+        },
         onKeyPress: {
             type: Function,
             required: true,
