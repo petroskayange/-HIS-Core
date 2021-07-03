@@ -27,9 +27,9 @@
                     <td> <ion-input :value="data.other.noon" @click="launchKeyPad(data, 'noon')" class='dosage-input'/> </td>
                     <td> <ion-input :value="data.other.pm" @click="launchKeyPad(data, 'pm')" class='dosage-input'/> </td>
                     <td> 
-                        <select class="custom-med-frequency"> 
-                            <option> Daily </option>
-                            <option> Weekly </option>
+                        <select v-model="data.other.frequency" class="custom-med-frequency"> 
+                            <option value='Weekly (QW)'> Weekly </option>
+                            <option value='Daily (QOD)'> Daily  </option>
                         </select> 
                     </td>
                 </tr>
@@ -81,6 +81,7 @@ export default defineComponent({
             item.other.am = 0
             item.other.noon = 0
             item.other.pm = 0
+            item.other.frequency = 'Daily (QOD)'
             return true
         })
     },

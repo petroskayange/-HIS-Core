@@ -239,7 +239,8 @@ export default defineComponent({
                             other: {
                                 am: 0,
                                 noon: 0,
-                                pm: 0
+                                pm: 0,
+                                frequency: 'Daily (QOD)'
                             }
                         }))
                     }
