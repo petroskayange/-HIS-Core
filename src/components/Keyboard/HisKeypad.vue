@@ -34,14 +34,14 @@ export default defineComponent({
     }),
     methods: {
         async keypress(key: any) {
-            
             if (key.match(/done/i)) {
                 await modalController.dismiss()
             } else {
-                if (key && this.value === '0') this.value = ''
+                if (key.includes('.') && this.value.includes('.')) return
+                
+                if (!key.includes('.') && this.value === '0') this.value = ''
 
                 this.value = handleVirtualInput(key, this.value)
-                
                 
                 if (!this.value) this.value = '0'
                 
