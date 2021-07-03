@@ -53,17 +53,36 @@ export default defineComponent({
     options: {
         type: Function,
         required: true
+    },
+    clear: {
+        type: Boolean
     }
   },
   data: () => ({
     listData: [] as any
   }),
+  watch: {
+    clear: {
+        handler(clear: boolean) {
+            if(clear) this.onClear(); this.$emit('onClear');
+        },
+        immediate: true
+    }
+  },
   async activated() {
     this.listData = await this.options(this.fdata)
   },
   methods: {
     img(name: string) {
         return `assets/images/prescription/${name}.png`
+    },
+    onClear() {
+        this.listData = this.listData.filter((item: Option) => {
+            item.other.am = 0
+            item.other.noon = 0
+            item.other.pm = 0
+            return true
+        })
     },
     async launchKeyPad(item: Option, prop: string) {
         const modal = await modalController.create({
