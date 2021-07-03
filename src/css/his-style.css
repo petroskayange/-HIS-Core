@@ -30,6 +30,19 @@
     width: 100%;
 }
 
+.his-keyboard {
+    width: 90%;
+}
+
+.his-keyboard-margin {
+    padding: 2px;
+}
+
+.his-keyboard-btn {
+    font-weight: bold;
+    width: 90%;
+}
+
 .his-table > tr > td, th {
     text-align: left;
     padding: 1em;
@@ -53,6 +66,10 @@ body {
  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
 }
 
+.keypad-modal .modal-wrapper {
+    width: 340px;
+    height: 440px;
+}
 .custom-modal .modal-wrapper {
     width: 90%;
     height: 80%;
@@ -62,3 +79,10 @@ body {
     overflow-x: auto;
     height: 90%;
 }
+
+@media only screen and (min-width: 1024px) {
+    .his-keyboard-btn {
+      height: 57px;
+      font-size: 1.3rem;
+    }
+  }
