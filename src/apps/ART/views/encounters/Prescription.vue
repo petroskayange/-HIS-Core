@@ -232,7 +232,17 @@ export default defineComponent({
                     type: FieldType.TT_DOSAGE_INPUT,
                     condition: (form: any) => this.hasCustomRegimen(form),
                     validation: (val: Option) => Validation.required(val),
-                    options: (fdata: any) => fdata.custom_regimen
+                    options: (fdata: any) => {
+                        return fdata.custom_regimen.map((regimen: Option) => ({
+                            label: regimen.label,
+                            value: regimen.value,
+                            other: {
+                                am: 0,
+                                noon: 0,
+                                pm: 0
+                            }
+                        }))
+                    }
                 },
                 {
                     id: 'selected_meds',

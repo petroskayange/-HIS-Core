@@ -23,9 +23,9 @@
                 </tr>
                 <tr v-for="(data, index) in listData" :key="index">
                     <td> {{ data.label }} </td>
-                    <td> <ion-input @click="launchKeyPad" class='dosage-input'/> </td>
-                    <td> <ion-input @click="launchKeyPad" class='dosage-input'/> </td>
-                    <td> <ion-input @click="launchKeyPad" class='dosage-input'/> </td>
+                    <td> <ion-input :value="data.other.am" @click="launchKeyPad(data, 'am')" class='dosage-input'/> </td>
+                    <td> <ion-input :value="data.other.noon" @click="launchKeyPad(data, 'noon')" class='dosage-input'/> </td>
+                    <td> <ion-input :value="data.other.pm" @click="launchKeyPad(data, 'pm')" class='dosage-input'/> </td>
                     <td> 
                         <select class="custom-med-frequency"> 
                             <option> Daily </option>
@@ -41,6 +41,7 @@
 import { defineComponent, PropType } from 'vue'
 import ViewPort from '../DataViews/ViewPort.vue'
 import { modalController } from '@ionic/vue'
+import { Option } from '@/components/Forms/FieldInterface'
 import KeyPad from '../Keyboard/HisKeypad.vue'
 export default defineComponent({
   components: { ViewPort },
@@ -64,11 +65,16 @@ export default defineComponent({
     img(name: string) {
         return `assets/images/prescription/${name}.png`
     },
-    async launchKeyPad() {
+    async launchKeyPad(item: Option, prop: string) {
         const modal = await modalController.create({
             component: KeyPad,
             backdropDismiss: false,
-            cssClass: 'keypad-modal'
+            cssClass: 'keypad-modal',
+            componentProps: {
+                onKeyPress(val: string){
+                    item.other[prop] = val
+                }
+            }
         })
         modal.present()
     }

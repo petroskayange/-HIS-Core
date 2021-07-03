@@ -1,8 +1,8 @@
 <template>
     <ion-content> 
         <div class="keypad">
-            <ion-input :disabled="true" class='keypad-input'/> 
-            <base-keyboard btnSize="96px" :layout="keypad" @keypress="onkey"/> 
+            <ion-input :value="value" :disabled="true" class='keypad-input'/> 
+            <base-keyboard btnSize="96px" :layout="keypad" :onKeyPress="keypress"/> 
         </div>
     </ion-content>
 </template>
@@ -10,7 +10,8 @@
 import { defineComponent } from 'vue'
 import BaseKeyboard from '@/components/Keyboard/BaseKeyboard.vue'
 import { DEFAULT_KEYPAD } from '@/components/Keyboard/KbLayouts'
-
+import handleVirtualInput from '@/components/Keyboard/KbHandler'
+import { modalController } from '@ionic/core'
 export default defineComponent({
     components: { BaseKeyboard },
     props: {
@@ -20,12 +21,18 @@ export default defineComponent({
         },
     },
     data: () => ({
+        value: '',
         keypad: DEFAULT_KEYPAD
     }),
     methods: {
-        keypress(key: any) {
-            this.onKeyPress(key)
-        },
+        async keypress(key: any) {
+            if (key.match(/done/i)) {
+                await modalController.dismiss()
+            } else {
+                this.value = handleVirtualInput(key, this.value)
+                this.onKeyPress(parseFloat(this.value))
+            }
+        }
     }
 })
 </script>
