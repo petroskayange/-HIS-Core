@@ -21,16 +21,23 @@ export default defineComponent({
         },
     },
     data: () => ({
-        value: '',
+        value: '0',
         keypad: DEFAULT_KEYPAD
     }),
     methods: {
         async keypress(key: any) {
+            
             if (key.match(/done/i)) {
                 await modalController.dismiss()
             } else {
+                if (key && this.value === '0') this.value = ''
+
                 this.value = handleVirtualInput(key, this.value)
-                this.onKeyPress(parseFloat(this.value))
+                
+                
+                if (!this.value) this.value = '0'
+                
+                this.onKeyPress(parseInt(this.value))
             }
         }
     }
