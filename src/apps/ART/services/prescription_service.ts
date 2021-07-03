@@ -132,7 +132,7 @@ export class PrescriptionService extends RegimenService {
         return 'Daily (QOD)'
     }
 
-    toOrderObj(id: number, name: string, units: string, am=0, pm=0): DrugInterface {
+    toOrderObj(id: number, name: string, units: string, am=0, pm=0, frequency=''): DrugInterface {
         return {
             'drug_inventory_id': id,
             'equivalent_daily_dose': this.calculateEquivalentDosage(am, pm),
@@ -141,7 +141,7 @@ export class PrescriptionService extends RegimenService {
             'units': units,
             'instructions': this.getInstructions(name, am, pm, units),
             'dose': this.calculateDosage(am, pm),
-            'frequency': this.getDrugFrequency(name)
+            'frequency': frequency || this.getDrugFrequency(name)
         }
     }
 
