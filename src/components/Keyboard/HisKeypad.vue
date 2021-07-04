@@ -1,7 +1,7 @@
 <template>
     <ion-header> 
         <ion-toolbar> 
-            <ion-title> {{ title || 'keypad'}} </ion-title>
+            <center> {{ title || 'keypad'}} </center>
         </ion-toolbar>
     </ion-header>
     <ion-content> 

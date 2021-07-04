@@ -170,7 +170,7 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     requireNext: false,
                     options: () => [
-                        { label: 'ARV(s)', value: 'arv'},
+                        { label: 'ARV Regimen', value: 'arv'},
                         { label: 'Custom Regimen', value: 'custom'}
                     ]
                 },
@@ -274,5 +274,3 @@ export default defineComponent({
     }
 })
 </script>
-
-
