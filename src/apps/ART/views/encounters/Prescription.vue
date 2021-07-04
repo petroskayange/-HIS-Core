@@ -6,36 +6,25 @@ import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { RegimenInterface } from "@/interfaces/Regimen"
-import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations"
 import { PrescriptionService } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DrugInterface } from '@/interfaces/Drug'
 import { isArray, isEmpty } from "lodash"
 import HisDate from "@/utils/Date"
+import EncounterMixinVue from './EncounterMixin.vue'
 export default defineComponent({
-    components: { HisStandardForm },
+    mixins: [EncounterMixinVue],
     data: () => ({
         prescription: {} as any,
-        patient: {} as any,
-        fields: [] as Array<Field>,
-        form: {} as Record<string, Option> | Record<string, null>
     }),
-    computed: {
-        cancelDestination(): string {
-            return this.getCancelDestination()
-        } 
-    },
     watch: {
-        '$route': {
-            async handler(route: any){
-                if (!route || !route.params.p) return
+        patient: {
+            async handler(patient: any){
+                if (!patient) return
 
-                const { patient } = JSON.parse(route.params.p.toString())
-                
-                this.patient = patient
                 this.fields = this.getFields()
-                this.prescription = new PrescriptionService(this.patient.patient_id)
+                this.prescription = new PrescriptionService(patient.patient_id)
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.load3HpStatus()
             },
@@ -44,12 +33,6 @@ export default defineComponent({
         }
     },
     methods: {
-        getCancelDestination() {
-            return `/patient/dashboard/${this.patient.patient_id}`
-        },
-        onFinish(form: Record<string, Option> | Record<string, null>) {
-            this.form = form
-        },
         async onSubmit() {
             const formData = this.resolveData(this.form)
             let drugs: Array<DrugInterface> = this.prescription.getRegimenExtras()
@@ -74,7 +57,7 @@ export default defineComponent({
             
             if(drugOrder) {
                toastSuccess('Drug order has been created')
-               return this.$router.push({path: this.getCancelDestination()}) 
+               return this.gotoPatientDashboard()
             }
             toastWarning('Unable to create drug orders!')
         },
