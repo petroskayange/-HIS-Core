@@ -1,5 +1,10 @@
-<template> 
+<template>
   <ion-page>
+    <ion-header> 
+        <ion-toolbar>
+            <label class='his-title'> {{title}} </label>
+        </ion-toolbar>
+    </ion-header>
     <ion-content>
         <base-form
             :fields="formFields"
@@ -73,6 +78,11 @@ export default defineComponent({
             this.next(),
             this.finish()
         ]
+    },
+    computed: {
+        title(): string {
+            return this.formFields[this.index].helpText
+        }
     },
     watch: {
         activeField(field: string){

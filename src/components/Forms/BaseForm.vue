@@ -1,20 +1,17 @@
 <template>
-  <div>
-    <h1> {{activeField.helpText}} </h1>
-    <keep-alive>
-      <component
-        :key="activeField.id"
-        v-bind:is="activeField.type"
-        :config="activeField.config"
-        :options="activeField.options"
-        :preset="activeField.preset"
-        :clear="isClear"
-        :fdata="formData"
-        @onClear="isClear=false"
-        @onValue="onValue"
-      />
-    </keep-alive>
-  </div>
+  <keep-alive>
+    <component
+      :key="activeField.id"
+      v-bind:is="activeField.type"
+      :config="activeField.config"
+      :options="activeField.options"
+      :preset="activeField.preset"
+      :clear="isClear"
+      :fdata="formData"
+      @onClear="isClear=false"
+      @onValue="onValue"
+    />
+  </keep-alive>
 </template>
 <script lang='ts'>
 import { defineComponent, PropType } from "vue";
@@ -167,8 +164,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-  h1 {
-    font-weight:bold
-  }
-</style>
