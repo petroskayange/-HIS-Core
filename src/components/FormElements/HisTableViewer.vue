@@ -1,7 +1,7 @@
 <template>
     <view-port> 
         <div class="view-port-content"> 
-            <his-table :columns="columns" :rows="rows"/>
+            <his-table :columns="columns" :rows="rows" :colorCodes="colorCodes"/>
         </div>
     </view-port>
 </template>
@@ -15,6 +15,7 @@ export default defineComponent({
     data: ()=>({
         columns: [] as Array<string>,
         rows: [] as Array<string>,
+        colorCodes: [] as Array<string>
     }),
     props: {
         fdata: {
@@ -33,6 +34,7 @@ export default defineComponent({
         const { other } = data[0]
         this.columns = other.columns
         this.rows = other.rows
+        this.colorCodes = other.colorCodes
     }
 })
 </script>
