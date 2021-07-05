@@ -26,7 +26,42 @@ export default defineComponent({
           type: FieldType.TT_TEXT,
           validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
-          },
+          }
+        },
+        {
+          id: "custom_btn",
+          helpText: "Show custom button",
+          type: FieldType.TT_TEXT,
+          config: {
+            footerBtns: [
+              {
+                name: 'Void',
+                color: 'danger',
+                size: 'large',
+                visible: false,
+                slot: '',
+                visibleOnStateChange: (state: any) => {
+                  return state.index === 1
+                },
+                onClick: () => {
+                  alert('Record has been voided!')
+                }
+              },
+              {
+                name: 'Custom Something',
+                color: 'primary',
+                size: 'large',
+                visible: false,
+                slot: 'end',
+                visibleOnStateChange: (state: any) => {
+                  return state.index === 1
+                },
+                onClick: () => {
+                  alert('YaY! Custom Button Clicked')
+                }
+              },
+            ]
+          }
         },
         {
           id: "year",

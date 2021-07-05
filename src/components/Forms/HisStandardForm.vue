@@ -62,6 +62,7 @@ export default defineComponent({
         this.totalFields = this.formFields.length
         this.footerBtns = [
             this.cancel(),
+            ...this.getCustomFieldButtons(this.formFields),
             this.clear(),
             this.back(),
             this.next(),
@@ -86,35 +87,6 @@ export default defineComponent({
         },
         onFinish(formData: Record<string, any>) {
             this.$emit('onFinish', formData)
-        },
-        getDefaultSummaryField(): Field {
-            return {
-                id: '__form_summary__',
-                helpText: 'Summary',
-                type: FieldType.TT_SUMMARY,
-                options: (formData: Record<string, any>) => {
-                    const data: Array<Option> = [];
-                    const resolveLabel = (ref: string) => {
-                        return find(this.fields, {id: ref})?.helpText || 'Field'
-                    }
-                    for(const ref in formData) {
-                        const fdata = formData[ref]
-
-                        if (!fdata) continue
-
-                        if (Array.isArray(fdata)) {
-                            fdata.forEach(item => {
-                                data.push({  label: resolveLabel(ref), value: item.label })
-                            })
-                            continue
-                        }
-
-                        data.push({ label: resolveLabel(ref), value: fdata.label})
-                    }
-                    console.log(data)
-                    return data
-                }
-            }
         },
         cancel(): NavBtnInterface {
             return {
@@ -187,7 +159,44 @@ export default defineComponent({
                     this.isNext = true
                 }
             }
-        }
+        },
+        getCustomFieldButtons(fields: Array<Field>) {
+            let buttons: Array<NavBtnInterface> = []
+            fields.forEach((field: Field) => {
+                if (field.config && field.config.footerBtns) {
+                    buttons = [...buttons, ...field.config.footerBtns]
+                }
+            })
+            return buttons
+        },
+        getDefaultSummaryField(): Field {
+            return {
+                id: '__form_summary__',
+                helpText: 'Summary',
+                type: FieldType.TT_SUMMARY,
+                options: (formData: Record<string, any>) => {
+                    const data: Array<Option> = [];
+                    const resolveLabel = (ref: string) => {
+                        return find(this.fields, {id: ref})?.helpText || 'Field'
+                    }
+                    for(const ref in formData) {
+                        const fdata = formData[ref]
+
+                        if (!fdata) continue
+
+                        if (Array.isArray(fdata)) {
+                            fdata.forEach(item => {
+                                data.push({  label: resolveLabel(ref), value: item.label })
+                            })
+                            continue
+                        }
+
+                        data.push({ label: resolveLabel(ref), value: fdata.label})
+                    }
+                    return data
+                }
+            }
+        },
     }
 })
 </script>
