@@ -2,7 +2,7 @@
   <ion-page>
     <ion-header> 
         <ion-toolbar>
-            <label class='his-title'> {{title}} </label>
+            <label class='his-title'> {{title}}: </label>
         </ion-toolbar>
     </ion-header>
     <ion-content>
