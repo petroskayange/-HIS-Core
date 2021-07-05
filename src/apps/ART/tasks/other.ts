@@ -186,7 +186,19 @@ export const PREFERENCES = {
           {
             name: "Activate 3HP auto select",
             value: "activate_3hp_auto_select"
-          }
+          },
+          {
+            component: "clinic-days",
+            name: "Set Clinic Days",
+          },
+          {
+            component: "htn-age",
+            name: "Set HTN Age",
+          },
+          {
+            component: "appointment-limit",
+            name: "Set Appointment Limit",
+          },
         ],
         'Data Management': [
           {
