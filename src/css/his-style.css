@@ -13,8 +13,8 @@
 }
 
 .active-card-color {
-    border-color: rgb(83,155,253) !important;
-    background: rgb(249,252,255) !important;
+    border-color: rgb(53, 133, 247) !important;
+    background: rgb(121, 186, 252) !important;
     box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
     -webkit-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
     -moz-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
