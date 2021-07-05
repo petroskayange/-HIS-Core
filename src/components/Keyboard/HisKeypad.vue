@@ -1,12 +1,10 @@
 <template>
-    <ion-header> 
-        <ion-toolbar> 
-            <center> {{ title || 'keypad'}} </center>
-        </ion-toolbar>
-    </ion-header>
     <ion-content> 
         <div class="keypad">
             <ion-input :value="value" :disabled="true" class='keypad-input'/> 
+            <center>
+                <ion-chip> {{ title || 'keypad'}} </ion-chip>
+            </center>
             <base-keyboard btnSize="96px" :layout="keypad" :onKeyPress="keypress"/> 
         </div>
     </ion-content>
