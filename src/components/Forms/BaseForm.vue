@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1> {{activeField.helpText}} </h1>
+    <label class='help-text'> {{activeField.helpText}}: </label>
     <keep-alive>
       <component
         :key="activeField.id"
@@ -159,7 +159,7 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-  h1 {
-    font-weight:bold
+  .help-text {
+    font-size: 2em;
   }
 </style>
