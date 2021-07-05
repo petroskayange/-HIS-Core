@@ -64,6 +64,17 @@ export default defineComponent({
           }
         },
         {
+          id: 'hide_default_btns',
+          helpText: 'Default buttons have been hidden',
+          type: FieldType.TT_TEXT,
+          config: {
+            hiddenFooterBtns: [
+              'Clear',
+              'Cancel'
+            ]
+          }
+        },
+        {
           id: "year",
           helpText: "Year of birth",
           type: FieldType.TT_NUMBER

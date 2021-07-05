@@ -94,6 +94,9 @@ export default defineComponent({
                 size: 'large',
                 color:'danger',
                 visible: true,
+                visibleOnStateChange: () => {
+                    return !this.isFieldConfigureBtnHidden('Cancel')
+                },
                 onClick: async () => {
                     const confirmation = await alertConfirmation('Are you sure you want to cancel?') 
                     
@@ -108,6 +111,9 @@ export default defineComponent({
                 slot: 'end',
                 color:'warning',
                 visible: true,
+                visibleOnStateChange: () => {
+                    return !this.isFieldConfigureBtnHidden('Clear')
+                },
                 onClick: async () => {
                     const confirmation = await alertConfirmation('Are you sure you want to clear field data?')
         
@@ -122,8 +128,10 @@ export default defineComponent({
                 slot: 'end',
                 color: 'primary',
                 visible: false,
-                visibleOnStateChange: (state: Record<string, any>) => {
-                    return state.index > 0
+                visibleOnStateChange: () => {
+                    if (!this.isFieldConfigureBtnHidden('Back')) {
+                        return this.index > 0
+                    }
                 },
                 onClick: () => {
                     this.isPrev = true
@@ -138,7 +146,10 @@ export default defineComponent({
                 color: 'primary',
                 visible: this.index +1 < this.totalFields,
                 visibleOnStateChange: (state: Record<string, any>) => {
-                    return state.index +1 < state.totalFields && state.onNextRequired
+                    if (!this.isFieldConfigureBtnHidden('Next')) {
+                        return state.index +1 < state.totalFields && state.onNextRequired
+                    }
+                    return false
                 },
                 onClick: async () => {
                     this.isNext = true
@@ -153,12 +164,19 @@ export default defineComponent({
                 color: 'success',
                 visible: false,
                 visibleOnStateChange: (state: Record<string, any>) => {
-                    return state.index+1 >= state.totalFields
+                    if (!this.isFieldConfigureBtnHidden('Finish')) {
+                        return state.index+1 >= state.totalFields
+                    }
                 },
                 onClick: async () => {
                     this.isNext = true
                 }
             }
+        },
+        isFieldConfigureBtnHidden(btnName: string) {
+            const field: Field = this.formFields[this.index]
+            const hiddenBtns = field.config?.hiddenFooterBtns
+            return hiddenBtns ? hiddenBtns.includes(btnName): false 
         },
         getCustomFieldButtons(fields: Array<Field>) {
             let buttons: Array<NavBtnInterface> = []
@@ -174,6 +192,11 @@ export default defineComponent({
                 id: '__form_summary__',
                 helpText: 'Summary',
                 type: FieldType.TT_SUMMARY,
+                config: {
+                    hiddenFooterBtns: [
+                        'Clear'
+                    ]
+                },
                 options: (formData: Record<string, any>) => {
                     const data: Array<Option> = [];
                     const resolveLabel = (ref: string) => {
