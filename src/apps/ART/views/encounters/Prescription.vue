@@ -63,16 +63,28 @@ export default defineComponent({
         },
         getDosageTableOptions(formData: any) {
             let regimens: Array<RegimenInterface> = this.prescription.getRegimenExtras()
-            const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
-
-            if (this.hasArtRegimen(formData)) {
-                regimens = [...regimens, ...formData.arv_regimens.other.regimens]
-            }
+            let colorCodes: Array<string> = []
 
             if (this.hasCustomRegimen(formData)) {
                 regimens = formData.custom_dosage.map((regimen: Option) => regimen.other)
             }
+            
+            if (this.hasArtRegimen(formData)) {
+                regimens = [...regimens, ...formData.arv_regimens.other.regimens]
+                colorCodes = regimens.map((item: any) => {
+                    const category = item.regimen_category
+                    switch(category) {
+                        case 'A':
+                            return 'adult-regimen-formulation'
+                        case 'P':
+                            return 'pedaid-regimen-formulation'
+                        default:
+                            return ''
+                    }
+                })
+            }
 
+            const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
             const rows = regimens.map((regimen: any) => {
                 return [
                     regimen.alternative_drug_name || regimen.drug_name,
@@ -87,7 +99,7 @@ export default defineComponent({
                 { 
                     label: 'Selected Medication', 
                     value:'Table', 
-                    other: { columns, rows }
+                    other: { columns, rows, colorCodes }
                 }      
             ]
         },
