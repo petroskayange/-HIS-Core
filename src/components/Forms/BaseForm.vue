@@ -26,6 +26,9 @@ export default defineComponent({
     ...BaseFormComponents
   },
   props: {
+    index: {
+      type: Number
+    },
     clear: {
       type: Boolean
     },
@@ -49,6 +52,12 @@ export default defineComponent({
     };
   },
   watch: {
+    index(index: number) {
+      if (index >= 0 && index <= this.fields.length) {
+        this.setActiveField(index)
+        this.emitNext()
+      } 
+    },
     clear(val: boolean) {
       if (val) {
         this.isClear = true

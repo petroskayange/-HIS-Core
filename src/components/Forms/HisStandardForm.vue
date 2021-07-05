@@ -6,6 +6,7 @@
             :next="isNext"
             :prev="isPrev"
             :clear="isClear"
+            :index="skipToIndex"
             @onFinish="onFinish"
             @onClear="isClear=false"
             @onErrors="onErrors"
@@ -27,7 +28,7 @@ import { defineComponent, PropType } from "vue";
 import { IonPage, IonContent } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
-import { find } from "lodash"
+import { find, findIndex} from "lodash"
 export default defineComponent({
     name: "HisStandardForm",
     components: { BaseForm, IonPage, IonContent, HisFooter },
@@ -35,6 +36,9 @@ export default defineComponent({
         skipSummary: {
             type: Boolean,
             default: false
+        },
+        activeField: {
+            type: String
         },
         fields: {
             type: Object as PropType<Field[]>,
@@ -48,12 +52,13 @@ export default defineComponent({
     },
     data:()=>({
       index: 0,
-      formFields: [] as Array<Field>,
-      totalFields: 0,
-      onNextRequired: true,
-      isClear: false,
       isNext: false,
       isPrev: false,
+      isClear: false,
+      totalFields: 0,
+      skipToIndex: -1,
+      onNextRequired: true,
+      formFields: [] as Array<Field>,
       footerBtns: [] as Array<NavBtnInterface>
     }),
     created() {
@@ -69,12 +74,22 @@ export default defineComponent({
             this.finish()
         ]
     },
+    watch: {
+        activeField(field: string){
+            const index = findIndex(this.formFields, { id: field })
+            if (index != -1) {
+                this.skipToIndex = index 
+                this.$emit('onskip')
+            } 
+        }
+    },
     methods: {
         onErrors(errors: Array<string>) {
             toastWarning(errors.join(', '), 3000)
         },
         updateNext({ field, index }: any){
             this.isNext = false
+            this.skipToIndex = -1
             this.onNavigation(field, index)
         },
         updatePrev({ field, index }: any) {
@@ -94,9 +109,7 @@ export default defineComponent({
                 size: 'large',
                 color:'danger',
                 visible: true,
-                visibleOnStateChange: () => {
-                    return !this.isFieldConfigureBtnHidden('Cancel')
-                },
+                visibleOnStateChange: () => !this.isFieldConfigureBtnHidden('Cancel'),
                 onClick: async () => {
                     const confirmation = await alertConfirmation('Are you sure you want to cancel?') 
                     
@@ -111,9 +124,7 @@ export default defineComponent({
                 slot: 'end',
                 color:'warning',
                 visible: true,
-                visibleOnStateChange: () => {
-                    return !this.isFieldConfigureBtnHidden('Clear')
-                },
+                visibleOnStateChange: () => !this.isFieldConfigureBtnHidden('Clear'),
                 onClick: async () => {
                     const confirmation = await alertConfirmation('Are you sure you want to clear field data?')
         
@@ -145,9 +156,9 @@ export default defineComponent({
                 slot: 'end',
                 color: 'primary',
                 visible: this.index +1 < this.totalFields,
-                visibleOnStateChange: (state: Record<string, any>) => {
+                visibleOnStateChange: () => {
                     if (!this.isFieldConfigureBtnHidden('Next')) {
-                        return state.index +1 < state.totalFields && state.onNextRequired
+                        return this.index +1 < this.totalFields && this.onNextRequired
                     }
                     return false
                 },
@@ -163,10 +174,11 @@ export default defineComponent({
                 slot: 'end',
                 color: 'success',
                 visible: false,
-                visibleOnStateChange: (state: Record<string, any>) => {
+                visibleOnStateChange: () => {
                     if (!this.isFieldConfigureBtnHidden('Finish')) {
-                        return state.index+1 >= state.totalFields
+                        return this.index+1 >= this.totalFields
                     }
+                    return false
                 },
                 onClick: async () => {
                     this.isNext = true
