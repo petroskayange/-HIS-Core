@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+    <his-standard-form :activeField="regimenType" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -16,6 +16,7 @@ import EncounterMixinVue from './EncounterMixin.vue'
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
+        regimenType: 'arv_regimens',
         prescription: {} as any,
     }),
     watch: {
@@ -33,8 +34,8 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit() {
-            const formData = this.resolveData(this.form)
+        async onSubmit(form: Record<string, any>) {
+            const formData = this.resolveData(form)
             let drugs: Array<DrugInterface> = this.prescription.getRegimenExtras()
  
             const encounter = await this.prescription.createTreatmentEncounter()
@@ -45,11 +46,11 @@ export default defineComponent({
                 return toastWarning('Unable to create treatment encounter')
             }
             
-            if (this.hasArtRegimen(this.form)) {
+            if (this.hasArtRegimen()) {
                drugs = this.resolveDrugs([...drugs, ...formData.arv_regimens.other.regimens])
             }
 
-            if (this.hasCustomRegimen(this.form)) {
+            if (this.hasCustomRegimen()) {
                 drugs = this.resolveDrugs(formData.custom_dosage.map((drug: Option) =>  drug.other))
             }
 
@@ -65,11 +66,11 @@ export default defineComponent({
             let regimens: Array<RegimenInterface> = this.prescription.getRegimenExtras()
             let colorCodes: Array<string> = []
 
-            if (this.hasCustomRegimen(formData)) {
+            if (this.hasCustomRegimen()) {
                 regimens = formData.custom_dosage.map((regimen: Option) => regimen.other)
             }
             
-            if (this.hasArtRegimen(formData)) {
+            if (this.hasArtRegimen()) {
                 regimens = [...regimens, ...formData.arv_regimens.other.regimens]
                 colorCodes = regimens.map((item: any) => {
                     const category = item.regimen_category
@@ -109,11 +110,11 @@ export default defineComponent({
 
             const nextAppointment = this.prescription.calculateDateFromInterval()
 
-            if (this.hasArtRegimen(formData)) {
+            if (this.hasArtRegimen()) {
                 regimens = formData.arv_regimens.other.regimens
             }
 
-            if (this.hasCustomRegimen(formData)) {
+            if (this.hasCustomRegimen()) {
                 regimens = formData.custom_dosage.map((drug: Option) => drug.other)
             }
 
@@ -168,29 +169,18 @@ export default defineComponent({
             }
             return output
         },
-        hasArtRegimen(formData: any) {
-            return formData.regimen_type.value.match(/arv/, 'i')
+        hasArtRegimen() {
+            return this.regimenType.match(/arv_regimens/i)
         },
-        hasCustomRegimen(formData: any) {
-            return formData.regimen_type.value.match(/custom/, 'i')
+        hasCustomRegimen() {
+            return this.regimenType.match(/custom_regimen/i)
         },
         getFields(): Array<Field> {
             return [
                 {
-                    id: 'regimen_type',
-                    helpText: 'Select regimen type',
-                    type: FieldType.TT_SELECT,
-                    requireNext: false,
-                    options: () => [
-                        { label: 'ARV Regimen', value: 'arv'},
-                        { label: 'Custom Regimen', value: 'custom'}
-                    ]
-                },
-                {
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
-                    condition: (form: any) => this.hasArtRegimen(form),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const regimenCategories = await this.prescription.getPatientRegimens()
@@ -201,13 +191,30 @@ export default defineComponent({
                             options.push({ label: drug, value: index, other: { regimens } })
                         }
                         return options
+                    },
+                    config: {
+                        footerBtns: [
+                            {
+                                name: 'Custom Regimen',
+                                size: 'large',
+                                slot: 'end',
+                                color: 'primary',
+                                visible: false,
+                                visibleOnStateChange: (state: Record<string, any>) => {
+                                    return state.index === 0
+                                },
+                                onClick: () => {
+                                    this.regimenType = 'custom_regimen'
+                                }
+                            }
+                        ]
                     }
                 },
                 {
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: (form: any) => this.hasCustomRegimen(form),
+                    condition: () => this.hasCustomRegimen(),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await this.prescription.getCustomIngridients()
@@ -218,14 +225,32 @@ export default defineComponent({
                         }))
                     },
                     config: {
-                        showKeyboard: true
+                        showKeyboard: true,
+                        hiddenFooterBtns: [
+                            'Back'
+                        ],
+                        footerBtns: [
+                            {
+                                name: 'Standard Regimen',
+                                size: 'large',
+                                slot: 'end',
+                                color: 'primary',
+                                visible: false,
+                                visibleOnStateChange: (state: Record<string, any>) => {
+                                    return state.index === 1
+                                },
+                                onClick: () => {
+                                    this.regimenType = 'arv_regimens'
+                                }
+                            }
+                        ]
                     }
                 },
                 {
                     id: 'custom_dosage',
                     helpText: 'Custom dose',
                     type: FieldType.TT_DOSAGE_INPUT,
-                    condition: (form: any) => this.hasCustomRegimen(form),
+                    condition: () => this.hasCustomRegimen(),
                     validation: (val: Option) => Validation.required(val),
                     options: (fdata: any) => {
                         return fdata.custom_regimen.map((regimen: Option) => ({
@@ -248,7 +273,12 @@ export default defineComponent({
                     id: 'selected_meds',
                     helpText: 'Selected medication',
                     type: FieldType.TT_TABLE_VIEWER,
-                    options: (fdata: any) => this.getDosageTableOptions(fdata)
+                    options: (fdata: any) => this.getDosageTableOptions(fdata),
+                    config: {
+                        hiddenFooterBtns: [
+                            'Clear'
+                        ]
+                    }
                 },
                 {
                     id: 'next_visit_interval',
