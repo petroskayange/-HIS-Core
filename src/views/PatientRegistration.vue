@@ -1,5 +1,5 @@
 <template>
-  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+  <his-standard-form :fields="fields" @onFinish="onFinish"/>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -49,15 +49,12 @@ export default defineComponent({
     }
   },
   methods: {
-    onFinish(form: Record<string, Option> | Record<string, null>) {
-        this.form = form
-    },
-    async onSubmit() {
-      const personPayload: NewPerson = this.resolvePerson(this.form)
+    async onFinish(form: Record<string, Option> | Record<string, null>) {
+      const personPayload: NewPerson = this.resolvePerson(form)
       try {
         const person: Person = await new PersonService(personPayload).create()
         if (person.person_id) {
-            const attributesPayload: Array<NewAttribute> = this.resolvePersonAttributes(this.form, person.person_id)     
+            const attributesPayload: Array<NewAttribute> = this.resolvePersonAttributes(form, person.person_id)     
 
             if (attributesPayload.length >= 1) {
                 await PersonAttributeService.create(attributesPayload)  
