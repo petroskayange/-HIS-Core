@@ -1,0 +1,86 @@
+<template>
+  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish" :skipSummary="true" v-if="fields.length > 0"/>
+</template> 
+<script lang="ts">
+import { defineComponent } from "vue";
+import { FieldType } from "@/components/Forms/BaseFormElements"
+import { GlobalPropertyService } from "@/services/global_property_service"
+import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+import { Patientservice } from "@/services/patient_service"
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { Field } from "@/components/Forms/FieldInterface";
+export default defineComponent({
+  components: { HisStandardForm },
+  methods: {
+    onFinish(formData: any) {
+      GlobalPropertyService.set(this.property , formData.preference.value)
+      .then(() => toastSuccess('Property set'))
+      .then(() => this.$router.push('/'))
+    },
+    onSubmit() {
+      //
+    },
+    async setFields  (query: any){
+      if(query.label) {
+
+      const {label, property} = query;
+      const val = await GlobalPropertyService.get(property);
+      
+      this.property = property;
+      this.fields =  [
+        {
+          id: "preference",
+          helpText: label,
+          type: FieldType.TT_YES_NO,
+          preset: val,
+          config: {
+            showKeyboard: false,
+            showSummary: false
+          },
+          validation(value: any): null | Array<string> {
+            return !value ? ["Value is required"] : null;
+          },
+          options: ()=>([
+            {
+              label: label,
+              property: property,
+              values: [
+                {
+                  label: "yes",
+                  value: "true"
+                },
+                {
+                  label: "no",
+                  value: "false"
+                }
+                ],
+            },
+          ]),
+        }
+      ]
+
+      }
+    }
+  },
+  data() {
+    return {
+      property: null as any,
+      fields: [] as any,
+      label: null as any
+    };
+  },
+  mounted() {
+    //
+    // this.setFields();
+  },
+  watch: {
+    $route: {
+      async handler({ query }: any) {
+       this.setFields(query);
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+});
+</script>

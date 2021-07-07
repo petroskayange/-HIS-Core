@@ -1,6 +1,6 @@
 import { TaskInterface } from "../../interfaces/TaskInterface"
 import { PatientPrintoutService } from "@/services/patient_printout_service"
-
+import { FieldType } from "../preferences"
 const BASE_URL_PATH = '/assets/images/'
 
 function img(image: string) { return `${BASE_URL_PATH}${image}` }
@@ -110,3 +110,119 @@ export const OTHER_TASKS: Array<TaskInterface> = [
     icon: img("patient-type.png")
   }
 ]
+export const PREFERENCES = {
+        'Drug Management': [
+          {
+            name: "Enter Receipts",
+            component: FieldType.TT_SET_SITE_CODE,
+          },
+          {
+            name: "Enter Product relocation/Disposal",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            name: "Enter verified physical stock count",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            name: "Print Barcode",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            name: "Audit Trail",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+        ],
+        'User Management': [
+          {
+            name: "Cohort / disaggregated",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            component: FieldType.TT_SET_SITE_CODE,
+            name: "Survival analysis",
+            route: "/",
+          },
+          {
+            component: FieldType.TT_SET_SITE_CODE,
+            name: "TPT new initiations",
+            route: "/",
+          },
+        ],
+        'System Preferences': [
+          {
+            name: "Ask pills remaining at home",
+            value: "ask_pills_remaining_at_home"
+          },
+          {
+            name: "Activate Filing Numbers",
+            value: "use_filing_numbers"
+          },
+          {
+            name: "Activate extended labs",
+            value: "extended_labs"
+          },
+          {
+            name: "Activate drug management",
+            value: "activate_drug_management"
+          },
+          {
+            name: "Activate Hypertension screening",
+            value: "aactivate.htn.enhancement"
+          },
+          {
+            name: "Activate fast track",
+            value: "ask_pills_remaining_at_home"
+          },
+          {
+            name: "Is this a military site",
+            value: "military_site"
+          },
+          {
+            name: "Activate 3HP auto select",
+            value: "activate_3hp_auto_select"
+          },
+          {
+            component: FieldType.TT_SET_CLINC_DAY,
+            name: "Set Clinic Days",
+          },
+          {
+            component: FieldType.TT_SET_HTN_AGE,
+            name: "Set HTN Age",
+          },
+          {
+            component: FieldType.TT_SET_APPOINTMENT_LIMIT,
+            name: "Set Appointment Limit",
+          },
+          {
+            component: FieldType.TT_SET_SITE_CODE,
+            name: "Set Site Code",
+          },
+          {
+            component: FieldType.TT_SET_FILING_NUMBERS_LIMIT,
+            name: "Set Filing Numbers Limit",
+          },
+        ],
+        'Data Management': [
+          {
+            name: "Cohort / disaggregated",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            name: "Survival analysis",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+          {
+            name: "TPT new initiations",
+            component: FieldType.TT_SET_SITE_CODE,
+            route: "/",
+          },
+        ],
+      }
