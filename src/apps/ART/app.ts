@@ -1,9 +1,10 @@
 import { Option } from "@/components/Forms/FieldInterface";
 import { ENCOUNTERS } from "./tasks/encounters";
-import { OTHER_TASKS } from "./tasks/other";
+import { OTHER_TASKS, PREFERENCES } from "./tasks/other";
 import { AppInterface } from "../interfaces/AppInterface";
 import PatientAlerts from "@/services/patient_alerts";
 import appRoutes from "./routes"
+import {BasePrefernceComponents} from '@/apps/ART/preferences'
 const BASE_URL_PATH = '/assets/images/'
 
 function img(image: string) { return `${BASE_URL_PATH}${image}` }
@@ -44,6 +45,9 @@ const ART: AppInterface = {
         { value: "Drug Dispensations", selected: false },
         { value: "Prescriptions", selected: false },
         { value: "Vitals", selected: false }
-    ]
+    ],
+    preferences: PREFERENCES,
+    preferenceComponents: BasePrefernceComponents
+
 }
 export default ART 

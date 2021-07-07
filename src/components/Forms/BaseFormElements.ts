@@ -3,6 +3,8 @@ import MultipleSelect from "@/components/FormElements/HisMultipleSelect.vue";
 import TextInput from "@/components/FormElements/HisTextInput.vue"
 import NumberInput from "@/components/FormElements/HisNumberInput.vue"
 import MonthlyDays from "@/components/FormElements/HisMonthlyDays.vue"
+import YesNo from "@/components/FormElements/YesNoSelect.vue"
+
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
@@ -12,6 +14,7 @@ export enum FieldType {
     TT_DATETIME="datetime",
     TT_SELECT="single-select",
     TT_MULTIPLE_SELECT="multiple-select",
+    TT_YES_NO="yes-no",
     TT_SUMMARY="summary-page"
 }
 // Components to be rendered
@@ -21,5 +24,6 @@ export const BaseFormComponents = {
     MultipleSelect,
     NumberInput,
     MonthlyDays,
+    YesNo,
     SummaryPage
 }

@@ -21,6 +21,12 @@ export interface ActivityInterface {
     selected: boolean;
 }
 
+export interface PreferenceInterface {
+    name: string;
+    component?: string;
+    value?: string;
+    route?: string;
+}
 export interface AppInterface {
     readonly programID: number;
     readonly applicationName: string;
@@ -29,4 +35,6 @@ export interface AppInterface {
     readonly appRoutes: Array<RouteRecordRaw>;
     readonly patientDashboard: PatientDashboarInterface;
     activities: Array<ActivityInterface>;
+    preferences: { [key: string] : Array<PreferenceInterface>};
+    preferenceComponents?: any;
 }
