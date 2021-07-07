@@ -2,7 +2,6 @@
 <template>
   <his-standard-form
     :fields="fields"
-    @onSubmit="onSubmit"
     @onFinish="onFinish"
     :skipSummary="true"
     v-if="fields.length > 0"
@@ -32,38 +31,29 @@ export default defineComponent({
         .then(() => this.$router.push("/"))
         .catch(() => toastWarning('Could not set property'))
     },
-    async getActivities(property: string) {
+    async getClinicDayOptions(property: string) {
       const val = await GlobalPropertyService.get(property);
-        return this.days.map((el) => {
-          
-          if (val.search(el.value) >= 0) {
-            el.isChecked = true;
-          }
-          return el;
-        });
+      return this.days.map((day) => ({
+        label: day,
+        value: day,
+        isChecked: val.search(day) >= 0
+      }))
     },
-    async setFields() {
-      const days = [...this.days]; 
-      this.fields = [
+    getFields() {
+      return [
         {
           id: "adults",
           helpText: "Clinic days (adults: 18 yrs and over)",
           type: FieldType.TT_MULTIPLE_SELECT,
-          config: {
-            showKeyboard: false
-          },
           validation: (val: any) => Validation.required(val),
-          options:()=> (days),
+          options:()=> this.getClinicDayOptions('clinic.days'),
         },
         {
           id: "children",
           helpText: "Clinic days (children: Under 18 yrs)",
           type: FieldType.TT_MULTIPLE_SELECT,
-          config: {
-            showKeyboard: false
-          },
           validation: (val: any) => Validation.required(val),
-          options:()=> (days),
+          options:()=> this.getClinicDayOptions('peads.clinic.days'),
         }
       ];
     },
@@ -73,48 +63,20 @@ export default defineComponent({
       fields: [] as any,
       property: "site_prefix",
       days: [
-            {
-              label: "Sunday",
-              value: "Sunday",
-              isChecked: false,
-            },
-            {
-              label: "Monday",
-              value: "Monday",
-              isChecked: false,
-            },
-            {
-              label: "Tuesday",
-              value: "Tuesday",
-              isChecked: false,
-            },
-            {
-              label: "Wednesday",
-              value: "Wednesday",
-              isChecked: false,
-            },
-            {
-              label: "Thursday",
-              value: "Thursday",
-              isChecked: false,
-            },
-            {
-              label: "Friday",
-              value: "Friday",
-              isChecked: false,
-            },
-            {
-              label: "Saturday",
-              value: "Saturday",
-              isChecked: false,
-            }
-          ]
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ]
     };
   },
   watch: {
     $route: {
       async handler() {
-        this.setFields();
+        this.fields = this.getFields();
       },
       deep: true,
       immediate: true,
