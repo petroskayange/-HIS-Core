@@ -170,8 +170,8 @@ export default defineComponent({
             return { label: val, value: val }
         }
     },
-    async getFacilities(): Promise<Option[]> {
-        const facilities = await LocationService.getFacilities()
+    async getFacilities(filter=''): Promise<Option[]> {
+        const facilities = await LocationService.getFacilities({name: filter})
         return facilities.map((facility: any) => ({
             label: facility.name,
             value: facility.location_id
@@ -437,7 +437,7 @@ export default defineComponent({
                 helpText: 'Type of patient',
                 group: 'person',
                 type: FieldType.TT_SELECT,
-                condition: (form: any) => this.showPatientType,
+                condition: () => this.showPatientType,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'New patient',
@@ -451,7 +451,11 @@ export default defineComponent({
                 group: 'person',
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => this.showPatientType && form.patient_type.label === 'External consultation',  
-                options: () => this.getFacilities()
+                options: (_, filter='') => this.getFacilities(filter),
+                config: {
+                    showKeyboard: true,
+                    isFilterDataViaApi: true
+                }
             },
             {
                 id: 'occupation',

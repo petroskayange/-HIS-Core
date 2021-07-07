@@ -5,8 +5,8 @@ export class LocationService extends Service {
         super()
     }
 
-    static getFacilities() {
-        return super.getJson('/locations?name=')
+    static getFacilities(params={} as Record<string, string | number>) {
+        return super.getJson('/locations', params)
     }
 
     static getRegions() {
