@@ -93,7 +93,7 @@ export default defineComponent({
 ion-segment-button {
   height: 50px;
   margin: 1%;
-  font-size: 30px;
+  font-size: 1.6em;
   --indicator-color: #028000;
   --border-color: red;
   --background: white;

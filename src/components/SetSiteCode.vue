@@ -24,12 +24,8 @@ export default defineComponent({
         .then(() => toastSuccess("Property set"))
         .then(() => this.$router.push("/"));
     },
-    onSubmit() {
-      //      ;
-    },
     async setFields() {
       const val = await GlobalPropertyService.get("site_prefix");
-      console.log(val);
       this.fields = [
         {
           id: "site_code",

@@ -14,6 +14,7 @@ import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { GlobalPropertyService } from "@/services/global_property_service";
 import { toastSuccess } from "@/utils/Alerts";
+import Validation from "@/components/Forms/validations/StandardValidations"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -24,24 +25,17 @@ export default defineComponent({
         .then(() => toastSuccess("Property set"))
         .then(() => this.$router.push("/"));
     },
-    onSubmit() {
-      //      ;
-    },
-    async setFields() {
-      const val = await GlobalPropertyService.get(this.property);
-      console.log(val);
+    async getFields() {
       this.fields = [
         {
           id: "htn_age",
           helpText: "Enter HTN age Threshold",
           preset: {
-            label: val,
-            value: val,
+            label: this.htnThreshold,
+            value: this.htnThreshold,
           },
           type: FieldType.TT_TEXT,
-          validation(value: any): null | Array<string> {
-            return !value ? ["Value is required"] : null;
-          },
+          validation: (val: any) => Validation.required(val),
         },
       ];
     },
@@ -50,12 +44,14 @@ export default defineComponent({
     return {
       fields: [] as any,
       property: "htn.screening.age.threshold",
+      htnThreshold: ''
     };
   },
   watch: {
     $route: {
-      async handler({ query }: any) {
-        this.setFields();
+      async handler() {
+        this.htnThreshold = await GlobalPropertyService.get(this.property);
+        this.getFields();
       },
       deep: true,
       immediate: true,

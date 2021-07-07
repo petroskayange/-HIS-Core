@@ -1,7 +1,6 @@
 <template>
   <his-standard-form
     :fields="fields"
-    @onSubmit="onSubmit"
     @onFinish="onFinish"
     :skipSummary="true"
     v-if="fields.length > 0"
@@ -13,6 +12,7 @@ import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { GlobalPropertyService } from "@/services/global_property_service";
 import { toastSuccess } from "@/utils/Alerts";
+import Validation from "@/components/Forms/validations/StandardValidations"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -23,20 +23,17 @@ export default defineComponent({
         .then(() => toastSuccess("Property set"))
         .then(() => this.$router.push("/"));
     },
-    async setFields() {
-      const val = await GlobalPropertyService.get(this.property);
-      this.fields = [
+    getFields() {
+      return [
         {
           id: "property",
-          helpText: "Enter Appointment Limit",
+          helpText: "Enter Filing Number Limit",
           preset: {
-            label: val,
-            value: val,
+            label: this.presetFilingNumberLimit,
+            value: this.presetFilingNumberLimit,
           },
           type: FieldType.TT_TEXT,
-          validation(value: any): null | Array<string> {
-            return !value ? ["Value is required"] : null;
-          },
+          validation: (val: any) => Validation.required(val),
         },
       ];
     },
@@ -44,13 +41,15 @@ export default defineComponent({
   data() {
     return {
       fields: [] as any,
-      property: "clinic.appointment.limit",
+      presetFilingNumberLimit: '',
+      property: "filing.number.limit",
     };
   },
   watch: {
     $route: {
-      async handler({ query }: any) {
-        this.setFields();
+      async handler() {
+        this.presetFilingNumberLimit = await GlobalPropertyService.get(this.property);
+        this.fields = this.getFields() 
       },
       deep: true,
       immediate: true,
@@ -58,4 +57,3 @@ export default defineComponent({
   },
 });
 </script>
-

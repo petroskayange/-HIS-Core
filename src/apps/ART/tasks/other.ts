@@ -1,6 +1,6 @@
 import { TaskInterface } from "../../interfaces/TaskInterface"
 import { PatientPrintoutService } from "@/services/patient_printout_service"
-
+import { FieldType } from "../preferences"
 const BASE_URL_PATH = '/assets/images/'
 
 function img(image: string) { return `${BASE_URL_PATH}${image}` }
@@ -114,42 +114,42 @@ export const PREFERENCES = {
         'Drug Management': [
           {
             name: "Enter Receipts",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
           },
           {
             name: "Enter Product relocation/Disposal",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
             name: "Enter verified physical stock count",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
             name: "Print Barcode",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
             name: "Audit Trail",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
         ],
         'User Management': [
           {
             name: "Cohort / disaggregated",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             name: "Survival analysis",
             route: "/",
           },
           {
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             name: "TPT new initiations",
             route: "/",
           },
@@ -188,32 +188,40 @@ export const PREFERENCES = {
             value: "activate_3hp_auto_select"
           },
           {
-            component: "clinic-days",
+            component: FieldType.TT_SET_CLINC_DAY,
             name: "Set Clinic Days",
           },
           {
-            component: "htn-age",
+            component: FieldType.TT_SET_HTN_AGE,
             name: "Set HTN Age",
           },
           {
-            component: "appointment-limit",
+            component: FieldType.TT_SET_APPOINTMENT_LIMIT,
             name: "Set Appointment Limit",
+          },
+          {
+            component: FieldType.TT_SET_SITE_CODE,
+            name: "Set Site Code",
+          },
+          {
+            component: FieldType.TT_SET_FILING_NUMBERS_LIMIT,
+            name: "Set Filing Numbers Limit",
           },
         ],
         'Data Management': [
           {
             name: "Cohort / disaggregated",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
             name: "Survival analysis",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
           {
             name: "TPT new initiations",
-            component: "site-code",
+            component: FieldType.TT_SET_SITE_CODE,
             route: "/",
           },
         ],
