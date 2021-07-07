@@ -1,32 +1,109 @@
 <template>
-  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish"/>
+  <his-standard-form 
+    :fields="fields" 
+    :activeField="activeField" 
+    @onskip="activeField=''"
+    @onSubmit="onSubmit" 
+    @onFinish="onFinish"> 
+  </his-standard-form>
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Field } from "@/components/Forms/FieldInterface"
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 
 export default defineComponent({
   components: { HisStandardForm },
+  data: () => ({
+    activeField: '',
+    fields: [] as Array<Field>
+  }),
+  created() {
+    this.fields = this.getFields()
+  },
   methods: {
     onFinish(formData: any) {
       console.log(formData)
     },
-    onSubmit() {
-      console.log("Form has been submitted");
-    },
-  },
-  data() {
-    return {
-      fields: [
+    getFields() {
+      return [
         {
           id: "name_field",
           helpText: "What is your name",
           type: FieldType.TT_TEXT,
           validation(value: any): null | Array<string> {
             return !value ? ["Value is required"] : null;
-          },
+          }
+        },
+        {
+          id: "custom_btn",
+          helpText: "Show custom button",
+          type: FieldType.TT_TEXT,
+          config: {
+            footerBtns: [
+              {
+                name: 'Void',
+                color: 'danger',
+                size: 'large',
+                visible: false,
+                slot: '',
+                visibleOnStateChange: (state: any) => {
+                  return state.index === 1
+                },
+                onClick: () => {
+                  alert('Record has been voided!')
+                }
+              },
+              {
+                name: 'Custom Something',
+                color: 'primary',
+                size: 'large',
+                visible: false,
+                slot: 'end',
+                visibleOnStateChange: (state: any) => {
+                  return state.index === 1
+                },
+                onClick: () => {
+                  alert('YaY! Custom Button Clicked')
+                }
+              },
+            ]
+          }
+        },
+        {
+          id: 'hide_default_btns',
+          helpText: 'Default buttons have been hidden',
+          type: FieldType.TT_TEXT,
+          config: {
+            hiddenFooterBtns: [
+              'Clear',
+              'Cancel'
+            ]
+          }
+        },
+        {
+          id: 'skip_next_field',
+          helpText: 'Skip Next Field with custom button',
+          type: FieldType.TT_TEXT,
+          config: {
+            footerBtns: [
+              {
+                name: 'Skip Dates',
+                color: 'light',
+                size: 'large',
+                visible: false,
+                slot: 'end',
+                visibleOnStateChange: (state: any) => {
+                  return state.index === 3
+                },
+                onClick: () => {
+                  this.activeField = 'multiple_select'
+                }
+              }
+            ]
+          }
         },
         {
           id: "year",
@@ -184,8 +261,8 @@ export default defineComponent({
             },
           ]),
         },
-      ],
-    };
-  },
+      ]
+    }
+  }
 });
 </script>

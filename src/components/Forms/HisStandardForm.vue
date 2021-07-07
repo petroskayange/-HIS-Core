@@ -1,53 +1,49 @@
-<template> 
+<template>
   <ion-page>
+    <ion-header> 
+        <ion-toolbar>
+            <label class='his-title'> {{title}}: </label>
+        </ion-toolbar>
+    </ion-header>
     <ion-content>
-    <div v-if="showSummary">
-        <h3><b>Summary</b> </h3>
-        <his-form-summary :fieldItems="summaryData" />
-    </div>
-    <div v-show="!showSummary">
         <base-form
-        :fields="fields"
-        :next="isNext"
-        :prev="isPrev"
-        :clear="isClear"
-        @onClear="isClear=false"
-        @onErrors="onErrors"
-        @onNext="updateNext"
-        @onPrev="updatePrev"
-        @onFinish="onFinish"
-        />
-    </div>
+            :fields="formFields"
+            :next="isNext"
+            :prev="isPrev"
+            :clear="isClear"
+            :index="skipToIndex"
+            @onFinish="onFinish"
+            @onClear="isClear=false"
+            @onErrors="onErrors"
+            @onNext="updateNext"
+            @onPrev="updatePrev"/>
     </ion-content>
-    <his-footer
-      :showBack="showPrevBtn"
-      :showNext="showNextBtn"
-      :showFinish="showFinishBtn"
-      :showClear="showClearBtn"
-      @onCancel="onCancel"
-      @onClear="onClear"
-      @onNext="isNext=true"
-      @onBack="onBack"
-      @onFinish="onSubmit"
-    ></his-footer>
+    <his-footer 
+        :btns="footerBtns"
+        :state="{index, totalFields, onNextRequired}">
+    </his-footer>
   </ion-page>
 </template>
 <script lang="ts">
 import BaseForm from "@/components/Forms/BaseForm.vue";
-import HisFooter from "@/components/HisNavFooter.vue";
-import HisFormSummary from "@/components/DataViews/HisFormSummary.vue"
-import { Option } from "@/components/Forms/FieldInterface"
-import { Field } from "./FieldInterface";
+import HisFooter from "@/components/HisDynamicNavFooter.vue";
+import { Field, Option } from "./FieldInterface";
+import { FieldType } from "@/components/Forms/BaseFormElements"
 import { defineComponent, PropType } from "vue";
 import { IonPage, IonContent } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
+import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
+import { find, findIndex} from "lodash"
 export default defineComponent({
     name: "HisStandardForm",
-    components: { BaseForm, IonPage, IonContent, HisFooter, HisFormSummary },
+    components: { BaseForm, IonPage, IonContent, HisFooter },
     props: {
         skipSummary: {
             type: Boolean,
-            default: () => false
+            default: false
+        },
+        activeField: {
+            type: String
         },
         fields: {
             type: Object as PropType<Field[]>,
@@ -60,136 +56,192 @@ export default defineComponent({
         }
     },
     data:()=>({
-      formData: {} as any,
-      summaryData: [] as Array<Option> | Array<Option[]>,
-      showSummary: false,
-      showClearBtn: true,
-      showNextBtn: true,
-      showPrevBtn: false,
-      showFinishBtn: false,
-      isClear: false,
+      index: 0,
       isNext: false,
       isPrev: false,
+      isClear: false,
+      totalFields: 0,
+      skipToIndex: -1,
+      onNextRequired: true,
+      formFields: [] as Array<Field>,
+      footerBtns: [] as Array<NavBtnInterface>
     }),
     created() {
-        if (this.hasOneFieldOnly() && this.skipSummary) {
-            this.showFinishBtn = true
-            this.showNextBtn = false
+        const summary = this.skipSummary ? [] : [this.getDefaultSummaryField()]
+        this.formFields = [...this.fields, ...summary]
+        this.totalFields = this.formFields.length
+        this.footerBtns = [
+            this.cancel(),
+            ...this.getCustomFieldButtons(this.formFields),
+            this.clear(),
+            this.back(),
+            this.next(),
+            this.finish()
+        ]
+    },
+    computed: {
+        title(): string {
+            return this.formFields[this.index].helpText
+        }
+    },
+    watch: {
+        activeField(field: string){
+            const index = findIndex(this.formFields, { id: field })
+            if (index != -1) {
+                this.skipToIndex = index 
+                this.$emit('onskip')
+            } 
         }
     },
     methods: {
-        hasOneFieldOnly() {
-            return this.fields.length === 1
-        },
         onErrors(errors: Array<string>) {
             toastWarning(errors.join(', '), 3000)
         },
-        async onCancel(){
-            const confirmation = await alertConfirmation('Are you sure you want to cancel?') 
-            if (confirmation) {
-                this.$router.push({path: this.cancelDestinationPath})
-            }
-        },
-        async onClear() {
-            const confirmation = await alertConfirmation('Are you sure you want to clear field data?')
-            if (confirmation) {
-                this.isClear = true
-            }
-        },
-        onBack(){
-            if(this.showSummary) {
-                this.showNextBtn = true
-                this.showFinishBtn = false
-                this.showClearBtn = true
-                this.showSummary = false
-                return
-            }
-            this.isPrev = true
-        },
-        onFinish(formData: any) {
-            if (this.skipSummary) {
-                this.$emit('onFinish', formData)
-                this.$emit('onSubmit')
-            } else { 
-                this.summaryData = this.buildSummaryData(formData)
-                this.showSummary = true
-                this.showClearBtn = false
-                this.showFinishBtn = true
-                this.$emit('onFinish', formData)
-            }
-        },
-        onSubmit(): void {
-            if (this.hasOneFieldOnly() && this.skipSummary) {
-                this.$emit('onFinish', this.formData)
-                this.$emit('onSubmit')
-                return
-            }
-
-            if (!this.skipSummary) return this.$emit('onSubmit')
-
-            this.isNext = true
-        },
-        updateNext({ field, index, formData }: any): void {
+        updateNext({ field, index }: any){
             this.isNext = false
-            this.formData = formData
-
-            if (index >= 1) this.showPrevBtn = true
-            
-            if (this.skipSummary && index +1 >= this.fields.length) {
-                this.showFinishBtn = true
-                this.showNextBtn = false
-                return
-            }
-
-            if (this.fieldRequiresNextBtn(field) && !this.showSummary) {
-                this.showNextBtn = true
-            } else {
-                this.showNextBtn = false
-            }
-
-            this.$emit('onNext', field)
+            this.skipToIndex = -1
+            this.onNavigation(field, index)
         },
-        fieldRequiresNextBtn(field: Field): boolean{
-            if (!("requireNext" in field)) return true;
-            return field.requireNext ? true : false;
-        },
-        updatePrev({ field, index }: any): void {
+        updatePrev({ field, index }: any) {
             this.isPrev = false
-            this.showFinishBtn = false
-            
-            if (this.fieldRequiresNextBtn(field)) {
-                this.showNextBtn = true
-            } else {
-                this.showNextBtn = false
-            }
-            
-            if (index === 0) this.showPrevBtn = false
-            
-            this.$emit('onPrev', field)
+            this.onNavigation(field, index)
         },
-        buildSummaryData(formData: any): Array<Option> {
-            const data: Array<Option> = [];
-            const resolveLabel = (fieldId: string): string => {
-                const field: Field = this.fields.filter(item => item.id === fieldId)[0]
-                return field.helpText
-            }
-
-            for(const ref in formData) {
-                const fdata = formData[ref]
-                
-                if (!fdata) continue
-
-                if (Array.isArray(fdata)) {
-                    fdata.forEach(item => {
-                        data.push({ label: resolveLabel(ref), value: item.label })
-                    })
-                    continue
+        onNavigation(field: Field, index: number) {
+            this.index = index
+            this.onNextRequired = field.requireNext != undefined ? field.requireNext : true
+        },
+        onFinish(formData: Record<string, any>) {
+            this.$emit('onFinish', formData)
+        },
+        cancel(): NavBtnInterface {
+            return {
+                name: 'Cancel',
+                size: 'large',
+                color:'danger',
+                visible: true,
+                visibleOnStateChange: () => !this.isFieldConfigureBtnHidden('Cancel'),
+                onClick: async () => {
+                    const confirmation = await alertConfirmation('Are you sure you want to cancel?') 
+                    
+                    if (confirmation) this.$router.push({path: this.cancelDestinationPath })
                 }
-
-                data.push({ label: resolveLabel(ref), value: fdata.label})
             }
-            return data
-        }
+        },
+        clear(): NavBtnInterface {
+            return {
+                name: 'Clear',
+                size: 'large',
+                slot: 'end',
+                color:'warning',
+                visible: true,
+                visibleOnStateChange: () => !this.isFieldConfigureBtnHidden('Clear'),
+                onClick: async () => {
+                    const confirmation = await alertConfirmation('Are you sure you want to clear field data?')
+        
+                    if (confirmation) this.isClear = true
+                }
+            }
+        },
+        back(): NavBtnInterface {
+            return {
+                name: 'Back',
+                size: 'large',
+                slot: 'end',
+                color: 'primary',
+                visible: false,
+                visibleOnStateChange: () => {
+                    if (!this.isFieldConfigureBtnHidden('Back')) {
+                        return this.index > 0
+                    }
+                },
+                onClick: () => {
+                    this.isPrev = true
+                }
+            }
+        },
+        next(): NavBtnInterface {
+            return {
+                name: 'Next',
+                size: 'large',
+                slot: 'end',
+                color: 'primary',
+                visible: this.index +1 < this.totalFields,
+                visibleOnStateChange: () => {
+                    if (!this.isFieldConfigureBtnHidden('Next')) {
+                        return this.index +1 < this.totalFields && this.onNextRequired
+                    }
+                    return false
+                },
+                onClick: async () => {
+                    this.isNext = true
+                }
+            }
+        },
+        finish(): NavBtnInterface {
+            return {
+                name: 'Finish',
+                size: 'large',
+                slot: 'end',
+                color: 'success',
+                visible: false,
+                visibleOnStateChange: () => {
+                    if (!this.isFieldConfigureBtnHidden('Finish')) {
+                        return this.index+1 >= this.totalFields
+                    }
+                    return false
+                },
+                onClick: async () => {
+                    this.isNext = true
+                }
+            }
+        },
+        isFieldConfigureBtnHidden(btnName: string) {
+            const field: Field = this.formFields[this.index]
+            const hiddenBtns = field.config?.hiddenFooterBtns
+            return hiddenBtns ? hiddenBtns.includes(btnName): false 
+        },
+        getCustomFieldButtons(fields: Array<Field>) {
+            let buttons: Array<NavBtnInterface> = []
+            fields.forEach((field: Field) => {
+                if (field.config && field.config.footerBtns) {
+                    buttons = [...buttons, ...field.config.footerBtns]
+                }
+            })
+            return buttons
+        },
+        getDefaultSummaryField(): Field {
+            return {
+                id: '__form_summary__',
+                helpText: 'Summary',
+                type: FieldType.TT_SUMMARY,
+                config: {
+                    hiddenFooterBtns: [
+                        'Clear'
+                    ]
+                },
+                options: (formData: Record<string, any>) => {
+                    const data: Array<Option> = [];
+                    const resolveLabel = (ref: string) => {
+                        return find(this.fields, {id: ref})?.helpText || 'Field'
+                    }
+                    for(const ref in formData) {
+                        const fdata = formData[ref]
+
+                        if (!fdata) continue
+
+                        if (Array.isArray(fdata)) {
+                            fdata.forEach(item => {
+                                data.push({  label: resolveLabel(ref), value: item.label })
+                            })
+                            continue
+                        }
+
+                        data.push({ label: resolveLabel(ref), value: fdata.label})
+                    }
+                    return data
+                }
+            }
+        },
     }
 })
 </script>

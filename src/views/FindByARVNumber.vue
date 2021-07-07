@@ -1,5 +1,5 @@
 <template>
-  <his-standard-form :fields="fields" @onSubmit="onSubmit" @onFinish="onFinish" :skipSummary="true"/>
+  <his-standard-form :fields="fields" @onFinish="onFinish" :skipSummary="true"/>
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -14,9 +14,6 @@ export default defineComponent({
     onFinish(formData: any) {
       const ARVNumber = this.fields[1].config.prependValue + formData.arv_number.value;
       this.fetchclient(ARVNumber);
-    },
-    onSubmit() {
-      console.log("Form has been submitted");
     },
     getSitePrefix: async function() {
       const sitePrefix = await GlobalPropertyService.getSitePrefix()
