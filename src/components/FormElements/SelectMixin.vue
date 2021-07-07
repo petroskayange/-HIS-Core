@@ -8,6 +8,7 @@ import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 import SelectConfig from "@/components/FormElements/Interfaces/SelectConfig"
 import ViewPort from "@/components/DataViews/ViewPort.vue"
+import { isEmpty } from "lodash"
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard, ViewPort },
     props: {
@@ -34,6 +35,7 @@ export default defineComponent({
         showKeyboard: false,
         selected: '',
         filter: '',
+        filtered: [] as any,
         keyboard: QWERTY,
         listData: [] as Array<Option>
     }),
@@ -44,12 +46,22 @@ export default defineComponent({
             }
         }
     },
-    computed: {
-        filtered(): Array<Option> {
-            if (this.filter) {
-                return this.listData.filter(item => this.isMatch(item.label, this.filter))
-            }
-            return this.listData
+    watch: {
+        listData: {
+            handler(data: any) { if (data) this.filtered = data },
+            deep: true,
+            immediate: true
+        },
+        filter: {
+            async handler(filter: string) {
+                if (!filter) return this.filtered = this.listData
+
+                if (this.config?.isFilterDataViaApi) {
+                    return this.filtered = await this.options(this.fdata, filter)
+                }
+                this.filtered = this.listData.filter(item => this.isMatch(item.label, this.filter))
+            },
+            immediate: true
         }
     },
     methods: {
