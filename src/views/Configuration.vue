@@ -9,6 +9,7 @@ import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { Patientservice } from "@/services/patient_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { Field } from "@/components/Forms/FieldInterface";
+import Validation from "@/components/Forms/validations/StandardValidations"
 export default defineComponent({
   components: { HisStandardForm },
   methods: {
@@ -17,33 +18,24 @@ export default defineComponent({
       .then(() => toastSuccess('Property set'))
       .then(() => this.$router.push('/'))
     },
-    onSubmit() {
-      //
-    },
-    async setFields  (query: any){
-      if(query.label) {
+    async getFields  (){
 
-      const {label, property} = query;
-      const val = await GlobalPropertyService.get(property);
       
-      this.property = property;
       this.fields =  [
         {
           id: "preference",
-          helpText: label,
+          helpText: this.label,
           type: FieldType.TT_YES_NO,
-          preset: val,
+          preset: this.val,
           config: {
             showKeyboard: false,
             showSummary: false
           },
-          validation(value: any): null | Array<string> {
-            return !value ? ["Value is required"] : null;
-          },
+          validation: (val: any) => Validation.required(val),
           options: ()=>([
             {
-              label: label,
-              property: property,
+              label: this.label,
+              property: this.property,
               values: [
                 {
                   label: "yes",
@@ -59,24 +51,25 @@ export default defineComponent({
         }
       ]
 
-      }
     }
   },
   data() {
     return {
       property: null as any,
       fields: [] as any,
-      label: null as any
+      label: null as any,
+      val : ''
     };
-  },
-  mounted() {
-    //
-    // this.setFields();
   },
   watch: {
     $route: {
       async handler({ query }: any) {
-       this.setFields(query);
+        if(query.label && query.property) {
+          this.val = await GlobalPropertyService.get(query.property);
+          this.property = query.property;
+          this.label = query.label;
+          this.getFields();
+        }
       },
       deep: true,
       immediate: true,
