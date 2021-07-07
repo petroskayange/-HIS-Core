@@ -1,5 +1,5 @@
 <template>
-  <his-standard-form :fields="fields" :skipSummary="true" @onSubmit="onSubmit" @onFinish="onFinish"/>
+  <his-standard-form :fields="fields" :skipSummary="true" @onFinish="onFinish"/>
 </template> 
 
 <script lang="ts">
@@ -22,10 +22,7 @@ export default defineComponent({
   },
   methods: {
     onFinish(form: Record<string, Option> | Record<string, null>) {
-      this.form = form
-    },
-    onSubmit() {
-      const data: Record<string, string> = this.resolveData(this.form)
+      const data: Record<string, string> = this.resolveData(form)
       this.$router.push({path: '/patient/search_results', query: data})
     },
     resolveData(form: Record<string, Option> | Record<string, null>) {
