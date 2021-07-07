@@ -14,17 +14,19 @@ export class ConceptService extends Service {
         return this.getConceptNameFromApi(conceptId)
     }
 
-    static getConceptID(conceptName: string) {
+    static getConceptID(conceptName: string, strictMode=false) {
         try {
-            return this.getCachedConceptID(conceptName)
+            return this.getCachedConceptID(conceptName, strictMode)
         } catch (e) {
             return this.getConceptIDFromApi(conceptName)
         }
     }
 
-    static getCachedConceptID(conceptName: string) {
+    static getCachedConceptID(conceptName: string, strictMode=false) {
         const concepts = ConceptNameDictionary.filter(item => {
-            return item.name.match(new RegExp(conceptName, 'i'))
+           if (!strictMode) return item.name.match(new RegExp(conceptName, 'i'))
+
+           return item.name === conceptName
         })
         return this.resolveConcept(concepts, conceptName)
     }

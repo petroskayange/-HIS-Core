@@ -1,3 +1,4 @@
+import Prescription from "@/apps/ART/views/encounters/Prescription.vue"
 import Registration from "@/apps/ART/views/encounters/Registration.vue"
 import Appointments from "@/apps/ART/views/encounters/Appointment.vue"
 import Adherence from "@/apps/ART/views/encounters/Adherence.vue"
@@ -8,6 +9,11 @@ import Staging from "@/apps/ART/views/encounters/Staging.vue"
 import Vitals from "@/apps/ART/views/encounters/Vitals.vue"
 
 export default [
+    {
+        name: "Prescriptions",
+        path: "/art/encounters/prescriptions",
+        component: Prescription
+    },
     {
         name: "ART adherence",
         path: "/art/encounters/adherence",

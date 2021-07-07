@@ -1,9 +1,12 @@
 <template>
     <div>
       <view-port :showFull="!showKeyboard">
-      <his-text-input :value="selected" :disabled="false"/> 
+      <his-text-input :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" :disabled="false"/>
+      <span v-for="(item, index) in values" :key="index"> 
+        <ion-chip color="danger" @click="removeItem(item)">{{item}}</ion-chip>
+      </span>
       <ion-list class='view-port-content'>
-        <ion-item v-for="(entry, index) in filtered" :key="index" color="light">
+        <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
           <ion-label> {{ entry.label }} </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
@@ -28,6 +31,9 @@ export default defineComponent({
       return dataItem
     }
   },
+  data: () => ({
+    values: [] as Array<string>
+  }),
   watch: {
     clear(val: boolean){
       if (!val) return
@@ -38,7 +44,7 @@ export default defineComponent({
       handler(updatedItems: Array<Option>) {
         this.filter = ''
         const values = updatedItems.filter((item) => item.isChecked);
-        this.selected = values.map(item => item.label).join(';')
+        this.values = values.map(item => item.label)
 
         if (!isEmpty(values)) this.$emit("onValue", values);
       },
