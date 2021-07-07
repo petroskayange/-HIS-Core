@@ -20,7 +20,7 @@ import { Option } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
-
+import { isEmpty } from "lodash"
 export default defineComponent({
   components: { IonCheckbox },
   name: "HisMultipleSelect",
@@ -43,10 +43,9 @@ export default defineComponent({
   }),
   watch: {
     clear(val: boolean){
-      if (val) {
-        this.clearSelection()
-        this.listData = this.listData.map((item)=>this.setState(item))
-      }
+      if (!val) return
+      this.clearSelection()
+      this.listData = this.listData.map((item) => this.setState(item))
     },
     listData: {
       handler(updatedItems: Array<Option>) {
@@ -54,14 +53,14 @@ export default defineComponent({
         const values = updatedItems.filter((item) => item.isChecked);
         this.values = values.map(item => item.label)
 
-        if (values.length >= 1) this.$emit("onValue", values);
+        if (!isEmpty(values)) this.$emit("onValue", values);
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   async activated() {
     const options = await this.options(this.fdata)
-    this.listData = options.map((item: Option)=>this.setState(item))
-  },
+    this.listData = options.map((item: Option) => !item.isChecked ? this.setState(item): item)
+  }
 });
 </script>
