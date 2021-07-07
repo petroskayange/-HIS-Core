@@ -207,6 +207,10 @@ export const PREFERENCES = {
             component: FieldType.TT_SET_FILING_NUMBERS_LIMIT,
             name: "Set Filing Numbers Limit",
           },
+          {
+            component: FieldType.TT_SET_SITE_LOCATION,
+            name: "Set Site Location",
+          },
         ],
         'Data Management': [
           {
