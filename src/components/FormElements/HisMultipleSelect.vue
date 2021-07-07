@@ -1,9 +1,12 @@
 <template>
     <div>
       <view-port :showFull="!showKeyboard">
-      <his-text-input :value="selected" :disabled="false"/> 
+      <his-text-input :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" :disabled="false"/>
+      <span v-for="(item, index) in values" :key="index"> 
+        <ion-chip color="danger" @click="removeItem(item)">{{item}}</ion-chip>
+      </span>
       <ion-list class='view-port-content'>
-        <ion-item v-for="(entry, index) in filtered" :key="index" color="light">
+        <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
           <ion-label> {{ entry.label }} </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end"/>
       </ion-item>
@@ -17,7 +20,7 @@ import { Option } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
-
+import { isEmpty } from "lodash"
 export default defineComponent({
   components: { IonCheckbox },
   name: "HisMultipleSelect",
@@ -26,29 +29,31 @@ export default defineComponent({
     setState(dataItem: Option, isChecked=false) {
       dataItem.isChecked = isChecked
       return dataItem
-    },
+    }
   },
+  data: () => ({
+    values: [] as Array<string>
+  }),
   watch: {
     clear(val: boolean){
-      if (val) {
-        this.clearSelection()
-        this.listData = this.listData.map((item)=>this.setState(item))
-      }
+      if (!val) return
+      this.clearSelection()
+      this.listData = this.listData.map((item) => this.setState(item))
     },
     listData: {
       handler(updatedItems: Array<Option>) {
         this.filter = ''
         const values = updatedItems.filter((item) => item.isChecked);
-        this.selected = values.map(item => item.label).join(';')
+        this.values = values.map(item => item.label)
 
-        if (values.length >= 1) this.$emit("onValue", values);
+        if (!isEmpty(values)) this.$emit("onValue", values);
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   async activated() {
     const options = await this.options(this.fdata)
-    this.listData = options.map((item: Option)=>this.setState(item))
-  },
+    this.listData = options.map((item: Option) => !item.isChecked ? this.setState(item): item)
+  }
 });
 </script>

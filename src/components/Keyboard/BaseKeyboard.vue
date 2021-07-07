@@ -1,12 +1,14 @@
 <template>
-  <table id="keyboard">
+  <table class="his-keyboard">
     <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
-      <td v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
-        <div v-if="btnKey">
-          <ion-button @click="() => keyPress(btnKey)" class="keyboard-btn">
-            {{ btnKey }}
+      <td class='his-keyboard-margin' v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
+          <ion-button 
+            v-if="btnKey" 
+            :style="{width: btnSize}"
+            class="his-keyboard-btn" 
+            @click="() => keyPress(btnKey)">
+              {{ btnKey }}
           </ion-button>
-        </div>
       </td>
       </tr>
   </table>
@@ -17,6 +19,10 @@ import { IonButton } from "@ionic/vue";
 export default defineComponent({
   components: { IonButton },
   props: {
+    btnSize: {
+      type: String,
+      default: '90%'
+    },
     layout: {
       type: Array,
       required: true,
@@ -34,22 +40,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-table {
-  width: 90%;
-}
-td {
-  padding: 2px;
-}
-.keyboard-btn {
-  font-weight: bold;
-  width: 90%;
-}
-@media only screen and (min-width: 1024px) {
-  .keyboard-btn {
-    height: 57px;
-    font-size: 1.3rem;
-  }
-}
-</style>

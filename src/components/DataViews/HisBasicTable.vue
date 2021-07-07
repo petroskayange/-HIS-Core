@@ -1,26 +1,26 @@
 <template>
-    <table>
-        <thead>
-            <tr> 
-                <th v-for="(column, hIndex) in columns" :key="hIndex"> 
-                    {{ column }}
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="(dataItems, rIndex) in rows" :key="rIndex">
-                <td v-for="(item, dIndex) in dataItems" :key="dIndex"> 
-                    {{ item }}
-                </td>
-            </tr>
-        </tbody>
-        </table>
+    <table class="his-table">
+        <tr>
+            <th v-for="(column, hIndex) in columns" :key="hIndex"> 
+                {{ column }}
+            </th>
+        </tr>
+        <tr  v-for="(dataItems, rIndex) in rows" :key="rIndex">
+            <td :class="getColorCodeClass(rIndex)" v-for="(item, dIndex) in dataItems" :key="dIndex"> 
+                {{ item }}
+            </td>
+        </tr>
+    </table>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
     props: {
+        colorCodes: {
+            type: Object as PropType<string[]>,
+            default: []
+        },
         columns: {
             type: Object as PropType<string[]>,
             required: true
@@ -28,22 +28,15 @@ export default defineComponent({
         rows: {
             type: Object as PropType<string[]>
         }
+    },
+    methods: {
+        getColorCodeClass(index: number) {
+            try {
+                return this.colorCodes[index]
+            }catch(e) {
+                return ''
+            }
+        }
     }
 })
 </script>
-<style scoped>
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-td,
-th {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #f8f8f8;
-}
-</style>

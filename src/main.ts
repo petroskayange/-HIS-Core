@@ -23,6 +23,7 @@ import '@ionic/vue/css/flex-utils.css';
 import '@ionic/vue/css/display.css';
 
 import '@/css/his-style.css';
+import '@/css/art-style.css';
 
 /* Theme variables */
 import './theme/variables.css';

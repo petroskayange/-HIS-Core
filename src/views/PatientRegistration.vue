@@ -16,7 +16,7 @@ import {PersonAttributeService, NewAttribute} from '@/services/person_attributes
 import HisDate from "@/utils/Date"
 import { GlobalPropertyService } from "@/services/global_property_service" 
 import { ProgramService } from "@/services/program_service";
-import { EncounterService } from "@/services/Encounter";
+import { EncounterService } from "@/services/encounter_service";
 import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
@@ -67,7 +67,7 @@ export default defineComponent({
                     .then((data: Encounter) => {
                         this.createRegistrationOs(data, personPayload.patient_type? personPayload.patient_type : 'New patient')
                         .then(() => new PatientPrintoutService(person.person_id).printNidLbl())
-                        .then(() => this.$router.push(`/patient/dashboard?patient_id=${person.person_id}`))
+                        .then(() => this.$router.push(`/patient/dashboard/${person.person_id}`))
                     })
                 })
             });
@@ -143,14 +143,10 @@ export default defineComponent({
         return listOptions.map((item: any) => ({ label: item, value: item })) 
     },
     createRegistrationEncounter(patientID: number) {
-        return new EncounterService({
-            'encounter_type_name': 'REGISTRATION',
-            'encounter_type_id': 5,
-            'patient_id': patientID,
-            'program_id': EncounterService.getProgramID(),
-            'encounter_datetime': EncounterService.getSessionDate()
-        }).create();
-        
+        return EncounterService.create({
+            'encounter_type_id': 5, //TODO: get key from api or reference dictionary using name
+            'patient_id': patientID
+        })
     },
     createRegistrationOs(encounter: Encounter, patientType: string) {
         let ans: number;
@@ -174,8 +170,8 @@ export default defineComponent({
             return { label: val, value: val }
         }
     },
-    async getFacilities(): Promise<Option[]> {
-        const facilities = await LocationService.getFacilities()
+    async getFacilities(filter=''): Promise<Option[]> {
+        const facilities = await LocationService.getFacilities({name: filter})
         return facilities.map((facility: any) => ({
             label: facility.name,
             value: facility.location_id
@@ -441,7 +437,7 @@ export default defineComponent({
                 helpText: 'Type of patient',
                 group: 'person',
                 type: FieldType.TT_SELECT,
-                condition: (form: any) => this.showPatientType,
+                condition: () => this.showPatientType,
                 validation: (val: any) => Validation.required(val),
                 options: () => this.mapToOption([
                     'New patient',
@@ -455,7 +451,11 @@ export default defineComponent({
                 group: 'person',
                 validation: (val: any) => Validation.required(val),
                 condition: (form: any) => this.showPatientType && form.patient_type.label === 'External consultation',  
-                options: () => this.getFacilities()
+                options: (_, filter='') => this.getFacilities(filter),
+                config: {
+                    showKeyboard: true,
+                    isFilterDataViaApi: true
+                }
             },
             {
                 id: 'occupation',

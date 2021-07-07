@@ -39,6 +39,10 @@ export class Patientservice extends Service {
         })    
     }
 
+    getObj() {
+        return this.patient
+    }
+
     getID() {
         return this.patient.patient_id
     }

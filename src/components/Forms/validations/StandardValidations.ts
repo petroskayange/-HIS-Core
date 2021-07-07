@@ -1,12 +1,7 @@
-function required(value: any): null | Array<string> {
-    const noneFalsy = [undefined, '', null]
-    const msg = ['Field is empty!']
-    
-    if (noneFalsy.includes(value)) return msg
+import {isEmpty} from "lodash"
 
-    if (noneFalsy.includes(value.label)) return msg
-    
-    return null
+function required(value: any): null | Array<string> {
+    return isEmpty(value) ? ['Value is required'] : null
 }
 
 function isMWPhoneNumber(val: any) {
