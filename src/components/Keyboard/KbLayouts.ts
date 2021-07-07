@@ -1,3 +1,11 @@
+export const DEFAULT_KEYPAD = [
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+    ['.', '0', 'Del'],
+    ['',  'Done', '']
+]
+
 export const NUMBER_PAD_LO = [
     ['1', '2', '3'],
     ['4', '5', '6'],

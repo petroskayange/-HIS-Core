@@ -1,3 +1,4 @@
 export default interface SelectConfig {
-    showKeyboard: boolean
+    showKeyboard: boolean;
+    showRegimenCardTitle: boolean;
 }

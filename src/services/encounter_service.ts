@@ -3,21 +3,26 @@ import {Service} from "@/services/service"
 export interface NewEncounter {
     encounter_type_id: number;
     patient_id: number;
-    program_id: number;
-    encounter_datetime: string;
+    program_id?: number;
+    encounter_datetime?: string;
     encounter_type_name?: string;
 }
 
 export class EncounterService extends Service {
-    encounter: NewEncounter
-
-    constructor(data: NewEncounter) {
+    constructor() {
         super()
-        this.encounter = data
     }
 
-    create() {
-        return Service.postJson('/encounters', this.encounter)
+    static create(encounter: NewEncounter) {
+        const data = {...encounter}
+
+        if (!('program_id' in data)) 
+            Object.assign(data, {'program_id': this.getProgramID()})
+
+        if (!('encounter_datetime' in data)) 
+            Object.assign(data, {'encounter_datetime': this.getSessionDate()})
+        
+        return Service.postJson('/encounters', data)
     }
 
     static voidEncounter(encounterId: number, reason='Unknown') {
@@ -32,5 +37,4 @@ export class EncounterService extends Service {
             ...params
         })
     }
-
 }

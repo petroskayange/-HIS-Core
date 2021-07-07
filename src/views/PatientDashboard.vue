@@ -20,18 +20,18 @@
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col md="6" sm="12">
+                            <ion-col size="6" md="6" sm="12">
                                 <primary-card :counter="encountersCardItems.length" title="Activities" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
-                            <ion-col md="6" sm="12">
+                            <ion-col size="6" md="6" sm="12">
                                 <primary-card :counter="labOrderCardItems.length" title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col md="6" sm="12"> 
+                            <ion-col size="6" md="6" sm="12"> 
                                 <primary-card :counter="alertCardItems.length" title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
-                            <ion-col md="6" sm="12"> 
+                            <ion-col size="6" md="6" sm="12"> 
                                 <primary-card :counter="medicationCardItems.length" title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
@@ -90,7 +90,7 @@ import {
   IonToolbar,
   modalController
 } from "@ionic/vue";
-import { EncounterService } from '@/services/Encounter'
+import { EncounterService } from '@/services/encounter_service'
 export default defineComponent({
     components: {
         PatientHeader,
@@ -133,8 +133,10 @@ export default defineComponent({
     },
     watch: {
         "$route" : {
-            async handler({query}: any) {
-                this.patientId = parseInt(query.patient_id)
+            async handler({params}: any) {
+                if (!params) return
+                
+                this.patientId = parseInt(params.id)
 
                 if (this.patientId) this.init()
             },
@@ -279,7 +281,7 @@ export default defineComponent({
                 componentProps: {
                     items,
                     title: `${title}: ${date}`,
-                    taskParams: { patient: this.patient, visitDate: this.activeVisitDate}
+                    taskParams: { patient: this.patient.getObj(), visitDate: this.activeVisitDate}
                 }
             })
             modal.present()
@@ -330,7 +332,12 @@ export default defineComponent({
 </script>
 <style scoped>
     .grid-custom {
-        height: 99%;
-        overflow: hidden;
+        overflow-y: auto;
+    }
+    @media only screen and (width: 1024px) {
+         .grid-custom {
+            height: 99%;
+            overflow: hidden;
+        }   
     }
 </style>

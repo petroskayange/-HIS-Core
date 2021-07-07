@@ -81,7 +81,7 @@
             >
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large" :router-link="`/patient/dashboard?patient_id=${patientID}`">Continue</ion-button>
+            <ion-button color="success" size="large" :router-link="`/patient/dashboard/${patientID}`">Continue</ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>

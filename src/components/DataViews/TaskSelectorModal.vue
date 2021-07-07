@@ -27,6 +27,7 @@ import { defineComponent, PropType } from "vue";
 import TaskCard from "@/components/DataViews/TaskCard.vue";
 import { IonGrid, IonRow, IonCol, modalController } from "@ionic/vue"; 
 import { TaskInterface } from "@/apps/interfaces/TaskInterface";
+import Transformer from "@/utils/Transformers"
 export default defineComponent({
   components: { IonGrid, IonRow, IonCol, TaskCard },
   props: {
@@ -43,7 +44,7 @@ export default defineComponent({
       default: 3
     },
     taskParams: {
-      type: Object as PropType<any>,
+      type: Object,
       required: false
     }
   },
@@ -54,25 +55,15 @@ export default defineComponent({
     doTask(taskItem: TaskInterface) {
       if (taskItem.action) return taskItem.action(this.taskParams)
       
-      this.$router.push({ name: taskItem.name })
+      const params = { p: JSON.stringify(this.taskParams)}
+
+      this.$router.push({ name: taskItem.name, params })
       this.closeModal()
     }
   },
   computed: {
-    turpleTaskItems() {
-        const turples: any = [[]]
-        let rowIndex = 0
-        let counter = 0
-        this.items.forEach((item: any) => {
-            if (counter >= this.itemsPerRow) {
-                turples.push([])
-                counter = 0
-                ++rowIndex
-            }
-            turples[rowIndex].push(item)
-            ++counter
-        })
-        return turples
+    turpleTaskItems(): any {
+      return Transformer.convertArrayToTurples(this.items, this.itemsPerRow)
     }
   }
 });

@@ -26,12 +26,45 @@ export class ObservationService extends ConceptService {
         return super.postJson('/observations', data)     
     }
 
+    static saveObs(encounterId: number, obs: ObsValue) {
+        return this.create({
+            'encounter_id': encounterId,
+            observations: [obs]
+        })
+    }
+    
+    static saveObsArray(encounterId: number, obs: Array<ObsValue>) {
+        return this.create({
+            'encounter_id': encounterId,
+            observations: obs
+        })
+    }
+
+    static async buildValueCoded(conceptName: string, valueCoded: string, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName)
+        const coded = await ConceptService.getConceptID(valueCoded)
+        return {
+            'concept_id': concept,
+            'value_coded': coded,
+            'obs_datetime': date
+        }
+    }
+
+    static async buildValueText(conceptName: string, valueText: string, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName)
+        return {
+            'concept_id': concept,
+            'value_text': valueText,
+            'obs_datetime': date
+        }
+    }
+
     // Deprecated: use getObs instead
     static getObservations(patientID: number, conceptID: number) {
         return super.getJson(`/observations?person_id=${patientID}&concept_id=${conceptID}`)
     }
 
-    static getObs(params: Record<string, string>) {
+    static getObs(params: Record<string, string | number>) {
         return super.getJson('/observations', params)
     }
 

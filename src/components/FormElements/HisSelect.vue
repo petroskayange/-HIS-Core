@@ -3,7 +3,11 @@
         <view-port :showFull="!showKeyboard">
             <his-text-input :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" /> 
             <ion-list class='view-port-content'>
-                <ion-item button v-for="(item, index) in filtered" :key="index" @click="onselect(item)"> 
+                <ion-item 
+                    button v-for="(item, index) in filtered" 
+                    :color="item.label === selected ? 'light': ''" 
+                    :key="index"
+                    @click="onselect(item)"> 
                     <ion-label> {{item.label}} </ion-label>
                 </ion-item>
             </ion-list>
