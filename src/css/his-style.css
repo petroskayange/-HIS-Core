@@ -62,6 +62,17 @@
     box-shadow: var(--his-card-primary-shadow);
 }
 
+.tool-bar-medium-card {
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    height: 87px;
+    font-size: 0.8em;
+    overflow: hidden;
+    -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+    -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+    box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+}
+
 body {
  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
 }

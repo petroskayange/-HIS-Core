@@ -2,7 +2,14 @@
   <ion-page>
     <ion-header> 
         <ion-toolbar>
-            <label class='his-title'> {{title}}: </label>
+            <ion-row> 
+                <ion-col size="7"> 
+                    <label class='his-title'> {{title}}: </label>
+                </ion-col>
+                <ion-col size="5" v-if="toolbarInfo"> 
+                    <info-card :items="toolbarInfo"> </info-card>
+                </ion-col>
+            </ion-row>
         </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -34,9 +41,10 @@ import { IonPage, IonContent } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
 import { find, findIndex} from "lodash"
+import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 export default defineComponent({
     name: "HisStandardForm",
-    components: { BaseForm, IonPage, IonContent, HisFooter },
+    components: { InfoCard, BaseForm, IonPage, IonContent, HisFooter },
     props: {
         skipSummary: {
             type: Boolean,
@@ -82,6 +90,12 @@ export default defineComponent({
     computed: {
         title(): string {
             return this.formFields[this.index].helpText
+        },
+        toolbarInfo(): Array<Option> | undefined{
+            if (this.fields && this.fields[this.index].config) {
+                return this.fields[this.index]?.config?.toolbarInfo
+            }
+            return undefined
         }
     },
     watch: {
@@ -245,3 +259,10 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+.tool-bar-medium-card {
+    height: 100%;
+    padding-right: 10px;
+    text-align: right;
+}
+</style>
