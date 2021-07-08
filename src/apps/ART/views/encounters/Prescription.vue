@@ -7,16 +7,18 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import Validation from "@/components/Forms/validations/StandardValidations"
-import { PrescriptionService } from "@/apps/ART/services/prescription_service"
+import { PrescriptionService, REGIMEN_SWITCH_REASONS } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DrugInterface } from '@/interfaces/Drug'
 import { isArray, isEmpty } from "lodash"
 import HisDate from "@/utils/Date"
 import EncounterMixinVue from './EncounterMixin.vue'
+import { actionSheetController} from "@ionic/vue"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         regimenType: 'arv_regimens',
+        regimenSwitchReason: '' as string | undefined,
         prescription: {} as any,
         patientToolbar: [] as Array<Option>
     }),
@@ -59,7 +61,10 @@ export default defineComponent({
             const drugOrder = await this.prescription.createDrugOrder(drugs) 
             
             if(drugOrder) {
-               toastSuccess('Drug order has been created')
+                toastSuccess('Drug order has been created')
+                if (this.regimenSwitchReason) {
+                    await this.prescription.createRegimenSwitchObs(this.regimenSwitchReason)
+                }
                return this.gotoPatientDashboard()
             }
             toastWarning('Unable to create drug orders!')
@@ -188,12 +193,32 @@ export default defineComponent({
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
+        async regimenSwitchActionSheet() {
+            const reasons = REGIMEN_SWITCH_REASONS.map((i: string) => ({ text: i, role: i}))
+            const action = await actionSheetController.create({
+                header: `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
+                subHeader: 'Specify reason for switching regimen',
+                mode: 'ios',
+                backdropDismiss: false,
+                buttons: [ ...reasons, { text: 'Cancel', role: 'cancel' }]
+            })
+            action.present()
+            const { role } = await action.onDidDismiss();
+
+            if (role === 'cancel') {
+                this.regimenSwitchReason = ''
+                return false
+            }
+            this.regimenSwitchReason = role
+            return true
+        },
         getFields(): Array<Field> {
             return [
                 {
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
+                    preset: { value: this.programInfo.current_regimen },
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const regimenCategories = await this.prescription.getPatientRegimens()
@@ -204,6 +229,13 @@ export default defineComponent({
                             options.push({ label: drug, value: index, other: { regimens } })
                         }
                         return options
+                    },
+                    onValue: async (val: any) => {
+                        if (val && val.value != this.programInfo.current_regimen) {
+                            const res = await this.regimenSwitchActionSheet()
+                            return res
+                        }
+                        return true
                     },
                     config: {
                         toolbarInfo: this.patientToolbar,

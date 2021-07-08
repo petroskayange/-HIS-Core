@@ -83,7 +83,14 @@ export default defineComponent({
     getActiveFieldValue(): any {
       return this.formData[this.activeField.id];
     },
-    setActiveFieldValue(value: any): void {
+    async setActiveFieldValue(value: any) {
+      if (this.activeField?.onValue) {
+        const isValue = await this.activeField?.onValue(value) 
+        if (!isValue) {
+          this.isClear = true // undo value in active component
+          return this.formData[this.activeField.id] = null
+        }
+      }
       this.formData[this.activeField.id] = value;
     },
     activeFieldRequiresNext(): boolean {
@@ -144,8 +151,8 @@ export default defineComponent({
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
     },
-    onValue(value: string | number | Option | Array<Option>): void {
-      this.setActiveFieldValue(value);
+    async onValue(value: string | number | Option | Array<Option>) {
+      await this.setActiveFieldValue(value);
 
       if (this.fields.length === 1) return this.emitNext() 
 
