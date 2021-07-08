@@ -1,5 +1,5 @@
 <template>
-  <div id="card">
+  <div class="tool-bar-medium-card">
     <slot> </slot>
   </div>
 </template>
@@ -9,15 +9,3 @@ export default defineComponent({
   name: "ToolBarMediumCard"
 });
 </script>
-<style scoped>
-    #card {
-      border: 1px solid #ccc;
-      border-radius: 15px;
-      height: 87px;
-      font-size: 0.8em;
-      overflow: hidden;
-      -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-      -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-      box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-    }
-</style>
