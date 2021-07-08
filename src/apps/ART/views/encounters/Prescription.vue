@@ -196,7 +196,7 @@ export default defineComponent({
         async regimenSwitchActionSheet() {
             const reasons = REGIMEN_SWITCH_REASONS.map((i: string) => ({ text: i, role: i}))
             const action = await actionSheetController.create({
-                header: 'Are you sure you want to switch regimens',
+                header: `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
                 subHeader: 'Specify reason for switching regimen',
                 mode: 'ios',
                 backdropDismiss: false,
@@ -208,10 +208,9 @@ export default defineComponent({
             if (role === 'cancel') {
                 this.regimenSwitchReason = ''
                 return false
-            } else {
-                this.regimenSwitchReason = role
-                return true
             }
+            this.regimenSwitchReason = role
+            return true
         },
         getFields(): Array<Field> {
             return [
