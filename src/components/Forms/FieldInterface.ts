@@ -15,6 +15,7 @@ export interface Field {
     preset?: Option;
     condition?: Function;
     validation?: Function;
+    onValue?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
     config?: Record<string, any>;
