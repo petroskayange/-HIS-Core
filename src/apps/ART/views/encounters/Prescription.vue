@@ -24,11 +24,11 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 if (!patient) return
-                this.patientToolbar = await this.getPatientToolBar()
                 this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.load3HpStatus()
-                
+
+                this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
             immediate: true,
@@ -179,12 +179,13 @@ export default defineComponent({
         },
         async getPatientToolBar() {
             const weight = await this.patient.getRecentWeight()
+            const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
             return [
-                { label: 'Age', value: `${this.patient.getAge()} Year(s)`},
-                { label: 'Gender', value: this.patient.getGender()},
-                { label: 'Current Regimen', value: this.programInfo.current_regimen},
-                { label: 'Current weight', value: `${weight} kg(s)` || 'Unknown'},
-                { label: 'Reason for change', value: 'N/A'}
+                { label: 'Age', value: `${this.patient.getAge()} Year(s)` },
+                { label: 'Gender', value: this.patient.getGender() },
+                { label: 'Current Regimen', value: this.programInfo.current_regimen },
+                { label: 'Current weight', value: `${weight} kg(s)` || 'Unknown' },
+                { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
         getFields(): Array<Field> {
