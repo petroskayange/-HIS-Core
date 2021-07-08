@@ -29,13 +29,6 @@ export default defineComponent({
     setState(dataItem: Option, isChecked=false) {
       dataItem.isChecked = isChecked
       return dataItem
-    },
-    removeItem(item: string) {
-      this.listData.forEach((option) => {
-        if (option.label === item) {
-          this.setState(option, false)
-        }
-      }) 
     }
   },
   data: () => ({
