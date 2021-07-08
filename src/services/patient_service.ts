@@ -46,8 +46,10 @@ export class Patientservice extends Service {
         const concept = await ConceptService.getConceptID('weight', true)
         const obs = await ObservationService.getObs({
             'person_id': this.getID(),
-            'concept_id': concept
+            'concept_id': concept,
+            'page_size': 1
         })
+        console.log(obs)
         return obs.length >= 1 ? obs[0].value_numeric: null
     }
 
