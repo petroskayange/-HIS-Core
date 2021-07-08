@@ -12,7 +12,7 @@ export interface Field {
     helpText: string;
     type: FieldType;
     group?: string;  // Categories fields with related data
-    preset?: Option;
+    preset?: Option | Record<string, any>;
     condition?: Function;
     validation?: Function;
     onValue?: Function;
