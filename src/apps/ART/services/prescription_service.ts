@@ -8,6 +8,12 @@ import { isEmpty } from "lodash";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 
+export const REGIMEN_SWITCH_REASONS = [
+    'Policy change', 'Ease of administration (pill burden, swallowing)',
+    'Drug drug interaction', 'Pregnancy intention',
+    'Side effects', 'Treatment failure', 'Weight Change', 'Other'
+]
+
 export class PrescriptionService extends RegimenService {
     patientID: number;
     encounterID: number;
