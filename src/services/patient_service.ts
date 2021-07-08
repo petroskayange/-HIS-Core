@@ -49,7 +49,6 @@ export class Patientservice extends Service {
             'concept_id': concept,
             'page_size': 1
         })
-        console.log(obs)
         return obs.length >= 1 ? obs[0].value_numeric: null
     }
 

@@ -145,6 +145,15 @@ export class PrescriptionService extends RegimenService {
         }
     }
 
+    async getReasonForRegimenSwitch() {
+        const concept = await ConceptService.getConceptID('Reason for ARV switch', true)
+        const obs = await ObservationService.getObs({
+            'concept_id': concept, 'person_id': this.patientID, 'limit': 1
+        })
+        console.log(obs)
+        return !isEmpty(obs) ? obs[0].value_text : 'N/A'
+    }
+
     async createDrugOrder(drugOrders: Array<DrugInterface>, encounterID=this.encounterID) {
         return DrugOrderService.create({
             'encounter_id': encounterID,
