@@ -193,6 +193,13 @@ export default defineComponent({
                         return options
                     },
                     config: {
+                        toolbarInfo: [
+                            { label: 'Age', value: 'unknown'},
+                            { label: 'Gender', value: 'unknown'},
+                            { label: 'Current Regimen', value: 'unknown'},
+                            { label: 'Current weight', value: 'unknown'},
+                            { label: 'Reason for change', value: 'N/A'}
+                        ],
                         footerBtns: [
                             {
                                 name: 'Custom Regimen',
