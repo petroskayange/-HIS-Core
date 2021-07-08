@@ -2,11 +2,13 @@
 import { Field, Option } from '@/components/Forms/FieldInterface'
 import { defineComponent } from 'vue'
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
+import {Patientservice} from "@/services/patient_service"
 
 export default defineComponent({
     components: { HisStandardForm },
     data: () => ({
         patient: {} as any,
+        programInfo: {} as any,
         fields: [] as Array<Field>,
         form: {} as Record<string, Option> | Record<string, null>,
     }),
@@ -15,9 +17,10 @@ export default defineComponent({
             async handler(route: any){
                 if (!route || !route.params.p) return
 
-                const { patient } = JSON.parse(route.params.p.toString())
+                const { patient, program } = JSON.parse(route.params.p.toString())
 
-                this.patient = patient
+                this.patient = new Patientservice(patient)
+                this.programInfo = program
             },
             immediate: true,
             deep: true
@@ -30,13 +33,10 @@ export default defineComponent({
     },
     methods: {
         patientDashboardUrl() {
-            return `/patient/dashboard/${this.patient.patient_id}`
+            return `/patient/dashboard/${this.patient.getID()}`
         },
         gotoPatientDashboard() {
             return this.$router.push({path: this.patientDashboardUrl()}) 
-        },
-        onFinish(form: Record<string, Option> | Record<string, null>) {
-            this.form = form
         }
     }
 })
