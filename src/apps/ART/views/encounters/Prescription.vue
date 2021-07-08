@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :activeField="regimenType" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form v-if="fields.length >= 1" :activeField="regimenType" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -18,16 +18,18 @@ export default defineComponent({
     data: () => ({
         regimenType: 'arv_regimens',
         prescription: {} as any,
+        patientToolbar: [] as Array<Option>
     }),
     watch: {
         patient: {
             async handler(patient: any){
                 if (!patient) return
-
-                this.fields = this.getFields()
-                this.prescription = new PrescriptionService(patient.patient_id)
+                this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.load3HpStatus()
+
+                this.patientToolbar = await this.getPatientToolBar()
+                this.fields = this.getFields()
             },
             immediate: true,
             deep: true
@@ -175,6 +177,17 @@ export default defineComponent({
         hasCustomRegimen() {
             return this.regimenType.match(/custom_regimen/i)
         },
+        async getPatientToolBar() {
+            const weight = await this.patient.getRecentWeight()
+            const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
+            return [
+                { label: 'Age', value: `${this.patient.getAge()} Year(s)` },
+                { label: 'Gender', value: this.patient.getGender() },
+                { label: 'Current Regimen', value: this.programInfo.current_regimen },
+                { label: 'Current weight', value: `${weight} kg(s)` || 'Unknown' },
+                { label: 'Reason for change', value: reasonForSwitch }
+            ]
+        },
         getFields(): Array<Field> {
             return [
                 {
@@ -193,6 +206,7 @@ export default defineComponent({
                         return options
                     },
                     config: {
+                        toolbarInfo: this.patientToolbar,
                         footerBtns: [
                             {
                                 name: 'Custom Regimen',

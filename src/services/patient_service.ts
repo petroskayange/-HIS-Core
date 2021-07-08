@@ -2,7 +2,10 @@ import { Patient } from '@/interfaces/patient';
 import { getFullName } from '@/interfaces/name'
 import { getPersonAttribute } from '@/interfaces/personAttribute'
 import { getPatientIdentifier } from '@/interfaces/patientIdentifier'
+import { ObservationService } from './observation_service';
+import { ConceptService } from './concept_service';
 import { Service } from "@/services/service"
+import HisDate from "@/utils/Date"
 
 export class Patientservice extends Service {
     patient: Patient;
@@ -36,7 +39,17 @@ export class Patientservice extends Service {
     public static getPatientVisits(patientId: number) {
         return super.getJson(`patients/${patientId}/visits`, {
             'program_id': super.getProgramID()
-        })    
+        })
+    }
+
+    async getRecentWeight() {
+        const concept = await ConceptService.getConceptID('weight', true)
+        const obs = await ObservationService.getObs({
+            'person_id': this.getID(),
+            'concept_id': concept,
+            'page_size': 1
+        })
+        return obs.length >= 1 ? obs[0].value_numeric: null
     }
 
     getObj() {
@@ -46,6 +59,7 @@ export class Patientservice extends Service {
     getID() {
         return this.patient.patient_id
     }
+
 
     getPatientInfoString() {
         const data =  [
@@ -63,6 +77,10 @@ export class Patientservice extends Service {
 
     getGender() {
         return this.patient.person.gender
+    }
+
+    getAge() {
+        return HisDate.getAgeInYears(this.patient.person.birthdate)
     }
 
     getBirthdate() {
