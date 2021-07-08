@@ -218,6 +218,7 @@ export default defineComponent({
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
+                    preset: { value: this.programInfo.current_regimen },
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const regimenCategories = await this.prescription.getPatientRegimens()

@@ -21,6 +21,7 @@ import ViewPort from "@/components/DataViews/ViewPort.vue"
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 import Transformer from '@/utils/Transformers'
 import RegimenCard from "@/components/DataViews/RegimenCard.vue"
+import { find } from "lodash"
 export default defineComponent({
     components: { ViewPort, RegimenCard },
     mixins: [SelectMixin],
@@ -34,12 +35,16 @@ export default defineComponent({
     },
     async mounted() {
         this.init()
-        if (this.preset) this.onselect(this.preset)
     },
     methods: {
         async init() {
             const options = await this.options(this.fdata)
             this.listData = Transformer.convertArrayToTurples(options)
+
+            if (this.preset) {
+                const item = find(options, this.preset)
+                if (item) this.onselect(item)
+            }
         },
         onselect(item: Option): void {
             this.selected = item.label
