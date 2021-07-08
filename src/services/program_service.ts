@@ -16,7 +16,10 @@ export class ProgramService extends Service {
     static getNextTask(patientID: number) {
         return super.getJson(`/workflows/${super.getProgramID()}/${patientID}`, {date: super.getSessionDate()});
     }
-    
+    static getNextSuggestedARVNumber() {
+    return super.getJson(`/programs/1/next_available_arv_number`);
+      
+    }
     static getFastTrackStatus(patientID: number) {
         return super.getJson('/on_fast_track', {'person_id': patientID, date: super.getSessionDate()});
     }

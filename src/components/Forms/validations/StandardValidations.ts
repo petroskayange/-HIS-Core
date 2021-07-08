@@ -1,3 +1,4 @@
+import { ConceptService } from "@/services/concept_service"
 import {isEmpty} from "lodash"
 
 function required(value: any): null | Array<string> {
@@ -28,12 +29,21 @@ function rangeOf(val: any, min: number, max: number): null | Array<string> {
     const value = parseInt(val.label)
     return value >= min && value <= max ? null: [`${value} not within range of ${min} - ${max}`]
 }
-
+function neitherOr(val: any): null | Array<string> {
+    const allNo = val.filter((arr: any) => {
+        return parseInt(arr.other.value) === ConceptService.getCachedConceptID('No')
+    });
+    if(allNo.length == val.length) {
+        return ['All values can not be no']
+    }
+    return null;
+}
 export default {
     required,
     isMWPhoneNumber,
     isName,
     isNumber,
     hasLengthRangeOf,
-    rangeOf
+    rangeOf,
+    neitherOr
 }

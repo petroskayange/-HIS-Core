@@ -37,14 +37,14 @@ import HisFooter from "@/components/HisDynamicNavFooter.vue";
 import { Field, Option } from "./FieldInterface";
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { defineComponent, PropType } from "vue";
-import { IonPage, IonContent } from "@ionic/vue";
+import { IonPage, IonContent,IonRow, IonToolbar, IonCol, IonHeader } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
 import { find, findIndex} from "lodash"
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 export default defineComponent({
     name: "HisStandardForm",
-    components: { InfoCard, BaseForm, IonPage, IonContent, HisFooter },
+    components: { InfoCard, BaseForm, IonPage, IonContent, HisFooter, IonRow, IonToolbar, IonCol, IonHeader },
     props: {
         skipSummary: {
             type: Boolean,
