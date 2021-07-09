@@ -43,9 +43,9 @@ export default defineComponent({
           const response: Patient = await ProgramService.getJson(
             `/patients/${query.patient_id}`
           );
+          this.patientID = query.patient_id;
           const patient = new Patientservice(response);
           const ARVNumber = patient.getPatientIdentifier(4);
-          const extras = [];
           if (ARVNumber === "") {
             this.hasARVNumber = false;
             this.sitePrefix = await GlobalPropertyService.getSitePrefix();
@@ -117,39 +117,7 @@ export default defineComponent({
         },
       ];
 
-      const extras = [];
-      if (!this.hasARVNumber) {
-        extras.push(
-          {
-            id: "capture_arv",
-            helpText: "Capture ARV Number?",
-            type: FieldType.TT_SELECT,
-            requireNext: true,
-            validation: (val: any) => Validation.required(val),
-            options: () => values,
-          },
-          {
-            id: "arv_number",
-            helpText: "Conditionally display next question",
-            type: FieldType.TT_TEXT,
-            validation: (val: any) => Validation.required(val),
-            condition(formData: any) {
-              return (
-                formData.capture_arv.value ===
-                ConceptService.getCachedConceptID("Yes")
-              );
-            },
-            config: {
-              prepend: true,
-              prependValue: `${this.sitePrefix}-ARV-`,
-            },
-            preset: {
-              label: this.suggestedNumber,
-              value: this.suggestedNumber,
-            },
-          }
-        );
-      }
+     
       return [
         {
           id: "present",
@@ -162,7 +130,7 @@ export default defineComponent({
               return {};
             },
           },
-          validation: (val: any) => Validation.neitherOr(val),
+          validation: (val: any) => Validation.neitherOr(val) || Validation.anyEmpty(val),
           options: () => [
             {
               label: "Patient Present",
@@ -182,7 +150,35 @@ export default defineComponent({
             },
           ],
         },
-        ...extras,
+        {
+            id: "capture_arv",
+            helpText: "Capture ARV Number?",
+            type: FieldType.TT_SELECT,
+            requireNext: true,
+            condition: () => !this.hasARVNumber,
+            validation: (val: any) => Validation.required(val),
+            options: () => values,
+          },
+          {
+            id: "arv_number",
+            helpText: "Conditionally display next question",
+            type: FieldType.TT_TEXT,
+            validation: (val: any) => Validation.required(val),
+            condition(formData: any) {
+              return (
+                !this.hasARVNumber && formData.capture_arv && formData.capture_arv.value ===
+                ConceptService.getCachedConceptID("Yes")
+              );
+            },
+            config: {
+              prepend: true,
+              prependValue: `${this.sitePrefix}-ARV-`,
+            },
+            preset: {
+              label: this.suggestedNumber,
+              value: this.suggestedNumber,
+            },
+          }
       ];
     },
   },

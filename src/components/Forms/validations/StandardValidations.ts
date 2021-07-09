@@ -38,6 +38,15 @@ function neitherOr(val: any): null | Array<string> {
     }
     return null;
 }
+function anyEmpty(val: any): null | Array<string> {
+    const allNo = val.filter((arr: any) => {
+        return arr.other.value === "" 
+    });
+    if(allNo.length > 0) {
+        return ['all must be selected']
+    }
+    return null;
+}
 export default {
     required,
     isMWPhoneNumber,
@@ -45,5 +54,6 @@ export default {
     isNumber,
     hasLengthRangeOf,
     rangeOf,
-    neitherOr
+    neitherOr,
+    anyEmpty
 }
