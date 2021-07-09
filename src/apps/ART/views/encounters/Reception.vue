@@ -20,7 +20,7 @@ import { Patientservice } from "@/services/patient_service";
 import { EncounterService } from "@/services/encounter_service";
 import { Encounter } from "@/interfaces/encounter";
 import { ObservationService } from "@/services/observation_service";
-
+ 
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
