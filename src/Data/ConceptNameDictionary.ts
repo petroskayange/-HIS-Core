@@ -20,6 +20,86 @@ export default [
     { 'name': 'External consultation', 'concept_id': 9684 }, 
     { 'name': 'Type of patient', 'concept_id':  3289},
     {
+        "name": "WHO STAGE 1",
+        "concept_id": 9145,
+        "category": "whole_staging_numbers"
+    },
+     {
+        "name": "WHO STAGE 2",
+        "concept_id": 9146,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE 3",
+        "concept_id": 2932,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE 4",
+        "concept_id": 2933,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE I ADULT",
+        "concept_id": 7561,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE I ADULT AND PEDS",
+        "concept_id": 7041,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE I PEDS",
+        "concept_id": 7049,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE II ADULT",
+        "concept_id": 7046,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE II ADULT AND PEDS",
+        "concept_id": 7042,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE II PEDS",
+        "concept_id": 7050,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE III ADULT",
+        "concept_id": 7047,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE III ADULT AND PEDS",
+        "concept_id": 7043,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE III PEDS",
+        "concept_id": 7051,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE IV ADULT",
+        "concept_id": 7048,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE IV ADULT AND PEDS",
+        "concept_id": 7044,
+        "category": "whole_staging_numbers"
+     },
+     {
+        "name": "WHO STAGE IV PEDS",
+        "concept_id": 7052,
+        "category": "whole_staging_numbers"
+     },
+    {
         "name": "Cryptococcal meningitis or other extrapulmonary cryptococcosis",
         "concept_id": 7548,
         "category": "who_staging"
