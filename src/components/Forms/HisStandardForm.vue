@@ -94,7 +94,6 @@ export default defineComponent({
         fields: {
             handler(fields: Array<Field>) {
                 if (!fields) return
-
                 const summary = this.skipSummary ? [] : [this.getDefaultSummaryField()]
                 this.formFields = [...fields, ...summary]
                 this.totalFields = this.formFields.length
@@ -106,25 +105,24 @@ export default defineComponent({
                     this.next(),
                     this.finish()
                 ]
+                this.changeIndex(this.activeField || '')
             },
             deep: true,
             immediate: true
         },
         activeField:
         {
-            handler(field: string){
-                const index = findIndex(this.formFields, { id: field })
-                if (index >= 0) {
-                    this.skipToIndex = index 
-                    this.$emit('onskip')
-                } 
-            },
+            handler(field: string){ this.changeIndex(field) },
             immediate: true
         } 
     },
     methods: {
         onErrors(errors: Array<string>) {
             toastWarning(errors.join(', '), 3000)
+        },
+        changeIndex(fieldID: string) {
+           const index = findIndex(this.formFields, { id: fieldID })
+           if (index >= 0) this.skipToIndex = index 
         },
         onState({ field, index }: any){
             this.index = index

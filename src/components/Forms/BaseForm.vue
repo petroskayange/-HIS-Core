@@ -8,8 +8,8 @@
       :preset="activeField.preset"
       :clear="isClear"
       :fdata="formData"
-      @onClear="isClear=false"
       @onValue="onValue"
+      @onClear="isClear=false"
     />
   </keep-alive>
 </template>
@@ -37,8 +37,8 @@ export default defineComponent({
       type: Boolean
     },
     fields: {
-      required: true,
-      type: Object as PropType<Field[]>
+      type: Object as PropType<Field[]>,
+      required: true
     },
   },
   data() {
@@ -51,11 +51,8 @@ export default defineComponent({
   },
   watch: {
     index: {
-      handler(index: number) {
-        if (index >= 0 && index <= this.fields.length) {
-          this.activeIndex = index
-          this.onNext()
-        }
+      handler(i: number): void { 
+        if (this.isIndexValid(i)) return this.setActiveField(i)
       },
       immediate: true
     },
@@ -71,7 +68,6 @@ export default defineComponent({
         if (this.activeField.validation) {
           const value = this.formData[this.activeField.id]
           const errors = this.activeField.validation(value, this.formData)
-          
           if (errors) {
             this.emitState()
             return this.$emit('onErrors', errors)
@@ -87,14 +83,22 @@ export default defineComponent({
       this.emitState()
     },
   },
-  mounted() {
+  mounted(): void {
     this.buildFormData(this.fields);
-    this.onNext()
+    // Validate index prop and make it the active field if set
+    const i = this.index
+    if (i != undefined && this.isIndexValid(i)) {
+      return this.setActiveField(i)
+    }
+    this.onNext() //look for a field to mount initially
   },
   methods: {
     buildFormData(fields: Array<Field>): void {
       this.formData = {};
       fields.forEach((field) => (this.formData[field.id] = null));
+    },
+    isIndexValid(i: number): boolean {
+      return i >= 0 && i <= this.fields.length    
     },
     async setActiveFieldValue(value: any) {
       let newValue = value
@@ -152,11 +156,8 @@ export default defineComponent({
           !this.activeField.requireNext) this.onNext()
     },
     emitState() {
-      this.$emit("onState", {
-        field: this.activeField, 
-        index: this.activeIndex, 
-        formData: this.formData
-      });
+      this.$emit("onState", { field: this.activeField, 
+        index: this.activeIndex, formData: this.formData });
     }
   },
 });
