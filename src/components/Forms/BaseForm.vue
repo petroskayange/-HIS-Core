@@ -52,7 +52,7 @@ export default defineComponent({
   watch: {
     index: {
       handler(i: number): void { 
-        if (this.isIndexValid(i)) return this.setActiveField(i)
+        if (this.isIndexValid(i)) this.setActiveField(i)
       },
       immediate: true
     },
@@ -73,13 +73,16 @@ export default defineComponent({
             return this.$emit('onErrors', errors)
           }
         }
-        return this.onNext();
+        this.onNext();
+        return 
       }
       this.emitState()
     },
     prev(val: boolean): void {
-      if (val) return this.onPrev()
-  
+      if (val) {
+        this.onPrev()
+        return
+      }
       this.emitState()
     },
   },
@@ -88,7 +91,8 @@ export default defineComponent({
     // Validate index prop and make it the active field if set
     const i = this.index
     if (i != undefined && this.isIndexValid(i)) {
-      return this.setActiveField(i)
+      this.setActiveField(i, 'init')
+      return
     }
     this.onNext() //look for a field to mount initially
   },
@@ -111,7 +115,7 @@ export default defineComponent({
       }
       this.formData[this.activeField.id] = newValue;
     },
-    onNext(): void {
+    async onNext() {
       const totalFields = this.fields.length
 
       for(let i=this.activeIndex; i < totalFields; ++i) {
@@ -124,11 +128,12 @@ export default defineComponent({
           this.formData[field.id] = null
           continue
         }
-        return this.setActiveField(i)
+        await this.setActiveField(i, 'next')
+        return
       }
       this.$emit("onFinish", this.formData);
     },
-    onPrev(): void {
+    async onPrev() {
       for(let i=this.activeIndex; i >= 0; --i) {
         const field = this.fields[i]
         
@@ -140,14 +145,22 @@ export default defineComponent({
           continue
         }
 
-        return this.setActiveField(i)
+        await this.setActiveField(i, 'prev')
+        return
       }
       this.emitState()
     },
-    setActiveField(index: number) {
+    async setActiveField(index: number, state='') {
+      // load callback before changing active component
+      if (!isEmpty(this.activeField) && this.activeField.unload) {
+        const data = this.formData[this.activeField.id]
+        if (data) await this.activeField.unload(data, state)
+      } 
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
       this.emitState()
+
+      if (this.activeField.onload) await this.activeField.onload()
     },
     async onValue(value: string | number | Option | Array<Option>) {
       await this.setActiveFieldValue(value);
