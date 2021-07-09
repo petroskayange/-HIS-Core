@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form v-if="fields.length >= 1" :activeField="regimenType" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :activeField="fieldComponent" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -17,7 +17,7 @@ import { actionSheetController} from "@ionic/vue"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
-        regimenType: 'arv_regimens',
+        fieldComponent: 'arv_regimens',
         regimenSwitchReason: '' as string | undefined,
         prescription: {} as any,
         patientToolbar: [] as Array<Option>
@@ -26,11 +26,17 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 if (!patient) return
+
                 this.prescription = new PrescriptionService(patient.getID())
+                this.patientToolbar = await this.getPatientToolBar()
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.load3HpStatus()
+                await this.prescription.loadFastTrackStatus()
 
-                this.patientToolbar = await this.getPatientToolBar()
+                if (this.prescription.isFastTrack()) {
+                    await this.prescription.loadFastTrackMedications()
+                    this.fieldComponent = 'next_visit_interval'
+                }
                 this.fields = this.getFields()
             },
             immediate: true,
@@ -45,11 +51,15 @@ export default defineComponent({
             const encounter = await this.prescription.createTreatmentEncounter()
 
             this.prescription.setNextVisitInterval(formData.next_visit_interval.value)
-            
+
             if (!encounter) {
                 return toastWarning('Unable to create treatment encounter')
             }
-            
+
+            if (this.hasFastTrack()) {
+                drugs = this.resolveDrugs(this.prescription.getFastTrackMedications())
+            }
+
             if (this.hasArtRegimen()) {
                drugs = this.resolveDrugs([...drugs, ...formData.arv_regimens.other.regimens])
             }
@@ -73,10 +83,14 @@ export default defineComponent({
             let regimens: Array<RegimenInterface> = this.prescription.getRegimenExtras()
             let colorCodes: Array<string> = []
 
+            if (this.hasFastTrack()) {
+                regimens = this.prescription.getFastTrackMedications()
+            }
+
             if (this.hasCustomRegimen()) {
                 regimens = formData.custom_dosage.map((regimen: Option) => regimen.other)
             }
-            
+
             if (this.hasArtRegimen()) {
                 regimens = [...regimens, ...formData.arv_regimens.other.regimens]
                 colorCodes = regimens.map((item: any) => {
@@ -116,6 +130,10 @@ export default defineComponent({
             this.prescription.setNextVisitInterval(interval)
 
             const nextAppointment = this.prescription.calculateDateFromInterval()
+
+            if (this.hasFastTrack()) {
+                regimens = this.prescription.getFastTrackMedications()
+            }
 
             if (this.hasArtRegimen()) {
                 regimens = formData.arv_regimens.other.regimens
@@ -177,10 +195,13 @@ export default defineComponent({
             return output
         },
         hasArtRegimen() {
-            return this.regimenType.match(/arv_regimens/i)
+            return this.fieldComponent === "arv_regimens"
         },
         hasCustomRegimen() {
-            return this.regimenType.match(/custom_regimen/i)
+            return this.fieldComponent === "custom_regimen"
+        },
+        hasFastTrack() {
+            return this.prescription.isFastTrack()
         },
         async getPatientToolBar() {
             const weight = await this.patient.getRecentWeight()
@@ -250,7 +271,7 @@ export default defineComponent({
                                     return state.index === 0
                                 },
                                 onClick: () => {
-                                    this.regimenType = 'custom_regimen'
+                                    this.fieldComponent = 'custom_regimen'
                                 }
                             }
                         ]
@@ -272,9 +293,7 @@ export default defineComponent({
                     },
                     config: {
                         showKeyboard: true,
-                        hiddenFooterBtns: [
-                            'Back'
-                        ],
+                        hiddenFooterBtns: [ 'Back' ],
                         footerBtns: [
                             {
                                 name: 'Standard Regimen',
@@ -286,7 +305,7 @@ export default defineComponent({
                                     return state.index === 1
                                 },
                                 onClick: () => {
-                                    this.regimenType = 'arv_regimens'
+                                    this.fieldComponent = 'arv_regimens'
                                 }
                             }
                         ]
@@ -321,9 +340,7 @@ export default defineComponent({
                     type: FieldType.TT_TABLE_VIEWER,
                     options: (fdata: any) => this.getDosageTableOptions(fdata),
                     config: {
-                        hiddenFooterBtns: [
-                            'Clear'
-                        ]
+                        hiddenFooterBtns: [ 'Clear' ]
                     }
                 },
                 {
@@ -348,8 +365,7 @@ export default defineComponent({
                             { label: '12 months', value: 336 },
                         ]
                         return intervals.map(interval => ({
-                            ...interval, 
-                            other: { ...this.getDrugEstimates(fdata, interval.value) }
+                            ...interval,  other: { ...this.getDrugEstimates(fdata, interval.value) }
                             })
                         )
                     },

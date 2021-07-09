@@ -21,6 +21,7 @@ export class PrescriptionService extends RegimenService {
     fastTrack: boolean;
     received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
+    fastTrackMedications: Array<Record<string, any>>;
     constructor(patientID: number) {
         super()
         this.patientID = patientID
@@ -29,6 +30,7 @@ export class PrescriptionService extends RegimenService {
         this.fastTrack = false
         this.received3HP = false
         this.regimenExtras = []
+        this.fastTrackMedications = []
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -42,6 +44,10 @@ export class PrescriptionService extends RegimenService {
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
 
     getCustomIngridients() { return RegimenService.getCustomIngridients() }
+
+    getFastTrackMedications() { return this.fastTrackMedications }
+
+    isFastTrack() { return this.fastTrack }
 
     async load3HpStatus() {
         const orders = await ConceptService.getConceptID('Medication orders')
@@ -59,13 +65,12 @@ export class PrescriptionService extends RegimenService {
     }
 
     async loadFastTrackStatus() {
-        const fastTrack = await ConceptService.getConceptID('Fast track')
+        const fastTrack = await ConceptService.getConceptID('Fast track', true)
         const yes = await ConceptService.getConceptID('yes')
-        const req = await ObservationService.getObs({
+        const obs = await ObservationService.getObs({
             'person_id': this.patientID, 'concept_id': fastTrack
         })
-
-        if (!isEmpty(req) && req[0].value_coded === yes) this.fastTrack = true
+        if (!isEmpty(obs) && obs[0].value_coded === yes) this.fastTrack = true
     }
     
     async loadRegimenExtras(date=RegimenService.getSessionDate()) {
@@ -76,8 +81,22 @@ export class PrescriptionService extends RegimenService {
         if (meds) this.regimenExtras = Object.values(meds)
     }
 
-    async getFastTrackMedications() {
-        return DrugOrderService.getLastDrugsReceived(this.patientID)
+    async loadFastTrackMedications() {
+        const drugs = await DrugOrderService.getLastDrugsReceived(this.patientID)
+        const withDosages = drugs.map(async(data: any) => {
+            const { drug } = data
+            const dosage = await DrugOrderService.getDrugDosages(this.patientID, drug.drug_id)
+            return {
+                'drug_id': drug.drug_id,
+                'drug_name': drug.name,
+                'units': drug.units,
+                'am': dosage.am,
+                'noon': dosage.noon,
+                'pm': dosage.pm,
+                'frequency': data.frequency
+            }
+        })
+        this.fastTrackMedications = await Promise.all(withDosages)
     }
 
     getRegimenExtras() { return this.regimenExtras }
@@ -156,7 +175,6 @@ export class PrescriptionService extends RegimenService {
         const obs = await ObservationService.getObs({
             'concept_id': concept, 'person_id': this.patientID, 'limit': 1
         })
-        console.log(obs)
         return !isEmpty(obs) ? obs[0].value_text : 'N/A'
     }
 
