@@ -1,5 +1,65 @@
 export default [
     {
+        "name": "HIV rapid test",
+        "concept_id": 1040,
+        "category": "hiv_test_types"
+    },
+    {
+        "name": "HIV DNA polymerase chain reaction",
+        "concept_id": 844,
+        "category": "hiv_test_types"
+    },
+    {
+        "name": "Not done",
+        "concept_id": 1118,
+        "category": "hiv_test_types"
+    },
+    {
+        "name": "Unknown",
+        "concept_id": 1067,
+        "category": "hiv_test_types"
+    },
+    {
+        "name": "PRESUMED SEVERE HIV",
+        "concept_id": 8263,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "HIV DNA POLYMERASE CHAIN REACTION",
+        "concept_id": 844,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "HIV infected",
+        "concept_id": 1169,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "PATIENT PREGNANT",
+        "concept_id": 1755,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "BREASTFEEDING",
+        "concept_id": 5632,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "Asymptomatic",
+        "concept_id": 5006,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1",
+        "concept_id": 8376,
+        "category": "reason_for_art"
+    },
+    {
+        "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2",
+        "concept_id": 7559,
+        "category": "reason_for_art"
+    },
+    {
         "name": "Who stages criteria present",
         "concept_id": 2743
     },
@@ -94,6 +154,11 @@ export default [
     {
         "name": "CD4 count ",
         "concept_id": 5497
+    },
+    {
+        "name": "cd4 less than or equal to 750",
+        "concept_id": 8208,
+        "category": "cd4_count"
     },
     {
         "name": "cd4 less than or equal to 250",
