@@ -1,568 +1,919 @@
 export default [
     {
-        "name": "HIV rapid test",
-        "concept_id": 1040,
-        "category": "hiv_test_types"
+       "categories": [
+          "hiv_test_types"
+       ],
+       "concept_id": 1040,
+       "name": "HIV rapid test"
     },
     {
-        "name": "HIV DNA polymerase chain reaction",
-        "concept_id": 844,
-        "category": "hiv_test_types"
+       "categories": [
+          "hiv_test_types"
+       ],
+       "concept_id": 844,
+       "name": "HIV DNA polymerase chain reaction"
     },
     {
-        "name": "Not done",
-        "concept_id": 1118,
-        "category": "hiv_test_types"
+       "categories": [
+          "hiv_test_types"
+       ],
+       "concept_id": 1118,
+       "name": "Not done"
     },
     {
-        "name": "Unknown",
-        "concept_id": 1067,
-        "category": "hiv_test_types"
+       "categories": [
+          "hiv_test_types"
+       ],
+       "concept_id": 1067,
+       "name": "Unknown"
     },
     {
-        "name": "PRESUMED SEVERE HIV",
-        "concept_id": 8263,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 8263,
+       "name": "PRESUMED SEVERE HIV"
     },
     {
-        "name": "HIV DNA POLYMERASE CHAIN REACTION",
-        "concept_id": 844,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 844,
+       "name": "HIV DNA POLYMERASE CHAIN REACTION"
     },
     {
-        "name": "HIV infected",
-        "concept_id": 1169,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 1169,
+       "name": "HIV infected"
     },
     {
-        "name": "PATIENT PREGNANT",
-        "concept_id": 1755,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 1755,
+       "name": "PATIENT PREGNANT"
     },
     {
-        "name": "BREASTFEEDING",
-        "concept_id": 5632,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 5632,
+       "name": "BREASTFEEDING"
     },
     {
-        "name": "Asymptomatic",
-        "concept_id": 5006,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 5006,
+       "name": "Asymptomatic"
     },
     {
-        "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1",
-        "concept_id": 8376,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 8376,
+       "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1"
     },
     {
-        "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2",
-        "concept_id": 7559,
-        "category": "reason_for_art"
+       "categories": [
+          "reason_for_art"
+       ],
+       "concept_id": 7559,
+       "name": "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2"
     },
     {
-        "name": "Who stages criteria present",
-        "concept_id": 2743
+       "categories": [
+          ""
+       ],
+       "concept_id": 2743,
+       "name": "Who stages criteria present"
     },
     {
-        "name": "Is patient breast feeding",
-        "concept_id": 7965
+       "categories": [
+          ""
+       ],
+       "concept_id": 7965,
+       "name": "Is patient breast feeding"
     },
     {
-        "name": "Is patient pregnant",
-        "concept_id": 6131
+       "categories": [
+          ""
+       ],
+       "concept_id": 6131,
+       "name": "Is patient pregnant"
     },
     {
-        "name": "Reason for ART eligibility",
-        "concept_id": 7563
+       "categories": [
+          ""
+       ],
+       "concept_id": 7563,
+       "name": "Reason for ART eligibility"
     },
     {
-        "name": "Who stage",
-        "concept_id": 7562
+       "categories": [
+          ""
+       ],
+       "concept_id": 7562,
+       "name": "Who stage"
     },
     {
-        "name": "Pills brought",
-        "concept_id": 2540
+       "categories": [
+          ""
+       ],
+       "concept_id": 2540,
+       "name": "Pills brought"
     },
     {
-        "name": "weight",
-        "concept_id": 5089
+       "categories": [
+          ""
+       ],
+       "concept_id": 5089,
+       "name": "weight"
     },
     {
-        "name": "Rifapentine",
-        "concept_id": 9974
+       "categories": [
+          ""
+       ],
+       "concept_id": 9974,
+       "name": "Rifapentine"
     },
     {
-        "name": "Appointment type",
-        "concept_id": 6784
+       "categories": [
+          ""
+       ],
+       "concept_id": 6784,
+       "name": "Appointment type"
     },
     {
-        "name": "Reason for ARV switch",
-        "concept_id": 1779
+       "categories": [
+          ""
+       ],
+       "concept_id": 1779,
+       "name": "Reason for ARV switch"
     },
     {
-        "name": "Assess for fast track",
-        "concept_id": 9561
+       "categories": [
+          ""
+       ],
+       "concept_id": 9561,
+       "name": "Assess for fast track"
     },
     {
-        "name": "Medication orders",
-        "concept_id": 1282
+       "categories": [
+          ""
+       ],
+       "concept_id": 1282,
+       "name": "Medication orders"
     },
     {
-        "name": "Fast track",
-        "concept_id": 8471
+       "categories": [
+          ""
+       ],
+       "concept_id": 8471,
+       "name": "Fast track"
     },
     {
-        "name": "Art Side effects",
-        "concept_id": 7755
+       "categories": [
+          ""
+       ],
+       "concept_id": 7755,
+       "name": "Art Side effects"
     },
     {
-        "name": "Antiretroviral drugs",
-        "concept_id": 1085
+       "categories": [
+          ""
+       ],
+       "concept_id": 1085,
+       "name": "Antiretroviral drugs"
     },
     {
-        "name": "No",
-        "concept_id": 1066
+       "categories": [
+          ""
+       ],
+       "concept_id": 1066,
+       "name": "No"
     },
     {
-        "name": "Yes",
-        "concept_id": 1065
+       "categories": [
+          ""
+       ],
+       "concept_id": 1065,
+       "name": "Yes"
     },
     {
-        "name": "New patient",
-        "concept_id": 7572
+       "categories": [
+          ""
+       ],
+       "concept_id": 7572,
+       "name": "New patient"
     },
     {
-        "name": "Appointment date",
-        "concept_id": 5096
+       "categories": [
+          ""
+       ],
+       "concept_id": 5096,
+       "name": "Appointment date"
     },
     {
-        "name": "Type of patient",
-        "concept_id": 3289
+       "categories": [
+          ""
+       ],
+       "concept_id": 3289,
+       "name": "Type of patient"
     },
     {
-        "name": "External consultation",
-        "concept_id": 9684
+       "categories": [
+          ""
+       ],
+       "concept_id": 9684,
+       "name": "External consultation"
     },
     {
-        "name": "Cd4 count location",
-        "concept_id": 6830
+       "categories": [
+          ""
+       ],
+       "concept_id": 6830,
+       "name": "Cd4 count location"
     },
     {
-        "name": "Cd4 count datetime",
-        "concept_id": 6831
+       "categories": [
+          ""
+       ],
+       "concept_id": 6831,
+       "name": "Cd4 count datetime"
     },
     {
-        "name": "CD4 count ",
-        "concept_id": 5497
+       "categories": [
+          ""
+       ],
+       "concept_id": 5497,
+       "name": "CD4 count "
     },
     {
-        "name": "cd4 less than or equal to 750",
-        "concept_id": 8208,
-        "category": "cd4_count"
+       "categories": [
+          "cd4_count"
+       ],
+       "concept_id": 8208,
+       "name": "cd4 less than or equal to 750"
     },
     {
-        "name": "cd4 less than or equal to 250",
-        "concept_id": 8262,
-        "category": "cd4_count"
+       "categories": [
+          "cd4_count"
+       ],
+       "concept_id": 8262,
+       "name": "cd4 less than or equal to 250"
     },
     {
-        "name": "cd4 less than or equal to 350",
-        "concept_id": 8207,
-        "category": "cd4_count"
+       "categories": [
+          "cd4_count"
+       ],
+       "concept_id": 8207,
+       "name": "cd4 less than or equal to 350"
     },
     {
-        "name": "cd4 less than or equal to 500",
-        "concept_id": 9389,
-        "category": "cd4_count"
+       "categories": [
+          "cd4_count"
+       ],
+       "concept_id": 9389,
+       "name": "cd4 less than or equal to 500"
     },
     {
-        "name": "WHO STAGE 1",
-        "concept_id": 9145,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 9145,
+       "name": "WHO STAGE 1"
     },
     {
-        "name": "WHO STAGE 2",
-        "concept_id": 9146,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 9146,
+       "name": "WHO STAGE 2"
     },
     {
-        "name": "WHO STAGE 3",
-        "concept_id": 2932,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 2932,
+       "name": "WHO STAGE 3"
     },
     {
-        "name": "WHO STAGE 4",
-        "concept_id": 2933,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 2933,
+       "name": "WHO STAGE 4"
     },
     {
-        "name": "WHO STAGE I ADULT",
-        "concept_id": 7561,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7561,
+       "name": "WHO STAGE I ADULT"
     },
     {
-        "name": "WHO STAGE I ADULT AND PEDS",
-        "concept_id": 7041,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7041,
+       "name": "WHO STAGE I ADULT AND PEDS"
     },
     {
-        "name": "WHO STAGE I PEDS",
-        "concept_id": 7049,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7049,
+       "name": "WHO STAGE I PEDS"
     },
     {
-        "name": "WHO STAGE II ADULT",
-        "concept_id": 7046,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7046,
+       "name": "WHO STAGE II ADULT"
     },
     {
-        "name": "WHO STAGE II ADULT AND PEDS",
-        "concept_id": 7042,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7042,
+       "name": "WHO STAGE II ADULT AND PEDS"
     },
     {
-        "name": "WHO STAGE II PEDS",
-        "concept_id": 7050,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7050,
+       "name": "WHO STAGE II PEDS"
     },
     {
-        "name": "WHO STAGE III ADULT",
-        "concept_id": 7047,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7047,
+       "name": "WHO STAGE III ADULT"
     },
     {
-        "name": "WHO STAGE III ADULT AND PEDS",
-        "concept_id": 7043,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7043,
+       "name": "WHO STAGE III ADULT AND PEDS"
     },
     {
-        "name": "WHO STAGE III PEDS",
-        "concept_id": 7051,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7051,
+       "name": "WHO STAGE III PEDS"
     },
     {
-        "name": "WHO STAGE IV ADULT",
-        "concept_id": 7048,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7048,
+       "name": "WHO STAGE IV ADULT"
     },
     {
-        "name": "WHO STAGE IV ADULT AND PEDS",
-        "concept_id": 7044,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7044,
+       "name": "WHO STAGE IV ADULT AND PEDS"
     },
     {
-        "name": "WHO STAGE IV PEDS",
-        "concept_id": 7052,
-        "category": "whole_staging_numbers"
+       "categories": [
+          "whole_staging_numbers"
+       ],
+       "concept_id": 7052,
+       "name": "WHO STAGE IV PEDS"
     },
     {
-        "name": "Cryptococcal meningitis or other extrapulmonary cryptococcosis",
-        "concept_id": 7548,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 7548,
+       "name": "Cryptococcal meningitis or other extrapulmonary cryptococcosis"
     },
     {
-        "name": "Candidiasis of oseophagus, trachea and bronchi or lungs",
-        "concept_id": 5340,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 5340,
+       "name": "Candidiasis of oseophagus, trachea and bronchi or lungs"
     },
     {
-        "name": "Extrapulmonary tuberculosis (EPTB)",
-        "concept_id": 1547,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 1547,
+       "name": "Extrapulmonary tuberculosis (EPTB)"
     },
     {
-        "name": "Kaposis sarcoma",
-        "concept_id": 507,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 507,
+       "name": "Kaposis sarcoma"
     },
     {
-        "name": "Bacterial pneumonia, severe recurrent",
-        "concept_id": 1215,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 1215,
+       "name": "Bacterial pneumonia, severe recurrent"
     },
     {
-        "name": "Non-typhoidal Salmonella bacteraemia, recurrent",
-        "concept_id": 7959,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "staging_4_conditions",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7959,
+       "name": "Non-typhoidal Salmonella bacteraemia, recurrent"
     },
     {
-        "name": "Symptomatic HIV-associated nephropathy or cardiomyopathy",
-        "concept_id": 7957,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 7957,
+       "name": "Symptomatic HIV-associated nephropathy or cardiomyopathy"
     },
     {
-        "name": "Cerebral or B-cell non Hodgkin lymphoma",
-        "concept_id": 2587,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 2587,
+       "name": "Cerebral or B-cell non Hodgkin lymphoma"
     },
     {
-        "name": "Pneumocystis pneumonia",
-        "concept_id": 882,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 882,
+       "name": "Pneumocystis pneumonia"
     },
     {
-        "name": "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)",
-        "concept_id": 5344,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 5344,
+       "name": "Chronic herpes simplex infection (orolabial, gential / anorectal &gt;1 month or visceral at any site)"
     },
     {
-        "name": "Cytomegalovirus infection (retinitis or infection or other organs)",
-        "concept_id": 7551,
-        "category": "who_staging_conditions"
+       "categories": [
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 7551,
+       "name": "Cytomegalovirus infection (retinitis or infection or other organs)"
     },
     {
-        "name": "Toxoplasmosis of the brain",
-        "concept_id": 2583,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2583,
+       "name": "Toxoplasmosis of the brain"
     },
     {
-        "name": "Invasive cancer of cervix",
-        "concept_id": 2588,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 2588,
+       "name": "Invasive cancer of cervix"
     },
     {
-        "name": "Unspecified stage 4 condition",
-        "concept_id": 7040,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 7040,
+       "name": "Unspecified stage 4 condition"
     },
     {
-        "name": "Other",
-        "concept_id": 6408,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 6408,
+       "name": "Other"
     },
     {
-        "name": "HIV encephalopathy",
-        "concept_id": 1362,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 1362,
+       "name": "HIV encephalopathy"
     },
     {
-        "name": "Disseminated non-tuberculosis mycobacterial infection",
-        "concept_id": 2585,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2585,
+       "name": "Disseminated non-tuberculosis mycobacterial infection"
     },
     {
-        "name": "Cryptosporidiosis, chronic with diarroea",
-        "concept_id": 7549,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7549,
+       "name": "Cryptosporidiosis, chronic with diarroea"
     },
     {
-        "name": "Isosporiasis >1 month",
-        "concept_id": 7956,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7956,
+       "name": "Isosporiasis &gt;1 month"
     },
     {
-        "name": "Disseminated mycosis (coccidiomycosis or histoplasmosis)",
-        "concept_id": 7550,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7550,
+       "name": "Disseminated mycosis (coccidiomycosis or histoplasmosis)"
     },
     {
-        "name": "Progressive multifocal leukoencephalopathy",
-        "concept_id": 5046,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5046,
+       "name": "Progressive multifocal leukoencephalopathy"
     },
     {
-        "name": "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)",
-        "concept_id": 3068,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 3068,
+       "name": "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age &lt;70% or MUAC less than 11cm or oedema)"
     },
     {
-        "name": "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)",
-        "concept_id": 2894,
-        "category": "who_staging_conditions"
+       "categories": [
+          "who_staging_conditions"
+       ],
+       "concept_id": 2894,
+       "name": "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)"
     },
     {
-        "name": "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)",
-        "concept_id": 7960,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7960,
+       "name": "Chronic herpes simplex infection (orolabial or cutaneous &gt;1 month or visceral at any site)"
     },
     {
-        "name": "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)",
-        "concept_id": 7552,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7552,
+       "name": "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)"
     },
     {
-        "name": "Toxoplasmosis of the brain (from age 1 month)",
-        "concept_id": 5048,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions",
+          "staging_4_conditions"
+       ],
+       "concept_id": 5048,
+       "name": "Toxoplasmosis of the brain (from age 1 month)"
     },
     {
-        "name": "Recto-vaginal fistula, HIV-associated",
-        "concept_id": 7961,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7961,
+       "name": "Recto-vaginal fistula, HIV-associated"
     },
     {
-        "name": "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained",
-        "concept_id": 7540,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7540,
+       "name": "Severe weight loss &gt;10% and/or BMI &lt;18.5kg/m^2, unexplained"
     },
     {
-        "name": "Diarrhoea, chronic (>1 month) unexplained",
-        "concept_id": 5018,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5018,
+       "name": "Diarrhoea, chronic (&gt;1 month) unexplained"
     },
     {
-        "name": "Fever, persistent unexplained, intermittent or constant, >1 month",
-        "concept_id": 5027,
-        "category": "who_staging_conditions"
+       "categories": [
+          "who_staging_conditions"
+       ],
+       "concept_id": 5027,
+       "name": "Fever, persistent unexplained, intermittent or constant, &gt;1 month"
     },
     {
-        "name": "Pulmonary tuberculosis (current)",
-        "concept_id": 8206,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 8206,
+       "name": "Pulmonary tuberculosis (current)"
     },
     {
-        "name": "Tuberculosis (PTB or EPTB) within the last 2 years",
-        "concept_id": 7539,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7539,
+       "name": "Tuberculosis (PTB or EPTB) within the last 2 years"
     },
     {
-        "name": "Oral candidiasis",
-        "concept_id": 5334,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5334,
+       "name": "Oral candidiasis"
     },
     {
-        "name": "Anaemia, unexplained < 8 g/dl",
-        "concept_id": 2582,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2582,
+       "name": "Anaemia, unexplained &lt; 8 g/dl"
     },
     {
-        "name": "Neutropaenia, unexplained < 500 /mm(cubed)",
-        "concept_id": 7954,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7954,
+       "name": "Neutropaenia, unexplained &lt; 500 /mm(cubed)"
     },
     {
-        "name": "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)",
-        "concept_id": 7541,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7541,
+       "name": "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)"
     },
     {
-        "name": "Thrombocytopaenia, chronic < 50,000 /mm(cubed)",
-        "concept_id": 7955,
-        "category": "who_staging_conditions"
+       "categories": [
+          "who_staging_conditions"
+       ],
+       "concept_id": 7955,
+       "name": "Thrombocytopaenia, chronic &lt; 50,000 /mm(cubed)"
     },
     {
-        "name": "Hepatitis B or C infection",
-        "concept_id": 8205,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 8205,
+       "name": "Hepatitis B or C infection"
     },
     {
-        "name": "Oral hairy leukoplakia",
-        "concept_id": 5337,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5337,
+       "name": "Oral hairy leukoplakia"
     },
     {
-        "name": "Unspecified stage 3 condition",
-        "concept_id": 7039,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7039,
+       "name": "Unspecified stage 3 condition"
     },
     {
-        "name": "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)",
-        "concept_id": 7543,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7543,
+       "name": "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)"
     },
     {
-        "name": "Diarrhoea, persistent unexplained (14 days or more)",
-        "concept_id": 7544,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7544,
+       "name": "Diarrhoea, persistent unexplained (14 days or more)"
     },
     {
-        "name": "Oral candidiasis (from age 2 months)",
-        "concept_id": 7545,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7545,
+       "name": "Oral candidiasis (from age 2 months)"
     },
     {
-        "name": "Acute necrotizing ulcerative gingivitis or periodontitis",
-        "concept_id": 7546,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7546,
+       "name": "Acute necrotizing ulcerative gingivitis or periodontitis"
     },
     {
-        "name": "Lymph node tuberculosis",
-        "concept_id": 7547,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7547,
+       "name": "Lymph node tuberculosis"
     },
     {
-        "name": "Symptomatic lymphoid interstitial pneumonia",
-        "concept_id": 5024,
-        "category": "who_staging_conditions"
+       "categories": [
+          "who_staging_conditions"
+       ],
+       "concept_id": 5024,
+       "name": "Symptomatic lymphoid interstitial pneumonia"
     },
     {
-        "name": "Chronic HIV-associated lung disease, including bronchiectasis",
-        "concept_id": 2889,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_3_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2889,
+       "name": "Chronic HIV-associated lung disease, including bronchiectasis"
     },
     {
-        "name": "Moderate weight loss less than or equal to 10 percent, unexplained",
-        "concept_id": 5332,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5332,
+       "name": "Moderate weight loss less than or equal to 10 percent, unexplained"
     },
     {
-        "name": "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)",
-        "concept_id": 5012,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5012,
+       "name": "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)"
     },
     {
-        "name": "Seborrhoeic dermatitis",
-        "concept_id": 2578,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2578,
+       "name": "Seborrhoeic dermatitis"
     },
     {
-        "name": "Papular pruritic eruptions / Fungal nail infections",
-        "concept_id": 7536,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7536,
+       "name": "Papular pruritic eruptions / Fungal nail infections"
     },
     {
-        "name": "Herpes zoster",
-        "concept_id": 836,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 836,
+       "name": "Herpes zoster"
     },
     {
-        "name": "Angular cheilitis",
-        "concept_id": 2575,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2575,
+       "name": "Angular cheilitis"
     },
     {
-        "name": "Oral ulcerations, recurrent",
-        "concept_id": 2576,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2576,
+       "name": "Oral ulcerations, recurrent"
     },
     {
-        "name": "Unspecified stage 2 condition",
-        "concept_id": 7038,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_4_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7038,
+       "name": "Unspecified stage 2 condition"
     },
     {
-        "name": "Hepatosplenomegaly, persistent unexplained",
-        "concept_id": 7537,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 7537,
+       "name": "Hepatosplenomegaly, persistent unexplained"
     },
     {
-        "name": "Lineal gingival erythema",
-        "concept_id": 2891,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 2891,
+       "name": "Lineal gingival erythema"
     },
     {
-        "name": "Wart virus infection, extensive",
-        "concept_id": 6775,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 6775,
+       "name": "Wart virus infection, extensive"
     },
     {
-        "name": "Molluscum contagiosum, extensive",
-        "concept_id": 6776,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 6776,
+       "name": "Molluscum contagiosum, extensive"
     },
     {
-        "name": "Parotid enlargement, persistent unexplained",
-        "concept_id": 1210,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_2_conditions_pedaids",
+          "who_staging_conditions"
+       ],
+       "concept_id": 1210,
+       "name": "Parotid enlargement, persistent unexplained"
     },
     {
-        "name": "Asymptomatic HIV infection",
-        "concept_id": 5327,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_1_conditions_pedaids",
+          "stage_1_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5327,
+       "name": "Asymptomatic HIV infection"
     },
     {
-        "name": "Persistent generalized lymphadenopathy",
-        "concept_id": 5328,
-        "category": "who_staging_conditions"
+       "categories": [
+          "stage_1_conditions_pedaids",
+          "stage_1_conditions_adults",
+          "who_staging_conditions"
+       ],
+       "concept_id": 5328,
+       "name": "Persistent generalized lymphadenopathy"
     }
 ]
