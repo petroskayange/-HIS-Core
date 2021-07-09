@@ -1,100 +1,195 @@
 export default [
-    { 'name': 'Pills brought', 'concept_id': 2540 },
-    { 'name': 'weight', 'concept_id': 5089 },
-    { 'name': 'Appointment type', 'concept_id': 6784 },
-    { 'name': 'Rifapentine', 'concept_id': 9974 },
-    { 'name': 'Assess for fast track', 'concept_id': 9561 },
-    { 'name': 'Reason for ARV switch', 'concept_id': 1779 },
-    { 'name': 'Fast track', 'concept_id': 8471 },
-    { 'name': 'Medication orders', 'concept_id': 1282 },
-    { 'name': 'Antiretroviral drugs', 'concept_id': 1085 },
-    { 'name': 'Art Side effects', 'concept_id': 7755 },
-    { 'name': 'Yes', 'concept_id': 1065 },
-    { 'name': 'No', 'concept_id': 1066 },
-    { 'name': 'Appointment date', 'concept_id': 5096 },
-    { 'name': 'New patient', 'concept_id': 7572 },
-    { 'name': 'External consultation', 'concept_id': 9684 }, 
-    { 'name': 'Type of patient', 'concept_id':  3289},
+    {
+        "name": "Who stages criteria present",
+        "concept_id": 2743
+    },
+    {
+        "name": "Is patient breast feeding",
+        "concept_id": 7965
+    },
+    {
+        "name": "Is patient pregnant",
+        "concept_id": 6131
+    },
+    {
+        "name": "Reason for ART eligibility",
+        "concept_id": 7563
+    },
+    {
+        "name": "Who stage",
+        "concept_id": 7562
+    },
+    {
+        "name": "Pills brought",
+        "concept_id": 2540
+    },
+    {
+        "name": "weight",
+        "concept_id": 5089
+    },
+    {
+        "name": "Rifapentine",
+        "concept_id": 9974
+    },
+    {
+        "name": "Appointment type",
+        "concept_id": 6784
+    },
+    {
+        "name": "Reason for ARV switch",
+        "concept_id": 1779
+    },
+    {
+        "name": "Assess for fast track",
+        "concept_id": 9561
+    },
+    {
+        "name": "Medication orders",
+        "concept_id": 1282
+    },
+    {
+        "name": "Fast track",
+        "concept_id": 8471
+    },
+    {
+        "name": "Art Side effects",
+        "concept_id": 7755
+    },
+    {
+        "name": "Antiretroviral drugs",
+        "concept_id": 1085
+    },
+    {
+        "name": "No",
+        "concept_id": 1066
+    },
+    {
+        "name": "Yes",
+        "concept_id": 1065
+    },
+    {
+        "name": "New patient",
+        "concept_id": 7572
+    },
+    {
+        "name": "Appointment date",
+        "concept_id": 5096
+    },
+    {
+        "name": "Type of patient",
+        "concept_id": 3289
+    },
+    {
+        "name": "External consultation",
+        "concept_id": 9684
+    },
+    {
+        "name": "Cd4 count location",
+        "concept_id": 6830
+    },
+    {
+        "name": "Cd4 count datetime",
+        "concept_id": 6831
+    },
+    {
+        "name": "CD4 count ",
+        "concept_id": 5497
+    },
+    {
+        "name": "cd4 less than or equal to 250",
+        "concept_id": 8262,
+        "category": "cd4_count"
+    },
+    {
+        "name": "cd4 less than or equal to 350",
+        "concept_id": 8207,
+        "category": "cd4_count"
+    },
+    {
+        "name": "cd4 less than or equal to 500",
+        "concept_id": 9389,
+        "category": "cd4_count"
+    },
     {
         "name": "WHO STAGE 1",
         "concept_id": 9145,
         "category": "whole_staging_numbers"
     },
-     {
+    {
         "name": "WHO STAGE 2",
         "concept_id": 9146,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE 3",
         "concept_id": 2932,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE 4",
         "concept_id": 2933,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE I ADULT",
         "concept_id": 7561,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE I ADULT AND PEDS",
         "concept_id": 7041,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE I PEDS",
         "concept_id": 7049,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE II ADULT",
         "concept_id": 7046,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE II ADULT AND PEDS",
         "concept_id": 7042,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE II PEDS",
         "concept_id": 7050,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE III ADULT",
         "concept_id": 7047,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE III ADULT AND PEDS",
         "concept_id": 7043,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE III PEDS",
         "concept_id": 7051,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE IV ADULT",
         "concept_id": 7048,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE IV ADULT AND PEDS",
         "concept_id": 7044,
         "category": "whole_staging_numbers"
-     },
-     {
+    },
+    {
         "name": "WHO STAGE IV PEDS",
         "concept_id": 7052,
         "category": "whole_staging_numbers"
-     },
+    },
     {
         "name": "Cryptococcal meningitis or other extrapulmonary cryptococcosis",
         "concept_id": 7548,
