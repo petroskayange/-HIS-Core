@@ -6,6 +6,12 @@ export class ConceptService extends Service {
         super()
     }
 
+    static getConceptsByCategory(categoryId: string) {
+        return ConceptNameDictionary.filter((i: any) => {
+            return i.category && i.category === categoryId
+        })
+    }
+
     static async getConceptName(conceptId: number) {
         const concept = await this.getCachedConceptName(conceptId)
 
