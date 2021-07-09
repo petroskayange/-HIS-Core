@@ -57,7 +57,9 @@ export default defineComponent({
       
       const params = { p: JSON.stringify(this.taskParams)}
 
-      this.$router.push({ name: taskItem.name, params })
+      this.$router.push({ name: taskItem.name, params, query: {
+        'patient_id': this.taskParams?.patient.patient_id
+      } })
       this.closeModal()
     }
   },
