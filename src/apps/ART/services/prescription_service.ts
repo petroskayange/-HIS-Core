@@ -7,6 +7,7 @@ import { Observation, ObservationService, ObsValue } from "@/services/observatio
 import { isEmpty } from "lodash";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
+import { find } from "lodash"
 
 export const REGIMEN_SWITCH_REASONS = [
     'Policy change', 'Ease of administration (pill burden, swallowing)',
@@ -14,13 +15,20 @@ export const REGIMEN_SWITCH_REASONS = [
     'Side effects', 'Treatment failure', 'Weight Change', 'Other'
 ]
 
+export enum HangingPill {
+   OPTIMIZE = 'Optimize - including hanging pills',
+   EXACT = 'Exact - excluding hanging pills'
+}
+
 export class PrescriptionService extends RegimenService {
     patientID: number;
     encounterID: number;
     nextVisitInterval: number;
     fastTrack: boolean;
+    useHangingPills: boolean;
     received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
+    hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
     constructor(patientID: number) {
         super()
@@ -29,17 +37,17 @@ export class PrescriptionService extends RegimenService {
         this.nextVisitInterval = 0
         this.fastTrack = false
         this.received3HP = false
+        this.useHangingPills = false
         this.regimenExtras = []
         this.fastTrackMedications = []
+        this.hangingPills = []
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
     }
 
-    setEncounterID(encounterID: number) {
-        this.encounterID = encounterID
-    }
+    setEncounterID(encounterID: number) { this.encounterID = encounterID }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
 
@@ -48,6 +56,21 @@ export class PrescriptionService extends RegimenService {
     getFastTrackMedications() { return this.fastTrackMedications }
 
     isFastTrack() { return this.fastTrack }
+
+    hasHangingPills(drugs: any) {
+        let isHanging = false
+        for(const index in drugs) {
+            const drug = drugs[index]
+            const filter = find(this.hangingPills, {
+                drug: drug.drug_id, hasRemaining: true
+            })
+            if (filter) {
+                isHanging = true
+                break;
+            }
+        }
+        return isHanging
+    }
 
     async load3HpStatus() {
         const orders = await ConceptService.getConceptID('Medication orders')
@@ -79,6 +102,26 @@ export class PrescriptionService extends RegimenService {
             {date}
         )
         if (meds) this.regimenExtras = Object.values(meds)
+    }
+
+    async loadHangingPills() {
+        const amountBrought = await ConceptService.getConceptID('Pills brought', true)
+        const obs = await ObservationService.getObs({
+            'person_id': this.patientID,
+            'concept_id': amountBrought,
+            'date': RegimenService.getSessionDate()
+        })
+
+        if (obs) this.hangingPills = obs.map((item: any)=> {
+            try {
+                return {
+                    drug: item.order.drug_order.drug_inventory_id,
+                    hasRemaining: item.value_numeric >= 1
+                }
+            }catch(e) {
+                return { drug: 0, hasRemaining: false }
+            }
+        })
     }
 
     async loadFastTrackMedications() {
@@ -197,7 +240,14 @@ export class PrescriptionService extends RegimenService {
 
         return encounter
     }
-
+    
+    async createHangingPillsObs(response: HangingPill, encounterID=this.encounterID) {
+        const appointmentType = await ObservationService.buildValueText(
+            'Appointment type', response
+        )
+        return ObservationService.saveObs(encounterID, appointmentType)
+    }
+    
     async createRegimenSwitchObs(reasonForSwitch: string, encounterID=this.encounterID): Promise<Observation> {
         const regimenSwitch = await ObservationService.buildValueText(
             'Reason for ARV switch', reasonForSwitch

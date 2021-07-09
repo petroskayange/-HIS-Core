@@ -1,4 +1,5 @@
 export default [
+    { 'name': 'Pills brought', 'concept_id': 2540 },
     { 'name': 'weight', 'concept_id': 5089 },
     { 'name': 'Appointment type', 'concept_id': 6784 },
     { 'name': 'Rifapentine', 'concept_id': 9974 },
