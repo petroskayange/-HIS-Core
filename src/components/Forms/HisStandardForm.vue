@@ -4,9 +4,7 @@
         <ion-toolbar>
             <ion-row> 
                 <ion-col size="7"> 
-                    <label class='his-title'> 
-                        {{title}}: 
-                    </label>
+                    <label class='his-title'> {{title}} </label>
                 </ion-col>
                 <ion-col size="5" v-if="toolbarInfo"> 
                     <info-card :items="toolbarInfo"> </info-card>
