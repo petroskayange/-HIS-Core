@@ -11,6 +11,7 @@ export default defineComponent({
         programInfo: {} as any,
         fields: [] as Array<Field>,
         form: {} as Record<string, Option> | Record<string, null>,
+        patientID: '' as any
     }),
     watch: {
        '$route': {
@@ -18,7 +19,7 @@ export default defineComponent({
                 if (!route || !route.params.p) return
 
                 const { patient, program } = JSON.parse(route.params.p.toString())
-
+                this.patientID = route.query.patient_id;
                 this.patient = new Patientservice(patient)
                 this.programInfo = program
             },
@@ -33,7 +34,7 @@ export default defineComponent({
     },
     methods: {
         patientDashboardUrl() {
-            return `/patient/dashboard/${this.patient.getID()}`
+            return `/patient/dashboard/${this.patientID}`
         },
         gotoPatientDashboard() {
             return this.$router.push({path: this.patientDashboardUrl()}) 

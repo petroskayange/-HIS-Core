@@ -100,15 +100,15 @@ props: {
   margin: auto;
   border: solid 1px black;
   position: fixed;
-  z-index: 500;
-  opacity: 90%;
+  z-index: 222200;
+
 }
 .wrapper{
   min-width: 750px;
   max-width: 1000px;
   padding: 25px;
   border-radius: 10px;
-  background-color: white;;
+  background-color: white;
   box-shadow: -3px -3px 7px #ffffff73,
                2px 2px 5px rgba(94,104,121,0.288);
 }
