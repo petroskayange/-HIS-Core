@@ -6,9 +6,9 @@ export class ConceptService extends Service {
         super()
     }
 
-    static getConceptsByCategory(categoryId: string) {
+    static getConceptsByCategory(categoryName: string) {
         return ConceptNameDictionary.filter((i: any) => {
-            return i.category && i.category === categoryId
+            return i.categories.includes(categoryName)
         })
     }
 
