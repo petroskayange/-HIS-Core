@@ -13,5 +13,7 @@ export default [
     { 'name': 'Appointment date', 'concept_id': 5096 },
     { 'name': 'New patient', 'concept_id': 7572 },
     { 'name': 'External consultation', 'concept_id': 9684 },
-    { 'name': 'Type of patient', 'concept_id':  3289}
+    { 'name': 'Type of patient', 'concept_id':  3289},
+    { 'name': 'Patient present', 'concept_id':  1805},
+    { 'name': 'Guardian present', 'concept_id':  2122},
 ]

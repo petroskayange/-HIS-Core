@@ -28,20 +28,12 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Option } from "../Forms/FieldInterface";
 import SelectMixin from "@/components/FormElements/SelectMixin.vue";
 import {
   IonRow,
   IonGrid,
   IonLabel,
-  IonPage,
   IonCol,
-  IonContent,
-  IonButton,
-  IonFooter,
-  IonToolbar,
-  IonList,
-  IonItem,
   IonSegment,
   IonSegmentButton,
 } from "@ionic/vue";
