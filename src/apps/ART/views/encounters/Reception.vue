@@ -4,6 +4,7 @@
     :activeField="activeField"
     @onFinish="onFinish"
     :skipSummary="true"
+    :cancelDestinationPath="cancelDestination"
   >
   </his-standard-form>
 </template> 
@@ -20,8 +21,9 @@ import { Patientservice } from "@/services/patient_service";
 import { EncounterService } from "@/services/encounter_service";
 import { Encounter } from "@/interfaces/encounter";
 import { ObservationService } from "@/services/observation_service";
- 
+import EncounterMixinVue from './EncounterMixin.vue'
 export default defineComponent({
+  mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
     activeField: "",
@@ -29,7 +31,6 @@ export default defineComponent({
     hasARVNumber: true,
     sitePrefix: "" as any,
     suggestedNumber: "" as any,
-    patientID: "" as any,
   }),
   computed: {
     patientDashboard(): string {
@@ -39,11 +40,9 @@ export default defineComponent({
   watch: {
     $route: {
       async handler({ query }: any) {
-        if (query.patient_id) {
           const response: Patient = await ProgramService.getJson(
             `/patients/${query.patient_id}`
           );
-          this.patientID = query.patient_id;
           const patient = new Patientservice(response);
           const ARVNumber = patient.getPatientIdentifier(4);
           const extras = [];
@@ -54,7 +53,6 @@ export default defineComponent({
             this.suggestedNumber = j.arv_number.replace(/^\D+/g, "");
           }
           this.fields = this.getFields();
-        }
       },
       deep: true,
       immediate: true,
@@ -74,7 +72,7 @@ export default defineComponent({
             this.postARVNumber(`${this.sitePrefix}-ARV-${formData.arv_number.value}`)
           }
         })
-        .then(() => this.$router.push(this.patientDashboard))
+        .then(() => this.gotoPatientDashboard())
     },
     postARVNumber(ARVNumber: string) {
       const identifierData = {
@@ -127,18 +125,14 @@ export default defineComponent({
             helpText: "Capture ARV Number?",
             type: FieldType.TT_SELECT,
             requireNext: true,
-            validation(value: any): null | Array<string> {
-              return !value ? ["Value is required"] : null;
-            },
+            validation: (val: any) => Validation.required(val),
             options: () => values,
           },
           {
             id: "arv_number",
             helpText: "Conditionally display next question",
             type: FieldType.TT_TEXT,
-            validation(value: any): null | Array<string> {
-              return !value ? ["Value is required"] : null;
-            },
+            validation: (val: any) => Validation.required(val),
             condition(formData: any) {
               return (
                 formData.capture_arv.value ===
