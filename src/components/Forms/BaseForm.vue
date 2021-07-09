@@ -8,8 +8,8 @@
       :preset="activeField.preset"
       :clear="isClear"
       :fdata="formData"
-      @onClear="isClear=false"
       @onValue="onValue"
+      @onClear="isClear=false"
     />
   </keep-alive>
 </template>
@@ -17,6 +17,7 @@
 import { defineComponent, PropType } from "vue";
 import { Field, Option } from "./FieldInterface";
 import { BaseFormComponents } from "@/components/Forms/BaseFormElements"
+import { isEmpty } from "lodash"
 export default defineComponent({
   name: "BaseForm",
   components: {
@@ -36,8 +37,8 @@ export default defineComponent({
       type: Boolean
     },
     fields: {
-      required: true,
-      type: Object as PropType<Field[]>
+      type: Object as PropType<Field[]>,
+      required: true
     },
   },
   data() {
@@ -49,11 +50,11 @@ export default defineComponent({
     };
   },
   watch: {
-    index(index: number) {
-      if (index >= 0 && index <= this.fields.length) {
-        this.setActiveField(index)
-        this.emitNext()
-      } 
+    index: {
+      handler(i: number): void { 
+        if (this.isIndexValid(i)) return this.setActiveField(i)
+      },
+      immediate: true
     },
     clear(val: boolean) {
       if (val) {
@@ -62,111 +63,101 @@ export default defineComponent({
         this.$emit("onClear")
       }
     },
-    next(val: boolean) {
-      if (val) this.onNext();
-      this.emitNext()
+    next(val: boolean): void {
+      if (val) {
+        if (this.activeField.validation) {
+          const value = this.formData[this.activeField.id]
+          const errors = this.activeField.validation(value, this.formData)
+          if (errors) {
+            this.emitState()
+            return this.$emit('onErrors', errors)
+          }
+        }
+        return this.onNext();
+      }
+      this.emitState()
     },
-    prev(val: boolean) {
-      if (val) this.onPrev();
-      this.$emit("onPrev", {field: this.activeField, index: this.activeIndex});
+    prev(val: boolean): void {
+      if (val) return this.onPrev()
+  
+      this.emitState()
     },
   },
-  mounted() {
+  mounted(): void {
     this.buildFormData(this.fields);
-    this.activeField = this.fields[0];
+    // Validate index prop and make it the active field if set
+    const i = this.index
+    if (i != undefined && this.isIndexValid(i)) {
+      return this.setActiveField(i)
+    }
+    this.onNext() //look for a field to mount initially
   },
   methods: {
     buildFormData(fields: Array<Field>): void {
       this.formData = {};
       fields.forEach((field) => (this.formData[field.id] = null));
     },
-    getActiveFieldValue(): any {
-      return this.formData[this.activeField.id];
+    isIndexValid(i: number): boolean {
+      return i >= 0 && i <= this.fields.length    
     },
     async setActiveFieldValue(value: any) {
+      let newValue = value
       if (this.activeField?.onValue) {
         const isValue = await this.activeField?.onValue(value) 
         if (!isValue) {
           this.isClear = true // undo value in active component
-          return this.formData[this.activeField.id] = null
+          newValue = null
         }
       }
-      this.formData[this.activeField.id] = value;
+      this.formData[this.activeField.id] = newValue;
     },
-    activeFieldRequiresNext(): boolean {
-      if (!("requireNext" in this.activeField)) return true;
+    onNext(): void {
+      const totalFields = this.fields.length
 
-      return this.activeField.requireNext ? true : false;
-    },
-    activeFieldConditionPassed(): boolean {
-      if (this.activeField.condition) 
-        return this.activeField.condition(this.formData);
-      return true;
-    },
-    emitActiveFieldValidationErrors(){
-      if (!this.activeField.validation) return
+      for(let i=this.activeIndex; i < totalFields; ++i) {
+        const field = this.fields[i]
 
-      const val = this.getActiveFieldValue()
-      const errors = this.activeField.validation(val, this.formData)
-
-      if (errors) {
-        this.$emit("onErrors", errors);
-        return true
-      }
-    },
-    onNext(skipValidation = false): void {
-      const originalIndex = this.activeIndex
-      const totalFields = this.fields.length;
-      const nextIndex = originalIndex + 1;
-
-      if (!skipValidation && this.emitActiveFieldValidationErrors()) return
-
-      if (nextIndex >= totalFields) return this.onFinish();
-
-      this.setActiveField(nextIndex);
-
-      if (!this.activeFieldConditionPassed()) {
-        this.setActiveFieldValue(null);
-        // Rivert to previous field if this is the last field and finish
-        if (nextIndex + 1 >= totalFields) {
-          this.setActiveField(originalIndex)
-          return this.onFinish()
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
+          continue
+        
+        if (field.condition && !field.condition(this.formData)) {
+          this.formData[field.id] = null
+          continue
         }
-        this.onNext(true);
-      } 
+        return this.setActiveField(i)
+      }
+      this.$emit("onFinish", this.formData);
     },
     onPrev(): void {
-      const prevIndex = this.activeIndex - 1;
+      for(let i=this.activeIndex; i >= 0; --i) {
+        const field = this.fields[i]
+        
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
+          continue
+        
+        if (field.condition && !field.condition(this.formData)) {
+          this.formData[field.id] = null
+          continue
+        }
 
-      if (prevIndex <= -1) return;
-
-      this.setActiveField(prevIndex);
-
-      if (this.activeFieldConditionPassed()) return 
-
-      this.setActiveFieldValue(null);
-      this.onPrev();
+        return this.setActiveField(i)
+      }
+      this.emitState()
     },
     setActiveField(index: number) {
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
+      this.emitState()
     },
     async onValue(value: string | number | Option | Array<Option>) {
       await this.setActiveFieldValue(value);
 
-      if (this.fields.length === 1) return this.emitNext() 
-
-      if (!this.activeFieldRequiresNext()) this.onNext(), this.emitNext();
+      if ('requireNext' in this.activeField && 
+          !this.activeField.requireNext) this.onNext()
     },
-    emitNext() {
-      this.$emit("onNext", {
-        field: this.activeField, 
-        index: this.activeIndex, 
-        formData: this.formData
-      });
-    },
-    onFinish(): void {
-      this.$emit("onFinish", this.formData);
+    emitState() {
+      this.$emit("onState", { field: this.activeField, 
+        index: this.activeIndex, formData: this.formData });
     }
   },
 });

@@ -4,7 +4,7 @@
         <ion-toolbar>
             <ion-row> 
                 <ion-col size="7"> 
-                    <label class='his-title'> {{title}}: </label>
+                    <label class='his-title'> {{title}} </label>
                 </ion-col>
                 <ion-col size="5" v-if="toolbarInfo"> 
                     <info-card :items="toolbarInfo"> </info-card>
@@ -14,6 +14,7 @@
     </ion-header>
     <ion-content>
         <base-form
+            v-if="fields.length >= 1"
             :fields="formFields"
             :next="isNext"
             :prev="isPrev"
@@ -22,8 +23,8 @@
             @onFinish="onFinish"
             @onClear="isClear=false"
             @onErrors="onErrors"
-            @onNext="updateNext"
-            @onPrev="updatePrev"/>
+            @onState="onState"
+        />
     </ion-content>
     <his-footer 
         :btns="footerBtns"
@@ -41,6 +42,7 @@ import { IonPage, IonContent } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
 import { find, findIndex} from "lodash"
+import { isEmpty } from "lodash"
 import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
 export default defineComponent({
     name: "HisStandardForm",
@@ -64,7 +66,8 @@ export default defineComponent({
         }
     },
     data:()=>({
-      index: 0,
+      index: -1,
+      field: {} as Field,
       isNext: false,
       isPrev: false,
       isClear: false,
@@ -74,54 +77,56 @@ export default defineComponent({
       formFields: [] as Array<Field>,
       footerBtns: [] as Array<NavBtnInterface>
     }),
-    created() {
-        const summary = this.skipSummary ? [] : [this.getDefaultSummaryField()]
-        this.formFields = [...this.fields, ...summary]
-        this.totalFields = this.formFields.length
-        this.footerBtns = [
-            this.cancel(),
-            ...this.getCustomFieldButtons(this.formFields),
-            this.clear(),
-            this.back(),
-            this.next(),
-            this.finish()
-        ]
-    },
     computed: {
         title(): string {
-            return this.formFields[this.index].helpText
+            return !isEmpty(this.field) ? this.field.helpText : ''
         },
         toolbarInfo(): Array<Option> | undefined{
-            if (this.fields && this.fields[this.index].config) {
-                return this.fields[this.index]?.config?.toolbarInfo
+            if (!isEmpty(this.field) && this.field.config) {
+                return this.field?.config?.toolbarInfo
             }
             return undefined
         }
     },
     watch: {
-        activeField(field: string){
-            const index = findIndex(this.formFields, { id: field })
-            if (index != -1) {
-                this.skipToIndex = index 
-                this.$emit('onskip')
-            } 
-        }
+        fields: {
+            handler(fields: Array<Field>) {
+                if (!fields) return
+                const summary = this.skipSummary ? [] : [this.getDefaultSummaryField()]
+                this.formFields = [...fields, ...summary]
+                this.totalFields = this.formFields.length
+                this.footerBtns = [
+                    this.cancel(),
+                    ...this.getCustomFieldButtons(this.formFields),
+                    this.clear(),
+                    this.back(),
+                    this.next(),
+                    this.finish()
+                ]
+                this.changeIndex(this.activeField || '')
+            },
+            deep: true,
+            immediate: true
+        },
+        activeField:
+        {
+            handler(field: string){ this.changeIndex(field) },
+            immediate: true
+        } 
     },
     methods: {
         onErrors(errors: Array<string>) {
             toastWarning(errors.join(', '), 3000)
         },
-        updateNext({ field, index }: any){
-            this.isNext = false
-            this.skipToIndex = -1
-            this.onNavigation(field, index)
+        changeIndex(fieldID: string) {
+           const index = findIndex(this.formFields, { id: fieldID })
+           if (index >= 0) this.skipToIndex = index 
         },
-        updatePrev({ field, index }: any) {
-            this.isPrev = false
-            this.onNavigation(field, index)
-        },
-        onNavigation(field: Field, index: number) {
+        onState({ field, index }: any){
             this.index = index
+            this.field = field
+            this.isNext = false
+            this.isPrev = false
             this.onNextRequired = field.requireNext != undefined ? field.requireNext : true
         },
         onFinish(formData: Record<string, any>) {
@@ -210,8 +215,7 @@ export default defineComponent({
             }
         },
         isFieldConfigureBtnHidden(btnName: string) {
-            const field: Field = this.formFields[this.index]
-            const hiddenBtns = field.config?.hiddenFooterBtns
+            const hiddenBtns = this.field.config?.hiddenFooterBtns
             return hiddenBtns ? hiddenBtns.includes(btnName): false 
         },
         getCustomFieldButtons(fields: Array<Field>) {
