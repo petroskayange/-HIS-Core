@@ -2,6 +2,7 @@ import { Service } from '@/services/service'
 import { EncounterService } from '@/services/encounter_service'
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService, ObsValue } from "@/services/observation_service";
+import { LocationService } from "@/services/location_service"
 
 export enum StagingCategory {
     ADULT_STAGE_4 = 'stage_4_conditions_adults',
@@ -41,6 +42,8 @@ export class StagingService extends Service {
 
     isPedaid() { return this.ageInYears <= 14 }
 
+    getFacilities (filter='') { return LocationService.getFacilities({name: filter}) }
+
     getConceptID(conceptName: string) {
         return ConceptService.getCachedConceptID(conceptName, true)
     }
@@ -48,11 +51,22 @@ export class StagingService extends Service {
     getStagingConditions(stage: StagingCategory) {
         return ConceptService.getConceptsByCategory(stage)
     }
-    
-    async buildValueCoded(conceptName: string, value: string) {
+   
+    buildValueText(conceptName: string, value: string) {
+        return ObservationService.buildValueText(conceptName, value)
+    }
+
+    buildValueCoded(conceptName: string, value: string) {
         return ObservationService.buildValueCoded(conceptName, value)
     }
 
+    buildValueNumber(conceptName: string, value: string) {
+        return ObservationService.buildValueNumber(conceptName, value)
+    }
+
+    buildValueDate(conceptName: string, value: string) {
+        return ObservationService.buildValueDate(conceptName, value)
+    }
     async loadHivConfirmatoryTestType() {
         const test = await ObservationService.getFirstValueCoded(
             this.patientID, 'Confirmatory hiv test type'
