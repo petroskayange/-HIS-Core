@@ -254,7 +254,7 @@ export default [
          ""
       ],
       "concept_id": 5497,
-      "name": "CD4 count "
+      "name": "CD4 count"
    },
    {
       "categories": [
