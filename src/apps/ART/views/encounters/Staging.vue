@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -24,9 +24,9 @@ export default defineComponent({
         cd4Count: [] as any,
         cd4Date: [] as any,
         cd4Location: [] as any,
+        cd4DateStr: '' as string,
         month: '' as string,
-        year: '' as string,
-        summary: [] as any
+        year: '' as string
     }),
     watch: {
         patient: {
@@ -105,6 +105,7 @@ export default defineComponent({
                     helpText: 'Pregnant / Breastfeeding',
                     type: FieldType.TT_MULTIPLE_YES_NO,
                     condition: () => this.staging.isFemale(),
+                    summaryMapValue: (d: Option) => ({ label: d.label, value: d.value }),
                     unload: async (data: any) => this.setPregnancyObsData(data),
                     options: () => [
                         {
@@ -183,6 +184,7 @@ export default defineComponent({
                     id: 'year',
                     helpText: 'Year of CD4 result',
                     type: FieldType.TT_NUMBER,
+                    appearInSummary: false,
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => this.year = `${d.value}`,
                     validation(val: any) {
@@ -198,6 +200,7 @@ export default defineComponent({
                     id: 'month',
                     helpText: 'Month of CD4 result',
                     type: FieldType.TT_SELECT,
+                    appearInSummary: false,
                     options: () => MonthOptions,
                     unload: (d: Option) => this.month = `${d.value}`,
                     condition: (f: any) => this.hasCd4Count(f),
@@ -212,11 +215,18 @@ export default defineComponent({
                     id: 'day',
                     helpText: 'Day of CD4 result',
                     type: FieldType.TT_MONTHLY_DAYS,
+                    summaryMapValue: () => ({ 
+                        label: 'CD4 Results date',
+                        value: HisDate.toStandardHisDisplayFormat(this.cd4DateStr) 
+                    }),
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => {
-                        this.cd4Date = [this.staging.buildValueDate(
-                            'Cd4 count datetime', `${this.year}-${this.month}-${d.value}`
-                        )]
+                        this.cd4DateStr = `${this.year}-${this.month}-${d.value}`
+                        this.cd4Date = [
+                            this.staging.buildValueDate(
+                                'Cd4 count datetime', this.cd4DateStr
+                            )
+                        ]
                     },
                     validation: (val: any) => {
                         const day = val.value
@@ -241,15 +251,6 @@ export default defineComponent({
                         showKeyboard: true,
                         isFilterDataViaApi: true
                     }
-                },
-                {
-                    id: '__form_summary__',
-                    helpText: 'Summary',
-                    type: FieldType.TT_SUMMARY,
-                    config: {
-                        hiddenFooterBtns: [ 'Clear' ]
-                    },
-                    options: () => this.summary 
                 }
             ]
         }
