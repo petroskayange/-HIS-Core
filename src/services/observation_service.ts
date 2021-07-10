@@ -60,6 +60,25 @@ export class ObservationService extends ConceptService {
         }
     }
 
+    static async buildValueNumber(conceptName: string, ValueNumber: string, modifier=null, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        return {
+            'concept_id': concept,
+            'value_numeric': parseInt(ValueNumber),
+            'value_modifier': modifier,
+            'obs_datetime': date
+        }
+    }
+
+    static async buildValueDate(conceptName: string, valueDate: string, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        return {
+            'concept_id': concept,
+            'value_datetime': valueDate,
+            'obs_datetime': date
+        }
+    }
+
     // Deprecated: use getObs instead
     static getObservations(patientID: number, conceptID: number) {
         return super.getJson(`/observations?person_id=${patientID}&concept_id=${conceptID}`)
