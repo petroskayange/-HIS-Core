@@ -42,8 +42,8 @@ export class ObservationService extends ConceptService {
     }
 
     static async buildValueCoded(conceptName: string, valueCoded: string, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName)
-        const coded = await ConceptService.getConceptID(valueCoded)
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        const coded = await ConceptService.getConceptID(valueCoded, true)
         return {
             'concept_id': concept,
             'value_coded': coded,
@@ -52,7 +52,7 @@ export class ObservationService extends ConceptService {
     }
 
     static async buildValueText(conceptName: string, valueText: string, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName)
+        const concept = await ConceptService.getConceptID(conceptName, true)
         return {
             'concept_id': concept,
             'value_text': valueText,
