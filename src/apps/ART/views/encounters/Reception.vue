@@ -94,7 +94,7 @@ export default defineComponent({
       const guardianPresentConcept =  ConceptService.getCachedConceptID("Guardian present");
       const getValue = (key: string) =>{
         const j = present.filter((val: any) => val.other.property === key);
-        return j[0].other.value; 
+        return j[0].value; 
       }
       const obs = {
         'encounter_id': encounter.encounter_id,
