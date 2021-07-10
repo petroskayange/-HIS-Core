@@ -18,6 +18,8 @@ export interface Field {
     onValue?: Function;
     onload?: Function;
     unload?: Function;
+    summaryMapValue?: Function;
+    appearInSummary?: boolean;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
     config?: Record<string, any>;

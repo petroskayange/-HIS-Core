@@ -233,28 +233,26 @@ export default defineComponent({
                 helpText: 'Summary',
                 type: FieldType.TT_SUMMARY,
                 config: {
-                    hiddenFooterBtns: [
-                        'Clear'
-                    ]
+                    hiddenFooterBtns: [ 'Clear' ]
                 },
                 options: (formData: Record<string, any>) => {
                     const data: Array<Option> = [];
-                    const resolveLabel = (ref: string) => {
-                        return find(this.fields, {id: ref})?.helpText || 'Field'
-                    }
                     for(const ref in formData) {
+                        const field = this.fields.filter((i: Field) => i.id === ref)[0]
                         const fdata = formData[ref]
-
-                        if (!fdata) continue
-
-                        if (Array.isArray(fdata)) {
-                            fdata.forEach(item => {
-                                data.push({  label: resolveLabel(ref), value: item.label })
-                            })
+                        
+                        if (!fdata || 'appearInSummary' in field && !field.appearInSummary)
                             continue
-                        }
-
-                        data.push({ label: resolveLabel(ref), value: fdata.label})
+                        
+                        const values = Array.isArray(fdata) ? fdata : [fdata]
+                    
+                        values.forEach(item => {
+                            if (field.summaryMapValue) {
+                                data.push(field.summaryMapValue(item))
+                                return
+                            }
+                            data.push({ label: field.helpText, value: item.label })
+                        })
                     }
                     return data
                 }
