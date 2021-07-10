@@ -284,7 +284,8 @@ export default defineComponent({
                     taskParams: { 
                         patient: this.patient.getObj(), 
                         program: this.patientProgram,
-                        visitDate: this.activeVisitDate
+                        visitDate: this.activeVisitDate,
+                        patientID: this.patientId
                     }
                 }
             })

@@ -181,7 +181,7 @@ export const PREFERENCES = {
           },
           {
             name: "Is this a military site",
-            value: "military_site"
+            value: "military.enabled"
           },
           {
             name: "Activate 3HP auto select",

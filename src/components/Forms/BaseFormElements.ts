@@ -8,6 +8,7 @@ import NextVisitInterval from "@/components/FormElements/HisNextVisitInterval.vu
 import TableViewer from "@/components/FormElements/HisTableViewer.vue"
 import DosageInput from "@/components/FormElements/HisDosageInput.vue"
 import YesNo from "@/components/FormElements/YesNoSelect.vue"
+import MultiYesNo from "@/components/FormElements/MultiYesNoSelect.vue"
 
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 // Reference names for BaseFormComponents
@@ -23,6 +24,7 @@ export enum FieldType {
     TT_TABLE_VIEWER="table-viewer",
     TT_DOSAGE_INPUT="dosage-input",
     TT_YES_NO="yes-no",
+    TT_MULTIPLE_YES_NO="multi-yes-no",
     TT_SUMMARY="summary-page"
 }
 // Components to be rendered
@@ -37,5 +39,6 @@ export const BaseFormComponents = {
     TableViewer,
     DosageInput,
     YesNo,
-    SummaryPage
+    SummaryPage,
+    MultiYesNo
 }
