@@ -19,6 +19,7 @@ export class StagingService extends Service {
     encounterID: number;
     gender: 'M' | 'F';
     ageInMonths: number;
+    ageInYears: number;
     confirmatoryTest: string | null;
     stagingConditions: Array<any>;
     constructor(patientID: number, age: number, gender: 'M' | 'F') {
@@ -26,6 +27,7 @@ export class StagingService extends Service {
         this.encounterID = 0
         this.patientID = patientID
         this.gender = gender
+        this.ageInYears = age
         this.ageInMonths = age * 12
         this.confirmatoryTest = null
         this.stagingConditions = []
@@ -35,16 +37,20 @@ export class StagingService extends Service {
 
     isFemale() { return this.gender === 'F' }
 
+    isAdult() { return this.ageInYears >= 15 }
+
+    isPedaid() { return this.ageInYears <= 14 }
+
     getConceptID(conceptName: string) {
         return ConceptService.getCachedConceptID(conceptName, true)
     }
 
+    getStagingConditions(stage: StagingCategory) {
+        return ConceptService.getConceptsByCategory(stage)
+    }
+    
     async buildValueCoded(conceptName: string, value: string) {
         return ObservationService.buildValueCoded(conceptName, value)
-    }
-
-    async loadStagingConditions(stage: StagingCategory) {
-        return ConceptService.getConceptsByCategory(stage)
     }
 
     async loadHivConfirmatoryTestType() {
