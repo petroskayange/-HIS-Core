@@ -9,8 +9,9 @@
           <ion-col size="6">
             <ion-segment
               mode="ios"
-              v-model="item.other.value"
+              v-model="item.value"
             >
+
               <ion-segment-button
                 class="yes-no"
                 v-for="(option, idx) in item.other.values"
