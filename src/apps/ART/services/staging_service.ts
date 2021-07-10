@@ -35,6 +35,14 @@ export class StagingService extends Service {
 
     isFemale() { return this.gender === 'F' }
 
+    getConceptID(conceptName: string) {
+        return ConceptService.getCachedConceptID(conceptName, true)
+    }
+
+    async buildValueCoded(conceptName: string, value: string) {
+        return ObservationService.buildValueCoded(conceptName, value)
+    }
+
     async loadStagingConditions(stage: StagingCategory) {
         return ConceptService.getConceptsByCategory(stage)
     }
