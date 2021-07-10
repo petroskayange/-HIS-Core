@@ -37,6 +37,10 @@ export default defineComponent({
         },
         gotoPatientDashboard() {
             return this.$router.push({path: this.patientDashboardUrl()}) 
+        },
+        nextTask() {
+            //TODO: add workflow logic here to navigate to other encounter
+            this.gotoPatientDashboard()
         }
     }
 })

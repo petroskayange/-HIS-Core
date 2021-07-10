@@ -70,7 +70,7 @@ export default defineComponent({
 
             toastSuccess('Drug order has been created')
 
-            return this.gotoPatientDashboard()
+            this.nextTask()
         },
         getDosageTableOptions(regimen: any) {
             const colorCodes = regimen.map((item: any) => {
