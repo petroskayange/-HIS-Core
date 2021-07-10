@@ -35,8 +35,17 @@ export default defineComponent({
     },
     methods: {
         async onSubmit() {
-            console.log(this.observations)
-            return this.nextTask()
+            const encounter = await this.staging.createStagingEncounter()
+
+            if (!encounter) return toastWarning('Unable to create encounter')
+
+            const obs = await this.staging.createObs(this.observations)
+
+            if (!obs) return toastWarning('Unable to save patient observations')
+
+            toastSuccess('Observations and encounter created!')
+
+            this.nextTask()
         },
         getYesNoOptions() {
             return [
