@@ -1,4 +1,9 @@
 export default [
+   {
+      "categories": [],
+      "name": "Confirmatory hiv test type",
+      "concept_id": 7880
+   },
     {
        "categories": [
           "hiv_test_types"
