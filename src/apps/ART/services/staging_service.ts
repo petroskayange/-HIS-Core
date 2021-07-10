@@ -1,7 +1,7 @@
 import { Service } from '@/services/service'
 import { EncounterService } from '@/services/encounter_service'
 import { ConceptService } from "@/services/concept_service";
-import { ObservationService } from "@/services/observation_service";
+import { ObservationService, ObsValue } from "@/services/observation_service";
 
 export enum StagingCategory {
     ADULT_STAGE_4 = 'stage_4_conditions_adults',
@@ -44,6 +44,10 @@ export class StagingService extends Service {
             this.patientID, 'Confirmatory hiv test type'
         )
         if (test) this.confirmatoryTest = test
+    }
+
+    async createObs(obs: Array<ObsValue>) {
+        return ObservationService.saveObsArray(this.encounterID, obs)
     }
 
     async createStagingEncounter() {
