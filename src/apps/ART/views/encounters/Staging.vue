@@ -39,12 +39,14 @@ export default defineComponent({
             const encounter = await this.staging.createStagingEncounter()
 
             if (!encounter) return toastWarning('Unable to create encounter')
-
-            const obs = await this.staging.createObs([
+            
+            const data = await Promise.all([
                 ...this.pregnancyObs, ... this.stageFourObs, 
                 ...this.stageThreeObs, ...this.stageTwoObs, 
                 ...this.stageOneObs
             ])
+            
+            const obs = await this.staging.createObs(data)
 
             if (!obs) return toastWarning('Unable to save patient observations')
 
@@ -65,8 +67,9 @@ export default defineComponent({
             this.pregnancyObs = await Promise.all(payload)
         },
         async buildStagingData(data: Array<Option>) {
-            console.log(data)
-            return []
+            return data.map((item: Option) => {
+                return this.staging.buildValueCoded('Who stages criteria present', item.label)
+            })
         },
         mapStagingOptions(group: StagingCategory) {
             return this.staging.getStagingConditions(group).map((concept: any) => ({
