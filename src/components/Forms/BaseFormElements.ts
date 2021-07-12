@@ -9,7 +9,7 @@ import TableViewer from "@/components/FormElements/HisTableViewer.vue"
 import DosageInput from "@/components/FormElements/HisDosageInput.vue"
 import YesNo from "@/components/FormElements/YesNoSelect.vue"
 import MultiYesNo from "@/components/FormElements/MultiYesNoSelect.vue"
-
+import WeightChart from "@/components/FormElements/HisWeightChart.vue"
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
@@ -25,7 +25,8 @@ export enum FieldType {
     TT_DOSAGE_INPUT="dosage-input",
     TT_YES_NO="yes-no",
     TT_MULTIPLE_YES_NO="multi-yes-no",
-    TT_SUMMARY="summary-page"
+    TT_SUMMARY="summary-page",
+    TT_WEIGHT_CHART = "weight-chart"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -40,5 +41,6 @@ export const BaseFormComponents = {
     DosageInput,
     YesNo,
     SummaryPage,
-    MultiYesNo
+    MultiYesNo,
+    WeightChart
 }

@@ -27,7 +27,7 @@ export default defineComponent({
     onFinish(formData: any) {
       console.log(formData)
     },
-    getFields() {
+    getFields(): Array<Field> {
       return [
         {
           id: "name_field",
@@ -71,6 +71,19 @@ export default defineComponent({
               },
             ]
           }
+        },
+        {
+          id: "patient_chart",
+          helpText: "Patient Chart",
+          type: FieldType.TT_WEIGHT_CHART,
+          options: () => ([{
+            label: 'Patient weight',
+            value: 54,
+            other: {
+              labels: ['10 Jan', '11 June', '8 Aug'],
+              values: [65, 38, 89, 57]
+            }
+          }])
         },
         {
           id: 'hide_default_btns',

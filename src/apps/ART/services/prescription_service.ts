@@ -3,8 +3,7 @@ import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
 import { EncounterService } from "@/services/encounter_service";
-import { Observation, ObservationService, ObsValue } from "@/services/observation_service";
-import { isEmpty } from "lodash";
+import { Observation, ObservationService } from "@/services/observation_service";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 import { find } from "lodash"
@@ -73,27 +72,22 @@ export class PrescriptionService extends RegimenService {
     }
 
     async load3HpStatus() {
-        const orders = await ConceptService.getConceptID('Medication orders')
-        const req = await ObservationService.getObs({
-            'person_id': this.patientID, 'concept_id': orders
-        })
-        
-        if (!req) return
+        const orders = await ObservationService.getAll(this.patientID, 'Medication orders')
+      
+        if (!orders) return
 
         const rifapentine = await ConceptService.getConceptID('Rifapentine')
 
-        const receipt = req.filter((obs: ObsValue) => obs.value_coded === rifapentine)
+        const ordered = find(orders, {'value_coded': rifapentine})
 
-        if (!isEmpty(receipt)) this.received3HP = true
+        if (ordered) this.received3HP = true
     }
 
     async loadFastTrackStatus() {
-        const fastTrack = await ConceptService.getConceptID('Fast track', true)
+        const isFastTrack = await ObservationService.getFirstValueCoded(this.patientID, 'Fast track')
         const yes = await ConceptService.getConceptID('yes')
-        const obs = await ObservationService.getObs({
-            'person_id': this.patientID, 'concept_id': fastTrack
-        })
-        if (!isEmpty(obs) && obs[0].value_coded === yes) this.fastTrack = true
+
+        if (isFastTrack) this.fastTrack = isFastTrack === yes
     }
     
     async loadRegimenExtras(date=RegimenService.getSessionDate()) {
@@ -105,14 +99,9 @@ export class PrescriptionService extends RegimenService {
     }
 
     async loadHangingPills() {
-        const amountBrought = await ConceptService.getConceptID('Pills brought', true)
-        const obs = await ObservationService.getObs({
-            'person_id': this.patientID,
-            'concept_id': amountBrought,
-            'date': RegimenService.getSessionDate()
-        })
+        const pills = await ObservationService.getAll(this.patientID, 'Pills brought')
 
-        if (obs) this.hangingPills = obs.map((item: any)=> {
+        if (pills) this.hangingPills = pills.map((item: any)=> {
             try {
                 return {
                     drug: item.order.drug_order.drug_inventory_id,
@@ -214,11 +203,8 @@ export class PrescriptionService extends RegimenService {
     }
 
     async getReasonForRegimenSwitch() {
-        const concept = await ConceptService.getConceptID('Reason for ARV switch', true)
-        const obs = await ObservationService.getObs({
-            'concept_id': concept, 'person_id': this.patientID, 'limit': 1
-        })
-        return !isEmpty(obs) ? obs[0].value_text : 'N/A'
+        const reason = await ObservationService.getFirstValueText(this.patientID, 'Reason for ARV switch')
+        return reason ? reason : 'N/A'
     }
 
     async createDrugOrder(drugOrders: Array<DrugInterface>, encounterID=this.encounterID) {

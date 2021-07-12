@@ -6,6 +6,7 @@ import { ObservationService } from './observation_service';
 import { ConceptService } from './concept_service';
 import { Service } from "@/services/service"
 import HisDate from "@/utils/Date"
+import {Observation} from "@/interfaces/observation"
 
 export class Patientservice extends Service {
     patient: Patient;
@@ -50,6 +51,13 @@ export class Patientservice extends Service {
             'page_size': 1
         })
         return obs.length >= 1 ? obs[0].value_numeric: -1
+    }
+
+    async getWeightHistory() {
+        const weights = await ObservationService.getAll(this.getID(), 'weight')
+        return weights.map((obs: Observation) => ({
+            weight: obs.value_numeric, date: obs.obs_datetime
+        }))
     }
 
     getObj() {

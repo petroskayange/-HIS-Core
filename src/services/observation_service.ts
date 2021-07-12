@@ -1,5 +1,6 @@
 import { ConceptService } from './concept_service'
 import HisDate from '@/utils/Date'
+import { isEmpty }  from "lodash"
 
 export interface ObsValue {
     concept_id: number;
@@ -41,8 +42,8 @@ export class ObservationService extends ConceptService {
     }
 
     static async buildValueCoded(conceptName: string, valueCoded: string, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName)
-        const coded = await ConceptService.getConceptID(valueCoded)
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        const coded = await ConceptService.getConceptID(valueCoded, true)
         return {
             'concept_id': concept,
             'value_coded': coded,
@@ -51,10 +52,29 @@ export class ObservationService extends ConceptService {
     }
 
     static async buildValueText(conceptName: string, valueText: string, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName)
+        const concept = await ConceptService.getConceptID(conceptName, true)
         return {
             'concept_id': concept,
             'value_text': valueText,
+            'obs_datetime': date
+        }
+    }
+
+    static async buildValueNumber(conceptName: string, ValueNumber: string, modifier=null, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        return {
+            'concept_id': concept,
+            'value_numeric': parseInt(ValueNumber),
+            'value_modifier': modifier,
+            'obs_datetime': date
+        }
+    }
+
+    static async buildValueDate(conceptName: string, valueDate: string, date=this.getSessionDate()) {
+        const concept = await ConceptService.getConceptID(conceptName, true)
+        return {
+            'concept_id': concept,
+            'value_datetime': valueDate,
             'obs_datetime': date
         }
     }
@@ -66,6 +86,41 @@ export class ObservationService extends ConceptService {
 
     static getObs(params: Record<string, string | number>) {
         return super.getJson('/observations', params)
+    }
+
+    static async getAll(patientID: number, conceptName: string, date=this.getSessionDate(), strictMode=true){
+        const concept = await ConceptService.getConceptID(conceptName, strictMode)
+        const obs = await this.getObs({
+            'person_id':  patientID, 
+            'concept_id': concept,
+            'date': date,
+        })
+
+        if (!isEmpty(obs)) return obs
+    }
+
+    static async getFirstValueText(patientID: number, conceptName: string, date=this.getSessionDate(), strictMode=true) {
+        const concept = await ConceptService.getConceptID(conceptName, strictMode)
+        const obs = await this.getObs({
+            'person_id':  patientID, 
+            'concept_id': concept,
+            'date': date,
+            'page_size': 1
+        })
+
+        if (!isEmpty(obs)) return obs[0].value_text
+    }
+
+    static async getFirstValueCoded(patientID: number, conceptName: string, date=this.getSessionDate(), strictMode=true) {
+        const concept = await ConceptService.getConceptID(conceptName, strictMode)
+        const obs = await this.getObs({
+            'person_id':  patientID, 
+            'concept_id': concept,
+            'date': date,
+            'page_size': 1
+        })
+
+        if (!isEmpty(obs)) return ConceptService.getConceptName(obs[0].value_coded)
     }
 
     static async resolvePrimaryValue(obs: any) {

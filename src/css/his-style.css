@@ -93,7 +93,7 @@ body {
 
 .view-port-content {
     overflow-x: auto;
-    height: 90%;
+    height: 98%;
 }
 
 @media only screen and (min-width: 1024px) {

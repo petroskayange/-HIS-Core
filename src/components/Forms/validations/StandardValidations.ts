@@ -31,7 +31,8 @@ function rangeOf(val: any, min: number, max: number): null | Array<string> {
 }
 function neitherOr(val: any): null | Array<string> {
     const allNo = val.filter((arr: any) => {
-        return parseInt(arr.other.value) === ConceptService.getCachedConceptID('No')
+        const val = arr.value || arr.other.value
+        return parseInt(val) === ConceptService.getCachedConceptID('No', true)
     });
     if(allNo.length == val.length) {
         return ['All values can not be no']
@@ -39,12 +40,10 @@ function neitherOr(val: any): null | Array<string> {
     return null;
 }
 function anyEmpty(val: any): null | Array<string> {
-    const allNo = val.filter((arr: any) => {
-        return arr.other.value === "" 
-    });
-    if(allNo.length > 0) {
-        return ['all must be selected']
-    }
+    const allNo = val.map((i: any) => i.value === '' || i.other.value === '')
+
+    if(allNo.every((i: any) => i)) return ['all must be selected']
+
     return null;
 }
 export default {
