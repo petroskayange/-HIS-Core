@@ -1,13 +1,10 @@
 import { DrugInterface } from "@/interfaces/Drug";
-import { Encounter } from "@/interfaces/encounter";
-import { ConceptService } from "@/services/concept_service";
 import { DrugOrderService } from "@/services/drug_order_service";
-import { EncounterService } from "@/services/encounter_service";
-import { Observation, ObservationService } from "@/services/observation_service";
+import { Observation } from "@/services/observation_service";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 import { find } from "lodash"
-
+import { AppEncounterService } from "@/services/app_encounter_service"
 export const REGIMEN_SWITCH_REASONS = [
     'Policy change', 'Ease of administration (pill burden, swallowing)',
     'Drug drug interaction', 'Pregnancy intention',
@@ -19,9 +16,7 @@ export enum HangingPill {
    EXACT = 'Exact - excluding hanging pills'
 }
 
-export class PrescriptionService extends RegimenService {
-    patientID: number;
-    encounterID: number;
+export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
     fastTrack: boolean;
     useHangingPills: boolean;
@@ -30,9 +25,7 @@ export class PrescriptionService extends RegimenService {
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
     constructor(patientID: number) {
-        super()
-        this.patientID = patientID
-        this.encounterID = 0
+        super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
         this.fastTrack = false
         this.received3HP = false
@@ -45,8 +38,6 @@ export class PrescriptionService extends RegimenService {
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
     }
-
-    setEncounterID(encounterID: number) { this.encounterID = encounterID }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
 
@@ -72,11 +63,11 @@ export class PrescriptionService extends RegimenService {
     }
 
     async load3HpStatus() {
-        const orders = await ObservationService.getAll(this.patientID, 'Medication orders')
+        const orders = await AppEncounterService.getAll(this.patientID, 'Medication orders')
       
         if (!orders) return
 
-        const rifapentine = await ConceptService.getConceptID('Rifapentine')
+        const rifapentine = await AppEncounterService.getConceptID('Rifapentine')
 
         const ordered = find(orders, {'value_coded': rifapentine})
 
@@ -84,8 +75,8 @@ export class PrescriptionService extends RegimenService {
     }
 
     async loadFastTrackStatus() {
-        const isFastTrack = await ObservationService.getFirstValueCoded(this.patientID, 'Fast track')
-        const yes = await ConceptService.getConceptID('yes')
+        const isFastTrack = await AppEncounterService.getFirstValueCoded(this.patientID, 'Fast track')
+        const yes = await AppEncounterService.getConceptID('yes')
 
         if (isFastTrack) this.fastTrack = isFastTrack === yes
     }
@@ -99,7 +90,7 @@ export class PrescriptionService extends RegimenService {
     }
 
     async loadHangingPills() {
-        const pills = await ObservationService.getAll(this.patientID, 'Pills brought')
+        const pills = await AppEncounterService.getAll(this.patientID, 'Pills brought')
 
         if (pills) this.hangingPills = pills.map((item: any)=> {
             try {
@@ -203,41 +194,22 @@ export class PrescriptionService extends RegimenService {
     }
 
     async getReasonForRegimenSwitch() {
-        const reason = await ObservationService.getFirstValueText(this.patientID, 'Reason for ARV switch')
+        const reason = await AppEncounterService.getFirstValueText(this.patientID, 'Reason for ARV switch')
         return reason ? reason : 'N/A'
     }
 
-    async createDrugOrder(drugOrders: Array<DrugInterface>, encounterID=this.encounterID) {
+    async createDrugOrder(drugOrders: Array<DrugInterface>) {
         return DrugOrderService.create({
-            'encounter_id': encounterID,
+            'encounter_id': this.encounterID,
             'drug_orders': drugOrders
         })
     }
 
-    async createTreatmentEncounter(): Promise<Encounter | undefined> {
-        const encounter = await EncounterService.create({
-            'patient_id': this.patientID,
-            'encounter_type_id': 25, //TODO, get this from api or reference dictionary
-        })
-
-        if (!encounter) return
-
-        this.encounterID = encounter.encounter_id
-
-        return encounter
+    async createHangingPillsObs(response: HangingPill) {
+        return this.saveValueTextObs('appointment type', response)
     }
-    
-    async createHangingPillsObs(response: HangingPill, encounterID=this.encounterID) {
-        const appointmentType = await ObservationService.buildValueText(
-            'Appointment type', response
-        )
-        return ObservationService.saveObs(encounterID, appointmentType)
-    }
-    
-    async createRegimenSwitchObs(reasonForSwitch: string, encounterID=this.encounterID): Promise<Observation> {
-        const regimenSwitch = await ObservationService.buildValueText(
-            'Reason for ARV switch', reasonForSwitch
-        )
-        return ObservationService.saveObs(encounterID, regimenSwitch)
+
+    async createRegimenSwitchObs(reasonForSwitch: string): Promise<Observation> {
+        return this.saveValueTextObs('Reason for ARV switch', reasonForSwitch)
     }
 }

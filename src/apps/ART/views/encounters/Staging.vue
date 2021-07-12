@@ -45,7 +45,7 @@ export default defineComponent({
     },
     methods: {
         async onSubmit() {
-            const encounter = await this.staging.createStagingEncounter()
+            const encounter = await this.staging.createEncounter()
 
             if (!encounter) return toastWarning('Unable to create encounter')
             
@@ -56,7 +56,7 @@ export default defineComponent({
                 ...this.cd4Date, ...this.cd4Location
             ])
 
-            const obs = await this.staging.createObs(data)
+            const obs = await this.staging.saveObservationList(data)
 
             if (!obs) return toastWarning('Unable to save patient observations')
 
@@ -77,7 +77,7 @@ export default defineComponent({
                 value: facility.location_id
             }))
         },
-        setPregnancyObsData(data: Array<Option>) {
+        setPregnancyObsData(data: Array<Option>) {      
             const payload = data.map((obs: Option) => {
                 return this.staging.buildValueCoded(obs.other.concept, obs.value)
             })
