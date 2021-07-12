@@ -16,6 +16,8 @@ export interface Field {
     condition?: Function;
     validation?: Function;
     onValue?: Function;
+    onload?: Function;
+    unload?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
     config?: Record<string, any>;
