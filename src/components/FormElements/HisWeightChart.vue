@@ -36,6 +36,9 @@ export default defineComponent({
         chart: {
           id: "weight_chart",
         },
+        title: {
+            text: 'Weight trail (2 year period)'
+        },
         stroke: {
             curve: 'straight',
         },
