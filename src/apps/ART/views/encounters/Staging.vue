@@ -125,7 +125,27 @@ export default defineComponent({
                             }
                         }
                     ]
-                }, 
+                },
+                {
+                    id: 'patient_weight_chart',
+                    helpText: 'Patient weight chart',
+                    type: FieldType.TT_WEIGHT_CHART,
+                    options: async () => {
+                        const history = await this.patient.getWeightHistory()
+                        const labels = history.map((i: any) => HisDate.toStandardHisDisplayFormat(i.date))
+                        const values = history.map((i: any) => i.weight)
+                        return [
+                            {
+                                label: "Weight for patient",
+                                value: "Weight trail",
+                                other: {
+                                    labels, 
+                                    values
+                                }
+                            }
+                        ]
+                    }
+                },
                 {
                     id: 'stage_4_conditions',
                     helpText: 'Stage 4 conditions',

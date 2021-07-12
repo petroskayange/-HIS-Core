@@ -55,7 +55,9 @@ export class Patientservice extends Service {
 
     async getWeightHistory() {
         const weights = await ObservationService.getAll(this.getID(), 'weight')
-        return weights.map((obs: Observation) => obs.value_numeric)
+        return weights.map((obs: Observation) => ({
+            weight: obs.value_numeric, date: obs.obs_datetime
+        }))
     }
 
     getObj() {
