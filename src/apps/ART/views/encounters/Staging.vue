@@ -104,6 +104,7 @@ export default defineComponent({
                     id: 'pregnancyObs_status',
                     helpText: 'Pregnant / Breastfeeding',
                     type: FieldType.TT_MULTIPLE_YES_NO,
+                    validation: (val: any) => Validation.anyEmpty(val),
                     condition: () => this.staging.isFemale(),
                     summaryMapValue: (d: Option) => ({ label: d.label, value: d.value }),
                     unload: async (data: any) => this.setPregnancyObsData(data),
