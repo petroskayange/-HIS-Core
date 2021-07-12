@@ -145,6 +145,11 @@ export default defineComponent({
                                 }
                             }
                         ]
+                    },
+                    config: {
+                        hiddenFooterBtns: [
+                            'Clear'
+                        ]
                     }
                 },
                 {
