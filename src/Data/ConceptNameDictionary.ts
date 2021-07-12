@@ -141,6 +141,13 @@ export default [
       "categories": [
          ""
       ],
+      "concept_id": 5090,
+      "name": "height"
+   },
+   {
+      "categories": [
+         ""
+      ],
       "concept_id": 9974,
       "name": "Rifapentine"
    },
