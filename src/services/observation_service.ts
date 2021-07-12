@@ -7,7 +7,7 @@ export interface ObsValue {
     value_text?: string;
     value_coded?: number;
     value_datetime?: string;
-    value_modifier?: string;
+    value_modifier?: string | null;
     value_boolean?: string;
     value_numeric?: number;
     obs_datetime?: string;
@@ -60,11 +60,11 @@ export class ObservationService extends ConceptService {
         }
     }
 
-    static async buildValueNumber(conceptName: string, ValueNumber: string, modifier=null, date=this.getSessionDate()) {
+    static async buildValueNumber(conceptName: string, value: number, modifier=null, date=this.getSessionDate()) {
         const concept = await ConceptService.getConceptID(conceptName, true)
         return {
             'concept_id': concept,
-            'value_numeric': parseInt(ValueNumber),
+            'value_numeric': value,
             'value_modifier': modifier,
             'obs_datetime': date
         }

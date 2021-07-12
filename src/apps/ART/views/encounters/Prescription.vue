@@ -48,7 +48,7 @@ export default defineComponent({
     },
     methods: {
         async onSubmit() {
-            const encounter = await this.prescription.createTreatmentEncounter()
+            const encounter = await this.prescription.createEncounter()
 
             const payload = this.mapOrder(this.drugs)
 
