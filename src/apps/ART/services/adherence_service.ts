@@ -11,7 +11,7 @@ export class AdherenceService extends AppEncounterService {
     }
 
     async loadPreviousDrugs() {
-        const drugs = await DrugOrderService.getLastDrugsReceived(super.patientID)
+        const drugs = await DrugOrderService.getLastDrugsReceived(this.patientID)
         let startDate = ''
 
         if (!drugs) return
@@ -23,6 +23,25 @@ export class AdherenceService extends AppEncounterService {
             }
             return new Date(drug.start_date) >= new Date(startDate)
         })
+    }
+
+    getLastDrugs() { return this.lastDrugs }
+
+    buildPillCountObs(orderId: number, pillCount: number) {
+        return this.buildValueNumber('Number of tablets brought to clinic', pillCount, null, orderId)
+    }
+
+    async buildAdherenceObs(orderId: number, drugId: number, adherence: number) {
+        const concept = await AppEncounterService.getConceptID('Drug adherence', true)
+        return {
+            'concept_id': concept,
+            'value_numeric': adherence,
+            'value_drug': drugId,
+            'value_modifier': '%',
+            'order_id': orderId,
+            'person_id': this.patientID,
+            'obs_datetime': AppEncounterService.getSessionDate()
+        }
     }
 
     isAdherenceGood(adherence: number) {
