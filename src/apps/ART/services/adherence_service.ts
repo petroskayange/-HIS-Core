@@ -25,6 +25,10 @@ export class AdherenceService extends AppEncounterService {
         })
     }
 
+    isAdherenceGood(adherence: number) {
+        return adherence >= 95 && adherence <= 105
+    }
+
     calculateAdherence(given: number, pills: number, expected: number) {
         return Math.round(100 * (given - pills) / (given - expected));
     }
