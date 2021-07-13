@@ -132,23 +132,23 @@ export class ObservationService extends ConceptService {
     static async resolvePrimaryValue(obs: any) {
         let value: string | number = ''
 
-        if (obs.value_datetime) {
+        if (obs.value_datetime != null) {
             value = HisDate.toStandardHisDisplayFormat(obs.value_datetime)
         }
 
-        if (obs.value_text) {
+        if (obs.value_text != null) {
             value = obs.value_text
         }
         
-        if (obs.value_numeric) {
+        if (obs.value_numeric != null) {
             value = obs.value_numeric
         }
 
-        if (obs.value_coded) {
+        if (obs.value_coded != null) {
             value = await super.getConceptName(obs.value_coded)
         }
 
-        if (obs.value_modifier) {
+        if (obs.value_modifier != null) {
             value = `${value} ${obs.value_modifier}`
         }
 
