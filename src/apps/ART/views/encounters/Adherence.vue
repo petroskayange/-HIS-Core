@@ -101,7 +101,10 @@ export default defineComponent({
                     id: 'pills_brought',
                     helpText: 'Pills remaining (brought to clinic)',
                     type: FieldType.TT_ADHERENCE_INPUT,
-                    validation: (val: any) => Validation.required(val),
+                    validation: (val: any) => {
+                        const empty = val.map((i: Option) => i.value === '')
+                        return empty.some(Boolean) ? ['Some values are missing'] : null
+                    },
                     summaryMapValue: ({label, value}: Option) => ({ label: `${label}-Amount brought`, value }),
                     unload: async (data: any) => {
                         this.drugObs = []
