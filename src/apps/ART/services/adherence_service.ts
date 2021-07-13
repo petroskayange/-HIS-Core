@@ -53,8 +53,14 @@ export class AdherenceService extends AppEncounterService {
     }
 
     calculateExpected(given: number, equivalentDailyDose: number, startDate: string) {
-        const daysGone = HisDate.dateDiffInDays(startDate, AppEncounterService.getSessionDate());
-
+        const daysGone = this.calculateDateDiffInDays(AppEncounterService.getSessionDate(), startDate);
         return (given - (daysGone * parseFloat(equivalentDailyDose.toString())));
+    }
+
+    calculateDateDiffInDays(date1: string, date2: string) {
+        // Based on Old ART algorithm reused to maintain parity...
+        const timeDiff = Math.abs(new Date(date2).getTime() - new Date(date1).getTime());
+        const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        return diffDays;
     }
 }
