@@ -13,7 +13,8 @@ export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         adherence: {} as any,
-        drugObs: [] as any
+        drugObs: [] as any,
+        calculationAgreementObs: [] as any
     }),
     watch: {
         patient: {
@@ -33,7 +34,8 @@ export default defineComponent({
 
             if (!encounter) return toastWarning('Unable to create encounter')
 
-            const obs = await this.adherence.saveObservationList(this.drugObs)
+            const data = await Promise.all([...this.drugObs, ...this.calculationAgreementObs])
+            const obs = await this.adherence.saveObservationList(data)
 
             if (!obs) return toastWarning('Unable to save patient observations')
 
@@ -59,14 +61,12 @@ export default defineComponent({
                             const adherence = this.adherence.calculateAdherence(
                                 quantity, val.value, expected
                             )
-                            const adhrenceObs = await this.adherence.buildAdherenceObs(
-                                order.order_id, drug.drug_id, adherence
+                            this.drugObs.push(
+                                this.adherence.buildAdherenceObs(order.order_id, drug.drug_id, adherence)
                             )
-                            const pillObs = await this.adherence.buildPillCountObs(
-                                order.order_id, val.value
+                            this.drugObs.push(
+                                this.adherence.buildPillCountObs(order.order_id, val.value)
                             )
-                            this.drugObs.push(adhrenceObs)
-                            this.drugObs.push(pillObs)
                         })
                     },
                     options: () => {
@@ -78,6 +78,21 @@ export default defineComponent({
                             }
                         }))
                     }
+                },
+                {
+                    id: "agree_with_calculation",
+                    helpText: "Agree with adherence calculation",
+                    type: FieldType.TT_SELECT,
+                    validation: (val: Option) => Validation.required(val),
+                    unload: ({ value }: Option) => {
+                        this.calculationAgreementObs = [ this.adherence.buildValueCoded(
+                            'Reason for poor treatment adherence', value
+                        )]
+                    },
+                    options: () => [
+                        { label: 'Yes', value: 'Yes' },
+                        { label: 'No', value: 'No' }
+                    ]
                 }
             ]
         }

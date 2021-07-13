@@ -1,6 +1,11 @@
 export default [
    {
       "categories": [],
+      "concept_id": 3140,
+      "name": "Reason for poor treatment adherence"
+   },
+   {
+      "categories": [],
       "concept_id": 6987,
       "name": "Drug adherence"
    },
