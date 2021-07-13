@@ -1,6 +1,11 @@
 export default [
    {
       "categories": [],
+      "concept_id": 1488,
+      "name": "Treatment status"
+   },
+   {
+      "categories": [],
       "concept_id": 7880,
       "name": "Confirmatory hiv test type"
    },

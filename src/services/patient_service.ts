@@ -52,7 +52,15 @@ export class Patientservice extends Service {
         })
         return obs.length >= 1 ? obs[0].value_numeric: -1
     }
-
+    async getRecentHeight() {
+        const concept = await ConceptService.getConceptID('height', true)
+        const obs = await ObservationService.getObs({
+            'person_id': this.getID(),
+            'concept_id': concept,
+            'page_size': 1
+        })
+        return obs.length >= 1 ? obs[0].value_numeric: -1
+    }
     async getWeightHistory() {
         const weights = await ObservationService.getAll(this.getID(), 'weight')
         return weights.map((obs: Observation) => ({

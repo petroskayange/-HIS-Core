@@ -6,21 +6,22 @@
           <ion-col size="2">
             <ion-button
               v-for="(key, index) in keys"
-              :key="key.name"
+              :key="key.label"
               @click="activeField = index"
               class="vitals-btn"
               size="large"
               expan="full"
               :color="activeField === index ? 'secondary' : 'tertiary'"
+              v-show="key.other.visible !== false "
             >
               <ion-avatar>
-                <img :src="img(key.icon)" />
+                <img :src="img(key.other.icon)" />
               </ion-avatar>
-              <ion-label>{{ key.name }}</ion-label>
+              <ion-label>{{ key.label }}</ion-label>
             </ion-button>
           </ion-col>
           <ion-col size="5">
-            <ion-input type="text" v-model="keys[activeField].value" />
+            <ion-input type="text" v-if="keys.length > 0" v-model="keys[activeField].value" />
             <base-keyboard
               btnSize="96px"
               :layout="keyboard"
@@ -31,14 +32,9 @@
             <table class="his-table">
               <tr v-for="(key, index) in keys" :key="key.name" 
                 :style="activeField === index ? {color : 'red'}: ''">
-                <td>{{ key.name }}</td>
+                <td>{{ key.label }}</td>
                 <td>{{ key.value }}</td>
-                <td>{{ key.modifier }}</td>
-              </tr>
-              <tr>
-                <td>Age</td>
-                <td>{{age}}</td>
-                <td>Years old</td>
+                <td>{{ key.other.modifier }}</td>
               </tr>
               <tr>
                 <td colspan="2">BMI</td>
@@ -68,9 +64,7 @@ import {
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 import { VITALS_KEYPAD } from "../Keyboard/KbLayouts";
 import { BMIService } from "@/services/bmi_service";
-import { Patient } from "@/interfaces/patient";
-import { ProgramService } from "@/services/program_service";
-import { Patientservice } from "@/services/patient_service";
+import { Option } from '../Forms/FieldInterface'
 export default defineComponent({
   components: {
     ViewPort,
@@ -94,17 +88,13 @@ export default defineComponent({
     clear: {
       type: Boolean,
     },
+    preset: {
+      type: Object as PropType<Option>,
+      required: false
+    },
   },
   data: () => ({
-    listData: [] as any,
-    keys: [
-      { name: "Weight", value: "", modifier: "KG", icon: "weight" },
-      { name: "Height", value: "", modifier: "CM", icon: "height" },
-      { name: "BP", value: "", modifier: "mmHG", icon: "bp" },
-      { name: "Temp", value: "", modifier: "C", icon: "temp" },
-      { name: "SP02", value: "", modifier: "%", icon: "spo2" },
-      { name: "Pulse", value: "", modifier: "BPM", icon: "pulse-rate" },
-    ],
+    keys: [] as any,
     patientID: '' as any,
     activeField: 0,
     keyboard: VITALS_KEYPAD,
@@ -117,17 +107,10 @@ export default defineComponent({
     }
   }),
   watch: {
-    $route: {
-      async handler({ query }: any) {
-          const response: Patient = await ProgramService.getJson(
-            `/patients/${query.patient_id}`
-          );
-          this.patientID = query.patient_id;
-          const patient = new Patientservice(response);
-          this.age = patient.getAge();
-          this.gender = patient.getGender();
-          patient.getRecentWeight
-          
+    keys: {
+      async handler( params ) {
+        const vals  = [...params, ...[{label: 'BMI', value: this.BMI.index}]];
+        this.$emit("onValue",vals);
       },
       deep: true,
       immediate: true,
@@ -138,10 +121,10 @@ export default defineComponent({
       return `assets/images/vitals/${name}.png`;
     },
     async getBMI(): Promise<any> {
-      const j: any= await BMIService.getBMI(this.getWeight(), this.getHeight(), this.gender, this.age);
-      this.BMI.index = j.index;
-      this.BMI.result = j.result;
-      this.BMI.color = j.color;
+      const BMI: any= await BMIService.getBMI(this.getWeight(), this.getHeight(), this.gender, this.getAge());
+      this.BMI.index = BMI.index;
+      this.BMI.result = BMI.result;
+      this.BMI.color = BMI.color;
      
     },
     async onKeyPress(key: any) {
@@ -159,14 +142,27 @@ export default defineComponent({
       this.getBMI();
     },
     getWeight(): number {
-      const weight = this.keys.filter((key) => key.name === "Weight");
+      const weight = this.keys.filter((key: any) => key.label === "Weight");
       return weight[0].value === "" ? 0 : parseFloat(weight[0].value);
     },
     getHeight(): number {
-      const height = this.keys.filter((key) => key.name === "Height");
+      const height = this.keys.filter((key: any) => key.label === "Height");
       return height[0].value === "" ? 0 : parseFloat(height[0].value);
     },
+    getAge(): number {
+      const age = this.keys.filter((key: any) => key.label === "Age");
+      return age[0].value === "" ? 0 : parseFloat(age[0].value);
+    },
+    async init() {
+      this.keys = await this.options(this.fdata)
+    }
   },
+  mounted() {
+    this.init();
+    if (this.preset) {
+      this.gender = this.preset.value
+    }
+  }
 });
 </script>
 <style scoped>
