@@ -60,14 +60,20 @@ export class ObservationService extends ConceptService {
         }
     }
 
-    static async buildValueNumber(conceptName: string, value: number, modifier=null, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName, true)
-        return {
-            'concept_id': concept,
-            'value_numeric': value,
-            'value_modifier': modifier,
-            'obs_datetime': date
-        }
+    static async buildValueNumber(
+        conceptName: string, 
+        value: number, 
+        modifier: string | null = null, 
+        orderId: number | null = null, 
+        date=this.getSessionDate()) {
+            const concept = await ConceptService.getConceptID(conceptName, true)
+            return {
+                'concept_id': concept,
+                'value_numeric': value,
+                'value_modifier': modifier,
+                'order_id': orderId,
+                'obs_datetime': date
+            }
     }
 
     static async buildValueDate(conceptName: string, valueDate: string, date=this.getSessionDate()) {
