@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -102,10 +102,12 @@ export default defineComponent({
                     helpText: 'Pills remaining (brought to clinic)',
                     type: FieldType.TT_ADHERENCE_INPUT,
                     validation: (val: any) => {
+                        if (Validation.required(val)) return ['No drugs available']
+
                         const empty = val.map((i: Option) => i.value === '')
-                        return empty.some(Boolean) ? ['Some values are missing'] : null
+                        
+                        return  empty.some(Boolean) ? ['Some values are missing'] : null
                     },
-                    summaryMapValue: ({label, value}: Option) => ({ label: `${label}-Amount brought`, value }),
                     unload: async (data: any) => {
                         this.drugObs = []
                         data.forEach(async(val: Option) => {
