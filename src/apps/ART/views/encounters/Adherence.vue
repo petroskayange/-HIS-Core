@@ -9,12 +9,14 @@ import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { AdherenceService } from "@/apps/ART/services/adherence_service"
 import EncounterMixinVue from './EncounterMixin.vue'
 import Validation from "@/components/Forms/validations/StandardValidations"
+import HisDate from "@/utils/Date"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         adherence: {} as any,
         drugObs: [] as any,
-        calculationAgreementObs: [] as any
+        calculationAgreementObs: [] as any,
+        adherenceRows: [] as Array<any>
     }),
     watch: {
         patient: {
@@ -43,6 +45,53 @@ export default defineComponent({
 
             this.nextTask()
         },
+        buildAdherenceReport(data: any) {
+            const lastVisit = this.adherence.getReceiptDate()
+            const daysElapsed = this.adherence.calculateDaysElapsed(lastVisit)
+            const timeElapse = `
+                Last visit: ${HisDate.toStandardHisDisplayFormat(lastVisit)} 
+                (${daysElapsed} Days Elapsed)
+            `
+            const blankRows = data.map(() => '') 
+            const columns = [timeElapse, ...data.map(({drug}: any) => drug.name)]
+            const rows = [
+                ['Prescription', ...blankRows],
+                ['Tabs given', ...data.map((i: any) => i.quantity)],
+                ['Tabs per day', ...data.map((i: any) => i.equivalent_daily_dose)],
+                ['Tabs remaining', ...blankRows],
+                ['Expected', ...data.map((i: any) => this.calcPillsExpected(i) < 0 ? 0 : this.calcPillsExpected(i))],
+                ['Actual (counted)', ...data.map((i: any) => i.pillsBrought)],
+                ['Adherence', ...blankRows],
+                ['Doses missed/ Unaccounted for', ...data.map((i: any) => this.calcUnaccountedDoses(i))],
+                ['Doses consumed', ...data.map((i: any) => `${this.calcAdherence(i)}%`)],
+                ['Art Adherence', ...data.map((i: any) => this.adherenceStatus(i))]
+            ]
+            return [
+                { 
+                    label: 'Selected Medication', 
+                    value:'Table', 
+                    other: { columns, rows }
+                }      
+            ]
+        },
+        adherenceStatus(d: any) {
+            const adherence = this.calcAdherence(d)
+            const isGood = this.adherence.isAdherenceGood(adherence)
+            return isGood ? 'Good adherence' : 'Explore problem'
+        },
+        calcAdherence(d: any) {
+            const exp = this.calcPillsExpected(d)
+            return this.adherence.calculateAdherence(d.quantity, d.pillsBrought, exp)
+        },
+        calcUnaccountedDoses(d: any) {
+            const exp = this.calcPillsExpected(d)
+            return this.adherence.calculateUnaccountedOrMissed(exp, d.pillsBrought)
+        },
+        calcPillsExpected(d: any) {
+            return this.adherence.calculateExpected(
+                d.quantity, d.equivalent_daily_dose, d.order.start_date
+            )
+        },
         getFields(): Array<Field> {
             return [
                 {
@@ -54,13 +103,8 @@ export default defineComponent({
                     unload: async (data: any) => {
                         this.drugObs = []
                         data.forEach(async(val: Option) => {
-                            const {drug, order, quantity } = val.other
-                            const expected = this.adherence.calculateExpected(
-                                quantity, val.other.equivalent_daily_dose, order.start_date
-                            )
-                            const adherence = this.adherence.calculateAdherence(
-                                quantity, val.value, expected
-                            )
+                            const {drug, order } = val.other
+                            const adherence = this.calcAdherence({ ...val.other, pillsBrought: val.value })
                             this.drugObs.push(
                                 this.adherence.buildAdherenceObs(order.order_id, drug.drug_id, adherence)
                             )
@@ -78,6 +122,16 @@ export default defineComponent({
                             }
                         }))
                     }
+                },
+                {
+                    id: "adherence_report",
+                    helpText: "ART adherence",
+                    type: FieldType.TT_TABLE_VIEWER,
+                    options: (d: any) => this.buildAdherenceReport(
+                        d.pills_brought.map((i: Option) => ({ 
+                            ...i.other, pillsBrought: i.value
+                        }))
+                    )
                 },
                 {
                     id: "agree_with_calculation",
