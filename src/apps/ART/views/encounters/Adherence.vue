@@ -66,11 +66,14 @@ export default defineComponent({
                 ['Doses consumed', ...data.map((i: any) => `${this.calcAdherence(i)}%`)],
                 ['Art Adherence', ...data.map((i: any) => this.adherenceStatus(i))]
             ]
+            const colorCodes = [
+                'adherence-col-bg','','','adherence-col-bg','','','adherence-col-bg',
+            ]
             return [
                 { 
                     label: 'Selected Medication', 
                     value:'Table', 
-                    other: { columns, rows }
+                    other: { columns, rows, colorCodes }
                 }      
             ]
         },
