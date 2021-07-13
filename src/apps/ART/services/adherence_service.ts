@@ -1,29 +1,31 @@
 import { AppEncounterService } from "@/services/app_encounter_service"
-import HisDate from "@/utils/Date"
 import { DrugInterface } from "@/interfaces/Drug"
 import { DrugOrderService } from "@/services/drug_order_service"
 
 export class AdherenceService extends AppEncounterService {
     lastDrugs: Array<DrugInterface>
+    lastReceiptDate: string
     constructor(patientID: number) {
         super(patientID, 68) //TODO: Use encounter type reference name
         this.lastDrugs = []
+        this.lastReceiptDate = ''
     }
 
     async loadPreviousDrugs() {
         const drugs = await DrugOrderService.getLastDrugsReceived(this.patientID)
-        let startDate = ''
 
         if (!drugs) return
 
         this.lastDrugs = drugs.filter((drug: DrugInterface) => {
-            if (!startDate) {
-                startDate = drug.start_date
+            if (!this.lastReceiptDate) {
+                this.lastReceiptDate = drug.order.start_date
                 return true
             }
-            return new Date(drug.start_date) >= new Date(startDate)
+            return new Date(drug.order.start_date) >= new Date(this.lastReceiptDate)
         })
     }
+
+    getReceiptDate() { return this.lastReceiptDate }
 
     getLastDrugs() { return this.lastDrugs }
 
@@ -53,14 +55,20 @@ export class AdherenceService extends AppEncounterService {
     }
 
     calculateExpected(given: number, equivalentDailyDose: number, startDate: string) {
-        const daysGone = this.calculateDateDiffInDays(AppEncounterService.getSessionDate(), startDate);
+        const daysGone = this.calculateDaysElapsed(startDate);
         return (given - (daysGone * parseFloat(equivalentDailyDose.toString())));
     }
 
-    calculateDateDiffInDays(date1: string, date2: string) {
+    calculateDaysElapsed(date1: string) {
         // Based on Old ART algorithm reused to maintain parity...
+        const date2 = AppEncounterService.getSessionDate()
         const timeDiff = Math.abs(new Date(date2).getTime() - new Date(date1).getTime());
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
         return diffDays;
+    }
+
+    calculateUnaccountedOrMissed(expected: string, actual: string) {
+        const exp = (parseFloat(expected) - parseFloat(actual));
+        return (exp < 0 ? ((exp * -1) + ' missed') : (exp + ' unacc'));
     }
 }
