@@ -52,8 +52,13 @@ export default defineComponent({
                     unload: async (data: any) => {
                         this.drugObs = []
                         data.forEach(async(val: Option) => {
-                            const {drug, order } = val.other
-                            const adherence = 0 //TODO calculate adherence here
+                            const {drug, order, quantity } = val.other
+                            const expected = this.adherence.calculateExpected(
+                                quantity, val.other.equivalent_daily_dose, order.start_date
+                            )
+                            const adherence = this.adherence.calculateAdherence(
+                                quantity, val.value, expected
+                            )
                             const adhrenceObs = await this.adherence.buildAdherenceObs(
                                 order.order_id, drug.drug_id, adherence
                             )
