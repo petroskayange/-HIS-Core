@@ -52,20 +52,31 @@ export default defineComponent({
                 Last visit: ${HisDate.toStandardHisDisplayFormat(lastVisit)} 
                 (${daysElapsed} Days Elapsed)
             `
-            const blankRows = data.map(() => '') 
             const columns = [timeElapse, ...data.map(({drug}: any) => drug.name)]
             const rows = [
-                ['Prescription', ...blankRows],
-                ['Tabs given', ...data.map((i: any) => i.quantity)],
-                ['Tabs per day', ...data.map((i: any) => i.equivalent_daily_dose)],
-                ['Tabs remaining', ...blankRows],
-                ['Expected', ...data.map((i: any) => this.calcPillsExpected(i) < 0 ? 0 : this.calcPillsExpected(i))],
-                ['Actual (counted)', ...data.map((i: any) => i.pillsBrought)],
-                ['Adherence', ...blankRows],
-                ['Doses missed/ Unaccounted for', ...data.map((i: any) => this.calcUnaccountedDoses(i))],
-                ['Doses consumed', ...data.map((i: any) => `${this.calcAdherence(i)}%`)],
-                ['Art Adherence', ...data.map((i: any) => this.adherenceStatus(i))]
-            ]
+                ['Prescription'],
+                ['Tabs given'],
+                ['Tabs per day'],
+                ['Tabs remaining'],
+                ['Expected'],
+                ['Actual (counted)'],
+                ['Adherence'],
+                ['Doses missed/ Unaccounted for'],
+                ['Doses consumed'],
+                ['Art Adherence']
+            ]        
+            data.forEach((order) => {
+                rows[0].push('')
+                rows[1].push(order.quantity)
+                rows[2].push(order.equivalent_daily_dose)
+                rows[3].push('')
+                rows[4].push(this.calcPillsExpected(order) < 0 ? 0 : this.calcPillsExpected(order))
+                rows[5].push(order.pillsBrought)
+                rows[6].push('')
+                rows[7].push(this.calcUnaccountedDoses(order))
+                rows[8].push(`${this.calcAdherence(order)}%`)
+                rows[9].push(this.adherenceStatus(order))
+            })
             const colorCodes = [
                 'adherence-col-bg','','','adherence-col-bg','','','adherence-col-bg',
             ]
