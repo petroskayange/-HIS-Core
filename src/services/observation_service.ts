@@ -67,13 +67,16 @@ export class ObservationService extends ConceptService {
         orderId: number | null = null, 
         date=this.getSessionDate()) {
             const concept = await ConceptService.getConceptID(conceptName, true)
-            return {
+            const payload = {
                 'concept_id': concept,
                 'value_numeric': value,
-                'value_modifier': modifier,
-                'order_id': orderId,
                 'obs_datetime': date
             }
+            if (modifier) 
+                Object.assign(payload, {'value_modifier': modifier})
+            if (orderId) 
+                Object.assign(payload, {'order_id': orderId})
+            return payload
     }
 
     static async buildValueDate(conceptName: string, valueDate: string, date=this.getSessionDate()) {
