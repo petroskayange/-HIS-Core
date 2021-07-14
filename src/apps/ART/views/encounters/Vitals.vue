@@ -10,77 +10,86 @@
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Field } from "@/components/Forms/FieldInterface";
+import { Field, Option } from "@/components/Forms/FieldInterface";
 import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { Patient } from "@/interfaces/patient";
 import { ProgramService } from "@/services/program_service";
 import { Patientservice } from "@/services/patient_service";
-import Validation from "@/components/Forms/validations/StandardValidations"
+import Validation from "@/components/Forms/validations/StandardValidations";
 import { GlobalPropertyService } from "@/services/global_property_service";
 import { ObservationService } from "@/services/observation_service";
-
+import { VitalsService } from "@/apps/ART/services/vitals_service";
+import { isArray } from "lodash";
 export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
     activeField: "",
     fields: [] as Array<Field>,
-    patientID: '' as any,
+    patientID: "" as any,
     age: null as any,
     gender: null as any,
     hasBPinfo: false,
     recentHeight: null,
     HTNEnabled: false,
     hasHTNObs: false,
-    vitals: {} as any
+    vitals: {} as any,
   }),
   created() {
     //
   },
   watch: {
-      $route: {
+    $route: {
       async handler({ query }: any) {
-         this.init(query.patient_id);
+        this.init(query.patient_id);
       },
       deep: true,
       immediate: true,
-    }
+    },
   },
   methods: {
     onFinish(formData: any) {
       console.log(formData);
     },
     validateVitals(vitals: any) {
-
-     return null 
+      const v = this.sanitizeVitals(vitals);
+      const vital = new VitalsService(v);
+      return vital.validateAll();
+    },
+    sanitizeVitals(vitals: Array<Option>) {
+      return vitals.filter((element) => {
+        return element.value !== "";
+      });
     },
     async init(patientID: number) {
-         const response: Patient = await ProgramService.getJson(
-            `/patients/${patientID}`
-          );
-          this.patientID = patientID;
-          const patient = new Patientservice(response);
-          this.age = patient.getAge();
-          this.gender = patient.getGender();
-          const lastHeight = await patient.getRecentHeight();
-          this.recentHeight = lastHeight == -1 ? null : lastHeight;
+      const response: Patient = await ProgramService.getJson(
+        `/patients/${patientID}`
+      );
+      this.patientID = patientID;
+      const patient = new Patientservice(response);
+      this.age = patient.getAge();
+      this.gender = patient.getGender();
+      const lastHeight = await patient.getRecentHeight();
+      this.recentHeight = lastHeight == -1 ? null : lastHeight;
 
-          await ObservationService.getAll(patient.getID(), 'Treatment status').then(data =>{
-            this.hasHTNObs =data && data.length > 0
-          })
-          await GlobalPropertyService.isHTNEnabled().then(data => {
-            if(data && data === 'true') {
-              this.HTNEnabled = true
-            }
-          });
-          this.fields = this.getFields();
+      await ObservationService.getAll(patient.getID(), "Treatment status").then(
+        (data) => {
+          this.hasHTNObs = data && data.length > 0;
+        }
+      );
+      await GlobalPropertyService.isHTNEnabled().then((data) => {
+        if (data && data === "true") {
+          this.HTNEnabled = true;
+        }
+      });
+      this.fields = this.getFields();
     },
     getFields(): Array<Field> {
-      const recentHeight = this.recentHeight ? this.recentHeight : ''
+      const recentHeight = this.recentHeight ? this.recentHeight : "";
       const HTNEnabled = this.HTNEnabled;
-      const hasHTNObs =  this.hasHTNObs;
+      const hasHTNObs = this.hasHTNObs;
 
-      const showHeight =  !(recentHeight && this.age > 18);
+      const showHeight = !(recentHeight && this.age > 18);
       return [
         {
           id: "on_htn_medication",
@@ -88,7 +97,7 @@ export default defineComponent({
           type: FieldType.TT_SELECT,
           validation: (val: any) => Validation.required(val),
           condition() {
-            return HTNEnabled && !hasHTNObs
+            return HTNEnabled && !hasHTNObs;
           },
           options: () => [
             {
@@ -110,7 +119,7 @@ export default defineComponent({
             return true;
           },
           preset: {
-            label: 'Gender',
+            label: "Gender",
             value: this.gender,
           },
           options: () => [
@@ -125,7 +134,7 @@ export default defineComponent({
             {
               label: "Height",
               value: `${recentHeight}`,
-              other: { modifier: "CM", icon: "height", visible: showHeight} 
+              other: { modifier: "CM", icon: "height", visible: showHeight },
             },
             { label: "BP", value: "", other: { modifier: "mmHG", icon: "bp" } },
             {
@@ -147,7 +156,7 @@ export default defineComponent({
               label: "Age",
               value: this.age,
               other: { modifier: "Years old", icon: "", visible: false },
-            }
+            },
           ],
         },
       ];

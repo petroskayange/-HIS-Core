@@ -53,7 +53,7 @@ export class Patientservice extends Service {
         return obs.length >= 1 ? obs[0].value_numeric: -1
     }
     async getRecentHeight() {
-        const concept = await ConceptService.getConceptID('height', true)
+        const concept = await ConceptService.getConceptID('Height', true)
         const obs = await ObservationService.getObs({
             'person_id': this.getID(),
             'concept_id': concept,

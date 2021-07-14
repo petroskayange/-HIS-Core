@@ -1,6 +1,26 @@
 export default [
    {
       "categories": [],
+      "concept_id": 5085,
+      "name": "BP"
+   },
+   {
+      "categories": [],
+      "concept_id": 5088,
+      "name": "Temp"
+   },
+   {
+      "categories": [],
+      "concept_id": 5092,
+      "name": "SP02"
+   },
+   {
+      "categories": [],
+      "concept_id": 5087,
+      "name": "Pulse"
+   },
+   {
+      "categories": [],
       "concept_id": 1488,
       "name": "Treatment status"
    },
@@ -147,7 +167,7 @@ export default [
          ""
       ],
       "concept_id": 5090,
-      "name": "height"
+      "name": "Height"
    },
    {
       "categories": [
