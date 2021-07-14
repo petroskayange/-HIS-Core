@@ -12,3 +12,15 @@
   background-color: #b6b6b6; 
   font-weight: bold;
 }
+.adherence-txt-bad, .adherence-txt-good {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.adherence-txt-good {
+  color: green;
+}
+
+.adherence-txt-bad {
+  color: red;
+}

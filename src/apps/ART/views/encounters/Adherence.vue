@@ -51,7 +51,8 @@ export default defineComponent({
                 Last visit: ${HisDate.toStandardHisDisplayFormat(lastVisit)} 
                 (${daysElapsed} Days Elapsed)
             `
-            const colorCodes = {}
+            const rowColors = [{ indexes: [0, 3, 6], class: 'adherence-col-bg' }]
+            const cellColors: any = []
             const columns = [timeElapse]
             const rows = [
                 ['Prescription'],
@@ -65,7 +66,8 @@ export default defineComponent({
                 ['Doses consumed'],
                 ['Art Adherence']
             ]        
-            data.forEach((order) => {
+            data.forEach((order: any, index: number) => {
+                const adherenceStatus = this.adherenceStatus(order)
                 columns.push(order.drug.name)
                 rows[0].push('')
                 rows[1].push(order.quantity)
@@ -76,18 +78,19 @@ export default defineComponent({
                 rows[6].push('')
                 rows[7].push(this.calcUnaccountedDoses(order))
                 rows[8].push(`${this.calcAdherence(order)}%`)
-                rows[9].push(this.adherenceStatus(order))
-            })
-            colorCodes.rows = {
-                indexes: [0, 3, 6],
-                class: 'adherence-col-bg'
-            }
+                rows[9].push(adherenceStatus)
 
+                cellColors.push({ 
+                    index: index+1,
+                    row: 9, 
+                    class: adherenceStatus.match(/good/i) ? 'adherence-txt-good' : 'adherence-txt-bad' 
+                })
+            })
             return [
                 { 
                     label: 'Selected Medication', 
                     value:'Table', 
-                    other: { columns, rows, colorCodes }
+                    other: { columns, rows, rowColors, cellColors }
                 }      
             ]
         },
