@@ -11,6 +11,7 @@ import EncounterMixinVue from './EncounterMixin.vue'
 import Validation from "@/components/Forms/validations/StandardValidations"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
+import { isEmpty } from "lodash"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -183,6 +184,15 @@ export default defineComponent({
                     id: 'stage_1_conditions',
                     helpText: 'Stage 1 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
+                    validation: (val: any) => {
+                        const stages = [
+                            ...this.stageFourObs,
+                            ...this.stageThreeObs,
+                            ...this.stageTwoObs
+                        ]
+                        if (isEmpty(val) && isEmpty(stages)) 
+                            return ['Please provide atleast one staging condition']
+                    },
                     unload: async (data: any) => this.stageOneObs = this.buildStagingData(data),
                     options: () => this.mapStagingOptions(
                         this.staging.isAdult() ? StagingCategory.ADULT_STAGE_1 : StagingCategory.PEDAID_STAGE_1 
