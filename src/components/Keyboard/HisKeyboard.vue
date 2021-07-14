@@ -31,8 +31,17 @@ export default defineComponent({
   data: () => ({
     activeLayout: {} as HisKeyboardConfig
   }),
-  mounted() {
-    this.activeLayout = this.kbConfig
+  watch: {
+
+    kbConfig: {
+      handler(keyboard: HisKeyboardConfig){
+        if(keyboard) {
+          this.activeLayout = keyboard
+        }
+      },
+      deep: true,
+      immediate: true
+    }
   },
   methods: {
     keypress(key: any) {
