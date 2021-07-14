@@ -14,20 +14,16 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { isEmpty } from "lodash"
 export default defineComponent({
     props: {
-        colorCodes: {
-            type: Object,
-            default:() => ({
-                rows: {
-                    class: '',
-                    indexes: []
-                },
-                cells: {
-                    class: '',
-                    indexes: []
-                }
-            })
+        rowColors: {
+            type: Array,
+            default: () => []
+        },
+        cellColors:{
+            type: Array,
+            default: () => []
         },
         columns: {
             type: Object as PropType<string[]>,
@@ -40,15 +36,21 @@ export default defineComponent({
     methods: {
         getColorCodeClass(rIndex: number, dIndex: number) {
             let styleClass = ''
-            const conf = this.colorCodes
-            if ('rows' in conf && conf.rows.indexes.includes(rIndex)) {
-                styleClass = this.colorCodes.rows.class
+            if (!isEmpty(this.rowColors)) {
+                const row: any = this.rowColors.filter((i: any) => i.indexes.includes(rIndex))
+                if (!isEmpty(row)) {
+                    styleClass += ' ' + row[0].class
+                }
             }
 
-            if ('cells' in conf && conf.cells.indexes.includes(dIndex)) {
-                styleClass = this.colorCodes.cells.class
+            if (!isEmpty(this.cellColors)) {
+                const cell: any = this.cellColors.filter((i: any) => {
+                    return i.index === dIndex && i.row === rIndex
+                })
+                if (!isEmpty(cell)) {
+                    styleClass += ' ' + cell[0].class
+                } 
             }
-
             return styleClass
         }
     }
