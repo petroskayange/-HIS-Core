@@ -79,8 +79,7 @@ export default defineComponent({
         },
         adherenceStatus(d: any) {
             const adherence = this.calcAdherence(d)
-            const isGood = this.adherence.isAdherenceGood(adherence)
-            return isGood ? 'Good adherence' : 'Explore problem'
+            return this.adherence.isAdherenceGood(adherence) ? 'Good adherence' : 'Explore problem'
         },
         calcAdherence(d: any) {
             const exp = this.calcPillsExpected(d)
