@@ -6,7 +6,7 @@
             </th>
         </tr>
         <tr  v-for="(dataItems, rIndex) in rows" :key="rIndex">
-            <td :class="getColorCodeClass(rIndex)" v-for="(item, dIndex) in dataItems" :key="dIndex"> 
+            <td :class="getColorCodeClass(rIndex, dIndex)" v-for="(item, dIndex) in dataItems" :key="dIndex"> 
                 {{ item }}
             </td>
         </tr>
@@ -14,12 +14,20 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-
 export default defineComponent({
     props: {
         colorCodes: {
-            type: Object as PropType<string[]>,
-            default: []
+            type: Object,
+            default:() => ({
+                rows: {
+                    class: '',
+                    indexes: []
+                },
+                cells: {
+                    class: '',
+                    indexes: []
+                }
+            })
         },
         columns: {
             type: Object as PropType<string[]>,
@@ -30,12 +38,18 @@ export default defineComponent({
         }
     },
     methods: {
-        getColorCodeClass(index: number) {
-            try {
-                return this.colorCodes[index]
-            }catch(e) {
-                return ''
+        getColorCodeClass(rIndex: number, dIndex: number) {
+            let styleClass = ''
+            const conf = this.colorCodes
+            if ('rows' in conf && conf.rows.indexes.includes(rIndex)) {
+                styleClass = this.colorCodes.rows.class
             }
+
+            if ('cells' in conf && conf.cells.indexes.includes(dIndex)) {
+                styleClass = this.colorCodes.cells.class
+            }
+
+            return styleClass
         }
     }
 })
