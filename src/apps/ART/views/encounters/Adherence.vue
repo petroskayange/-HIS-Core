@@ -139,7 +139,12 @@ export default defineComponent({
                         d.pills_brought.map((i: Option) => ({ 
                             ...i.other, pillsBrought: i.value
                         }))
-                    )
+                    ),
+                    config: {
+                        hiddenFooterBtns: [
+                            'Clear'
+                        ]
+                    }
                 },
                 {
                     id: "agree_with_calculation",
