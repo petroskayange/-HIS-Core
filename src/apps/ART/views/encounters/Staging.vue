@@ -12,6 +12,7 @@ import Validation from "@/components/Forms/validations/StandardValidations"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
 import { isEmpty } from "lodash"
+import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -209,12 +210,23 @@ export default defineComponent({
                 {
                     id: 'cd4_count',
                     helpText: 'CD4 Count',
-                    type: FieldType.TT_NUMBER,
+                    type: FieldType.TT_TEXT,
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => {
                         this.cd4Count = [this.staging.buildValueNumber('CD4 count', d.value)]
                     },
-                    validation: (val: any) => Validation.required(val) || Validation.isNumber(val)
+                    validation: (val: any) => Validation.required(val) || Validation.isNumber(val),
+                    config: {
+                        customKeyboard: {
+                            primaryKeyBoard: CD4_COUNT_PAD_LO,
+                            colSizePrimary: 4,
+                            colSizeSecondary: 4,
+                            colSizeSpace: 4,
+                            secondaryKeyboard: [
+                                ['Unknown', 'Delete']
+                            ]
+                        }
+                    }
                 },
                 {
                     id: 'year',

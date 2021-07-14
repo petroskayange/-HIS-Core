@@ -6,6 +6,13 @@ export const DEFAULT_KEYPAD = [
     ['',  'Done', '']
 ]
 
+export const CD4_COUNT_PAD_LO = [
+    ['1', '2', '3', '<'],
+    ['4', '5', '6', '>'],
+    ['7', '8', '9', '='],
+    ['',  '0', '']
+]
+
 export const NUMBER_PAD_LO = [
     ['1', '2', '3'],
     ['4', '5', '6'],
