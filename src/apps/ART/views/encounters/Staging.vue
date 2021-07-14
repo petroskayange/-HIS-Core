@@ -215,7 +215,15 @@ export default defineComponent({
                     unload: (d: Option) => {
                         this.cd4Count = [this.staging.buildValueNumber('CD4 count', d.value)]
                     },
-                    validation: (val: any) => Validation.required(val) || Validation.isNumber(val),
+                    validation: (val: any) => {
+                        if (!val) return ['Value is required']
+                        
+                        if (val.value === 'Unknown') return
+
+                        if (!val.value.match(/^(=|<|>)([0-9]*)$/m)) return [
+                            'Pleas start with either modifier first: >, <, or ='
+                        ]
+                    },
                     config: {
                         customKeyboard: {
                             primaryKeyBoard: CD4_COUNT_PAD_LO,
