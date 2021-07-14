@@ -51,7 +51,6 @@ export default defineComponent({
         },
         config: {
             type: Object as PropType<TextInputInterface>,
-            default: QWERTY
         },
         clear: {
             type: Boolean
@@ -60,7 +59,7 @@ export default defineComponent({
     mounted() {
         if (this.preset) this.onselect(this.preset)
 
-        this.keyboard = this.config.customKeyboard
+        this.keyboard = this.config?.customKeyboard || QWERTY
     },
     methods: {
         onselect(item: Option){
