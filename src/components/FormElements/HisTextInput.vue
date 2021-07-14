@@ -26,13 +26,14 @@ import handleVirtualInput from "@/components/Keyboard/KbHandler"
 import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
-import { TextInput } from '@/components/FormElements/Interfaces/TextConfig'
+import { TextInputInterface } from '@/components/FormElements/Interfaces/TextConfig'
+import { HisKeyboardConfig } from '@/components/Keyboard/HisKbConfigurations.ts'
 import ViewPort from "@/components/DataViews/ViewPort.vue"
 export default defineComponent({
     components: { BaseInput, HisKeyboard, ViewPort, IonList, IonItem, IonLabel },
     data: ()=>({ 
         value: '',
-        keyboard: QWERTY,
+        keyboard: {} as HisKeyboardConfig,
         listData: [] as Array<Option>
     }),
     props: {
@@ -49,16 +50,17 @@ export default defineComponent({
             required: false,
         },
         config: {
-            type: Object as PropType<TextInput>
+            type: Object as PropType<TextInputInterface>,
+            default: QWERTY
         },
         clear: {
             type: Boolean
         },
     },
     mounted() {
-        if (this.preset) {
-            this.onselect(this.preset)
-        }
+        if (this.preset) this.onselect(this.preset)
+
+        this.keyboard = this.config.customKeyboard
     },
     methods: {
         onselect(item: Option){
