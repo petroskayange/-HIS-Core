@@ -16,7 +16,6 @@ export default defineComponent({
         adherence: {} as any,
         drugObs: [] as any,
         calculationAgreementObs: [] as any,
-        adherenceRows: [] as Array<any>
     }),
     watch: {
         patient: {
@@ -52,7 +51,8 @@ export default defineComponent({
                 Last visit: ${HisDate.toStandardHisDisplayFormat(lastVisit)} 
                 (${daysElapsed} Days Elapsed)
             `
-            const columns = [timeElapse, ...data.map(({drug}: any) => drug.name)]
+            const colorCodes = {}
+            const columns = [timeElapse]
             const rows = [
                 ['Prescription'],
                 ['Tabs given'],
@@ -66,6 +66,7 @@ export default defineComponent({
                 ['Art Adherence']
             ]        
             data.forEach((order) => {
+                columns.push(order.drug.name)
                 rows[0].push('')
                 rows[1].push(order.quantity)
                 rows[2].push(order.equivalent_daily_dose)
@@ -77,9 +78,11 @@ export default defineComponent({
                 rows[8].push(`${this.calcAdherence(order)}%`)
                 rows[9].push(this.adherenceStatus(order))
             })
-            const colorCodes = [
-                'adherence-col-bg','','','adherence-col-bg','','','adherence-col-bg',
-            ]
+            colorCodes.rows = {
+                indexes: [0, 3, 6],
+                class: 'adherence-col-bg'
+            }
+
             return [
                 { 
                     label: 'Selected Medication', 
