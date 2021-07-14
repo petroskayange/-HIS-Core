@@ -60,14 +60,23 @@ export class ObservationService extends ConceptService {
         }
     }
 
-    static async buildValueNumber(conceptName: string, value: number, modifier=null, date=this.getSessionDate()) {
-        const concept = await ConceptService.getConceptID(conceptName, true)
-        return {
-            'concept_id': concept,
-            'value_numeric': value,
-            'value_modifier': modifier,
-            'obs_datetime': date
-        }
+    static async buildValueNumber(
+        conceptName: string, 
+        value: number, 
+        modifier: string | null = null, 
+        orderId: number | null = null, 
+        date=this.getSessionDate()) {
+            const concept = await ConceptService.getConceptID(conceptName, true)
+            const payload = {
+                'concept_id': concept,
+                'value_numeric': value,
+                'obs_datetime': date
+            }
+            if (modifier) 
+                Object.assign(payload, {'value_modifier': modifier})
+            if (orderId) 
+                Object.assign(payload, {'order_id': orderId})
+            return payload
     }
 
     static async buildValueDate(conceptName: string, valueDate: string, date=this.getSessionDate()) {
@@ -126,23 +135,23 @@ export class ObservationService extends ConceptService {
     static async resolvePrimaryValue(obs: any) {
         let value: string | number = ''
 
-        if (obs.value_datetime) {
+        if (obs.value_datetime != null) {
             value = HisDate.toStandardHisDisplayFormat(obs.value_datetime)
         }
 
-        if (obs.value_text) {
+        if (obs.value_text != null) {
             value = obs.value_text
         }
         
-        if (obs.value_numeric) {
+        if (obs.value_numeric != null) {
             value = obs.value_numeric
         }
 
-        if (obs.value_coded) {
+        if (obs.value_coded != null) {
             value = await super.getConceptName(obs.value_coded)
         }
 
-        if (obs.value_modifier) {
+        if (obs.value_modifier != null) {
             value = `${value} ${obs.value_modifier}`
         }
 

@@ -7,6 +7,10 @@ function currentDisplayDate() {
     return dayjs().format(DISPLAY_DATE_FORMAT)
 }
 
+function dateDiffInDays(date1: string, date2: string) {
+    return dayjs(date1).diff(date2, 'days')
+}
+
 function getAgeInYears(date: string | Date): number {
     return dayjs().diff(date, 'years');
 }
@@ -41,6 +45,7 @@ function stitchDate(year: number | string, month='01', day='01') {
 }
 
 export default {
+    dateDiffInDays,
     getAgeInYears,
     toStandardHisTimeFormat,
     toStandardHisDisplayFormat,

@@ -1,6 +1,21 @@
 export default [
    {
       "categories": [],
+      "concept_id": 3140,
+      "name": "Reason for poor treatment adherence"
+   },
+   {
+      "categories": [],
+      "concept_id": 6987,
+      "name": "Drug adherence"
+   },
+   {
+      "categories": [],
+      "concept_id": 2540,
+      "name": "Number of tablets brought to clinic"
+   },
+   {
+      "categories": [],
       "concept_id": 7880,
       "name": "Confirmatory hiv test type"
    },
