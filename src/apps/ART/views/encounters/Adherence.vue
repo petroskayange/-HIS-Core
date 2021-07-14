@@ -15,6 +15,7 @@ export default defineComponent({
     data: () => ({
         adherence: {} as any,
         drugObs: [] as any,
+        askReasonForPoorAdherence: false,
         calculationAgreementObs: [] as any,
     }),
     watch: {
@@ -128,13 +129,18 @@ export default defineComponent({
                         this.drugObs = []
                         data.forEach(async(val: Option) => {
                             const {drug, order } = val.other
-                            const adherence = this.calcAdherence({ ...val.other, pillsBrought: val.value })
+                            const data = { ...val.other, pillsBrought: val.value }
+                            const adherence = this.calcAdherence(data)
                             this.drugObs.push(
                                 this.adherence.buildAdherenceObs(order.order_id, drug.drug_id, adherence)
                             )
                             this.drugObs.push(
                                 this.adherence.buildPillCountObs(order.order_id, val.value)
                             )
+
+                            if (!this.askReasonForPoorAdherence) {
+                                this.askReasonForPoorAdherence = !this.adherence.isAdherenceGood(data)
+                            }
                         })
                     },
                     options: () => {
@@ -166,6 +172,7 @@ export default defineComponent({
                     id: "agree_with_calculation",
                     helpText: "Agree with adherence calculation",
                     type: FieldType.TT_SELECT,
+                    condition: () => this.askReasonForPoorAdherence,
                     validation: (val: Option) => Validation.required(val),
                     unload: ({ value }: Option) => {
                         this.calculationAgreementObs = [ this.adherence.buildValueCoded(
