@@ -21,13 +21,16 @@ export default defineComponent({
         fieldComponent: '',
         patientToolbar: [] as Array<Option>,
         regimenSwitchReason: '' as string | undefined,
-        hangingPillOptimization: '' as HangingPill | ''
+        hangingPillOptimization: '' as HangingPill | '',
+        patientWeight: 0 as number,
+        starterPackSelected: false as boolean
     }),
     watch: {
         patient: {
             async handler(patient: any){
                 if (!patient) return
 
+                this.patientWeight = await patient.getRecentWeight()
                 this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadMedicationOrders()
                 await this.prescription.loadFastTrackStatus()
@@ -40,6 +43,7 @@ export default defineComponent({
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
                 await this.prescription.load3HpStatus()
+                await this.prescription.loadTreatmentState()
 
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
@@ -98,7 +102,7 @@ export default defineComponent({
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
             const rows = regimen.map((regimen: any) => {
                 return [
-                    regimen.alternative_drug_name || regimen.drug_name,
+                    regimen.drug_name,
                     regimen.units,
                     regimen.am,
                     regimen.noon,
@@ -151,13 +155,12 @@ export default defineComponent({
             return this.fieldComponent === "custom_regimen"
         },
         async getPatientToolBar() {
-            const weight = await this.patient.getRecentWeight()
             const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
             return [
                 { label: 'Age', value: `${this.patient.getAge()} Year(s)` },
                 { label: 'Gender', value: this.patient.getGender() },
                 { label: 'Current Regimen', value: this.programInfo.current_regimen },
-                { label: 'Current weight', value: `${weight} kg(s)` || 'Unknown' },
+                { label: 'Current weight', value: `${this.patientWeight} kg(s)` || 'Unknown' },
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
@@ -171,6 +174,21 @@ export default defineComponent({
             action.present()
             const { role } = await action.onDidDismiss()
             return role
+        },
+        async starterPackActionSheet() {
+            const action = await actionSheetController.create({
+                header: 'First time initiation',
+                subHeader: 'Starter pack needed for 14 days',
+                mode: 'ios',
+                backdropDismiss: false,
+                buttons: [
+                    { text: 'Prescribe starter pack', role: 'prescribe' }, 
+                    { text: 'Cancel', role: 'cancel' }
+                ]
+            })
+            action.present()
+            const { role } = await action.onDidDismiss()
+            return role === 'prescribe'
         },
         async regimenSwitchActionSheet() {
             const reasons = REGIMEN_SWITCH_REASONS.map((i: string) => ({ text: i, role: i}))
@@ -202,9 +220,11 @@ export default defineComponent({
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
                     unload: (data: any) => {
-                        this.drugs = [
-                            ...this.prescription.getRegimenExtras(), ...data.other.regimens
-                        ]
+                        if (!this.starterPackSelected) {
+                            this.drugs = [
+                                ...this.prescription.getRegimenExtras(), ...data.other.regimens
+                            ]
+                        }
                     },
                     options: async () => {
                         const regimenCategories = await this.prescription.getPatientRegimens()
@@ -216,11 +236,29 @@ export default defineComponent({
                         }
                         return options
                     },
-                    onValue: async (val: any) => {
-                        if (val && val.value != this.programInfo.current_regimen) {
+                    onValue: async ({ label, value }: Option) => {
+                        this.starterPackSelected = false
+
+                        if (value != this.programInfo.current_regimen) {
                             const res = await this.regimenSwitchActionSheet()
-                            return res
+                            
+                            if (!res) return false
                         }
+
+                        if (this.prescription.starterPackNeeded(label)) {
+                            const confirm = await this.starterPackActionSheet()
+
+                            if (!confirm) return false
+
+                            this.drugs = await this.prescription.getRegimenStarterpack(
+                                value, this.patientWeight
+                            )
+
+                            this.drugs = [...this.prescription.getRegimenExtras(), ...this.drugs]
+                            this.starterPackSelected = true
+                            this.fieldComponent = 'selected_meds'
+                        }
+
                         return true
                     },
                     config: {
