@@ -13,7 +13,7 @@
             :key="index"
             :color="item.other.id === active.id ? 'light' : ''"
             :detail="true"
-            @click="() => showDetails(item.other)"
+            @click="() => showDetails(item.label, item.other)"
           >
             {{ item.label }}
           </ion-item>
@@ -28,8 +28,8 @@
   </ion-content>
   <ion-footer>
     <ion-toolbar> 
-      <ion-button color="danger" @click="voidActiveItem" :disabled="!canVoid" slot="end"> Void </ion-button>
-      <ion-button @click="closeModal" slot="end"> Close </ion-button>
+      <ion-button color="danger" @click="voidActiveItem" :disabled="!canVoid" size="large"> Void </ion-button>
+      <ion-button @click="closeModal" size="large" slot="end"> Close </ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
@@ -38,12 +38,14 @@ import { defineComponent, PropType } from "vue";
 import HisBasicTable from "@/components/DataViews/HisBasicTable.vue";
 import { actionSheetController, modalController } from "@ionic/vue"
 import { Option } from "@/components/Forms/FieldInterface"
-import {isEmpty} from "lodash"
+import { isEmpty } from "lodash"
+import { alertConfirmation } from "@/utils/Alerts.ts"
 export default defineComponent({
   components: { HisBasicTable },
   data: () => ({
     active: {
       id: -1,
+      name: '',
       rows: [],
       columns: []
     } as any,
@@ -57,7 +59,7 @@ export default defineComponent({
     items: {
       handler(items: any){
         if (items.length >= 1) {
-          this.showDetails(items[0].other)
+          this.showDetails(items[0].label, items[0].other)
         } 
       },
       immediate: true,
@@ -107,6 +109,10 @@ export default defineComponent({
       return role
     },
     async voidActiveItem() {
+      const confirm = await alertConfirmation(`Do you really want to void ${this.active.name}?`)
+
+      if (!confirm) return
+
       const reason = await this.initiateVoidReason()
 
       if (reason === 'cancel') return
@@ -116,11 +122,12 @@ export default defineComponent({
       this.active = {}
       
       if (this.items.length >= 1) {
-        this.showDetails(this.items[0].other)
+        this.showDetails(this.items[0].label, this.items[0].other)
       } 
     },
-    async showDetails({id, columns, getRows, onVoid}: any) {
+    async showDetails(name: string, {id, columns, getRows, onVoid}: any) {
       this.active.id = id
+      this.active.name = name
       this.active.columns = columns;
       this.active.onVoid = onVoid
       this.active.rows = await getRows()
