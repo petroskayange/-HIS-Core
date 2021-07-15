@@ -12,6 +12,11 @@
     background: var(--his-card-primary-color) !important;
 }
 
+.disabled-card-color {
+    background-color: #cccccc;
+    color: #aaaaaa;
+}
+
 .active-card-color {
     border-color: rgb(53, 133, 247) !important;
     background: rgb(121, 186, 252) !important;
