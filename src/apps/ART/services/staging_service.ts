@@ -41,6 +41,14 @@ export class StagingService extends AppEncounterService {
         return AppEncounterService.getConceptsByCategory(stage)
     }
 
+    cd4CountIsValid(value: string) {
+        try {
+            return value.match(/^(=|<|>)([0-9]*)$/m) ? true : false
+        }catch(e) {
+            return false
+        }
+    }
+
     async loadHivConfirmatoryTestType() {
         const test = await AppEncounterService.getFirstValueCoded(
             super.patientID, 'Confirmatory hiv test type'

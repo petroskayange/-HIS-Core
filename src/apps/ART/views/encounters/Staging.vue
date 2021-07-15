@@ -217,12 +217,11 @@ export default defineComponent({
                     },
                     validation: (val: any) => {
                         if (!val) return ['Value is required']
-                        
-                        if (val.value === 'Unknown') return
 
-                        if (!val.value.match(/^(=|<|>)([0-9]*)$/m)) return [
-                            'Pleas start with either modifier first: >, <, or ='
-                        ]
+                        const {value} = val
+
+                        if (value != 'Unknown' && !this.staging.cd4CountIsValid(value)) 
+                            return ['Pleas start with either modifier first: >, <, or =']
                     },
                     config: {
                         customKeyboard: {
