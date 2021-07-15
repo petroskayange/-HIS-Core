@@ -238,8 +238,9 @@ export default defineComponent({
                     },
                     onValue: async ({ label, value }: Option) => {
                         this.starterPackSelected = false
+                        const currentRegimen = this.programInfo.current_regimen
 
-                        if (value != this.programInfo.current_regimen) {
+                        if (currentRegimen !='N/A' && value != currentRegimen) {
                             const res = await this.regimenSwitchActionSheet()
                             
                             if (!res) return false
