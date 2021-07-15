@@ -5,12 +5,12 @@ import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 import { find, isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
+
 export const REGIMEN_SWITCH_REASONS = [
     'Policy change', 'Ease of administration (pill burden, swallowing)',
     'Drug drug interaction', 'Pregnancy intention',
     'Side effects', 'Treatment failure', 'Weight Change', 'Other'
 ]
-
 export enum HangingPill {
    OPTIMIZE = 'Optimize - including hanging pills',
    EXACT = 'Exact - excluding hanging pills'
@@ -53,6 +53,8 @@ export class PrescriptionService extends AppEncounterService {
 
     getFastTrackMedications() { return this.fastTrackMedications }
 
+    getTreatmentState() { return this.treatmentState }
+
     isFastTrack() { return this.fastTrack }
 
     medicationOrdersAvailable() { return !isEmpty(this.medicationOrders) }
@@ -82,7 +84,6 @@ export class PrescriptionService extends AppEncounterService {
         }
         return isHanging
     }
-
 
     async load3HpStatus() {
         const orders = await AppEncounterService.getAll(this.patientID, 'Medication orders')
