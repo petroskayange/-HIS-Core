@@ -269,8 +269,19 @@ export default defineComponent({
                     helpText: 'Custom dose',
                     type: FieldType.TT_DOSAGE_INPUT,
                     condition: () => this.hasCustomRegimen(),
-                    validation: (val: Option) => Validation.required(val),
+                    validation: (val: Array<Option>) => {
+                        if (Validation.required(val)) return ['Drugs are not available']
+
+                        const empty = val.map(({ other }: Option) => other.am <= 0 && other.pm <= 0)
+                        return empty.some(Boolean) ? ['Missing dosage configuration on some drugs'] : null
+                    },
                     unload: (data: any) => this.drugs = data.map((drug: Option) => drug.other),
+                    summaryMapValue: ({other}: any) => ({
+                        label: 'Dosages', 
+                        value: this.prescription.getInstructions(
+                            other.drug_name, other.am, other.pm, other.units
+                        ) 
+                    }),
                     options: (fdata: any) => {
                         return fdata.custom_regimen.map((regimen: Option) => ({
                             label: regimen.label,

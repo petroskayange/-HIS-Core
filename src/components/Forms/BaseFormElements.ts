@@ -13,6 +13,7 @@ import WeightChart from "@/components/FormElements/HisWeightChart.vue"
 import VitalsEntry from "@/components/FormElements/HisVitalsEntry.vue"
 
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
+import AdherenceInput from "@/components/FormElements/HisAdherenceInput.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
     TT_MONTHLY_DAYS="monthly-days",
@@ -29,7 +30,8 @@ export enum FieldType {
     TT_MULTIPLE_YES_NO="multi-yes-no",
     TT_SUMMARY="summary-page",
     TT_WEIGHT_CHART = "weight-chart",
-    TT_VITALS_ENTRY="vitals-entry"
+    TT_VITALS_ENTRY="vitals-entry",
+    TT_ADHERENCE_INPUT = "adherence-input"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -46,5 +48,6 @@ export const BaseFormComponents = {
     SummaryPage,
     MultiYesNo,
     WeightChart,
-    VitalsEntry
+    VitalsEntry,
+    AdherenceInput
 }

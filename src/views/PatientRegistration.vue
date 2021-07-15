@@ -271,15 +271,16 @@ export default defineComponent({
                 helpText: 'Year of birth',
                 type: FieldType.TT_NUMBER,
                 validation(val: any) {
+                    if (Validation.required(val)) return ['Year value is required']
+
                     const minYr = HisDate.getYearFromAge(100)
                     const maxYr = HisDate.getCurrentYear()
                     const notNum = Validation.isNumber(val)
-                    const noYear = Validation.required(val)
                     const notInRange = Validation.rangeOf(val, minYr, maxYr)
 
                     if (val.label.match(/Unknown/i)) return
 
-                    return notNum || noYear || notInRange
+                    return notNum || notInRange
                 }
             },
             {

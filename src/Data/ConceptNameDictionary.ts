@@ -1,11 +1,6 @@
 export default [
    {
       "categories": [],
-      "concept_id": 5085,
-      "name": "BP"
-   },
-   {
-      "categories": [],
       "concept_id": 5088,
       "name": "Temp"
    },
@@ -21,8 +16,23 @@ export default [
    },
    {
       "categories": [],
-      "concept_id": 1488,
+      "concept_id": 1484,
       "name": "Treatment status"
+   },
+   {
+      "categories": [],
+      "concept_id": 3140,
+      "name": "Reason for poor treatment adherence"
+   },
+   {
+      "categories": [],
+      "concept_id": 6987,
+      "name": "Drug adherence"
+   },
+   {
+      "categories": [],
+      "concept_id": 2540,
+      "name": "Number of tablets brought to clinic"
    },
    {
       "categories": [],
