@@ -392,7 +392,11 @@ export default defineComponent({
                             { label: '12 months', value: 336 },
                         ]
                         return intervals.map(interval => ({
-                            ...interval,  other: { ...this.getDrugEstimates(this.drugs, interval.value) }
+                            ...interval, other: { 
+                                ...this.getDrugEstimates(this.drugs, interval.value),
+                                enabled: (this.starterPackSelected 
+                                            && interval.value <= 14 || !this.starterPackSelected)
+                                }
                             })
                         )
                     },
