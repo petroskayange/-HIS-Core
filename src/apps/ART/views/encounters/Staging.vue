@@ -212,8 +212,11 @@ export default defineComponent({
                     helpText: 'CD4 Count',
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => this.hasCd4Count(f),
-                    unload: (d: Option) => {
-                        this.cd4Count = [this.staging.buildValueNumber('CD4 count', d.value)]
+                    unload: (val: Option) => {
+                        const value = val.value.toString()
+                        const modifier = value.charAt(0)
+                        const count = value.substring(1)
+                        this.cd4Count = [this.staging.buildValueNumber('CD4 count', parseInt(count), modifier)]
                     },
                     validation: (val: any) => {
                         if (!val) return ['Value is required']
