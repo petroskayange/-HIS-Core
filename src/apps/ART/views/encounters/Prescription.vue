@@ -8,10 +8,9 @@ import { Field, Option } from "@/components/Forms/FieldInterface"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import { PrescriptionService, HangingPill, REGIMEN_SWITCH_REASONS } from "@/apps/ART/services/prescription_service"
-import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { toastWarning, toastSuccess, actionSheet } from "@/utils/Alerts"
 import HisDate from "@/utils/Date"
 import EncounterMixinVue from './EncounterMixin.vue'
-import { actionSheetController} from "@ionic/vue"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -164,51 +163,25 @@ export default defineComponent({
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
-        async hangingPillsActionSheet() {
-            const action = await actionSheetController.create({
-                header: 'Do you want to use hanging pills?',
-                mode: 'ios',
-                backdropDismiss: false,
-                buttons: [{ text: 'Yes', role: 'yes' }, { text: 'No', role: 'no' }]
-            })
-            action.present()
-            const { role } = await action.onDidDismiss()
-            return role
+        async promptHangingPill() {
+            return actionSheet(
+                'Do you want to use hanging pills?', '',
+                ['Yes', 'No']
+            )
         },
-        async starterPackActionSheet() {
-            const action = await actionSheetController.create({
-                header: 'First time initiation',
-                subHeader: 'Starter pack needed for 14 days',
-                mode: 'ios',
-                backdropDismiss: false,
-                buttons: [
-                    { text: 'Prescribe starter pack', role: 'prescribe' }, 
-                    { text: 'Cancel', role: 'cancel' }
-                ]
-            })
-            action.present()
-            const { role } = await action.onDidDismiss()
-            return role === 'prescribe'
+        async promptAcceptStarterPack() {
+            return actionSheet(
+                'First time initiation', 
+                'Starter pack needed for 14 days',
+                ['Prescribe starter pack', 'Cancel'] 
+            )
         },
-        async regimenSwitchActionSheet() {
-            const reasons = REGIMEN_SWITCH_REASONS.map((i: string) => ({ text: i, role: i}))
-            const action = await actionSheetController.create({
-                header: `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
-                subHeader: 'Specify reason for switching regimen',
-                mode: 'ios',
-                backdropDismiss: false,
-                buttons: [ ...reasons, { text: 'Cancel', role: 'cancel' }]
-            })
-            action.present()
-            const { role } = await action.onDidDismiss();
-
-            if (role === 'cancel') {
-                this.regimenSwitchReason = ''
-                return false
-            }
-
-            this.regimenSwitchReason = role
-            return true
+        async promptWhySwitchingRegimen() {
+            return actionSheet(
+                `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
+                'Specify reason for switching regimen',
+                [...REGIMEN_SWITCH_REASONS, 'Cancel']
+            )
         },
         getFields(): Array<Field> {
             return [
@@ -241,20 +214,23 @@ export default defineComponent({
                         const currentRegimen = this.programInfo.current_regimen
 
                         if (currentRegimen !='N/A' && value != currentRegimen) {
-                            const res = await this.regimenSwitchActionSheet()
-                            
-                            if (!res) return false
+                            const reasonOption = await this.promptWhySwitchingRegimen()
+                            if (reasonOption != 'cancel') {
+                                this.regimenSwitchReason = reasonOption
+                            } else {
+                                this.regimenSwitchReason = '' 
+                                return false
+                            }
                         }
 
                         if (this.prescription.starterPackNeeded(label)) {
-                            const confirm = await this.starterPackActionSheet()
+                            const starterPackOption = await this.promptAcceptStarterPack()
 
-                            if (!confirm) return false
+                            if (starterPackOption === 'cancel') return false
 
                             this.drugs = await this.prescription.getRegimenStarterpack(
                                 value, this.patientWeight
                             )
-
                             this.drugs = [...this.prescription.getRegimenExtras(), ...this.drugs]
                             this.starterPackSelected = true
                             this.fieldComponent = 'selected_meds'
@@ -367,8 +343,10 @@ export default defineComponent({
                     unload: async (data: any, state: string) => {
                         this.nextInterval = data.value
                         if (this.prescription.hasHangingPills(this.drugs) && state==='next') {
-                            const res = await this.hangingPillsActionSheet()
-                            if (res === 'yes') {
+                            
+                            const hangingPillOption = await this.promptHangingPill()
+
+                            if (hangingPillOption === 'yes') {
                                 return this.hangingPillOptimization = HangingPill.OPTIMIZE
                             }
                             return this.hangingPillOptimization = HangingPill.EXACT
