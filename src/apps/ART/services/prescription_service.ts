@@ -15,6 +15,10 @@ export enum HangingPill {
    OPTIMIZE = 'Optimize - including hanging pills',
    EXACT = 'Exact - excluding hanging pills'
 }
+export enum TreatmentState {
+    CONTINUING = 'CONTINUING',
+    INITIATION = 'Initiation'
+}
 
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
@@ -25,6 +29,7 @@ export class PrescriptionService extends AppEncounterService {
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
     medicationOrders: Array<Observation>;
+    treatmentState: string;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -35,6 +40,7 @@ export class PrescriptionService extends AppEncounterService {
         this.fastTrackMedications = []
         this.hangingPills = []
         this.medicationOrders = []
+        this.treatmentState = ''
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -108,7 +114,7 @@ export class PrescriptionService extends AppEncounterService {
     async loadMedicationOrders() {
         const medicationOrders = await AppEncounterService.getConceptID("Medication orders")
         const orders = await AppEncounterService.getObs({
-            'concept_id': medicationOrders, 
+            'concept_id': medicationOrders,
             'obs_datetime': AppEncounterService.getSessionDate()
         })
         this.medicationOrders = orders.map((i: Observation) => i.value_coded)
@@ -145,6 +151,14 @@ export class PrescriptionService extends AppEncounterService {
             }
         })
         this.fastTrackMedications = await Promise.all(withDosages)
+    }
+
+    async loadTreatmentState() {
+        const params = { date: AppEncounterService.getSessionDate()}
+
+        this.treatmentState = await AppEncounterService.getJson(`
+            programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status
+        `, params)
     }
 
     getRegimenExtras() { return this.regimenExtras }
