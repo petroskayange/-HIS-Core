@@ -18,7 +18,7 @@ export default defineComponent({
         drugs: [] as Array<RegimenInterface>,
         nextInterval: 0,
         prescription: {} as any,
-        fieldComponent: 'arv_regimens',
+        fieldComponent: '',
         patientToolbar: [] as Array<Option>,
         regimenSwitchReason: '' as string | undefined,
         hangingPillOptimization: '' as HangingPill | ''
@@ -27,9 +27,9 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 if (!patient) return
-
                 this.prescription = new PrescriptionService(patient.getID())
                 this.patientToolbar = await this.getPatientToolBar()
+                await this.prescription.loadArvPrescriptionStatus()
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.load3HpStatus()
                 await this.prescription.loadFastTrackStatus()
@@ -188,6 +188,7 @@ export default defineComponent({
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
                     preset: { value: this.programInfo.current_regimen },
+                    condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
                     unload: (data: any) => {
                         this.drugs = [

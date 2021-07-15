@@ -3,7 +3,7 @@ import { DrugOrderService } from "@/services/drug_order_service";
 import { Observation } from "@/services/observation_service";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
-import { find } from "lodash"
+import { find, isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
 export const REGIMEN_SWITCH_REASONS = [
     'Policy change', 'Ease of administration (pill burden, swallowing)',
@@ -18,6 +18,7 @@ export enum HangingPill {
 
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
+    prescribeArvs: boolean;
     fastTrack: boolean;
     useHangingPills: boolean;
     received3HP: boolean;
@@ -27,6 +28,7 @@ export class PrescriptionService extends AppEncounterService {
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
+        this.prescribeArvs = false
         this.fastTrack = false
         this.received3HP = false
         this.useHangingPills = false
@@ -46,6 +48,8 @@ export class PrescriptionService extends AppEncounterService {
     getFastTrackMedications() { return this.fastTrackMedications }
 
     isFastTrack() { return this.fastTrack }
+    
+    shouldPrescribeArvs() { return this.prescribeArvs }
 
     hasHangingPills(drugs: any) {
         let isHanging = false
@@ -61,6 +65,7 @@ export class PrescriptionService extends AppEncounterService {
         }
         return isHanging
     }
+
 
     async load3HpStatus() {
         const orders = await AppEncounterService.getAll(this.patientID, 'Medication orders')
@@ -87,6 +92,13 @@ export class PrescriptionService extends AppEncounterService {
             {date}
         )
         if (meds) this.regimenExtras = Object.values(meds)
+    }
+
+    async loadArvPrescriptionStatus() {
+        const data = await AppEncounterService.buildValueCoded("Medication orders", "Antiretroviral drugs")
+        const status = await AppEncounterService.getObs(data)
+
+        if (!isEmpty(status)) this.prescribeArvs = true
     }
 
     async loadHangingPills() {
