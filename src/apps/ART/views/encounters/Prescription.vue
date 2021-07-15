@@ -88,19 +88,19 @@ export default defineComponent({
             this.nextTask()
         },
         getDosageTableOptions(regimen: any) {
-            const colorCodes = regimen.map((item: any) => {
-                const category = item.regimen_category
-                switch(category) {
-                    case 'A':
-                        return 'adult-regimen-formulation'
-                    case 'P':
-                        return 'pedaid-regimen-formulation'
-                    default:
-                        return ''
-                }
-            })
+            const rowColors: any = [ 
+                { indexes: [], class: 'adult-regimen-formulation' },
+                { indexes: [], class: 'pedaid-regimen-formulation' }
+            ]
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
-            const rows = regimen.map((regimen: any) => {
+            const rows = regimen.map((regimen: any, index: number) => {
+                switch(regimen.regimen_category) {
+                    case 'A':
+                        rowColors[0].indexes.push(index)
+                        break
+                    case 'P':
+                        rowColors[1].indexes.push(index)
+                }
                 return [
                     regimen.drug_name,
                     regimen.units,
@@ -114,7 +114,7 @@ export default defineComponent({
                 { 
                     label: 'Selected Medication', 
                     value:'Table', 
-                    other: { columns, rows, colorCodes }
+                    other: { columns, rows, rowColors }
                 }      
             ]
         },
