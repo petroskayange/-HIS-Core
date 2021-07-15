@@ -109,8 +109,7 @@ export default defineComponent({
   watch: {
     keys: {
       async handler( params ) {
-        const vals  = [...params, ...[{label: 'BMI', value: this.BMI.index}]];
-        this.$emit("onValue",vals);
+        this.$emit("onValue", params);
       },
       deep: true,
       immediate: true,
