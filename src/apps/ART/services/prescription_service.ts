@@ -16,8 +16,9 @@ export enum HangingPill {
    EXACT = 'Exact - excluding hanging pills'
 }
 export enum TreatmentState {
-    CONTINUING = 'CONTINUING',
-    INITIATION = 'Initiation'
+    CONTINUING = 'Continuing',
+    INITIATION = 'Initiation',
+    RE_INITIATION = 'Re-initiated'
 }
 
 export class PrescriptionService extends AppEncounterService {
@@ -46,6 +47,8 @@ export class PrescriptionService extends AppEncounterService {
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
     }
+
+    getRegimenExtras() { return this.regimenExtras }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
 
@@ -83,6 +86,19 @@ export class PrescriptionService extends AppEncounterService {
             }
         }
         return isHanging
+    }
+
+    getRegimenStarterpack(regimenCode: string, patientWeight: number) {
+        const regimenNumber = regimenCode.match(/\d+/) //Get the first proceeding digits
+       
+        if (!regimenNumber) return []
+
+        const params = { weight: patientWeight, regimen: parseInt(regimenNumber[0])}
+
+        return AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
+            params
+        )
     }
 
     async load3HpStatus() {
@@ -162,7 +178,12 @@ export class PrescriptionService extends AppEncounterService {
         `, params)
     }
 
-    getRegimenExtras() { return this.regimenExtras }
+    starterPackNeeded(regimenName: string) {
+        if (this.treatmentState != TreatmentState.CONTINUING 
+            && regimenName.match(/NVP/i)) {
+            return true
+        }
+    }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
         return parseFloat(am.toString()) + noon + pm
