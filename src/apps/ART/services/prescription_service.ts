@@ -1,6 +1,6 @@
 import { DrugInterface } from "@/interfaces/Drug";
 import { DrugOrderService } from "@/services/drug_order_service";
-import { Observation } from "@/services/observation_service";
+import { Observation } from "@/interfaces/observation";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 import { find, isEmpty } from "lodash"
@@ -18,23 +18,23 @@ export enum HangingPill {
 
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
-    prescribeArvs: boolean;
     fastTrack: boolean;
     useHangingPills: boolean;
     received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
+    medicationOrders: Array<Observation>;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
-        this.prescribeArvs = false
         this.fastTrack = false
         this.received3HP = false
         this.useHangingPills = false
         this.regimenExtras = []
         this.fastTrackMedications = []
         this.hangingPills = []
+        this.medicationOrders = []
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -48,8 +48,19 @@ export class PrescriptionService extends AppEncounterService {
     getFastTrackMedications() { return this.fastTrackMedications }
 
     isFastTrack() { return this.fastTrack }
+
+    medicationOrdersAvailable() { return !isEmpty(this.medicationOrders) }
+
+    shouldPrescribeArvs() { 
+        const arvs = AppEncounterService.getCachedConceptID("Antiretroviral drugs")
+        return this.medicationOrders.includes(arvs)
+    }
     
-    shouldPrescribeArvs() { return this.prescribeArvs }
+    shouldPrescribeExtras() {
+        const extras = AppEncounterService.getConceptsByCategory('art_extra_medication_order')
+        const extrasAvailable = extras.map((i: any) => this.medicationOrders.includes(i.concept_id))
+        return extrasAvailable.some(Boolean)
+    }
 
     hasHangingPills(drugs: any) {
         let isHanging = false
@@ -94,11 +105,13 @@ export class PrescriptionService extends AppEncounterService {
         if (meds) this.regimenExtras = Object.values(meds)
     }
 
-    async loadArvPrescriptionStatus() {
-        const data = await AppEncounterService.buildValueCoded("Medication orders", "Antiretroviral drugs")
-        const status = await AppEncounterService.getObs(data)
-
-        if (!isEmpty(status)) this.prescribeArvs = true
+    async loadMedicationOrders() {
+        const medicationOrders = await AppEncounterService.getConceptID("Medication orders")
+        const orders = await AppEncounterService.getObs({
+            'concept_id': medicationOrders, 
+            'obs_datetime': AppEncounterService.getSessionDate()
+        })
+        this.medicationOrders = orders.map((i: Observation) => i.value_coded)
     }
 
     async loadHangingPills() {

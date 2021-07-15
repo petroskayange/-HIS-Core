@@ -27,19 +27,30 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 if (!patient) return
+
                 this.prescription = new PrescriptionService(patient.getID())
-                this.patientToolbar = await this.getPatientToolBar()
-                await this.prescription.loadArvPrescriptionStatus()
-                await this.prescription.loadRegimenExtras()
-                await this.prescription.load3HpStatus()
+                await this.prescription.loadMedicationOrders()
                 await this.prescription.loadFastTrackStatus()
+
+                if (!this.prescription.medicationOrdersAvailable() && !this.prescription.isFastTrack()) {
+                    toastWarning('Patient is not eligible for treatment Today! Please check HIV Clinic Consultation')
+                    return this.nextTask()
+                }
+                
+                await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
+                await this.prescription.load3HpStatus()
 
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
                     this.drugs = this.prescription.getFastTrackMedications()
                     this.fieldComponent = 'next_visit_interval'
+
+                } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
+                    this.drugs = this.prescription.getRegimenExtras()
                 }
+
+                this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
             immediate: true,
