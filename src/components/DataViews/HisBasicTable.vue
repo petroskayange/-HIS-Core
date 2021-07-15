@@ -6,7 +6,7 @@
             </th>
         </tr>
         <tr  v-for="(dataItems, rIndex) in rows" :key="rIndex">
-            <td :class="getColorCodeClass(rIndex)" v-for="(item, dIndex) in dataItems" :key="dIndex"> 
+            <td :class="getColorCodeClass(rIndex, dIndex)" v-for="(item, dIndex) in dataItems" :key="dIndex"> 
                 {{ item }}
             </td>
         </tr>
@@ -14,12 +14,16 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-
+import { isEmpty } from "lodash"
 export default defineComponent({
     props: {
-        colorCodes: {
-            type: Object as PropType<string[]>,
-            default: []
+        rowColors: {
+            type: Array,
+            default: () => []
+        },
+        cellColors:{
+            type: Array,
+            default: () => []
         },
         columns: {
             type: Object as PropType<string[]>,
@@ -30,12 +34,24 @@ export default defineComponent({
         }
     },
     methods: {
-        getColorCodeClass(index: number) {
-            try {
-                return this.colorCodes[index]
-            }catch(e) {
-                return ''
+        getColorCodeClass(rIndex: number, dIndex: number) {
+            let styleClass = ''
+            if (!isEmpty(this.rowColors)) {
+                const row: any = this.rowColors.filter((i: any) => i.indexes.includes(rIndex))
+                if (!isEmpty(row)) {
+                    styleClass += ' ' + row[0].class
+                }
             }
+
+            if (!isEmpty(this.cellColors)) {
+                const cell: any = this.cellColors.filter((i: any) => {
+                    return i.index === dIndex && i.row === rIndex
+                })
+                if (!isEmpty(cell)) {
+                    styleClass += ' ' + cell[0].class
+                } 
+            }
+            return styleClass
         }
     }
 })
