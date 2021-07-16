@@ -11,6 +11,7 @@
                                     :label="item.label" 
                                     :value="item.value"
                                     @onclick="onselect(item)"
+                                    :enabled="item.other.enabled"
                                     :color="item.label === selected ? 'active-card-color' : 'inactive-card-color'"/>
                             </ion-col>
                         </ion-row>

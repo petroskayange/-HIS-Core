@@ -11,6 +11,8 @@ import EncounterMixinVue from './EncounterMixin.vue'
 import Validation from "@/components/Forms/validations/StandardValidations"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
+import { isEmpty } from "lodash"
+import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -183,6 +185,15 @@ export default defineComponent({
                     id: 'stage_1_conditions',
                     helpText: 'Stage 1 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
+                    validation: (val: any) => {
+                        const stages = [
+                            ...this.stageFourObs,
+                            ...this.stageThreeObs,
+                            ...this.stageTwoObs
+                        ]
+                        if (isEmpty(val) && isEmpty(stages)) 
+                            return ['Please provide atleast one staging condition']
+                    },
                     unload: async (data: any) => this.stageOneObs = this.buildStagingData(data),
                     options: () => this.mapStagingOptions(
                         this.staging.isAdult() ? StagingCategory.ADULT_STAGE_1 : StagingCategory.PEDAID_STAGE_1 
@@ -199,12 +210,33 @@ export default defineComponent({
                 {
                     id: 'cd4_count',
                     helpText: 'CD4 Count',
-                    type: FieldType.TT_NUMBER,
+                    type: FieldType.TT_TEXT,
                     condition: (f: any) => this.hasCd4Count(f),
-                    unload: (d: Option) => {
-                        this.cd4Count = [this.staging.buildValueNumber('CD4 count', d.value)]
+                    unload: (val: Option) => {
+                        const value = val.value.toString()
+                        const modifier = value.charAt(0)
+                        const count = value.substring(1)
+                        this.cd4Count = [this.staging.buildValueNumber('CD4 count', parseInt(count), modifier)]
                     },
-                    validation: (val: any) => Validation.required(val) || Validation.isNumber(val)
+                    validation: (val: any) => {
+                        if (!val) return ['Value is required']
+
+                        const {value} = val
+
+                        if (value != 'Unknown' && !this.staging.cd4CountIsValid(value)) 
+                            return ['Pleas start with either modifier first: >, <, or =']
+                    },
+                    config: {
+                        customKeyboard: {
+                            primaryKeyBoard: CD4_COUNT_PAD_LO,
+                            colSizePrimary: 4,
+                            colSizeSecondary: 4,
+                            colSizeSpace: 4,
+                            secondaryKeyboard: [
+                                ['Unknown', 'Delete']
+                            ]
+                        }
+                    }
                 },
                 {
                     id: 'year',

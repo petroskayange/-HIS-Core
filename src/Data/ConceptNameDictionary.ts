@@ -184,7 +184,7 @@ export default [
    },
    {
       "categories": [
-         ""
+         "art_extra_medication_order"
       ],
       "concept_id": 5090,
       "name": "Height"
@@ -195,6 +195,20 @@ export default [
       ],
       "concept_id": 9974,
       "name": "Rifapentine"
+   },
+   {
+      "categories": [
+         "art_extra_medication_order"
+      ],
+      "concept_id": 916,
+      "name": "CPT"
+   },
+   {
+      "categories": [
+         "art_extra_medication_order"
+      ],
+      "concept_id": 916,
+      "name": "INH"
    },
    {
       "categories": [
@@ -240,7 +254,7 @@ export default [
    },
    {
       "categories": [
-         ""
+         "art_medication_order"
       ],
       "concept_id": 1085,
       "name": "Antiretroviral drugs"

@@ -12,6 +12,11 @@
     background: var(--his-card-primary-color) !important;
 }
 
+.disabled-card-color {
+    background-color: #cccccc;
+    color: #aaaaaa;
+}
+
 .active-card-color {
     border-color: rgb(53, 133, 247) !important;
     background: rgb(121, 186, 252) !important;
@@ -54,6 +59,7 @@
 
 .his-card {
     font-size: 1em;
+    border: 1px solid #cccbcb;
     background: var(--his-card-primary-color);
     padding: var(--his-card-primary-padding);
     border-radius: var(--his-card-primary-border-radius);
