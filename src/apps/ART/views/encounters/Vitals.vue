@@ -58,7 +58,7 @@ export default defineComponent({
       console.log(formData);
     const encounter  = await this.createEncounter();
     if(encounter) {
-    const j: any = await this.mapObs(this.sanitizeVitals(formData.vitals));
+    const j: any = await this.mapObs(this.sanitizeVitals(formData.vitals).filter((element) => element.label !== "BP"));
     if(this.HTNEnabled && !this.hasHTNObs) {
       const obs =  await ObservationService.buildValueText(
             "Treatment status", formData.on_htn_medication.value
@@ -125,7 +125,7 @@ export default defineComponent({
       const p = vitals.filter((element) => {
         return element.value !== "" && element.label !== "Age";
       });
-      return [...this.splitBP(p), ...p].filter((element) => element.label !== "BP"); 
+      return [...this.splitBP(p), ...p]; 
     },
     checkRequiredVitals(vitals: Array<Option>) {
       return vitals.filter((element) => {

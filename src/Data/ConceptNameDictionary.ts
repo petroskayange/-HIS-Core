@@ -21,6 +21,11 @@ export default [
    },
    {
       "categories": [],
+      "concept_id": 5088,
+      "name": "Temp"
+   },
+   {
+      "categories": [],
       "concept_id": 1484,
       "name": "Treatment status"
    },
