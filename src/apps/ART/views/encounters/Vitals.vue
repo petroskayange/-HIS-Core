@@ -55,7 +55,6 @@ export default defineComponent({
   },
   methods: {
     async onFinish(formData: any) {
-      console.log(formData);
     const encounter  = await this.createEncounter();
     if(encounter) {
     const j: any = await this.mapObs(this.sanitizeVitals(formData.vitals).filter((element) => element.label !== "BP"));
@@ -123,7 +122,10 @@ export default defineComponent({
     },
     sanitizeVitals(vitals: Array<Option>) {
       const p = vitals.filter((element) => {
-        return element.value !== "" && element.label !== "Age";
+        if(element.label === "Height" && element.other.required == false) {
+          return false
+        }
+        return element.value !== "" && element.label !== "Age" ;
       });
       return [...this.splitBP(p), ...p]; 
     },

@@ -4,34 +4,38 @@
       <ion-grid style="width: 100%">
         <ion-row>
           <ion-col size="2">
-            <ion-button
+            <ion-card
               v-for="(key, index) in keys"
               :key="key.label"
               @click="activeField = index"
-              class="vitals-btn"
               size="large"
               expan="full"
-              :color="activeField === index ? 'secondary' : 'tertiary'"
-              v-show="key.other.visible !== false "
+              :color="activeField === index ? 'medium' : 'primary'"
+              v-show="key.other.visible !== false"
             >
-              <ion-avatar>
-                <img :src="img(key.other.icon)" />
-              </ion-avatar>
-              <ion-label>{{ key.label }}</ion-label>
-            </ion-button>
+              <img :src="img(key.other.icon)" />
+              <ion-card-content>
+                <ion-label>{{ key.label }}</ion-label>
+              </ion-card-content>
+            </ion-card>
           </ion-col>
           <ion-col size="5">
-            <ion-input type="text" v-if="keys.length > 0" v-model="keys[activeField].value" />
-            <base-keyboard
-              btnSize="96px"
-              :layout="keyboard"
-              :onKeyPress="onKeyPress"
-            />
+            <div class="centered">
+              <ion-input
+                type="text"
+                v-if="keys.length > 0"
+                v-model="keys[activeField].value"
+              />
+              <base-keyboard :layout="keyboard" :onKeyPress="onKeyPress" />
+            </div>
           </ion-col>
           <ion-col size="5">
             <table class="his-table">
-              <tr v-for="(key, index) in keys" :key="key.name" 
-                :style="activeField === index ? {color : 'red'}: ''">
+              <tr
+                v-for="(key, index) in keys"
+                :key="key.name"
+                :style="activeField === index ? { color: 'red' } : ''"
+              >
                 <td>{{ key.label }}</td>
                 <td>{{ key.value }}</td>
                 <td>{{ key.other.modifier }}</td>
@@ -39,9 +43,6 @@
               <tr>
                 <td colspan="2">BMI</td>
                 <td>{{ BMI.index }}</td>
-              </tr>
-              <tr>
-                <td colspan="3" :style="{'background-color': BMI.color, 'color': 'white'}">{{ BMI.result }}</td>
               </tr>
             </table>
           </ion-col>
@@ -58,13 +59,13 @@ import {
   IonCol,
   IonRow,
   IonInput,
-  IonButton,
+  IonCard,
   IonAvatar,
 } from "@ionic/vue";
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 import { VITALS_KEYPAD } from "../Keyboard/KbLayouts";
 import { BMIService } from "@/services/bmi_service";
-import { Option } from '../Forms/FieldInterface'
+import { Option } from "../Forms/FieldInterface";
 export default defineComponent({
   components: {
     ViewPort,
@@ -73,8 +74,7 @@ export default defineComponent({
     IonRow,
     IonInput,
     BaseKeyboard,
-    IonButton,
-    IonAvatar,
+    IonCard,
   },
   props: {
     fdata: {
@@ -90,25 +90,25 @@ export default defineComponent({
     },
     preset: {
       type: Object as PropType<Option>,
-      required: false
+      required: false,
     },
   },
   data: () => ({
     keys: [] as any,
-    patientID: '' as any,
+    patientID: "" as any,
     activeField: 0,
     keyboard: VITALS_KEYPAD,
     age: null as any,
     gender: null as any,
     BMI: {
       index: 0,
-      result: 'Normal',
-      color: ''
-    }
+      result: "Normal",
+      color: "",
+    },
   }),
   watch: {
     keys: {
-      async handler( params ) {
+      async handler(params) {
         this.$emit("onValue", params);
       },
       deep: true,
@@ -120,11 +120,15 @@ export default defineComponent({
       return `assets/images/vitals/${name}.png`;
     },
     async getBMI(): Promise<any> {
-      const BMI: any= await BMIService.getBMI(this.getWeight(), this.getHeight(), this.gender, this.getAge());
+      const BMI: any = await BMIService.getBMI(
+        this.getWeight(),
+        this.getHeight(),
+        this.gender,
+        this.getAge()
+      );
       this.BMI.index = BMI.index;
       this.BMI.result = BMI.result;
       this.BMI.color = BMI.color;
-     
     },
     async onKeyPress(key: any) {
       const currentValue = this.keys[this.activeField].value;
@@ -153,15 +157,15 @@ export default defineComponent({
       return age[0].value === "" ? 0 : parseFloat(age[0].value);
     },
     async init() {
-      this.keys = await this.options(this.fdata)
-    }
+      this.keys = await this.options(this.fdata);
+    },
   },
   mounted() {
     this.init();
     if (this.preset) {
-      this.gender = this.preset.value
+      this.gender = this.preset.value;
     }
-  }
+  },
 });
 </script>
 <style scoped>
@@ -202,12 +206,34 @@ export default defineComponent({
 ion-input {
   border: solid 1px black;
   font-size: 20px;
+  width: 98%;
 }
 .active {
   color: blue;
 }
-.vitals-btn{
+.vitals-btn {
   width: 100%;
   height: 15%;
+}
+ion-col {
+  border-right: black solid 1px;
+}
+img {
+  width: 40px;
+  height: 40px;
+}
+ion-card {
+  text-align: center;
+}
+ion-card-content {
+  padding: 5px;
+}
+.centered {
+  background: #f4f4f4;
+  padding: 0.7em;
+  margin: auto;
+}
+.his-table > tr {
+  border-bottom: solid 1px rgb(87, 87, 87);
 }
 </style>
