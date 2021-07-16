@@ -1,19 +1,24 @@
 import { DrugInterface } from "@/interfaces/Drug";
 import { DrugOrderService } from "@/services/drug_order_service";
-import { Observation } from "@/services/observation_service";
+import { Observation } from "@/interfaces/observation";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
-import { find } from "lodash"
+import { find, isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
+
 export const REGIMEN_SWITCH_REASONS = [
     'Policy change', 'Ease of administration (pill burden, swallowing)',
     'Drug drug interaction', 'Pregnancy intention',
     'Side effects', 'Treatment failure', 'Weight Change', 'Other'
 ]
-
 export enum HangingPill {
    OPTIMIZE = 'Optimize - including hanging pills',
    EXACT = 'Exact - excluding hanging pills'
+}
+export enum TreatmentState {
+    CONTINUING = 'Continuing',
+    INITIATION = 'Initiation',
+    RE_INITIATION = 'Re-initiated'
 }
 
 export class PrescriptionService extends AppEncounterService {
@@ -24,6 +29,8 @@ export class PrescriptionService extends AppEncounterService {
     regimenExtras: Array<Record<string, any>>;
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
+    medicationOrders: Array<Observation>;
+    treatmentState: string;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -33,11 +40,15 @@ export class PrescriptionService extends AppEncounterService {
         this.regimenExtras = []
         this.fastTrackMedications = []
         this.hangingPills = []
+        this.medicationOrders = []
+        this.treatmentState = ''
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
     }
+
+    getRegimenExtras() { return this.regimenExtras }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
 
@@ -45,7 +56,22 @@ export class PrescriptionService extends AppEncounterService {
 
     getFastTrackMedications() { return this.fastTrackMedications }
 
+    getTreatmentState() { return this.treatmentState }
+
     isFastTrack() { return this.fastTrack }
+
+    medicationOrdersAvailable() { return !isEmpty(this.medicationOrders) }
+
+    shouldPrescribeArvs() { 
+        const arvs = AppEncounterService.getCachedConceptID("Antiretroviral drugs")
+        return this.medicationOrders.includes(arvs)
+    }
+    
+    shouldPrescribeExtras() {
+        const extras = AppEncounterService.getConceptsByCategory('art_extra_medication_order')
+        const extrasAvailable = extras.map((i: any) => this.medicationOrders.includes(i.concept_id))
+        return extrasAvailable.some(Boolean)
+    }
 
     hasHangingPills(drugs: any) {
         let isHanging = false
@@ -60,6 +86,19 @@ export class PrescriptionService extends AppEncounterService {
             }
         }
         return isHanging
+    }
+
+    getRegimenStarterpack(regimenCode: string, patientWeight: number) {
+        const regimenNumber = regimenCode.match(/\d+/) //Get the first proceeding digits
+       
+        if (!regimenNumber) return []
+
+        const params = { weight: patientWeight, regimen: parseInt(regimenNumber[0])}
+
+        return AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
+            params
+        )
     }
 
     async load3HpStatus() {
@@ -87,6 +126,15 @@ export class PrescriptionService extends AppEncounterService {
             {date}
         )
         if (meds) this.regimenExtras = Object.values(meds)
+    }
+
+    async loadMedicationOrders() {
+        const medicationOrders = await AppEncounterService.getConceptID("Medication orders")
+        const orders = await AppEncounterService.getObs({
+            'concept_id': medicationOrders,
+            'obs_datetime': AppEncounterService.getSessionDate()
+        })
+        this.medicationOrders = orders.map((i: Observation) => i.value_coded)
     }
 
     async loadHangingPills() {
@@ -122,7 +170,20 @@ export class PrescriptionService extends AppEncounterService {
         this.fastTrackMedications = await Promise.all(withDosages)
     }
 
-    getRegimenExtras() { return this.regimenExtras }
+    async loadTreatmentState() {
+        const params = { date: AppEncounterService.getSessionDate()}
+
+        this.treatmentState = await AppEncounterService.getJson(`
+            programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status
+        `, params)
+    }
+
+    starterPackNeeded(regimenName: string) {
+        if (this.treatmentState != TreatmentState.CONTINUING 
+            && regimenName.match(/NVP/i)) {
+            return true
+        }
+    }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
         return parseFloat(am.toString()) + noon + pm
