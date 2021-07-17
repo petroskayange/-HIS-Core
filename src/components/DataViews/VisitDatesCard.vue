@@ -1,30 +1,35 @@
 <template>
-  <div class="card">
-    <div class="header-section"> {{ title }} </div>
+  <div class="card his-card">
+    <ion-button 
+      color="light" 
+      class="nav-btn" 
+      :disabled="!showPrevButton" 
+      @click="goPrev">
+      <img :src="upbuttonImg" :width="btnSize"/>
+    </ion-button>
     
-    <div class="top-section"> 
-      <ion-button class="pagination-button" color="light" :disabled="!showPrevButton" @click="goPrev">
-        <img src="/assets/images/drop-up-arrow.svg" width="30"/>
-      </ion-button>
+    <div class="header-section">
+      {{ title }} 
     </div>
     
-    <div class="body-section">
-      <ion-row>
-        <ion-col size="12" v-for="(item, index) in activeListItems" :key="index"> 
-          <ion-button
-            class="pagination-button"
-            @click="onselect(item)"
-            :color="isActive(item) ? 'primary' : 'light'"
-          >
-            {{ item.label }}
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </div>
-    
+    <ion-list> 
+      <ion-item
+        v-for="(item, index) in activeListItems" :key="index"
+        @click="onselect(item)"
+        :detail="true"
+        :color="isActive(item) ? 'primary' : ''"
+      > 
+        {{ item.label }}
+      </ion-item>
+    </ion-list>
+
     <div class="bottom-section"> 
-      <ion-button class="pagination-button" color="light" :disabled="!showNextButton" @click="goNext">
-        <img src="/assets/images/drop-down-arrow.svg" width="30"/>
+      <ion-button 
+        class="nav-btn" 
+        color="light" 
+        :disabled="!showNextButton" 
+        @click="goNext">
+        <img :src="downbuttonImg" :width="btnSize"/>
       </ion-button>
     </div>
   </div>
@@ -52,9 +57,16 @@ export default defineComponent({
     activeListItems: [] as any,
     paginatedListItems: [] as any,
     index: -1,
-    perPage: 7
+    perPage: 7,
+    btnSize: 45
   }),
   computed: {
+    upbuttonImg(): string {
+      return '/assets/images/drop-up-arrow.svg'
+    },
+    downbuttonImg(): string {
+      return '/assets/images/drop-down-arrow.svg'
+    },
     showNextButton(): boolean {
       return this.index +1 < this.paginatedListItems.length
     },
@@ -112,50 +124,18 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: rgb(255, 255, 255);
-  border-right: 1px solid #ccc;
-  -webkit-box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
-  -moz-box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
-  box-shadow: 10px 0px 17px -12px rgba(0,0,0,0.4);
 }
-.date-button {
-  width: 90%;
-  text-align: center;
+.nav-btn {
+  margin-left: 14%;
+  width: 70%;
 }
-
-.pagination-button {
-  width: 100%;
-  text-align: center;
-}
-
-.header-section .top-section .body-section .bottom-section {
-  overflow: hidden;
-}
-
 .header-section {
   text-align: center;
   font-weight: bold;
-  padding: 10px;
-  height: 6%;
+  margin: 10%;
 }
-
-.top-section {
-  height: 8%;
-}
-
-.body-section {
-  position: absolute;
-  height: 60%;
-  line-height: 52px;
-  margin: auto;
-  left: 0;
-  right: 0;
-}
-
 .bottom-section {
   position: absolute;
-  height: 12%;
-  margin: auto;
   left: 0;
   right: 0;
   bottom: 0;
