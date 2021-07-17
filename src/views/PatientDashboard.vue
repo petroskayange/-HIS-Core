@@ -7,7 +7,8 @@
                     <ion-col size="2">
                         <visit-dates-card :title="visitDatesTitle" :items="visitDates" @onselect="onActiveVisitDate"> </visit-dates-card>
                     </ion-col>
-                    <ion-col size="10"> 
+                    <ion-col size="10">
+                        <div class="his-card"> 
                         <ion-row> 
                            <ion-col size="4"> 
                                <b>Today's Date:</b> {{ currentDate }}
@@ -35,6 +36,7 @@
                                 <primary-card :counter="medicationCardItems.length" title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
+                        </div>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -338,6 +340,11 @@ export default defineComponent({
 <style scoped>
     .grid-custom {
         overflow-y: auto;
+        padding: 1%;
+    }
+    .his-card {
+        height: 100%;
+        padding: 1.8%;
     }
     @media only screen and (width: 1024px) {
          .grid-custom {

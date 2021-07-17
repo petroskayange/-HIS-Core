@@ -52,7 +52,7 @@ export default defineComponent({
   width: 100%;
   border-radius: 6px;
   border: 1px solid #ccc;
-  height: 34.8vh;
+  height: 32.8vh;
   background-color: rgb(255, 255, 255);
   overflow: hidden;
   -webkit-box-shadow: 0px -2px 19px -2px rgba(196, 190, 196, 1);
