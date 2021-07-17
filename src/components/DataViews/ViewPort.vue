@@ -19,8 +19,10 @@ export default defineComponent({
     #view-port {
         border: 1px solid #ccc;
         background: #f8f8f8;
-        width: 100%;
-        border-radius: 10px;
+        width: 95%;
+        margin: auto;
+        margin-top: 1.7%;
+        border-radius: 3px;
         padding: 5px;
         overflow: hidden;
       -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);

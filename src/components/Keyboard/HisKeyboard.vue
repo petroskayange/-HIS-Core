@@ -70,8 +70,9 @@ export default defineComponent({
 .key-b {
   left: 0;
   bottom: 0;
+  right: 0;
   position: absolute;
-  width: 100%;
+  width: 96%;
   background-color: white;
   border-radius: 15px;
   border-color: #ccc;

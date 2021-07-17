@@ -96,9 +96,16 @@ body {
     height: 98%;
 }
 
-@media only screen and (min-width: 1024px) {
+@media only screen and (width: 1024px) {
     .his-keyboard-btn {
-      height: 57px;
-      font-size: 1.3rem;
+      height: 50px;
+      font-size: 1.2rem;
     }
   }
+
+@media only screen and (min-width: 1280px) {
+    .his-keyboard-btn {
+      height: 58px;
+      font-size: 1.3rem;
+    }
+}
