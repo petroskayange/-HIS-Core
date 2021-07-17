@@ -1,5 +1,6 @@
 <template>
-  <ion-grid class="key-b">
+  <ion-grid class="his-floating-keyboard">
+    <div class="his-floating-keyboard-content">
     <ion-row>
       <ion-col :size="activeLayout.colSizePrimary || 9">
         <base-keyboard :layout="activeLayout.primaryKeyBoard" :onKeyPress="keypress" />
@@ -9,6 +10,7 @@
         <base-keyboard :layout="activeLayout.secondaryKeyboard" :onKeyPress="keypress" />
       </ion-col>
     </ion-row>
+    </div>
   </ion-grid>
 </template>
 <script lang="ts">
@@ -66,18 +68,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.key-b {
-  left: 0;
-  bottom: 0;
-  right: 0;
-  position: absolute;
-  width: 96%;
-  background-color: white;
-  border-radius: 15px;
-  border-color: #ccc;
-  border-style: solid;
-  border-width: 2px;
-  z-index: 10;
-}
-</style>

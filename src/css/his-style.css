@@ -30,19 +30,6 @@
     width: 100%;
 }
 
-.his-keyboard {
-    width: 90%;
-}
-
-.his-keyboard-margin {
-    padding: 2px;
-}
-
-.his-keyboard-btn {
-    font-weight: bold;
-    width: 90%;
-}
-
 .his-table > tr > td, th {
     text-align: left;
     padding: 1em;
@@ -81,6 +68,7 @@ body {
     width: 340px;
     height: 480px;
 }
+
 .his-title {
     font-size: 1.7em;
     padding: 0.3em;
@@ -96,16 +84,3 @@ body {
     height: 98%;
 }
 
-@media only screen and (width: 1024px) {
-    .his-keyboard-btn {
-      height: 50px;
-      font-size: 1.2rem;
-    }
-  }
-
-@media only screen and (min-width: 1280px) {
-    .his-keyboard-btn {
-      height: 58px;
-      font-size: 1.3rem;
-    }
-}
