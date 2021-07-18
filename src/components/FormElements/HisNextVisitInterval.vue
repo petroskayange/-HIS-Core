@@ -5,7 +5,7 @@
                 <ion-row> 
                     <ion-col size="4">
                         <ion-row v-for="(row, rowIndex) in listData" :key="rowIndex"> 
-                            <ion-col size="6" v-for="(item, itemIndex) in row" :key="itemIndex"> 
+                            <ion-col size-md="6" size-sm="12" v-for="(item, itemIndex) in row" :key="itemIndex"> 
                                 <interval-card
                                     :showTitle="config.showRegimenCardTitle"
                                     :label="item.label"
