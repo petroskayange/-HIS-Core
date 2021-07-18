@@ -5,7 +5,7 @@
     @onskip="activeField = ''"
     @onFinish="onFinish"
     :skipSummary="true"
-    :cancelDestinationPath="patientDashboard"
+    :cancelDestinationPath="cancelDestination"
   >
   </his-standard-form>
 </template> 
@@ -15,17 +15,15 @@ import { Field, Option } from "@/components/Forms/FieldInterface";
 import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { Patient } from "@/interfaces/patient";
-import { ProgramService } from "@/services/program_service";
 import { Patientservice } from "@/services/patient_service";
 import Validation from "@/components/Forms/validations/StandardValidations";
 import { GlobalPropertyService } from "@/services/global_property_service";
 import { ObservationService } from "@/services/observation_service";
 import { VitalsService } from "@/apps/ART/services/vitals_service";
-import { AppEncounterService } from "@/services/app_encounter_service";
-import { Encounter } from "@/interfaces/encounter";
-import { EncounterService } from "@/services/encounter_service";
-import { toastWarning } from "@/utils/Alerts";
+import { toastSuccess, toastWarning } from "@/utils/Alerts";
+import EncounterMixinVue from './EncounterMixin.vue'
 export default defineComponent({
+  mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
     activeField: "",
@@ -42,7 +40,7 @@ export default defineComponent({
   computed: {
     patientDashboard(): string {
       return `/patient/dashboard/${this.patientID}`;
-    }
+    },
   },
   watch: {
     $route: {
@@ -55,79 +53,76 @@ export default defineComponent({
   },
   methods: {
     async onFinish(formData: any) {
-    const encounter  = await this.createEncounter();
-    if(encounter) {
-    const j: any = await this.mapObs(this.sanitizeVitals(formData.vitals).filter((element) => element.label !== "BP"));
-    if(this.HTNEnabled && !this.hasHTNObs) {
-      const obs =  await ObservationService.buildValueText(
-            "Treatment status", formData.on_htn_medication.value
-      )
-      j.push(obs)
-      return this.postObs(encounter.encounter_id, j)
+      const encounter = await this.vitals.createEncounter();
 
-    }else 
+      if (encounter) {
+       const obs = await  this.buildObs(formData);
+        const observations = await this.vitals.saveObservationList(obs);
+        if (!observations) return toastWarning('Unable to save patient observations')
 
-      return this.postObs(encounter.encounter_id, j)
-    }
-    else{
-      return toastWarning('Unable to create treatment encounter')
-    }
+        toastSuccess('Observations and encounter created!');
+            this.nextTask()
+      } else {
+        return toastWarning("Unable to create treatment encounter");
+      }
     },
-    postObs(encounterID: number, obs: any) {
-      AppEncounterService.saveObsArray(encounterID, obs).then(data => this.$router.push(this.patientDashboard))
+    async buildObs(formData: any) {
+      const observations: any = await this.mapObs(
+        this.sanitizeVitals(formData.vitals).filter(
+          (element) => element.label !== "BP"
+        )
+      );
+      if (this.HTNEnabled && !this.hasHTNObs) {
+        const obs = await ObservationService.buildValueText(
+          "Treatment status",
+          formData.on_htn_medication.value
+        );
+        observations.push(obs);
+      }
+      return observations;
     },
     splitBP(formData: Option[]) {
       const p: Option[] = [];
-      formData.forEach(element => {
-        if(element.label === "BP") {
-          const value = `${element.value}`.split('/');
+      formData.forEach((element) => {
+        if (element.label === "BP") {
+          const value = `${element.value}`.split("/");
           const bpSystolic = value[0];
           const bpDiastolic = value[1];
 
-          p.push({label: "Systolic", value: bpSystolic});
-          p.push({label: 'Diastolic', value: bpDiastolic})
+          p.push({ label: "Systolic", value: bpSystolic });
+          p.push({ label: "Diastolic", value: bpDiastolic });
         }
       });
       return p;
     },
     async mapObs(vitals: any) {
       const j = vitals.map(async (element: any) => {
-         const obs = await ObservationService.buildValueNumber(
-            element.label, element.value
-          )
-          return obs;
+        const obs = await ObservationService.buildValueNumber(
+          element.label,
+          element.value
+        );
+        return obs;
       });
-      return Promise.all(j) ;
-    },
-    async createEncounter():  Promise<Encounter | undefined>  {
-        const encounter = await EncounterService.create({
-            'encounter_type_id': 6,
-            'patient_id': this.patientID
-        })
-
-        if (encounter) {
-            return encounter
-        } 
+      return Promise.all(j);
     },
     validateVitals(vitals: any) {
       const l = this.checkRequiredVitals(vitals);
-      if(l.length > 0) {
-        return l.map(val => {
-         return [`${val.label} can not be empty`]
-        })
+      if (l.length > 0) {
+        return l.map((val) => {
+          return [`${val.label} can not be empty`];
+        });
       }
       const v = this.sanitizeVitals(vitals);
-      const vital = new VitalsService(v);
-      return vital.validateAll();
+      return this.vitals.validateAll(v);
     },
     sanitizeVitals(vitals: Array<Option>) {
       const p = vitals.filter((element) => {
-        if(element.label === "Height" && element.other.required == false) {
-          return false
+        if (element.label === "Height" && element.other.required == false) {
+          return false;
         }
-        return element.value !== "" && element.label !== "Age" ;
+        return element.value !== "" && element.label !== "Age";
       });
-      return [...this.splitBP(p), ...p]; 
+      return [...this.splitBP(p), ...p];
     },
     checkRequiredVitals(vitals: Array<Option>) {
       return vitals.filter((element) => {
@@ -135,16 +130,14 @@ export default defineComponent({
       });
     },
     async init(patientID: number) {
-      const response: Patient = await ProgramService.getJson(
-        `/patients/${patientID}`
-      );
+      const response: Patient = await Patientservice.findByID(patientID);
       this.patientID = patientID;
       const patient = new Patientservice(response);
       this.age = patient.getAge();
       this.gender = patient.getGender();
       const lastHeight = await patient.getRecentHeight();
       this.recentHeight = lastHeight == -1 ? null : lastHeight;
-
+      this.vitals = new VitalsService(patientID);
       await ObservationService.getAll(patient.getID(), "Treatment status").then(
         (data) => {
           this.hasHTNObs = data && data.length > 0;
@@ -173,24 +166,21 @@ export default defineComponent({
             return HTNEnabled && !hasHTNObs;
           },
           options: () => [
-           {
-            label: "Yes",
-            value: "BP Drugs started",
-          },
-          {
-            label: "No",
-            value: "Not on BP Drugs",
-          },
+            {
+              label: "Yes",
+              value: "BP Drugs started",
+            },
+            {
+              label: "No",
+              value: "Not on BP Drugs",
+            },
           ],
         },
         {
           id: "vitals",
-          helpText: "Showing Games",
+          helpText: "Vitals entry",
           type: FieldType.TT_VITALS_ENTRY,
           validation: (value: any) => this.validateVitals(value),
-          condition(formData: any) {
-            return true;
-          },
           preset: {
             label: "Gender",
             value: this.gender,
@@ -202,13 +192,18 @@ export default defineComponent({
               other: {
                 modifier: "KG",
                 icon: "weight",
-                required: true
+                required: true,
               },
             },
             {
               label: "Height",
               value: `${recentHeight}`,
-              other: { modifier: "CM", icon: "height", visible: showHeight, required: this.age < 18 },
+              other: {
+                modifier: "CM",
+                icon: "height",
+                visible: showHeight,
+                required: this.age < 18,
+              },
             },
             { label: "BP", value: "", other: { modifier: "mmHG", icon: "bp" } },
             {

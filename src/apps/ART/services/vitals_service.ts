@@ -1,11 +1,8 @@
-import { ConceptService } from "@/services/concept_service";
-import { Option } from "@/components/Forms/FieldInterface";
+import { AppEncounterService } from "@/services/app_encounter_service";
 import { isArray } from "lodash";
-import { ObservationService, ObsValue } from "@/services/observation_service"
-export class VitalsService {
-  vitals: Option[];
-  constructor(vitals: Option[]) {
-    this.vitals = vitals;
+export class VitalsService extends AppEncounterService{
+  constructor(patientID: number) {
+    super(patientID, 6);
   }
   isNotEmptyandNumber(vital: any) {
     return `${vital.value}`.match(/^-?\d+\.?\d*$/) ? null : [`Invalid entry for ${vital.label}`]
@@ -13,7 +10,7 @@ export class VitalsService {
   isNotEmptyandFloat(vital: any) {
     return `${vital.value}`.match(/^-?\d+\.\d*$/) ? null : [`Invalid entry for ${vital.label}`]
   }
-  checkMinMax(val: Option, min: number, max: number) {
+  checkMinMax(val: any, min: number, max: number) {
     const p = [];
     if (parseFloat(`${val.value}`) < min) {
       p.push([`${val.label} entered is less than minimum ${val.label}`])
@@ -23,9 +20,9 @@ export class VitalsService {
     }
     return p.length > 0 ? p : null;
   }
-  validateAll() {
+  validateAll(vitals: any) {
     const p: any = [];
-    this.vitals.map(vital => {
+    vitals.map((vital: any) => {
       const j = this.validator(vital);
       return isArray(j) ? p.push(j) : null
     })
@@ -41,7 +38,7 @@ export class VitalsService {
     });
     return holder.length > 0 ? holder : null
   }
-  isValidBPReading(vital: Option) {
+  isValidBPReading(vital: any) {
     const p = [];
     const isValidBP =  `${vital.value}`.match(/([0-9]\/[0-9])|([0-9]*0\b)/) ? null : ['Invalid BP reading']
     p.push(isValidBP);
@@ -62,7 +59,7 @@ export class VitalsService {
     return this.mergeErrors(p)
   }
   
-  validator(vital: Option) {
+  validator(vital: any) {
 
     const values = [
       {
