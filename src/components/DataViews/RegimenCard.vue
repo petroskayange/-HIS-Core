@@ -1,6 +1,13 @@
 <template>
     <div :class="`his-card clickable ${color}`" @click="$emit('onclick')"> 
-        <b v-if="showTitle">{{ value }}</b> {{ label }}
+        <div v-show="showTitle"> 
+            <b>{{ value }}</b>
+        </div>
+        <div> 
+            {{ label }}
+        </div>
+        <div> 
+        </div>
     </div>
 </template>
 
@@ -29,8 +36,11 @@ export default defineComponent({
 </script>
 <style scoped>
  .his-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     height: 50px;
     margin: 1.4%;
-    text-align: center;
  }
+
 </style>
