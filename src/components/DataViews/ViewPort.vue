@@ -21,7 +21,6 @@ export default defineComponent({
         background: #f8f8f8;
         width: 95%;
         margin: auto;
-        margin-top: 1.7%;
         border-radius: 3px;
         padding: 5px;
         overflow: hidden;
@@ -30,9 +29,9 @@ export default defineComponent({
       box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
     }
     .full {
-        height: 80vh;
+        height: 84vh;
     }
     .half {
-        height: 50vh;
+        height: 55vh;
     }
 </style>
