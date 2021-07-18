@@ -227,15 +227,12 @@ export default defineComponent({
                             return ['Pleas start with either modifier first: >, <, or =']
                     },
                     config: {
-                        customKeyboard: {
-                            primaryKeyBoard: CD4_COUNT_PAD_LO,
-                            colSizePrimary: 4,
-                            colSizeSecondary: 4,
-                            colSizeSpace: 4,
-                            secondaryKeyboard: [
+                        customKeyboard: [
+                            CD4_COUNT_PAD_LO,
+                            [
                                 ['Unknown', 'Delete']
                             ]
-                        }
+                        ]
                     }
                 },
                 {
