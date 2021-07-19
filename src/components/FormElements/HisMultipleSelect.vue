@@ -7,8 +7,11 @@
       </span>
       <ion-list class='view-port-content'>
         <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
-          <ion-label> {{ entry.label }} </ion-label>
-          <ion-checkbox v-model="entry.isChecked" slot="end"/>
+          <ion-label> 
+            {{ entry.label }} 
+            <span v-if="entry.other?.disableReason">({{entry.other?.disableReason}})</span>
+          </ion-label>
+          <ion-checkbox v-model="entry.isChecked" slot="end" :disabled="entry.other?.disabled"/>
       </ion-item>
       </ion-list>
       </view-port>
@@ -19,7 +22,7 @@
 import { Option } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
-import { find, isEmpty } from "lodash"
+import { find } from "lodash"
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 export default defineComponent({
   components: { IonCheckbox },
