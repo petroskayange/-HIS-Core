@@ -43,6 +43,7 @@ import ViewPort from '../DataViews/ViewPort.vue'
 import { modalController } from '@ionic/vue'
 import { Option } from '@/components/Forms/FieldInterface'
 import KeyPad from '../Keyboard/HisKeypad.vue'
+import { find } from 'lodash'
 export default defineComponent({
   components: { ViewPort },
   props: {
@@ -77,7 +78,8 @@ export default defineComponent({
     }
   },
   async activated() {
-    this.listData = await this.options(this.fdata)
+    const data = await this.options(this.fdata)
+    this.updateListData(data)
   },
   methods: {
     img(name: string) {
@@ -91,6 +93,21 @@ export default defineComponent({
             item.other.frequency = 'Daily (QOD)'
             return true
         })
+    },
+    /*
+      * Update existing list with new options while maintaining previously entered items
+    */
+    updateListData(newListData: Array<Option>) {
+      this.listData = newListData.map(newItem => {
+        const itemSelected = find(this.listData, { 
+          label: newItem.label, 
+          value: newItem.value
+        })
+
+        if (itemSelected) return itemSelected
+
+        return itemSelected ? itemSelected : newItem
+      })
     },
     async launchKeyPad(item: Option, prop: string) {
         const modal = await modalController.create({
