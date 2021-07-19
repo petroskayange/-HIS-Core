@@ -42,8 +42,11 @@ export default defineComponent({
 </script>
 <style scoped>
  .his-card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     height: 50px;
     margin: 1.4%;
-    text-align: center;
  }
+
 </style>

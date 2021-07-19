@@ -67,15 +67,13 @@ export default defineComponent({
     padding: 0.7em;
     margin: auto;
 }
+
 .his-keyboard-margin {
  padding: 0px!important;
 }
 
 .his-keyboard-btn {
     width: 110px!important;
-}
-.his-keyboard {
-    width: 100% !important;
 }
 .keypad-input {
     border: solid 1px #ccc;

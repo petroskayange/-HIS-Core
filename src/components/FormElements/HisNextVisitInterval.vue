@@ -5,11 +5,10 @@
                 <ion-row> 
                     <ion-col size="4">
                         <ion-row v-for="(row, rowIndex) in listData" :key="rowIndex"> 
-                            <ion-col size="6" v-for="(item, itemIndex) in row" :key="itemIndex"> 
-                                <regimen-card
+                            <ion-col size-md="6" size-sm="12" v-for="(item, itemIndex) in row" :key="itemIndex"> 
+                                <interval-card
                                     :showTitle="config.showRegimenCardTitle"
-                                    :label="item.label" 
-                                    :value="item.value"
+                                    :label="item.label"
                                     @onclick="onselect(item)"
                                     :enabled="item.other.enabled"
                                     :color="item.label === selected ? 'active-card-color' : 'inactive-card-color'"/>
@@ -41,12 +40,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Option } from '../Forms/FieldInterface'
-import RegimenCard from '@/components/DataViews/RegimenCard.vue'
+import IntervalCard from '@/components/DataViews/IntervalCard.vue'
 import ViewPort from '../DataViews/ViewPort.vue'
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 import Transformer from '@/utils/Transformers'
 export default defineComponent({
-    components: { RegimenCard, ViewPort },
+    components: { IntervalCard, ViewPort },
     mixins: [SelectMixin],
     data: ()=>({
         active: {} as Option | {}

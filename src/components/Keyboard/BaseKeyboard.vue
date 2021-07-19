@@ -1,5 +1,5 @@
 <template>
-  <table class="his-keyboard">
+  <table>
     <tr v-for="(row, rowIndex) in layout" :key="rowIndex">
       <td class='his-keyboard-margin' v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
           <ion-button 

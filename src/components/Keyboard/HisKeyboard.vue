@@ -1,26 +1,21 @@
 <template>
-  <ion-grid class="key-b">
-    <ion-row>
-      <ion-col :size="activeLayout.colSizePrimary || 9">
-        <base-keyboard :layout="activeLayout.primaryKeyBoard" :onKeyPress="keypress" />
-      </ion-col>
-      <ion-col v-if="activeLayout.colSizeSpace" :size="activeLayout.colSizeSpace"></ion-col>
-      <ion-col :size="activeLayout.colSizeSecondary || 3">
-        <base-keyboard :layout="activeLayout.secondaryKeyboard" :onKeyPress="keypress" />
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="his-floating-keyboard">
+    <div class="his-floating-keyboard-content">
+      <div v-for="(layout, index) in activeLayout" :key="index">
+        <base-keyboard :layout="layout" :onKeyPress="keypress" />
+      </div>
+    </div>
+  </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { IonGrid, IonRow, IonCol } from "@ionic/vue";
-import { HisKeyboardConfig, KEY_BTN_NAV } from "@/components/Keyboard/HisKbConfigurations"
+import { defineComponent } from "vue";
+import { KEY_BTN_NAV } from "@/components/Keyboard/HisKbConfigurations"
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 export default defineComponent({
-  components: { BaseKeyboard, IonGrid, IonRow, IonCol },
+  components: { BaseKeyboard},
   props: {
     kbConfig: {
-      type: Object as PropType<HisKeyboardConfig>,
+      type: Array,
       required: true
     },
     onKeyPress: {
@@ -29,12 +24,11 @@ export default defineComponent({
     },
   },
   data: () => ({
-    activeLayout: {} as HisKeyboardConfig
+    activeLayout: {} as Array<any>
   }),
   watch: {
-
     kbConfig: {
-      handler(keyboard: HisKeyboardConfig){
+      handler(keyboard: Array<any>){
         if(keyboard) {
           this.activeLayout = keyboard
         }
@@ -66,17 +60,3 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped>
-.key-b {
-  left: 0;
-  bottom: 0;
-  position: absolute;
-  width: 100%;
-  background-color: white;
-  border-radius: 15px;
-  border-color: #ccc;
-  border-style: solid;
-  border-width: 2px;
-  z-index: 10;
-}
-</style>
