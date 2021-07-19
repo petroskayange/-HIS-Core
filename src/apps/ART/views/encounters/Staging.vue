@@ -126,6 +126,12 @@ export default defineComponent({
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
         },
+        asymptomatic(f: any) {
+            if (f) {
+                const asymptomatics = f.filter((i: Option) => i.label.match(/asymptomatic/i) && i.isChecked)
+                return !isEmpty(asymptomatics)
+            }
+        },
         getFields(): Array<Field> {
             return [
                 {
@@ -184,6 +190,8 @@ export default defineComponent({
                     id: 'stage_4_conditions',
                     helpText: 'Stage 4 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: (data: any) => {
                         this.stageFourObs = this.buildStagingData(data)
                         if (!isEmpty(this.stageFourObs)) this.setArtStagingReasonObs(4)
@@ -194,6 +202,8 @@ export default defineComponent({
                     id: 'stage_3_conditions',
                     helpText: 'Stage 3 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: async (data: any) => {
                         this.stageThreeObs = this.buildStagingData(data)
                         // prioritize stage 4 reason if stage 4 conditions are set
@@ -206,6 +216,8 @@ export default defineComponent({
                     id: 'stage_2_conditions',
                     helpText: 'Stage 2 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     unload: async (data: any) => {
                         this.stageTwoObs = this.buildStagingData(data)
                         // prioritize stage 3 and 4 reason if stage 3 and 4 conditions are set
@@ -230,9 +242,8 @@ export default defineComponent({
                             return ['Please provide atleast one staging condition']
                     },
                     onValue: async (values: Array<Option>) => {
-                        const asymptomatics = values.filter((i: Option) => i.label.match(/asymptomatic/i))
                         const otherSymptoms = [ ...this.stageFourObs, ...this.stageThreeObs, ...this.stageTwoObs ] 
-                        if (!isEmpty(asymptomatics) && !isEmpty(otherSymptoms)) {
+                        if (this.asymptomatic(values) && !isEmpty(otherSymptoms)) {
                             const actions = [
                                 { text: "Keep 'Other' conditions", role: "other" },
                                 { text: "Keep 'Asymptomatic'", role: "keep" }
@@ -249,8 +260,9 @@ export default defineComponent({
                         }
                         return true
                     },
-                    unload: async (data: any) => {
+                    unload: async (data: Array<Option>) => {
                         this.stageOneObs = this.buildStagingData(data)
+
                         // prioritize higher staging reasons if other conditions are set
                         if (!isEmpty(this.stageOneObs) && isEmpty([
                             ...this.stageFourObs, ...this.stageThreeObs,
@@ -300,7 +312,7 @@ export default defineComponent({
                     id: 'year',
                     helpText: 'Year of CD4 result',
                     type: FieldType.TT_NUMBER,
-                    appearInSummary: false,
+                    appearInSummary: () => false,
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => this.year = `${d.value}`,
                     validation(val: any) {
@@ -316,7 +328,7 @@ export default defineComponent({
                     id: 'month',
                     helpText: 'Month of CD4 result',
                     type: FieldType.TT_SELECT,
-                    appearInSummary: false,
+                    appearInSummary: () => false,
                     options: () => MonthOptions,
                     unload: (d: Option) => this.month = `${d.value}`,
                     condition: (f: any) => this.hasCd4Count(f),
