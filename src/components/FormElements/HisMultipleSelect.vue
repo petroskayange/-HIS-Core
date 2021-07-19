@@ -49,23 +49,25 @@ export default defineComponent({
       this.listData.forEach(option => {
         if (option.label === label) option.isChecked = false
       }) 
+    },
+    getChecked(list: Array<Option>) {
+      return list.filter((item: Option) => item.isChecked)
     }
   },
   computed: {
     checkedItems(): Array<Option> {
-      return this.listData.filter((item: Option) => item.isChecked)
+      return this.getChecked(this.listData)
     }
   },
   watch: {
     clear(isClear: boolean){
       if (isClear) {
-        // clear defaults
-        this.clearSelection()
         // uncheck items
         this.listData = this.listData.map((item) => {
           item.isChecked = false
           return item
         })
+        this.$emit('onClear')
       }
     },
     listData: {
@@ -73,9 +75,9 @@ export default defineComponent({
         // clear search string entered via keyboard
         this.filter = ''
   
-        const values = updatedItems.filter((item) => item.isChecked);
+        const values = this.getChecked(updatedItems);
 
-        if (!isEmpty(values)) this.$emit("onValue", values);
+        this.$emit("onValue", values);
       },
       deep: true
     }
