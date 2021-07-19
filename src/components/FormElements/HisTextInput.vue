@@ -90,3 +90,8 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped> 
+#view-port {
+    height: 53vh;
+}
+</style>

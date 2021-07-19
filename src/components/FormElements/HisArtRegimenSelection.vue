@@ -54,6 +54,9 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+#view-port {
+    height: 74vh;
+}
 .view-port-content {
     height: 100%;
 }
