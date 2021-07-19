@@ -7,34 +7,36 @@
                     <ion-col size="2">
                         <visit-dates-card :title="visitDatesTitle" :items="visitDates" @onselect="onActiveVisitDate"> </visit-dates-card>
                     </ion-col>
-                    <ion-col size="10"> 
+                    <ion-col size="10">
+                        <div class="his-card"> 
                         <ion-row> 
-                           <ion-col size="4"> 
+                           <ion-col size-md="4" size-sm="6"> 
                                <b>Today's Date:</b> {{ currentDate }}
                             </ion-col> 
-                            <ion-col size="5"> 
+                            <ion-col size-md="5" size-sm="6"> 
                                 <b>Next Task:</b> {{ nextTask }}
                             </ion-col>
-                            <ion-col size="3"> 
+                            <ion-col size-md="3" size-sm="12"> 
                                 <b>Set Date:</b> {{ sessionDate }}
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col size="6" md="6" sm="12">
+                            <ion-col size-md="6" size-sm="12">
                                 <primary-card :counter="encountersCardItems.length" title="Activities" :items="encountersCardItems" titleColor="#658afb" @click="showAllEncounters"> </primary-card>
                             </ion-col>
-                            <ion-col size="6" md="6" sm="12">
+                            <ion-col size-md="6" size-sm="12">
                                 <primary-card :counter="labOrderCardItems.length" title="Lab Orders" :items="labOrderCardItems" titleColor="#69bb7b" @click="showAllLabOrders"> </primary-card>
                             </ion-col>
                         </ion-row>
                         <ion-row> 
-                            <ion-col size="6" md="6" sm="12"> 
+                            <ion-col size-md="6" size-sm="12"> 
                                 <primary-card :counter="alertCardItems.length" title="Alerts" :items="alertCardItems" titleColor="#f95d5d"> </primary-card>
                             </ion-col>
-                            <ion-col size="6" md="6" sm="12"> 
+                            <ion-col size-md="6" size-sm="12"> 
                                 <primary-card :counter="medicationCardItems.length" title="Medications" :items="medicationCardItems" titleColor="#fdb044" @click="showAllMedications"> </primary-card>
                             </ion-col>
                         </ion-row>
+                        </div>
                     </ion-col>
                 </ion-row>
             </ion-grid>
@@ -338,6 +340,11 @@ export default defineComponent({
 <style scoped>
     .grid-custom {
         overflow-y: auto;
+        padding: 1%;
+    }
+    .his-card {
+        height: 100%;
+        padding: 1.8%;
     }
     @media only screen and (width: 1024px) {
          .grid-custom {

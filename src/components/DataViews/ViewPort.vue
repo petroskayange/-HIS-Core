@@ -1,5 +1,5 @@
 <template> 
-    <div id='view-port' :class="showFull ? 'full': 'half'"> 
+    <div id='view-port' :class="!showFull ? 'half': ''"> 
         <slot></slot>
     </div>
 </template>
@@ -15,22 +15,8 @@ export default defineComponent({
     }
 })
 </script>
-<style scoped>
-    #view-port {
-        border: 1px solid #ccc;
-        background: #f8f8f8;
-        width: 100%;
-        border-radius: 10px;
-        padding: 5px;
-        overflow: hidden;
-      -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-      -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-      box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
-    }
-    .full {
-        height: 80vh;
-    }
+<style scoped> 
     .half {
-        height: 50vh;
+        height: 53vh !important;
     }
 </style>

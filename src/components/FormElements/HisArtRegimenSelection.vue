@@ -2,7 +2,7 @@
     <view-port> 
         <div class="view-port-content"> 
             <ion-row v-for="(row, rowIndex) in listData" :key="rowIndex"> 
-                <ion-col size="6" v-for="(item, itemIndex) in row" :key="itemIndex"> 
+                <ion-col size-md="6" size-sm="12" v-for="(item, itemIndex) in row" :key="itemIndex"> 
                     <regimen-card
                         :label="item.label" 
                         :value="item.value"
@@ -30,9 +30,6 @@ export default defineComponent({
             if (val) this.clearSelection()
         }
     },
-    async activated() {
-        this.init()
-    },
     async mounted() {
         this.init()
     },
@@ -54,6 +51,9 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+#view-port {
+    height: 74vh;
+}
 .view-port-content {
     height: 100%;
 }

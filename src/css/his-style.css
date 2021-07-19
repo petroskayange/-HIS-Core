@@ -35,19 +35,6 @@
     width: 100%;
 }
 
-.his-keyboard {
-    width: 90%;
-}
-
-.his-keyboard-margin {
-    padding: 2px;
-}
-
-.his-keyboard-btn {
-    font-weight: bold;
-    width: 90%;
-}
-
 .his-table > tr > td, th {
     text-align: left;
     padding: 1em;
@@ -85,8 +72,9 @@ body {
 
 .keypad-modal .modal-wrapper {
     width: 340px;
-    height: 480px;
+    height: 500px;
 }
+
 .his-title {
     font-size: 1.7em;
     padding: 0.3em;
@@ -97,14 +85,29 @@ body {
     height: 80%;
 }
 
+#view-port {
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+    width: 95%;
+    margin: auto;
+    border-radius: 3px;
+    padding: 5px;
+    overflow: hidden;
+    margin-top: 1.3%;
+    height: 80vh;
+  -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+  -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+  box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
+}
+
 .view-port-content {
     overflow-x: auto;
     height: 98%;
 }
 
-@media only screen and (min-width: 1024px) {
-    .his-keyboard-btn {
-      height: 57px;
-      font-size: 1.3rem;
+@media (max-width: 1024px) {
+    .keypad-modal .modal-wrapper {
+        width: 340px;
+        height: 450px;
     }
-  }
+}

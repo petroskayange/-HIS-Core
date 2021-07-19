@@ -30,6 +30,10 @@ export default defineComponent({
             required: true,
             type: Function
         },
+        activationState: {
+            type: String,
+            default: ''
+        }
     },
     data: () => ({ 
         showKeyboard: false,

@@ -27,13 +27,12 @@ import { IonList, IonItem, IonLabel} from "@ionic/vue"
 import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 import { TextInputInterface } from '@/components/FormElements/Interfaces/TextConfig'
-import { HisKeyboardConfig } from '@/components/Keyboard/HisKbConfigurations.ts'
 import ViewPort from "@/components/DataViews/ViewPort.vue"
 export default defineComponent({
     components: { BaseInput, HisKeyboard, ViewPort, IonList, IonItem, IonLabel },
     data: ()=>({ 
         value: '',
-        keyboard: {} as HisKeyboardConfig,
+        keyboard: {} as Array<any>,
         listData: [] as Array<Option>
     }),
     props: {
@@ -91,3 +90,8 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped> 
+#view-port {
+    height: 53vh;
+}
+</style>
