@@ -67,7 +67,7 @@ export default defineComponent({
         .then(() => {
           if (
             !this.hasARVNumber && formData.capture_arv.value ===
-            ConceptService.getCachedConceptID("Yes")
+            ConceptService.getCachedConceptID("Yes", true)
           ) {
             this.postARVNumber(`${this.sitePrefix}-ARV-${formData.arv_number.value}`)
           }
@@ -109,11 +109,11 @@ export default defineComponent({
       const values = [
         {
           label: "yes",
-          value: ConceptService.getCachedConceptID("Yes"),
+          value: ConceptService.getCachedConceptID("Yes", true),
         },
         {
           label: "no",
-          value: ConceptService.getCachedConceptID("No"),
+          value: ConceptService.getCachedConceptID("No", true),
         },
       ];
 
@@ -134,17 +134,17 @@ export default defineComponent({
           options: () => [
             {
               label: "Patient Present",
+              value: "",
               other: {
                 property: "patient_present",
-                value: "",
                 values: values,
               },
             },
             {
               label: "Guardian Present",
+              value: "",
               other: {
                 property: "guardian_present",
-                value: "",
                 values: values,
               },
             },

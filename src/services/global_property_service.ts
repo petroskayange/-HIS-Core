@@ -25,4 +25,5 @@ export class GlobalPropertyService extends Service {
     static getCurrentHealthCenterId() { return this.get('current_health_center_id') }
 
     static isMilitarySite() { return this.get('military.enabled') }
+    static isHTNEnabled() { return this.get('activate.htn.enhancement') }
 }

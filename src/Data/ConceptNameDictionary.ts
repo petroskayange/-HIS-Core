@@ -1,6 +1,36 @@
 export default [
    {
       "categories": [],
+      "concept_id": 1805,
+      "name": "Patient present"
+   },
+   {
+      "categories": [],
+      "concept_id": 2122,
+      "name": "Guardian present"
+   },
+   {
+      "categories": [],
+      "concept_id": 5092,
+      "name": "SP02"
+   },
+   {
+      "categories": [],
+      "concept_id": 5087,
+      "name": "Pulse"
+   },
+   {
+      "categories": [],
+      "concept_id": 5088,
+      "name": "Temp"
+   },
+   {
+      "categories": [],
+      "concept_id": 1484,
+      "name": "Treatment status"
+   },
+   {
+      "categories": [],
       "concept_id": 3140,
       "name": "Reason for poor treatment adherence"
    },
@@ -155,6 +185,13 @@ export default [
    {
       "categories": [
          "art_extra_medication_order"
+      ],
+      "concept_id": 5090,
+      "name": "Height"
+   },
+   {
+      "categories": [
+         ""
       ],
       "concept_id": 9974,
       "name": "Rifapentine"

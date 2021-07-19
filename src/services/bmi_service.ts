@@ -11,7 +11,8 @@ export class BMIService {
   static async getBMIResult(gender: 'M' | 'F', age: number, bmindex: number) {
     let BMIResult = {
       result: '',
-      color: ''
+      color: '',
+      index: bmindex
     }
     if (age < 5 && age > 0) {
       BMIResult.result = 'Use MUAC to calculate nutrition status';
@@ -31,7 +32,8 @@ export class BMIService {
   static buildBounds(bounds: any, dataset: any, bmindex: any, results: any) {
     const BMIResult = {
       result: '',
-      color: ''
+      color: '',
+      index: bmindex
     }
     bounds.forEach((bound: any) => {
       if (bound.indexOf("-") >= 0) {
@@ -58,6 +60,9 @@ export class BMIService {
     return BMIResult;
   }
   static getBMI(weight: number, height: number, gender: 'M' | 'F', age: number) {
+    if(height == 0 || weight == 0) {
+     return 0 
+    }
     let bmindex = (weight / height / height) * 10000;
     bmindex = Math.round(bmindex * 10) / 10;
     return this.getBMIResult(gender, age, bmindex);
