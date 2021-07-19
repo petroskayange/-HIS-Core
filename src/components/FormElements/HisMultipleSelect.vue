@@ -19,7 +19,7 @@
 import { Option } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
-import { find } from "lodash"
+import { find, isEmpty } from "lodash"
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 export default defineComponent({
   components: { IonCheckbox },
@@ -75,7 +75,7 @@ export default defineComponent({
   
         const values = updatedItems.filter((item) => item.isChecked);
 
-        this.$emit("onValue", values);
+        if (!isEmpty(values)) this.$emit("onValue", values);
       },
       deep: true
     }
