@@ -757,6 +757,14 @@ export default [
          "stage_4_conditions_pedaids",
          "who_staging_conditions"
       ],
+      "meta": {
+         "age": {
+            "less_than_equal": 14
+         },
+         "weight_percentile": {
+            "less_than": 70
+         }
+      },
       "concept_id": 3068,
       "name": "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)"
    },
@@ -805,6 +813,14 @@ export default [
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
+      "meta": {
+         "bmi":{
+            "less_than_equal": 16
+         },
+         "age": {
+            "greater_than_equal": 15
+         }
+      },
       "concept_id": 7540,
       "name": "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained"
    },
@@ -925,6 +941,14 @@ export default [
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
       ],
+      "meta": {
+         "age": {
+            "less_than_equal": 14
+         },
+         "weight_percentile": {
+            "between": [70, 79]
+         }
+      },
       "concept_id": 7543,
       "name": "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)"
    },
@@ -973,6 +997,11 @@ export default [
          "stage_2_conditions_adults",
          "who_staging_conditions"
       ],
+      "meta": {
+         "bmi": {
+            "between": [16.0, 18.5]
+         }
+      },
       "concept_id": 5332,
       "name": "Moderate weight loss less than or equal to 10 percent, unexplained"
    },

@@ -71,11 +71,23 @@ export class Patientservice extends Service {
     async getBMI() {
         const weight = await this.getRecentWeight()
         const height = await this.getRecentHeight()
-        
-        if (!(weight && height)) return
+
+        if (!(weight && height)) return 0
 
         const gender = this.getGender() === 'M' ? 'M': 'F'
-        return BMIService.getBMI(weight, height, gender, this.getAge())
+        const bmi: any = await BMIService.getBMI(weight, height, gender, this.getAge())
+
+        return bmi['index']
+    }
+
+    async calculateWeightPercentile() {
+        const currentWeight = await this.getRecentWeight()
+        const medianWeightHeight = await this.getMedianWeightHeight()
+        try {
+            return (parseFloat(currentWeight) / (parseFloat(medianWeightHeight["weight"])) * 100)
+        } catch (e) {
+            return 0;
+        }
     }
 
     async getMedianWeightHeight() {

@@ -13,6 +13,8 @@ import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
 import { isEmpty } from "lodash"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
+import validateMeta from "@/utils/MetaValidator"
+
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -29,17 +31,30 @@ export default defineComponent({
         cd4Location: [] as any,
         cd4DateStr: '' as string,
         month: '' as string,
-        year: '' as string
+        year: '' as string,
+        meta: {
+            age: 0,
+            bmi: 0,
+            "weight_percentile": 0
+        }
     }),
     watch: {
         patient: {
             async handler(patient: any){
                 if (!patient) return
+
                 this.staging = new StagingService(
                     patient.getID(),
                     patient.getAge(),
                     patient.getGender()
                 )
+                this.meta.age = patient.getAge()
+                this.meta.bmi = await patient.getBMI()
+
+                if (this.staging.isPedaid()) {
+                    this.meta['weight_percentile'] = await patient.calculateWeightPercentile()
+                }
+
                 this.fields = this.getFields()
             },
             immediate: true,
@@ -105,7 +120,7 @@ export default defineComponent({
             return this.staging.getStagingConditions(group).map((concept: any) => ({
                 label: concept.name,
                 value: concept.concept_id,
-                isChecked: false
+                isChecked: validateMeta(this.meta, concept.meta || [])
             }))
         },
         hasCd4Count(f: any) {
