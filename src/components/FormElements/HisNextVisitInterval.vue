@@ -61,8 +61,10 @@ export default defineComponent({
     },
     async activated() {
         this.init()
-        this.active = {}
-        this.clearSelection()
+        if (this.activationState === 'next') {
+            this.active = {}
+            this.clearSelection()
+        }
     },
     async mounted() {
         this.init()
