@@ -5,13 +5,13 @@
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
-import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { toastWarning, toastSuccess, alertAction } from "@/utils/Alerts"
 import { StagingService, StagingCategory } from "@/apps/ART/services/staging_service"
 import EncounterMixinVue from './EncounterMixin.vue'
 import Validation from "@/components/Forms/validations/StandardValidations"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
-import { isEmpty } from "lodash"
+import { isEmpty, find } from "lodash"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
 import validateMeta from "@/utils/MetaValidator"
 
@@ -228,6 +228,26 @@ export default defineComponent({
                         ]
                         if (isEmpty(val) && isEmpty(stages))
                             return ['Please provide atleast one staging condition']
+                    },
+                    onValue: async (values: Array<Option>) => {
+                        const asymptomatics = values.filter((i: Option) => i.label.match(/asymptomatic/i))
+                        const otherSymptoms = [ ...this.stageFourObs, ...this.stageThreeObs, ...this.stageTwoObs ] 
+                        if (!isEmpty(asymptomatics) && !isEmpty(otherSymptoms)) {
+                            const actions = [
+                                { text: "Keep 'Other' conditions", role: "other" },
+                                { text: "Keep 'Asymptomatic'", role: "keep" }
+                            ]
+                            const action: string = await alertAction("CONTRADICTING STAGE DEFINING CONDITIONS", actions)
+                        
+                            if (action === "keep") {
+                                this.stageTwoObs = []
+                                this.stageThreeObs = []
+                                this.stageFourObs = []
+                                return true
+                            }
+                            return false
+                        }
+                        return true
                     },
                     unload: async (data: any) => {
                         this.stageOneObs = this.buildStagingData(data)
