@@ -173,7 +173,7 @@ export const PREFERENCES = {
           },
           {
             name: "Activate Hypertension screening",
-            value: "aactivate.htn.enhancement"
+            value: "activate.htn.enhancement"
           },
           {
             name: "Activate fast track",

@@ -10,6 +10,8 @@ import DosageInput from "@/components/FormElements/HisDosageInput.vue"
 import YesNo from "@/components/FormElements/YesNoSelect.vue"
 import MultiYesNo from "@/components/FormElements/MultiYesNoSelect.vue"
 import WeightChart from "@/components/FormElements/HisWeightChart.vue"
+import VitalsEntry from "@/components/FormElements/HisVitalsEntry.vue"
+
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 import AdherenceInput from "@/components/FormElements/HisAdherenceInput.vue"
 // Reference names for BaseFormComponents
@@ -28,6 +30,7 @@ export enum FieldType {
     TT_MULTIPLE_YES_NO="multi-yes-no",
     TT_SUMMARY="summary-page",
     TT_WEIGHT_CHART = "weight-chart",
+    TT_VITALS_ENTRY="vitals-entry",
     TT_ADHERENCE_INPUT = "adherence-input"
 }
 // Components to be rendered
@@ -45,5 +48,6 @@ export const BaseFormComponents = {
     SummaryPage,
     MultiYesNo,
     WeightChart,
+    VitalsEntry,
     AdherenceInput
 }
