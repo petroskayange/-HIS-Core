@@ -51,7 +51,7 @@ export default defineComponent({
         toastSuccess("Observations and encounter created!");
         this.nextTask();
       } else {
-        return toastWarning("Unable to create treatment encounter");
+        return toastWarning("Unable to create encounter");
       }
     },
     async setPatientType() {
