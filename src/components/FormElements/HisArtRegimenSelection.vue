@@ -30,9 +30,6 @@ export default defineComponent({
             if (val) this.clearSelection()
         }
     },
-    async activated() {
-        this.init()
-    },
     async mounted() {
         this.init()
     },
