@@ -78,6 +78,10 @@ export class Patientservice extends Service {
         return BMIService.getBMI(weight, height, gender, this.getAge())
     }
 
+    async getMedianWeightHeight() {
+        return Service.getJson(`patients/${this.getID()}/median_weight_height`)
+    }
+
     getObj() {
         return this.patient
     }
