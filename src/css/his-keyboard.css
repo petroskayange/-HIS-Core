@@ -1,6 +1,6 @@
 .his-floating-keyboard {
     left: 0;
-    bottom: 0;
+    bottom: 5px;
     right: 0;
     margin: auto;
     position: absolute;

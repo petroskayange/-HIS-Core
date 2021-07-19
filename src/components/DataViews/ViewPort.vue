@@ -24,6 +24,7 @@ export default defineComponent({
         border-radius: 3px;
         padding: 5px;
         overflow: hidden;
+        margin-top: 8px;
       -webkit-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       -moz-box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
       box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
