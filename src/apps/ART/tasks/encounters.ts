@@ -49,5 +49,10 @@ export const ENCOUNTERS: Array<TaskInterface> = [
     id: "vitals",
     name: "Vitals",
     icon: img("vitals.png")
+  },
+  {
+    id: "patient type",
+    name: "Patient Type",
+    icon: img("patient-type.png")
   }
 ]
