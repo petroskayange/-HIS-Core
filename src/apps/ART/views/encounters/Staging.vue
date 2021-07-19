@@ -120,7 +120,10 @@ export default defineComponent({
             return this.staging.getStagingConditions(group).map((concept: any) => ({
                 label: concept.name,
                 value: concept.concept_id,
-                isChecked: validateMeta(this.meta, concept.meta || [])
+                isChecked: validateMeta(this.meta, concept.meta || []),
+                other: {
+                    // initialised here  
+                }
             }))
         },
         hasCd4Count(f: any) {
@@ -226,7 +229,19 @@ export default defineComponent({
                             ])) 
                             this.setArtStagingReasonObs(2)
                     },
-                    options: () => this.getStagingOptions(2)
+                    options: (f: any) => {
+                        return this.getStagingOptions(2).map((option: Option) => {
+                            // Do not override severe weight loss in stage 2
+                            const severeWeightloss = f.stage_3_conditions.filter((i: Option) => {
+                                return i.label.match(/severe weight loss/i)
+                            })
+                            if (!isEmpty(severeWeightloss) && option.label.match(/moderate weight loss/i)) {
+                                option.other.disabled = true
+                                option.other.disableReason = 'Severe weight loss already selected'
+                            }
+                            return option
+                        })
+                    }
                 },
                 {
                     id: 'stage_1_conditions',
