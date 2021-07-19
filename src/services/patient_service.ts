@@ -7,7 +7,7 @@ import { ConceptService } from './concept_service';
 import { Service } from "@/services/service"
 import HisDate from "@/utils/Date"
 import {Observation} from "@/interfaces/observation"
-
+import  { BMIService } from "@/services/bmi_service"
 export class Patientservice extends Service {
     patient: Patient;
     constructor(patient: Patient) {
@@ -68,6 +68,16 @@ export class Patientservice extends Service {
         }))
     }
 
+    async getBMI() {
+        const weight = await this.getRecentWeight()
+        const height = await this.getRecentHeight()
+        
+        if (!(weight && height)) return
+
+        const gender = this.getGender() === 'M' ? 'M': 'F'
+        return BMIService.getBMI(weight, height, gender, this.getAge())
+    }
+
     getObj() {
         return this.patient
     }
@@ -75,7 +85,6 @@ export class Patientservice extends Service {
     getID() {
         return this.patient.patient_id
     }
-
 
     getPatientInfoString() {
         const data =  [
