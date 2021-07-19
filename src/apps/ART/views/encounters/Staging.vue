@@ -32,6 +32,7 @@ export default defineComponent({
         cd4DateStr: '' as string,
         month: '' as string,
         year: '' as string,
+        /* meta object used for validating certain concepts with meta data*/
         meta: {
             age: 0,
             bmi: 0,
@@ -224,9 +225,7 @@ export default defineComponent({
                     unload: async (data: any) => {
                         this.stageTwoObs = this.buildStagingData(data)
                         // prioritize stage 3 and 4 reason if stage 3 and 4 conditions are set
-                        if (!isEmpty(this.stageTwoObs) && isEmpty([
-                            ...this.stageFourObs, ...this.stageThreeObs
-                            ])) 
+                        if (!isEmpty(this.stageTwoObs) && isEmpty([...this.stageFourObs, ...this.stageThreeObs])) 
                             this.setArtStagingReasonObs(2)
                     },
                     options: (f: any) => {
@@ -258,6 +257,7 @@ export default defineComponent({
                     },
                     onValue: async (values: Array<Option>) => {
                         const otherSymptoms = [ ...this.stageFourObs, ...this.stageThreeObs, ...this.stageTwoObs ] 
+                        // We dont want a selection of asymptomatic to contradict other staging conditions selected
                         if (this.asymptomatic(values) && !isEmpty(otherSymptoms)) {
                             const actions = [
                                 { text: "Keep 'Other' conditions", role: "other" },
@@ -277,11 +277,9 @@ export default defineComponent({
                     },
                     unload: async (data: Array<Option>) => {
                         this.stageOneObs = this.buildStagingData(data)
-
                         // prioritize higher staging reasons if other conditions are set
                         if (!isEmpty(this.stageOneObs) && isEmpty([
-                            ...this.stageFourObs, ...this.stageThreeObs,
-                            ...this.stageTwoObs
+                            ...this.stageFourObs, ...this.stageThreeObs, ...this.stageTwoObs
                         ]))
                             this.setArtStagingReasonObs(1)
                     },
