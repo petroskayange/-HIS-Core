@@ -3,7 +3,7 @@
       <view-port :showFull="!showKeyboard">
       <his-text-input  v-if="showKeyboard" :value="selected" @onValue="(value) => onKbValue(value, showKeyboard)" :disabled="false"/>
       <span v-for="(item, index) in checkedItems" :key="index"> 
-        <ion-chip color="danger" @click="removeItem(index)">{{item.label}}</ion-chip>
+        <ion-chip color="danger" @click="uncheck(item.label)">{{item.label}}</ion-chip>
       </span>
       <ion-list class='view-port-content'>
         <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
@@ -45,9 +45,9 @@ export default defineComponent({
         return item
       })
     },
-    removeItem(id: number) {
-      this.listData.forEach((option, index) => {
-        if (index === id) this.setState(option, false)
+    uncheck(label: string) {
+      this.listData.forEach(option => {
+        if (option.label === label) option.isChecked = false
       }) 
     }
   },
@@ -62,7 +62,10 @@ export default defineComponent({
         // clear defaults
         this.clearSelection()
         // uncheck items
-        this.listData = this.listData.map((item) => this.setState(item))
+        this.listData = this.listData.map((item) => {
+          item.isChecked = false
+          return item
+        })
       }
     },
     listData: {
