@@ -8,6 +8,7 @@
       :preset="activeField.preset"
       :clear="isClear"
       :fdata="formData"
+      :activationState="state"
       @onValue="onValue"
       @onClear="isClear=false"
     />
@@ -47,6 +48,7 @@ export default defineComponent({
       activeIndex: 0,
       formData: {} as any,
       activeField: {} as Field,
+      state: '' as 'init' | 'next' | 'prev', 
     };
   },
   watch: {
@@ -150,12 +152,13 @@ export default defineComponent({
       }
       this.emitState()
     },
-    async setActiveField(index: number, state='') {
+    async setActiveField(index: number, state='' as 'init' | 'next' | 'prev') {
       // load callback before changing active component
       if (!isEmpty(this.activeField) && this.activeField.unload) {
         const data = this.formData[this.activeField.id]
         if (data) await this.activeField.unload(data, state)
-      } 
+      }
+      this.state = state
       this.activeIndex = index;
       this.activeField = this.fields[this.activeIndex];
       this.emitState()
