@@ -154,10 +154,24 @@ export default [
    },
    {
       "categories": [
-         ""
+         "art_extra_medication_order"
       ],
       "concept_id": 9974,
       "name": "Rifapentine"
+   },
+   {
+      "categories": [
+         "art_extra_medication_order"
+      ],
+      "concept_id": 916,
+      "name": "CPT"
+   },
+   {
+      "categories": [
+         "art_extra_medication_order"
+      ],
+      "concept_id": 916,
+      "name": "INH"
    },
    {
       "categories": [
@@ -203,7 +217,7 @@ export default [
    },
    {
       "categories": [
-         ""
+         "art_medication_order"
       ],
       "concept_id": 1085,
       "name": "Antiretroviral drugs"
@@ -472,6 +486,7 @@ export default [
    },
    {
       "categories": [
+         "stage_4_conditions_adults",
          "stage_4_conditions_pedaids",
          "who_staging_conditions",
          "staging_4_conditions"
@@ -506,10 +521,11 @@ export default [
          "staging_4_conditions"
       ],
       "concept_id": 5344,
-      "name": "Chronic herpes simplex infection (orolabial, gential / anorectal &gt;1 month or visceral at any site)"
+      "name": "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)"
    },
    {
       "categories": [
+         "stage_4_conditions_adults",
          "who_staging_conditions",
          "staging_4_conditions"
       ],
@@ -581,7 +597,7 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 7956,
-      "name": "Isosporiasis &gt;1 month"
+      "name": "Isosporiasis >1 month"
    },
    {
       "categories": [
@@ -605,7 +621,7 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 3068,
-      "name": "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age &lt;70% or MUAC less than 11cm or oedema)"
+      "name": "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)"
    },
    {
       "categories": [
@@ -620,7 +636,7 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 7960,
-      "name": "Chronic herpes simplex infection (orolabial or cutaneous &gt;1 month or visceral at any site)"
+      "name": "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)"
    },
    {
       "categories": [
@@ -653,7 +669,7 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 7540,
-      "name": "Severe weight loss &gt;10% and/or BMI &lt;18.5kg/m^2, unexplained"
+      "name": "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained"
    },
    {
       "categories": [
@@ -661,15 +677,16 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 5018,
-      "name": "Diarrhoea, chronic (&gt;1 month) unexplained"
+      "name": "Diarrhoea, chronic (>1 month) unexplained"
    },
    {
       "categories": [
+         "stage_3_conditions_adults",
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
       ],
       "concept_id": 5027,
-      "name": "Fever, persistent unexplained, intermittent or constant, &gt;1 month"
+      "name": "Fever, persistent unexplained, intermittent or constant, >1 month"
    },
    {
       "categories": [
@@ -699,12 +716,21 @@ export default [
    },
    {
       "categories": [
+         "stage_3_conditions_adults",
+         "stage_3_conditions_pedaids",
+         "who_staging_conditions"
+      ],
+      "concept_id": 7546,
+      "name": "Acute necrotizing ulcerative gingivitis or periodontitis"
+   },
+   {
+      "categories": [
          "stage_3_conditions_pedaids",
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
       "concept_id": 2582,
-      "name": "Anaemia, unexplained &lt; 8 g/dl"
+      "name": "Anaemia, unexplained < 8 g/dl"
    },
    {
       "categories": [
@@ -713,7 +739,7 @@ export default [
          "who_staging_conditions"
       ],
       "concept_id": 7954,
-      "name": "Neutropaenia, unexplained &lt; 500 /mm(cubed)"
+      "name": "Neutropaenia, unexplained < 500 /mm(cubed)"
    },
    {
       "categories": [
@@ -725,11 +751,12 @@ export default [
    },
    {
       "categories": [
+         "stage_3_conditions_adults",
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
       ],
       "concept_id": 7955,
-      "name": "Thrombocytopaenia, chronic &lt; 50,000 /mm(cubed)"
+      "name": "Thrombocytopaenia, chronic < 50,000 /mm(cubed)"
    },
    {
       "categories": [
@@ -785,14 +812,6 @@ export default [
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
       ],
-      "concept_id": 7546,
-      "name": "Acute necrotizing ulcerative gingivitis or periodontitis"
-   },
-   {
-      "categories": [
-         "stage_3_conditions_pedaids",
-         "who_staging_conditions"
-      ],
       "concept_id": 7547,
       "name": "Lymph node tuberculosis"
    },
@@ -839,6 +858,7 @@ export default [
    },
    {
       "categories": [
+         "stage_2_conditions_adults",
          "stage_2_conditions_pedaids",
          "who_staging_conditions"
       ],

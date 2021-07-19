@@ -1,4 +1,4 @@
-import { toastController, alertController } from "@ionic/vue";
+import { toastController, alertController, actionSheetController } from "@ionic/vue";
 
 async function toast(message: string, color="primary", duration=6000) {
     const toast = await toastController.create({
@@ -33,6 +33,18 @@ export async function alertAction(message: string, buttons: any) {
         buttons
    });
  await alert.present();
+}
+export async function actionSheet(header: string, subHeader: string, buttons: Array<string>) {
+    const action = await actionSheetController.create({
+        header,
+        subHeader,
+        mode: 'ios',
+        backdropDismiss: false,
+        buttons: buttons.map((i: any) => ({text: i, role: i.toLowerCase()}))
+    })
+    action.present()
+    const { role } = await action.onDidDismiss();
+    return role
 }
 export async function alertConfirmation(message: string, header="Confirmation") {
     const alert = await alertController.create({
