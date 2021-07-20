@@ -37,6 +37,8 @@ export class StagingService extends AppEncounterService {
 
     getFacilities (filter='') { return LocationService.getFacilities({name: filter}) }
     
+    getConfirmatoryTestType() { return this.confirmatoryTest }
+
     getStagingConditions(stage: StagingCategory) {
         return AppEncounterService.getConceptsByCategory(stage)
     }
