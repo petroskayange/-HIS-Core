@@ -8,6 +8,7 @@ import { Service } from "@/services/service"
 import HisDate from "@/utils/Date"
 import {Observation} from "@/interfaces/observation"
 import  { BMIService } from "@/services/bmi_service"
+
 export class Patientservice extends Service {
     patient: Patient;
     constructor(patient: Patient) {
@@ -41,6 +42,14 @@ export class Patientservice extends Service {
         return super.getJson(`patients/${patientId}/visits`, {
             'program_id': super.getProgramID()
         })
+    }
+
+    isMale() {
+        return this.getGender() === 'M'
+    }
+
+    isFemale() {
+        return this.getGender() === 'F'
     }
 
     async getRecentWeight() {
@@ -119,7 +128,7 @@ export class Patientservice extends Service {
     getGender() {
         return this.patient.person.gender
     }
-
+    
     getAge() {
         return HisDate.getAgeInYears(this.patient.person.birthdate)
     }
