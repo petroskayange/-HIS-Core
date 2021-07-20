@@ -120,11 +120,13 @@ export default defineComponent({
           (weight / medianWeightHeight) *
           100
         ).toFixed(0);
-
-        obs.push({
-          label: "Weight for height percent of median",
-          value: weightForHeightPercentile,
-        });
+        if(!isNaN(parseFloat(weightForHeightPercentile))) {
+          obs.push({
+            label: "Weight for height percent of median",
+            value: weightForHeightPercentile,
+          });
+        }
+        
         obs.push({
           label: "Weight for age percent of median",
           value: currentWeightPercentile,
@@ -203,7 +205,7 @@ export default defineComponent({
       this.fields = this.getFields();
     },
     getFields(): Array<Field> {
-      const recentHeight = this.recentHeight ? this.recentHeight : "";
+      const recentHeight = this.recentHeight && this.age > 18? this.recentHeight : "";
       const HTNEnabled = this.HTNEnabled;
       const hasHTNObs = this.hasHTNObs;
 
@@ -254,7 +256,7 @@ export default defineComponent({
                 modifier: "CM",
                 icon: "height",
                 visible: showHeight,
-                required: this.age < 18,
+                required: showHeight,
               },
             },
             { label: "BP", value: "", other: { modifier: "mmHG", icon: "bp" } },
