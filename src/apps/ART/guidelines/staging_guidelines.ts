@@ -89,7 +89,9 @@ export const CHILD_ART_ELIGIBILITY = {
         concept: 'WHO STAGE IV PEDS',
         minPass: 100,
         conditions: {
-            stage: (stage: number) => stage === 4,
+            stage: {
+                condition: () => (stage: number) => stage === 4
+            },
             pass: 100
         }
     },
@@ -97,7 +99,9 @@ export const CHILD_ART_ELIGIBILITY = {
         concept: 'WHO STAGE III PEDS',
         minPass: 100,
         conditions: {
-            stage: (stage: number) => stage === 3,
+            stage: {
+                condition: (stage: number) => stage === 3 
+            },
             pass: 100
         }
     },
@@ -109,11 +113,11 @@ export const CHILD_ART_ELIGIBILITY = {
                 condition: (age: number) => age < 12,
                 pass: 25
             },
-            'patient_conditions': {
-                condition: (patientConditions: Array<string>) => {
+            'selected_conditions': {
+                condition: (conditions: Array<string>) => {
                     const pshdConditions = ConceptService.getConceptsByCategory('pshd_condition')
                     for(const pshdCondition in pshdConditions) {
-                        if (patientConditions.includes(pshdCondition)) return true
+                        if (conditions.includes(pshdCondition)) return true
                     }
                     return false
                 },
