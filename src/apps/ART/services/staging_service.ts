@@ -59,6 +59,10 @@ export class StagingService extends AppEncounterService {
         return AppEncounterService.getConceptsByCategory(category)
     }
 
+    buildWhoCriteriaObs(condition: string) {
+        return this.buildValueCoded('Who stages criteria present', condition)
+    }
+
     private getStagingCategoryByNum(stageNumber: number) {
         switch(stageNumber) {
             case 1:
