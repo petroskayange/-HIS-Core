@@ -7,6 +7,7 @@ import Dispensing from "@/apps/ART/views/encounters/Dispensing.vue"
 import Reception from "@/apps/ART/views/encounters/Reception.vue"
 import Staging from "@/apps/ART/views/encounters/Staging.vue"
 import Vitals from "@/apps/ART/views/encounters/Vitals.vue"
+import PatientType from "@/apps/ART/views/encounters/PatientType.vue"
 
 export default [
     {
@@ -53,5 +54,10 @@ export default [
         name: "Vitals",
         path: "/art/encounters/vitals",
         component: Vitals
+    },
+    {
+        name: "Patient Type",
+        path: "/art/encounters/patient_type",
+        component: PatientType
     }
 ]
