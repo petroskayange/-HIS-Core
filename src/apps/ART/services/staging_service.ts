@@ -58,7 +58,19 @@ export class StagingService extends AppEncounterService {
         const category = this.getStagingCategoryByNum(stage)
         return AppEncounterService.getConceptsByCategory(category)
     }
+    
+    getWhoStage(stage: number) {
+        const category = this.getStagingCategoryByNum(stage)
+        const reasons = AppEncounterService.getConceptsByCategory(`${category}_who_reason`)
 
+        return !isEmpty(reasons) ? reasons[0].name: ''
+    }
+
+    buildWhoStageObs(stage: number) {
+        const strStage = this.getWhoStage(stage)
+        return this.buildValueCoded('Who stage', strStage)
+    }
+    
     buildWhoCriteriaObs(condition: string) {
         return this.buildValueCoded('Who stages criteria present', condition)
     }
@@ -80,12 +92,6 @@ export class StagingService extends AppEncounterService {
             default: 
                 return ''
         }
-    }
-
-    getWhoReasonForART(stage: StagingCategory) {
-        const reasons = AppEncounterService.getConceptsByCategory(`${stage}_who_reason`)
-
-        return !isEmpty(reasons) ? reasons[0].name: null
     }
 
     async loadHivConfirmatoryTestType() {

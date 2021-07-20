@@ -83,14 +83,18 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create encounter')
 
             const stagingConditions = this.buildStagingObs()
-            const reasonForArt = this.getReasonForArt()
+            const reasonForArt = this.buildReasonForArtObs()
+            const whoStage = this.buildWhoStageObs()
+
+            console.log(whoStage)
             const data = await Promise.all([
                 ...this.pregnancy, 
                 ...stagingConditions, 
                 ...this.cd4Count,
                 ...this.cd4Date, 
                 ...this.cd4Location,
-                ...reasonForArt
+                ...reasonForArt,
+                ...whoStage
             ])
 
             const obs = await this.staging.saveObservationList(data)
@@ -171,6 +175,15 @@ export default defineComponent({
         buildStagingObs() {
             return this.facts["selected_conditions"].map(item => this.staging.buildWhoCriteriaObs(item))
         },
+        buildReasonForArtObs() {
+            const guidelines = this.staging.getProgramEligibilityGuidelines()
+            const recommendedReasons = matchToGuidelines(this.facts, guidelines)
+
+            return [this.staging.buildReasonForArtObs(recommendedReasons[0].concept)]
+        },
+        buildWhoStageObs() {
+            return [this.staging.buildWhoStageObs(this.facts.stage)]
+        },
         buildStagingOptions(stage: number) {
             const facts = {...this.facts}
             facts.stage = stage
@@ -197,12 +210,6 @@ export default defineComponent({
                     }
                 }
             })
-        },
-        getReasonForArt() {
-            const guidelines = this.staging.getProgramEligibilityGuidelines()
-            const recommendedReasons = matchToGuidelines(this.facts, guidelines)
-
-            return [this.staging.buildReasonForArtObs(recommendedReasons[0].concept)]
         },
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
@@ -325,7 +332,7 @@ export default defineComponent({
                         const modifier = value.charAt(0)
                         const count = value.substring(1)
                         this.updateCd4Count(parseInt(count), modifier)
-                        this.getReasonForArt()
+                        this.buildReasonForArtObs()
                     },
                     validation: (val: any) => {
                         if (!val) return ['Value is required']
