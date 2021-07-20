@@ -13,6 +13,7 @@ import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
 import { isEmpty } from "lodash"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
+import { matchToGuidelines } from "@/utils/GuidelineEngine"
 
 export default defineComponent({
     mixins: [EncounterMixinVue],
@@ -169,14 +170,31 @@ export default defineComponent({
             return this.facts["selected_conditions"].map(item => this.staging.buildWhoCriteriaObs(item))
         },
         buildStagingOptions(stage: number) {
-            return this.staging.getStagingConditions(stage).map((concept: any) => ({
-                label: concept.name,
-                value: concept.concept_id,
-                // isChecked: validateMeta(this.meta, concept.meta || []),
-                other: {
-                    // initialised here  
+            const facts = {...this.facts}
+            facts.stage = stage
+            const guidelines = this.staging.getRecommendedConditionGuidelines()
+            const recommendations = matchToGuidelines(this.facts, guidelines)
+
+            return this.staging.getStagingConditions(stage).map((concept: any) => {
+                let isChecked = false
+                let disabled = false
+
+                const recommendation = recommendations.filter(i => i.concept === concept.name)
+    
+                if (!isEmpty(recommendation)) {
+                    isChecked = recommendation[0]?.actions?.isChecked ? true : false
+                    disabled = recommendation[0]?.actions?.disabled ? true : false 
+                }   
+
+                return {
+                    label: concept.name,
+                    value: concept.concept_id,
+                    isChecked,
+                    other: {
+                        disabled
+                    }
                 }
-            }))
+            })
         },
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
