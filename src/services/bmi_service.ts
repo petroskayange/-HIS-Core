@@ -60,12 +60,15 @@ export class BMIService {
     return BMIResult;
   }
   static getBMI(weight: number, height: number, gender: 'M' | 'F', age: number) {
+    const bmindex = this.calculateBMI(weight, height); 
+    return this.getBMIResult(gender, age, bmindex);
+
+  }
+  static calculateBMI(weight: number, height: number) {
     if(height == 0 || weight == 0) {
      return 0 
     }
     let bmindex = (weight / height / height) * 10000;
-    bmindex = Math.round(bmindex * 10) / 10;
-    return this.getBMIResult(gender, age, bmindex);
-
+    return bmindex = Math.round(bmindex * 10) / 10;
   }
 }

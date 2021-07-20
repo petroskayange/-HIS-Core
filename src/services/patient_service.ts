@@ -67,7 +67,9 @@ export class Patientservice extends Service {
             weight: obs.value_numeric, date: obs.obs_datetime
         }))
     }
-
+    getMedianWeightandHeight() {
+      return Service.getJson(`patients/${this.getID()}/median_weight_height`);
+    }
     getObj() {
         return this.patient
     }

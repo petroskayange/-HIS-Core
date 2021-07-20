@@ -23,10 +23,11 @@
             <div class="centered">
               <ion-input
                 type="text"
+                class='keypad-input'
                 v-if="keys.length > 0"
                 v-model="keys[activeField].value"
               />
-              <base-keyboard :layout="keyboard" :onKeyPress="onKeyPress" />
+              <base-keyboard :layout="keyboard" :onKeyPress="onKeyPress" btnSize="110px" />
             </div>
           </ion-col>
           <ion-col size="5">
@@ -44,6 +45,12 @@
                 <td colspan="2">BMI</td>
                 <td>{{ BMI.index }}</td>
               </tr>
+              <tr>
+
+              <td  colspan="3" :style="{'background-color': BMI.color, color: 'white', 'text-align': 'center'}">
+                {{BMI.result}}
+              </td>
+              </tr>
             </table>
           </ion-col>
         </ion-row>
@@ -60,7 +67,8 @@ import {
   IonRow,
   IonInput,
   IonCard,
-  IonAvatar,
+  IonCardContent,
+  IonLabel
 } from "@ionic/vue";
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 import { VITALS_KEYPAD } from "../Keyboard/KbLayouts";
@@ -75,6 +83,8 @@ export default defineComponent({
     IonInput,
     BaseKeyboard,
     IonCard,
+    IonCardContent,
+    IonLabel
   },
   props: {
     fdata: {
@@ -203,11 +213,6 @@ export default defineComponent({
   text-align: center;
   font-size: 3em;
 }
-ion-input {
-  border: solid 1px black;
-  font-size: 20px;
-  width: 98%;
-}
 .active {
   color: blue;
 }
@@ -235,5 +240,14 @@ ion-card-content {
 }
 .his-table > tr {
   border-bottom: solid 1px rgb(87, 87, 87);
+}
+.keypad-input {
+    border: solid 1px #ccc;
+    background: white;
+    border-radius: 10px;
+    width: 350px;
+    height: 70px;
+    text-align: center;
+    font-size: 3em;
 }
 </style>

@@ -17,11 +17,12 @@ import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import { Patient } from "@/interfaces/patient";
 import { Patientservice } from "@/services/patient_service";
 import Validation from "@/components/Forms/validations/StandardValidations";
-import { GlobalPropertyService } from "@/services/global_property_service";
-import { ObservationService } from "@/services/observation_service";
 import { VitalsService } from "@/apps/ART/services/vitals_service";
 import { toastSuccess, toastWarning } from "@/utils/Alerts";
-import EncounterMixinVue from './EncounterMixin.vue'
+import EncounterMixinVue from "./EncounterMixin.vue";
+import { BMIService } from "@/services/bmi_service";
+import { GlobalPropertyService } from "@/services/global_property_service";
+import { ProgramService } from "@/services/program_service";
 export default defineComponent({
   mixins: [EncounterMixinVue],
   components: { HisStandardForm },
@@ -36,6 +37,8 @@ export default defineComponent({
     HTNEnabled: false,
     hasHTNObs: false,
     vitals: {} as any,
+    weightForHeight: {} as any,
+    medianWeightandHeight: {} as any,
   }),
   computed: {
     patientDashboard(): string {
@@ -56,12 +59,13 @@ export default defineComponent({
       const encounter = await this.vitals.createEncounter();
 
       if (encounter) {
-       const obs = await  this.buildObs(formData);
+        const obs = await this.buildObs(formData);
         const observations = await this.vitals.saveObservationList(obs);
-        if (!observations) return toastWarning('Unable to save patient observations')
+        if (!observations)
+          return toastWarning("Unable to save patient observations");
 
-        toastSuccess('Observations and encounter created!');
-            this.nextTask()
+        toastSuccess("Observations and encounter created!");
+        this.nextTask();
       } else {
         return toastWarning("Unable to create treatment encounter");
       }
@@ -73,7 +77,7 @@ export default defineComponent({
         )
       );
       if (this.HTNEnabled && !this.hasHTNObs) {
-        const obs = await ObservationService.buildValueText(
+        const obs = await this.vitals.buildValueText(
           "Treatment status",
           formData.on_htn_medication.value
         );
@@ -95,9 +99,53 @@ export default defineComponent({
       });
       return p;
     },
+    getBMI(formData: Option[]) {
+      const weight = this.getVal(formData, "Weight");
+      const height = this.getVal(formData, "Height");
+      const obs: any = [];
+      if (this.age <= 14) {
+        const currentWeightPercentile = (
+          (weight / parseFloat(this.medianWeightandHeight["weight"])) *
+          100
+        ).toFixed(0);
+        const currentHeightPercentile = (
+          (height / parseFloat(this.medianWeightandHeight["height"])) *
+          100
+        ).toFixed(0);
+        const currentHeightRounded =
+          (height % Math.floor(height) < 0.5 ? 0 : 0.5) + Math.floor(height);
+        const medianWeightHeight =
+          this.weightForHeight[currentHeightRounded.toFixed(1)];
+        const weightForHeightPercentile = (
+          (weight / medianWeightHeight) *
+          100
+        ).toFixed(0);
+
+        obs.push({
+          label: "Weight for height percent of median",
+          value: weightForHeightPercentile,
+        });
+        obs.push({
+          label: "Weight for age percent of median",
+          value: currentWeightPercentile,
+        });
+        obs.push({
+          label: "Height for age percent of median",
+          value: currentHeightPercentile,
+        });
+      } else {
+        const BMI = BMIService.calculateBMI(weight, height);
+        obs.push({ label: "BMI", value: BMI });
+      }
+      return obs;
+    },
+    getVal(formData: Option[], val: string): number {
+      const value = formData.filter((key: any) => key.label === val);
+      return value[0].value === "" ? 0 : parseFloat(`${value[0].value}`);
+    },
     async mapObs(vitals: any) {
       const j = vitals.map(async (element: any) => {
-        const obs = await ObservationService.buildValueNumber(
+        const obs = await this.vitals.buildValueNumber(
           element.label,
           element.value
         );
@@ -122,7 +170,7 @@ export default defineComponent({
         }
         return element.value !== "" && element.label !== "Age";
       });
-      return [...this.splitBP(p), ...p];
+      return [...this.splitBP(p), ...p, ...this.getBMI(vitals)];
     },
     checkRequiredVitals(vitals: Array<Option>) {
       return vitals.filter((element) => {
@@ -138,8 +186,12 @@ export default defineComponent({
       const lastHeight = await patient.getRecentHeight();
       this.recentHeight = lastHeight == -1 ? null : lastHeight;
       this.vitals = new VitalsService(patientID);
-      await ObservationService.getAll(patient.getID(), "Treatment status").then(
-        (data) => {
+      if (this.age <= 14) {
+        this.medianWeightandHeight = await patient.getMedianWeightandHeight();
+        this.weightForHeight = await ProgramService.getWeightForHeightValues();
+      }
+      await VitalsService.getAll(patient.getID(), "Treatment status").then(
+        (data: any) => {
           this.hasHTNObs = data && data.length > 0;
         }
       );

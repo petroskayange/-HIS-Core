@@ -35,6 +35,9 @@ export class ProgramService extends Service {
           'date_enrolled': super.getSessionDate()
       })
     }
+    static getWeightForHeightValues() {
+      return super.getJson('/patient_weight_for_height_values');
+    }
     static async selectApplication() {
       const modal = await modalController.create({
         component: Modal,
