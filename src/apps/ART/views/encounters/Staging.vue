@@ -83,12 +83,14 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create encounter')
 
             const stagingConditions = this.buildStagingObs()
+            const reasonForArt = this.getReasonForArt()
             const data = await Promise.all([
                 ...this.pregnancy, 
                 ...stagingConditions, 
                 ...this.cd4Count,
                 ...this.cd4Date, 
-                ...this.cd4Location
+                ...this.cd4Location,
+                ...reasonForArt
             ])
 
             const obs = await this.staging.saveObservationList(data)
@@ -139,24 +141,24 @@ export default defineComponent({
         },
         updateStageFour(data: Array<Option>) {
             this.stageFour = data.map(i => i.label)
-            this.updateStagingFacts(4)
+            this.updateStagingFacts(4, data)
         },
         updateStageThree(data: Array<Option>) {
             this.stageThree = data.map(i => i.label)
-            this.updateStagingFacts(3)
+            this.updateStagingFacts(3, data)
         },
         updateStageTwo(data: Array<Option>) {
             this.stageTwo = data.map(i => i.label)
-            this.updateStagingFacts(2)
+            this.updateStagingFacts(2, data)
         },
         updateStageOne(data: Array<Option>) {
             this.stageOne = data.map(i => i.label)
-            this.updateStagingFacts(1)
+            this.updateStagingFacts(1, data)
         },
-        updateStagingFacts(stage: number) {
-            const primaryStage = this.facts.stage === null ? 0 : this.facts.stage
+        updateStagingFacts(stage: number, data: any) {
+            const activeStage = this.facts.stage === null ? 0 : this.facts.stage
             
-            if (stage >= primaryStage) 
+            if (stage >= activeStage && !isEmpty(data)) 
                 this.facts.stage = stage
 
             this.facts['selected_conditions'] = [
@@ -195,6 +197,12 @@ export default defineComponent({
                     }
                 }
             })
+        },
+        getReasonForArt() {
+            const guidelines = this.staging.getProgramEligibilityGuidelines()
+            const recommendedReasons = matchToGuidelines(this.facts, guidelines)
+
+            return [this.staging.buildReasonForArtObs(recommendedReasons[0].concept)]
         },
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
@@ -317,6 +325,7 @@ export default defineComponent({
                         const modifier = value.charAt(0)
                         const count = value.substring(1)
                         this.updateCd4Count(parseInt(count), modifier)
+                        this.getReasonForArt()
                     },
                     validation: (val: any) => {
                         if (!val) return ['Value is required']

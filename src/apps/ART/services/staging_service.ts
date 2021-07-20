@@ -63,6 +63,10 @@ export class StagingService extends AppEncounterService {
         return this.buildValueCoded('Who stages criteria present', condition)
     }
 
+    buildReasonForArtObs(reason: string) {
+        return this.buildValueCoded('Reason for ART eligibility', reason)
+    }
+
     private getStagingCategoryByNum(stageNumber: number) {
         switch(stageNumber) {
             case 1:
