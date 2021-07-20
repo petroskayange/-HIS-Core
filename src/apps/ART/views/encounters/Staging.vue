@@ -44,7 +44,8 @@ export default defineComponent({
             "selected_condition": '' as string,
             "selected_conditions": [] as Array<string>,
             "weight_percentile": -1 as number,
-            "age_in_months": -1 as number
+            "age_in_months": -1 as number,
+            "cd4_modifier": ''
         }
     }),
     watch: {
@@ -130,6 +131,7 @@ export default defineComponent({
                this.staging.buildValueNumber('CD4 count', count, modifier)
            ]
            this.facts.cd4 = count
+           this.facts['cd4_modifier'] = modifier
         },
         updateCd4Date(date: string) {
             this.cd4Date = [ 
