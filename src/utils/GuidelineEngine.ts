@@ -25,13 +25,15 @@ export interface GuideLineInterface {
  */
 function calculatePassMark(facts: Record<string, any>, conditions: Record<string, ConditionInterface>): number {
     let passMark = 0
-    
+
     for(const prop in conditions) {
         if (!(prop in facts)) 
             continue
 
-        const validator = conditions[prop]
+        if (facts[prop] === null) 
+            continue
 
+        const validator = conditions[prop]
         if (validator.condition(facts[prop])) {
             passMark += validator.pass
         }
