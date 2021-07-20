@@ -124,6 +124,10 @@ export class Patientservice extends Service {
         return HisDate.getAgeInYears(this.patient.person.birthdate)
     }
 
+    getAgeInMonths() {
+        return this.getAge() * 12
+    }
+
     getBirthdate() {
         return this.patient.person.birthdate
     }
