@@ -85,8 +85,6 @@ export default defineComponent({
             const stagingConditions = this.buildStagingObs()
             const reasonForArt = this.buildReasonForArtObs()
             const whoStage = this.buildWhoStageObs()
-
-            console.log(whoStage)
             const data = await Promise.all([
                 ...this.pregnancy, 
                 ...stagingConditions, 
