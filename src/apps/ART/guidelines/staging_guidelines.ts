@@ -252,6 +252,78 @@ export const ADULT_ART_ELIGIBILITY = {
             }
         }
     },
+    'CD4 less than 350 for adults before 2014': {
+        concept: 'cd4 less than or equal to 350',
+        minPass: 100,
+        conditions: {
+            date: {
+                condition: (date: string) => date < '2014-04-01',
+                pass: 50
+            },
+            cd4: {
+                condition: (cd4: number) => cd4 <= 350,
+                pass: 25
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 25
+            }
+        }
+    },
+    'CD4 less than 250 for adults after 2014': {
+        concept: 'cd4 less than or equal to 250',
+        minPass: 100,
+        conditions: {
+            date: {
+                condition: (date: string) => date >= '2014-04-01',
+                pass: 50
+            },
+            cd4: {
+                condition: (cd4: number) => cd4 <= 250,
+                pass: 25
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 25
+            }
+        }
+    },
+    'CD4 less than 350 for adults after 2014': {
+        concept: 'cd4 less than or equal to 350',
+        minPass: 100,
+        conditions: {
+            date: {
+                condition: (date: string) => date >= '2014-04-01',
+                pass: 50
+            },
+            cd4: {
+                condition: (cd4: number) =>  cd4 <= 350,
+                pass: 25
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 25
+            }
+        }
+    },
+    'CD4 less than 500 for adults after 2014': {
+        concept: 'cd4 less than or equal to 500',
+        minPass: 100,
+        conditions: {
+            date: {
+                condition: (date: string) => date >= '2014-04-01',
+                pass: 50
+            },
+            cd4: {
+                condition: (cd4: number) =>  cd4 <= 500,
+                pass: 25
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 25
+            }
+        }
+    },
     'Breast feeding women': {
         concept: 'BREASTFEEDING',
         minPass: 100,
@@ -284,62 +356,6 @@ export const ADULT_ART_ELIGIBILITY = {
             },
             stage: {
                 condition: (stage: number) => stage <= 2,
-                pass: 50
-            }
-        }
-    },
-    'CD4 less than 350 for adults before 2014': {
-        concept: 'CD4 COUNT LESS THAN OR EQUAL TO 350',
-        minPass: 100,
-        conditions: {
-            date: {
-                condition: (date: string) => date < '2014-04-01',
-                pass: 50
-            },
-            cd4: {
-                condition: (cd4: number) => cd4 <= 350,
-                pass: 50
-            }
-        }
-    },
-    'CD4 less than 250 for adults after 2014': {
-        concept: 'CD4 count less than or equal to 250',
-        minPass: 100,
-        conditions: {
-            date: {
-                condition: (date: string) => date >= '2014-04-01',
-                pass: 50
-            },
-            cd4: {
-                condition: (cd4: number) => cd4 <= 250,
-                pass: 50
-            }
-        }
-    },
-    'CD4 less than 350 for adults after 2014': {
-        concept: 'CD4 COUNT LESS THAN OR EQUAL TO 350',
-        minPass: 100,
-        conditions: {
-            date: {
-                condition: (date: string) => date >= '2014-04-01',
-                pass: 50
-            },
-            cd4: {
-                condition: (cd4: number) =>  cd4 <= 350,
-                pass: 50
-            }
-        }
-    },
-    'CD4 less than 500 for adults after 2014': {
-        concept: 'CD4 COUNT LESS THAN OR EQUAL TO 500',
-        minPass: 100,
-        conditions: {
-            date: {
-                condition: (date: string) => date >= '2014-04-01',
-                pass: 50
-            },
-            cd4: {
-                condition: (cd4: number) =>  cd4 <= 500,
                 pass: 50
             }
         }
