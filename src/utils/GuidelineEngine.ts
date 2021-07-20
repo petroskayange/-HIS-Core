@@ -13,6 +13,7 @@ export interface ConditionInterface {
 export interface GuideLineInterface {
     concept?: string;
     minPass: number;
+    actions?: Record<string, 'alert' | 'disabled' | 'isChecked'>;
     conditions: Record<string, ConditionInterface>;
 
 }
@@ -48,13 +49,15 @@ function calculatePassMark(facts: Record<string, any>, conditions: Record<string
  * @param guidelines 
  * @returns 
  */
-export function analyse(facts: Record<string, any>, guidelines: Array<GuideLineInterface>) {
+export function matchToGuidelines(facts: Record<string, any>, guidelines: Array<GuideLineInterface>) {
+    const matches = []
     for(const guidelineIndex in guidelines) {
         const data: GuideLineInterface = guidelines[guidelineIndex]
         const passMark = calculatePassMark(facts, data.conditions)
-        
-        if (passMark >= data.minPass) return data
+
+        if (passMark >= data.minPass) 
+            matches.push(data)
     }
-    return {}
+    return matches
 }
 
