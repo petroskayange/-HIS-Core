@@ -5,6 +5,9 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
     'Adults with a BMI less than 16': {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
         minPass: 100,
+        actions: {
+            isChecked: true
+        },
         conditions: {
             stage: {
                 condition: (stage: number) => stage === 4,
@@ -19,6 +22,9 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
     'Adults whose BMI is between 16 and 18': {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
+        actions: {
+            isChecked: true
+        },
         conditions: {
             stage: {
                 condition: (stage: number) => stage === 2,
@@ -73,7 +79,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
         actions: {
-            disable: true
+            disabled: true
         },
         conditions: {
             'selected_conditions': {
