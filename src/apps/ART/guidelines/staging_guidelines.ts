@@ -242,6 +242,20 @@ export const ADULT_ART_ELIGIBILITY = {
             }
         }
     },
+    'Has HIV wasting syndrome identified in stage 3': {
+        concept: 'WHO STAGE IV ADULT',
+        minPass: 100,
+        conditions: {
+            'selected_conditions': {
+                condition: (conditions: Array<string>) => {
+                    const severeSymp = ConceptService.getConceptsByCategory('severe_hiv_wasting_syndrome')
+                    const found = severeSymp.reduce((total, symp) => conditions.includes(symp.name) ? total+1: 0, 0)
+                    return found >= 2
+                },
+                pass: 100
+            }
+        }
+    },
     'Has stage 3 conditions': {
         concept: 'WHO STAGE III ADULT',
         minPass: 100,

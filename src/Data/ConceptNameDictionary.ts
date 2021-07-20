@@ -816,22 +816,16 @@ export default [
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
-      "meta": {
-         "bmi":{
-            "less_than_equal": 16
-         },
-         "age": {
-            "greater_than_equal": 15
-         }
-      },
       "concept_id": 7540,
       "name": "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained"
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
@@ -840,6 +834,7 @@ export default [
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
