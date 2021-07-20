@@ -1,5 +1,105 @@
 export default [
    {
+      "categories":[
+         "reasons_for_art",
+         "stage_1_conditions_adults_who_reason"
+      ],
+      "concept_id":7561,
+      "name":"WHO STAGE I ADULT"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_1_conditions_pedaids_who_reason",
+         "stage_1_conditions_adults_who_reason"
+      ],
+      "concept_id":7041,
+      "name":"WHO STAGE I ADULT AND PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_1_conditions_pedaids_who_reason"
+      ],
+      "concept_id":7049,
+      "name":"WHO STAGE I PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_2_conditions_adults_who_reason"
+      ],
+      "concept_id":7046,
+      "name":"WHO STAGE II ADULT"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_2_conditions_pedaids_who_reason",
+         "stage_2_conditions_adults_who_reason"
+      ],
+      "concept_id":7042,
+      "name":"WHO STAGE II ADULT AND PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_2_conditions_pedaids_who_reason"
+      ],
+      "concept_id":7050,
+      "name":"WHO STAGE II PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_3_conditions_adults_who_reason"
+      ],
+      "concept_id":7047,
+      "name":"WHO STAGE III ADULT"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_3_conditions_pedaids_who_reason",
+         "stage_3_conditions_adults_who_reason"
+      ],
+      "concept_id":7043,
+      "name":"WHO STAGE III ADULT AND PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_3_conditions_pedaids_who_reason"
+      ],
+      "concept_id":7051,
+      "name":"WHO STAGE III PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_4_conditions_adults_who_reason"
+      ],
+      "concept_id":7048,
+      "name":"WHO STAGE IV ADULT"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_4_conditions_pedaids_who_reason",
+         "stage_4_conditions_adults_who_reason"
+      ],
+      "concept_id":7044,
+      "name":"WHO STAGE IV ADULT AND PEDS"
+   },
+   {
+      "categories":[
+         "reasons_for_art",
+         "stage_4_conditions_pedaids_who_reason"
+      ],
+      "concept_id":7052,
+      "name":"WHO STAGE IV PEDS"
+   },
+   {
       "categories": [],
       "concept_id": 1805,
       "name": "Patient present"

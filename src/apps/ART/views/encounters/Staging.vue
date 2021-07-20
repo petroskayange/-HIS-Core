@@ -17,6 +17,7 @@ export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         staging: {} as any,
+        whoReasonsForArtObs: [] as any,
         pregnancyObs: [] as any,
         stageFourObs: [] as any,
         stageThreeObs: [] as any,
@@ -55,7 +56,8 @@ export default defineComponent({
                 ...this.pregnancyObs, ... this.stageFourObs, 
                 ...this.stageThreeObs, ...this.stageTwoObs, 
                 ...this.stageOneObs, ...this.cd4Count,
-                ...this.cd4Date, ...this.cd4Location
+                ...this.cd4Date, ...this.cd4Location,
+                ...this.whoReasonsForArtObs
             ])
 
             const obs = await this.staging.saveObservationList(data)
@@ -85,12 +87,21 @@ export default defineComponent({
             })
             this.pregnancyObs = payload
         },
+        setArtStagingReasonObs(stage: number) {
+            const category = this.staging.getStagingCategoryByNum(stage)
+            const reason = this.staging.getWhoReasonForART(category)
+
+            this.whoReasonsForArtObs = [this.staging.buildValueCoded(
+                "Reason for ART eligibility", reason
+            )]
+        },
         buildStagingData(data: Array<Option>) {
             return data.map((item: Option) => {
                 return this.staging.buildValueCoded('Who stages criteria present', item.label)
             })
         },
-        mapStagingOptions(group: StagingCategory) {
+        getStagingOptions(stage: number) {
+            const group: StagingCategory = this.staging.getStagingCategoryByNum(stage)
             return this.staging.getStagingConditions(group).map((concept: any) => ({
                 label: concept.name,
                 value: concept.concept_id,
@@ -158,28 +169,37 @@ export default defineComponent({
                     id: 'stage_4_conditions',
                     helpText: 'Stage 4 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: (data: any) => this.stageFourObs = this.buildStagingData(data),
-                    options: () => this.mapStagingOptions(
-                        this.staging.isAdult() ? StagingCategory.ADULT_STAGE_4 : StagingCategory.PEDAID_STAGE_4 
-                    )
+                    unload: (data: any) => {
+                        this.stageFourObs = this.buildStagingData(data)
+                        if (!isEmpty(this.stageFourObs)) this.setArtStagingReasonObs(4)
+                    },
+                    options: () => this.getStagingOptions(4)
                 },
                 {
                     id: 'stage_3_conditions',
                     helpText: 'Stage 3 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: async (data: any) => this.stageThreeObs = this.buildStagingData(data),
-                    options: () => this.mapStagingOptions(
-                        this.staging.isAdult() ? StagingCategory.ADULT_STAGE_3 : StagingCategory.PEDAID_STAGE_3 
-                    )
+                    unload: async (data: any) => {
+                        this.stageThreeObs = this.buildStagingData(data)
+                        // prioritize stage 4 reason if stage 4 conditions are set
+                        if (!isEmpty(this.stageThreeObs) && isEmpty(this.stageFourObs)) 
+                            this.setArtStagingReasonObs(3)
+                    },
+                    options: () => this.getStagingOptions(3)
                 },
                 {
                     id: 'stage_2_conditions',
                     helpText: 'Stage 2 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: async (data: any) => this.stageTwoObs = this.buildStagingData(data),
-                    options: () => this.mapStagingOptions(
-                        this.staging.isAdult() ? StagingCategory.ADULT_STAGE_2 : StagingCategory.PEDAID_STAGE_2 
-                    )
+                    unload: async (data: any) => {
+                        this.stageTwoObs = this.buildStagingData(data)
+                        // prioritize stage 3 and 4 reason if stage 3 and 4 conditions are set
+                        if (!isEmpty(this.stageTwoObs) && isEmpty([
+                            ...this.stageFourObs, ...this.stageThreeObs
+                            ])) 
+                            this.setArtStagingReasonObs(2)
+                    },
+                    options: () => this.getStagingOptions(2)
                 },
                 {
                     id: 'stage_1_conditions',
@@ -191,13 +211,19 @@ export default defineComponent({
                             ...this.stageThreeObs,
                             ...this.stageTwoObs
                         ]
-                        if (isEmpty(val) && isEmpty(stages)) 
+                        if (isEmpty(val) && isEmpty(stages))
                             return ['Please provide atleast one staging condition']
                     },
-                    unload: async (data: any) => this.stageOneObs = this.buildStagingData(data),
-                    options: () => this.mapStagingOptions(
-                        this.staging.isAdult() ? StagingCategory.ADULT_STAGE_1 : StagingCategory.PEDAID_STAGE_1 
-                    )
+                    unload: async (data: any) => {
+                        this.stageOneObs = this.buildStagingData(data)
+                        // prioritize higher staging reasons if other conditions are set
+                        if (!isEmpty(this.stageOneObs) && isEmpty([
+                            ...this.stageFourObs, ...this.stageThreeObs,
+                            ...this.stageTwoObs
+                        ]))
+                            this.setArtStagingReasonObs(1)
+                    },
+                    options: () => this.getStagingOptions(1)
                 },
                 {
                     id: 'cd4_available',

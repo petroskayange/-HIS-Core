@@ -1,6 +1,6 @@
 import { AppEncounterService } from "@/services/app_encounter_service"
 import { LocationService } from "@/services/location_service"
-
+import { isEmpty } from "lodash"
 export enum StagingCategory {
     ADULT_STAGE_4 = 'stage_4_conditions_adults',
     ADULT_STAGE_3 = 'stage_3_conditions_adults',
@@ -47,6 +47,25 @@ export class StagingService extends AppEncounterService {
         }catch(e) {
             return false
         }
+    }
+
+    getStagingCategoryByNum(stageNumber: number) {
+        switch(stageNumber) {
+            case 1:
+                return this.isAdult() ? StagingCategory.ADULT_STAGE_1 : StagingCategory.PEDAID_STAGE_1
+            case 2:
+                return this.isAdult() ? StagingCategory.ADULT_STAGE_2 : StagingCategory.PEDAID_STAGE_2
+            case 3:
+                return this.isAdult() ? StagingCategory.ADULT_STAGE_3 : StagingCategory.PEDAID_STAGE_3
+            case 4:
+                return this.isAdult() ? StagingCategory.ADULT_STAGE_4 : StagingCategory.PEDAID_STAGE_4
+        }
+    }
+
+    getWhoReasonForART(stage: StagingCategory) {
+        const reasons = AppEncounterService.getConceptsByCategory(`${stage}_who_reason`)
+
+        return !isEmpty(reasons) ? reasons[0].name: null
     }
 
     async loadHivConfirmatoryTestType() {
