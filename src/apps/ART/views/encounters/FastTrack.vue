@@ -1,7 +1,6 @@
 <template>
   <his-standard-form
     :fields="fields"
-    :activeField="activeField"
     @onFinish="onFinish"
     :skipSummary="true"
     :cancelDestinationPath="cancelDestination"
@@ -14,24 +13,25 @@ import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations";
 import EncounterMixinVue from "./EncounterMixin.vue";
-import { PatientTypeService } from "@/apps/ART/services/patient_type_service";
+import { FastTrackService } from "@/apps/ART/services/fast_track_service";
 import { toastSuccess, toastWarning } from "@/utils/Alerts";
-import { ConceptService } from "@/services/concept_service";
+import { Patientservice } from "@/services/patient_service";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
-    activeField: "",
     fields: [] as any,
-    patientType: "" as any,
+    fastTrack: {} as any,
+    options: [] as any,
+    values: [] as any,
+    gender: null as any,
   }),
   watch: {
     $route: {
       async handler({ query }: any) {
         this.patientID = query.patient_id;
-        await this.setPatientType();
-        this.fields = this.getFields();
+        this.init();
       },
       deep: true,
       immediate: true,
@@ -39,105 +39,108 @@ export default defineComponent({
   },
   methods: {
     async onFinish(formData: any) {
-      console.log(formData);
-      // const pts = new PatientTypeService(this.patientID);
-      // const encounter = await pts.createEncounter();
-      // if (encounter) {
-      //   const observations = await pts.saveValueCodedObs(
-      //     "Type of patient",
-      //     formData.patient_type.value
-      //   );
-      //   if (!observations)
-      //     return toastWarning("Unable to save patient observations");
+      const encounter = await this.fastTrack.createEncounter();
+      if (encounter) {
+        const obs = await this.buildObs(formData);
+        const observations = await this.fastTrack.saveObservationList(obs);
+        if (!observations)
+          return toastWarning("Unable to save patient observations");
 
-      //   toastSuccess("Observations and encounter created!");
-      //   this.nextTask();
-      // } else {
-      //   return toastWarning("Unable to create treatment encounter");
-      // }
+        toastSuccess("Observations and encounter created!");
+        this.nextTask();
+      } else {
+        return toastWarning("Unable to create fast track encounter");
+      }
     },
-    async setPatientType() {
-      await PatientTypeService.getAll(this.patientID, "Type of patient").then(
-        async (data) => {
-          if (data.length > 0) {
-            this.patientType = await PatientTypeService.getConceptName(
-              data[0].value_coded
-            );
-          }
-        }
+    async init() {
+      const response = await Patientservice.findByID(this.patientID);
+      const patient = new Patientservice(response);
+      this.gender = patient.getGender();
+      this.fastTrack = new FastTrackService(this.patientID);
+      this.values = await this.getYesNo();
+      this.options = await this.getOptions();
+      this.fields = this.getFields();
+    },
+    async buildObs(formData: any) {
+      const observations = [];
+      observations.push(
+        await this.fastTrack.buildValueCoded(
+          "Assess for fast track",
+          formData.ft_assessment.value
+        )
       );
+      if (formData.ft_questions) {
+        await formData.ft_questions.forEach(async (element: any) => {
+          observations.push(
+            await this.fastTrack.buildValueCoded(element.label, element.value)
+          );
+        });
+
+        observations.push(
+          await this.fastTrack.buildValueCoded(
+            "Fast track",
+            formData.book_client.value
+          )
+        );
+      }
+      return observations;
     },
-    getFields(): any {
-      const inclusionListArr = [
-        ["Adult  18 years +", 9533],
-        ["On ART for 12 months +", 9534],
-        ["On 1`st line ART", 9535],
-        ["Good current adherence", 9537],
-        ["Last VL <1000", 9536],
-        ["Pregnant / Breastfeeding", 9538],
-        ["Side effects / HIV-rel. diseases", 9539],
-        ["Needs BP / diabetes treatment", 9540],
-        ["Started IPT <12m ago", 9527],
-        ["Any sign for TB", 2186],
-      ];
-      const values = [
+    async getOptions() {
+      const values = this.getYesNo();
+      const options = await this.fastTrack
+        .getAssessmentValues("fast_track")
+        .map((data: any) => {
+          return {
+            label: data.name,
+            value: "",
+            other: {
+              values: values,
+            },
+          };
+        });
+      if (this.gender === "M") {
+        return options.filter((data: any) => {
+          return !data.label.match(/Pregnant/i);
+        });
+      }
+      return options;
+    },
+    getYesNo() {
+      return [
         {
           label: "yes",
-          value: ConceptService.getCachedConceptID("Yes", true),
+          value: "Yes",
         },
         {
           label: "no",
-          value: ConceptService.getCachedConceptID("No", true),
+          value: "No",
         },
       ];
+    },
+    getFields(): any {
       return [
         {
           id: "ft_assessment",
           helpText: `Assess client for FT`,
           type: FieldType.TT_SELECT,
           validation: (val: any) => Validation.required(val),
-          options: () => [
-            {
-              label: "Yes",
-              value: "Yes",
-            },
-            {
-              label: "No",
-              value: "No",
-            },
-          ],
+          options: () => this.getYesNo(),
         },
         {
-          id: "present",
-          helpText: "Who is present",
+          id: "ft_questions",
+          helpText: "Assess client for FT",
           type: FieldType.TT_MULTIPLE_YES_NO,
-          config: {
-            showKeyboard: false,
-            showSummary: false,
-            eventValidation: (newValue: any) => {
-              return {};
-            },
-          },
           condition(formData: any) {
             return formData.ft_assessment.value === "Yes";
           },
           validation: (val: any) => Validation.anyEmpty(val),
           options: () => {
-            return inclusionListArr.map((data) => {
-              return {
-                label: data[0],
-                value: "",
-                other: {
-                  property: "patient_present",
-                  values: values,
-                },
-              };
-            });
+            return this.options;
           },
         },
         {
           id: "book_client",
-          helpText: "Book client for Fast Track",
+          helpText: "Select type of visit to book",
           type: FieldType.TT_SELECT,
           condition(formData: any) {
             return formData.ft_assessment.value === "Yes";
@@ -145,11 +148,11 @@ export default defineComponent({
           validation: (val: any) => Validation.required(val),
           options: () => [
             {
-              label: "Yes",
+              label: "Fast track",
               value: "No",
             },
             {
-              label: "No",
+              label: "Normal visit",
               value: "No",
             },
           ],

@@ -102,7 +102,6 @@ ion-segment-button {
   margin: 1%;
   font-size: 1.6em;
   --indicator-color: #028000;
-  --border-color: red;
   --background: white;
 }
 
