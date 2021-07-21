@@ -1,5 +1,5 @@
 import { ConceptService } from "@/services/concept_service"
-import { alertConfirmation } from "@/utils/Alerts"
+import { alertAction } from "@/utils/Alerts"
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
 
 export const ADULT_WHO_STAGE_CRITERIA: Record<string, GuideLineInterface> = {
@@ -124,10 +124,15 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
         minPass: 100,
         priority: 1,
         actions: {
-            alert: () => {
-                return alertConfirmation(
-                    'Patient has a normal BMI, do you want to continue?'
+            alert: async() => {
+                const action = await alertAction(
+                    'Patient\'s current BMI is greater than 18.5, do you wish to proceed?',
+                    [
+                        { text: 'Yes, select severe weightloss', role: 'asympt'},
+                        { text: 'No, cancel', role: 'keep'}
+                    ]
                 )
+                return action === 'asympt'
             },
         },
         conditions: {
@@ -146,10 +151,15 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
         minPass: 100,
         priority: 1,
         actions: {
-            alert: () => {
-                return alertConfirmation(
-                    'CONTRADICTING STAGE DEFINING CONDITIONS'
+            alert: async () => {
+                const action = await alertAction(
+                    'CONTRADICTING STAGE DEFINING CONDITIONS',
+                    [
+                        { text: 'Keep Asymptomatic', role: 'asympt'},
+                        { text: 'Keep other(s)', role: 'keep'}
+                    ]
                 )
+                return action === 'asympt'
             }
         },
         conditions: {
