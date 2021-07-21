@@ -353,7 +353,7 @@ export const ADULT_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
             }
         }
     },
-    'Breast feeding women': {
+    'Women who are breast feeding': {
         concept: 'BREASTFEEDING',
         minPass: 100,
         priority: 7,
@@ -372,7 +372,7 @@ export const ADULT_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
             }
         }
     },
-    'Pregnant women': {
+    'Women who are pregnant': {
         concept: 'PATIENT PREGNANT',
         minPass: 100,
         priority: 8,
