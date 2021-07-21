@@ -6,6 +6,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     'Adults with a BMI less than 16': {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
         minPass: 100,
+        priority: 1,
         actions: {
             isChecked: true
         },
@@ -24,6 +25,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     'Adults whose BMI is between 16 and 18': {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
+        priority: 1,
         actions: {
             isChecked: true
         },
@@ -42,6 +44,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     "Warn if Severe weight loss is selected when patient BMI is normal": {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
         minPass: 100,
+        priority: 1,
         actions: {
             alert: () => {
                 return alertConfirmation(
@@ -59,6 +62,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     "Warn for contradicting stage defining conditions": {
         concept: 'Asymptomatic HIV infection',
         minPass: 100,
+        priority: 1,
         actions: {
             alert: () => {
                 return alertConfirmation(
@@ -80,6 +84,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     "Disable Moderate weight loss if severe weightloss is selected": {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
+        priority: 1,
         actions: {
             isChecked: false,
             disabled: true
@@ -102,6 +107,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Has stage 4 conditions': {
         concept: 'WHO STAGE IV PEDS',
         minPass: 100,
+        priority: 1,
         conditions: {
             stage: {
                 condition: () => (stage: number) => stage === 4,
@@ -112,6 +118,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Has stage 3 conditions': {
         concept: 'WHO STAGE III PEDS',
         minPass: 100,
+        priority: 1,
         conditions: {
             stage: {
                 condition: (stage: number) => stage === 3,
@@ -122,6 +129,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Children under twelve months who tested positive on Rapid test and have presumed severe HIV': {
         concept: 'PRESUMED SEVERE HIV',
         minPass: 100,
+        priority: 1,
         conditions: {
             'age_in_months':  {
                 condition: (age: number) => age < 12,
@@ -146,6 +154,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children under twelve who tested positive via HIV DNA Polymerase Chain Reaction test": {
         concept: 'HIV DNA POLYMERASE CHAIN REACTION',
         minPass: 100,
+        priority: 1,
         conditions: {
             'age_in_months': {
                 condition: (age: number) => age < 12,
@@ -160,6 +169,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children who are less than 24 months": {
         concept: 'HIV infected',
         minPass: 100,
+        priority: 1,
         conditions: {
             age: {
                 condition: (age: number) => age < 24,
@@ -170,6 +180,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children between 24 and 56 months who have stage 2 or 1 conditions": {
         concept: 'CD4 COUNT LESS THAN OR EQUAL TO 750',
         minPass: 100,
+        priority: 1,
         conditions: {
             'age_in_months': {
                 condition: (age: number) => age >= 24 && age <= 56,
@@ -188,6 +199,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children with CD4 count less than 500 and have stage 1 and stage 2 conditions": {
         concept: 'CD4 COUNT LESS THAN OR EQUAL TO 500',
         minPass: 100,
+        priority: 1,
         conditions: {
             cd4: {
                 condition: (cd4: number) => cd4 < 500,
@@ -202,6 +214,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children over the date 2014-04-01 who are more than five years old and have cd4 count less than 500": {
         concept: 'CD4 COUNT LESS THAN OR EQUAL TO 500',
         minPass: 100,
+        priority: 1,
         conditions: {
            date: {
                condition: (date: string) => date >= '2014-04-01',
@@ -216,6 +229,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Children over date 2014-04-01 and less than Five years old": {
         concept: 'HIV infected',
         minPass: 100,
+        priority: 1,
         conditions: {
             date: {
                 condition: (date: string) => date >= '2014-04-01',
@@ -230,6 +244,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     "Asymptomatic patient with either stage one or stage two conditions": {
         concept: 'Asymptomatic',
         minPass: 100,
+        priority: 1,
         conditions: {
             stage: {
                 condition: (stage: number) => stage <= 2,
