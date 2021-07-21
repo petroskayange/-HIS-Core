@@ -38,6 +38,7 @@ export default defineComponent({
             stage: -1 as number,
             cd4: -1 as number,
             date: '' as string,
+            "reason_for_art": '' as string,
             "test_type": '' as string,
             "pregnant": '' as 'Yes' | 'No',
             "breast_feeding": '' as 'Yes' | 'No',
@@ -84,7 +85,7 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create encounter')
 
             const stagingConditions = this.buildStagingObs()
-            const reasonForArt = this.buildReasonForArtObs()
+            const reasonForArt = this.buildReasonForArtObs() // must always come before who stage
             const whoStage = this.buildWhoStageObs()
             const data = await Promise.all([
                 ...this.pregnancy, 
@@ -178,11 +179,15 @@ export default defineComponent({
         buildReasonForArtObs() {
             const guidelines = this.staging.getProgramEligibilityGuidelines()
             const recommendedReasons = matchToGuidelines(this.facts, guidelines)
+            const reason = recommendedReasons[0].concept
+            this.facts['reason_for_art'] = reason || ''
 
-            return [this.staging.buildReasonForArtObs(recommendedReasons[0].concept)]
+            return [this.staging.buildReasonForArtObs(reason)]
         },
         buildWhoStageObs() {
-            return [this.staging.buildWhoStageObs(this.facts.stage)]
+            const guidelines = this.staging.getWhoStageGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+            return [this.staging.buildWhoStageObs(findings[0].concept)]
         },
         buildStagingOptions(stage: number) {
             const facts = {...this.facts}

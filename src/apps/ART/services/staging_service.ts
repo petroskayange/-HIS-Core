@@ -1,10 +1,11 @@
 import { AppEncounterService } from "@/services/app_encounter_service"
 import { LocationService } from "@/services/location_service"
-import { isEmpty } from "lodash"
 import {
     RECOMMENDED_ADULT_STAGING_CONDITIONS,
     CHILD_ART_ELIGIBILITY,
-    ADULT_ART_ELIGIBILITY
+    ADULT_ART_ELIGIBILITY,
+    ADULT_WHO_STAGE_CRITERIA,
+    CHILD_WHO_STAGE_CRITERIA
 } from "@/apps/ART/guidelines/staging_guidelines"
 
 /**
@@ -46,6 +47,10 @@ export class StagingService extends AppEncounterService {
         }
     }
 
+    getWhoStageGuidelines() {
+        return this.isAdult() ? ADULT_WHO_STAGE_CRITERIA : CHILD_WHO_STAGE_CRITERIA
+    }
+
     getProgramEligibilityGuidelines() {
         return this.isAdult() ? ADULT_ART_ELIGIBILITY: CHILD_ART_ELIGIBILITY
     }
@@ -58,17 +63,9 @@ export class StagingService extends AppEncounterService {
         const category = this.getStagingCategoryByNum(stage)
         return AppEncounterService.getConceptsByCategory(category)
     }
-    
-    getWhoStage(stage: number) {
-        const category = this.getStagingCategoryByNum(stage)
-        const reasons = AppEncounterService.getConceptsByCategory(`${category}_who_reason`)
 
-        return !isEmpty(reasons) ? reasons[0].name: ''
-    }
-
-    buildWhoStageObs(stage: number) {
-        const strStage = this.getWhoStage(stage)
-        return this.buildValueCoded('Who stage', strStage)
+    buildWhoStageObs(stage: string) {
+        return this.buildValueCoded('Who stage', stage)
     }
     
     buildWhoCriteriaObs(condition: string) {

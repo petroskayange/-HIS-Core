@@ -2,6 +2,122 @@ import { ConceptService } from "@/services/concept_service"
 import { alertConfirmation } from "@/utils/Alerts"
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
 
+export const ADULT_WHO_STAGE_CRITERIA: Record<string, GuideLineInterface> = {
+    'Adults with stage 4 conditions': {
+        concept: 'WHO STAGE IV ADULT',
+        minPass: 100,
+        priority: 1,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 4,
+                pass: 100
+            }
+        }
+    },
+    'Classify as stage 4 when reason for ART is WHO STAGE 4': {
+        concept: 'WHO STAGE IV ADULT',
+        minPass: 100,
+        priority: 2,
+        conditions: {
+            'reason_for_art': {
+                condition: (reason: string) => reason === 'WHO STAGE IV ADULT',
+                pass: 100
+            }
+        }
+    },
+    'Adults with stage 3 conditions': {
+        concept: 'WHO STAGE III ADULT',
+        minPass: 100,
+        priority: 3,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 3,
+                pass: 100
+            }
+        }
+    },
+    'Adults with stage 2 conditions': {
+        concept: 'WHO STAGE II ADULT',
+        minPass: 100,
+        priority: 4,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 2,
+                pass: 100
+            }
+        }
+    },
+    'Adults with stage 1 conditions': {
+        concept: 'WHO STAGE I ADULT',
+        minPass: 100,
+        priority: 5,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 1,
+                pass: 100
+            }
+        }
+    }
+}
+
+export const CHILD_WHO_STAGE_CRITERIA: Record<string, GuideLineInterface> = {
+    'Children with stage 4 conditions': {
+        concept: 'WHO STAGE IV PEDS',
+        minPass: 100,
+        priority: 1,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 4,
+                pass: 100
+            }
+        }
+    },
+    'Classify as stage 4 when reason for ART is WHO STAGE 4': {
+        concept: 'WHO STAGE IV PEDS',
+        minPass: 100,
+        priority: 2,
+        conditions: {
+            'reason_for_art': {
+                condition: (reason: string) => reason === 'WHO STAGE IV PEDS',
+                pass: 100
+            }
+        }
+    },
+    'For children with stage 3 conditions': {
+        concept: 'WHO STAGE III PEDS',
+        minPass: 100,
+        priority: 3,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 3,
+                pass: 100
+            }
+        }
+    },
+    'Children with stage 2 conditions': {
+        concept: 'WHO STAGE II PEDS',
+        minPass: 100,
+        priority: 4,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 2,
+                pass: 100
+            }
+        }
+    },
+    'Children with stage 1 conditions': {
+        concept: 'WHO STAGE I PEDS',
+        minPass: 100,
+        priority: 5,
+        conditions: {
+            stage: {
+                condition: (stage: number) => stage === 1,
+                pass: 100
+            }
+        }
+    }
+}
+
 export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInterface> = {
     'Adults with a BMI less than 16': {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
