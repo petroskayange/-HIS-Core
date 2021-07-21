@@ -5,7 +5,8 @@ import {
     CHILD_ART_ELIGIBILITY,
     ADULT_ART_ELIGIBILITY,
     ADULT_WHO_STAGE_CRITERIA,
-    CHILD_WHO_STAGE_CRITERIA
+    CHILD_WHO_STAGE_CRITERIA,
+    CONTRADICTING_STAGE_DEFINITIONS_ALERTS
 } from "@/apps/ART/guidelines/staging_guidelines"
 
 /**
@@ -45,6 +46,10 @@ export class StagingService extends AppEncounterService {
         }catch(e) {
             return false
         }
+    }
+
+    getAlertGuidelines() {
+        return CONTRADICTING_STAGE_DEFINITIONS_ALERTS
     }
 
     getWhoStageGuidelines() {

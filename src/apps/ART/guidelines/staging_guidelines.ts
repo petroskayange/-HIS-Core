@@ -118,6 +118,53 @@ export const CHILD_WHO_STAGE_CRITERIA: Record<string, GuideLineInterface> = {
     }
 }
 
+export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInterface> = {
+    "Warn if Severe weight loss is selected when actual patient BMI is acceptable": {
+        concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
+        minPass: 100,
+        priority: 1,
+        actions: {
+            alert: () => {
+                return alertConfirmation(
+                    'Patient has a normal BMI, do you want to continue?'
+                )
+            },
+        },
+        conditions: {
+            'selected_condition': {
+                condition: (condition: string) => condition === 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
+                pass: 50
+            },
+            bmi: {
+                condition: (bmi: number) => bmi > 18.0,
+                pass: 50 
+            }
+        }
+    },
+    "Warn for contradicting stage defining conditions": {
+        concept: 'Asymptomatic HIV infection',
+        minPass: 100,
+        priority: 1,
+        actions: {
+            alert: () => {
+                return alertConfirmation(
+                    'CONTRADICTING STAGE DEFINING CONDITIONS'
+                )
+            }
+        },
+        conditions: {
+            'selected_condition': {
+                condition: (condition: string) => condition === 'Asymptomatic HIV infection',
+                pass: 50
+            },
+            stage: {
+                condition: (stage: number) => stage >= 2,
+                pass: 50 
+            }
+        }
+    },
+}
+
 export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInterface> = {
     'Adults with a BMI less than 16': {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
@@ -153,46 +200,6 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
         conditions: {
             bmi:{
                 condition: (bmi: number) => bmi >= 16.0 && bmi <= 18.5,
-                pass: 50 
-            }
-        }
-    },
-    "Warn if Severe weight loss is selected when patient BMI is normal": {
-        concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
-        minPass: 100,
-        priority: 1,
-        actions: {
-            alert: () => {
-                return alertConfirmation(
-                    'Patient has a normal BMI, do you want to continue?'
-                )
-            },
-        },
-        conditions: {
-            bmi: {
-                condition: (bmi: number) => bmi > 18.0,
-                pass: 100 
-            }
-        }
-    },
-    "Warn for contradicting stage defining conditions": {
-        concept: 'Asymptomatic HIV infection',
-        minPass: 100,
-        priority: 1,
-        actions: {
-            alert: () => {
-                return alertConfirmation(
-                    'CONTRADICTING STAGE DEFINING CONDITIONS'
-                )
-            }
-        },
-        conditions: {
-            'selected_condition': {
-                condition: (condition: string) => condition.match(/asymptomatic/i),
-                pass: 50
-            },
-            stage: {
-                condition: (stage: number) => stage >= 2,
                 pass: 50 
             }
         }

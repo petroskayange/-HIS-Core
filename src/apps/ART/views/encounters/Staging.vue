@@ -105,6 +105,21 @@ export default defineComponent({
 
             this.nextTask()
         },
+        async onStagingCondition({ label }: Option) {
+            this.facts['selected_condition'] = label
+ 
+            const guidelines =  this.staging.getAlertGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+
+            if (isEmpty(findings)) 
+                return true
+
+            if (findings[0]?.actions && findings[0]?.actions.alert) {
+                const ok = await findings[0]?.actions.alert()
+                return ok ? true : false
+            }
+            return true
+        },
         getYesNoOptions() {
             return [
                 { label: "Yes", value: "Yes" },
@@ -292,7 +307,8 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: (data: any) => this.updateStageFour(data),
-                    options: () => this.buildStagingOptions(4)
+                    options: () => this.buildStagingOptions(4),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_3_conditions',
@@ -301,7 +317,8 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: async (data: any) => this.updateStageThree(data),
-                    options: () => this.buildStagingOptions(3)
+                    options: () => this.buildStagingOptions(3),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_2_conditions',
@@ -310,7 +327,8 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     unload: async (data: any) => this.updateStageTwo(data),
-                    options: () => this.buildStagingOptions(2)
+                    options: () => this.buildStagingOptions(2),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_1_conditions',
@@ -321,7 +339,8 @@ export default defineComponent({
                             return ['Please provide atleast one staging condition']
                     },
                     unload: async (data: Array<Option>) => this.updateStageOne(data),
-                    options: () => this.buildStagingOptions(1)
+                    options: () => this.buildStagingOptions(1),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'cd4_available',

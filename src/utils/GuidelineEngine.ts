@@ -18,6 +18,7 @@ export interface DescriptionInterface {
 }
 
 export interface GuideLineInterface {
+    title?: string;
     concept?: string;
     minPass: number;
     passMark?: number;
@@ -80,6 +81,7 @@ export function matchToGuidelines(facts: Record<string, any>, guidelines: Array<
         const passMark = calculatePassMark(facts, data.conditions)
 
         if (passMark >= data.minPass) {
+            data.title = guidelineIndex
             data.passMark = passMark
             if (data.description) {
                 data.description.text = data.description.info(facts)
