@@ -20,7 +20,8 @@ export interface DescriptionInterface {
 export interface GuideLineInterface {
     concept?: string;
     minPass: number;
-    priority?: number;
+    passMark?: number;
+    priority: number;
     actions?: Record<string, any>;
     description?: DescriptionInterface;
     conditions: Record<string, ConditionInterface>;
@@ -52,6 +53,20 @@ function calculatePassMark(facts: Record<string, any>, conditions: Record<string
 }
 
 /**
+ * Sort guidelines in the order of importance/relevance
+ * @param findings 
+ * @returns 
+ */
+function sortByRelevance(findings: Array<GuideLineInterface>) {
+    return findings.sort((a, b) => {
+        if (a.priority < b.priority || (a.priority === b.priority && a.minPass > b.minPass)) {
+            return  -1
+        }
+        return 0
+    })
+}
+
+/**
  * Check the guideline for matching facts and return matching object 
  * when passMark is greater the minimum passmark
  * @param facts 
@@ -65,12 +80,12 @@ export function matchToGuidelines(facts: Record<string, any>, guidelines: Array<
         const passMark = calculatePassMark(facts, data.conditions)
 
         if (passMark >= data.minPass) {
+            data.passMark = passMark
             if (data.description) {
                 data.description.text = data.description.info(facts)
             }
             matches.push(data)
         }
     }
-    return matches
+    return sortByRelevance(matches)
 }
-
