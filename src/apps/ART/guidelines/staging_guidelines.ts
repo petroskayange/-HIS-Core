@@ -8,14 +8,15 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
         actions: {
             isChecked: true
         },
+        description: {
+            color: 'danger',
+            show: 'always',
+            info: (facts: any) => `Adult has a low BMI of ${facts.bmi}`
+        },
         conditions: {
-            stage: {
-                condition: (stage: number) => stage === 4,
-                pass: 50
-            },
             bmi: {
                 condition: (bmi: number) => bmi < 16,
-                pass: 50
+                pass: 100
             }
         }
     },
@@ -25,11 +26,12 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
         actions: {
             isChecked: true
         },
+        description: {
+            color: 'warning',
+            show: 'onChecked',
+            info: (facts: any) => `BMI of ${facts.bmi} is between 16 and 18`,
+        },
         conditions: {
-            stage: {
-                condition: (stage: number) => stage === 2,
-                pass: 50
-            },
             bmi:{
                 condition: (bmi: number) => bmi >= 16.0 && bmi <= 18.5,
                 pass: 50 
@@ -44,7 +46,6 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
                 return alertConfirmation(
                     'Patient has a normal BMI, do you want to continue?'
                 )
-    
             },
         },
         conditions: {
@@ -81,6 +82,11 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
         actions: {
             isChecked: false,
             disabled: true
+        },
+        description: {
+            color: 'secondary',
+            show: 'always',
+            info: () => 'Severe weight loss was already selected',
         },
         conditions: {
             'selected_conditions': {
