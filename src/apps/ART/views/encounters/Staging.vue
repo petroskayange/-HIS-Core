@@ -218,9 +218,7 @@ export default defineComponent({
                     const conceptFinding = findings[0] //get the first item only
                     isChecked = conceptFinding?.actions?.isChecked ? true : false
                     disabled = conceptFinding?.actions?.disabled ? true : false 
-
-                    if (conceptFinding.description) 
-                        description = conceptFinding.description
+                    description = conceptFinding.description
                 }
 
                 return {
