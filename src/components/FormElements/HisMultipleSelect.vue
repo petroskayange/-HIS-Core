@@ -14,7 +14,7 @@
             <ion-text
               :color="entry.description.color" 
               v-if="isDescription(entry.description, entry.isChecked)"> 
-              <p><small>{{ entry.description.text }}</small></p>
+              <p><i>{{ entry.description.text }}</i></p>
             </ion-text>
           </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end" :disabled="entry?.disabled"/>
