@@ -5,6 +5,7 @@ export interface Option {
     value: string | number;
     other?: any;
     isChecked?: boolean;
+    disabled?: boolean;
 }
 
 export interface Field {

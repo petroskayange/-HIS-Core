@@ -11,7 +11,7 @@
             {{ entry.label }} 
             <span v-if="entry.other?.disableReason">({{entry.other?.disableReason}})</span>
           </ion-label>
-          <ion-checkbox v-model="entry.isChecked" slot="end" :disabled="entry.other?.disabled"/>
+          <ion-checkbox v-model="entry.isChecked" slot="end" :disabled="entry?.disabled"/>
       </ion-item>
       </ion-list>
       </view-port>
