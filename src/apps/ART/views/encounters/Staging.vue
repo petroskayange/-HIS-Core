@@ -205,20 +205,17 @@ export default defineComponent({
             return [this.staging.buildWhoStageObs(findings[0].concept)]
         },
         buildStagingOptions(stage: number) {
-            const facts = {...this.facts}
-            facts.stage = stage
             const guidelines = this.staging.getRecommendedConditionGuidelines()
-            const findings = matchToGuidelines(this.facts, guidelines)
 
             return this.staging.getStagingConditions(stage).map((concept: any) => {
                 let isChecked = false
                 let disabled = false
                 let description: unknown
+                this.facts['selected_condition'] = concept.name
+                const findings = matchToGuidelines(this.facts, guidelines)
 
-                const conceptFindings = findings.filter(i => i.concept === concept.name)
-
-                if (!isEmpty(conceptFindings)) {
-                    const conceptFinding = conceptFindings[0] //get the first item only
+                if (!isEmpty(findings)) {
+                    const conceptFinding = findings[0] //get the first item only
                     isChecked = conceptFinding?.actions?.isChecked ? true : false
                     disabled = conceptFinding?.actions?.disabled ? true : false 
 

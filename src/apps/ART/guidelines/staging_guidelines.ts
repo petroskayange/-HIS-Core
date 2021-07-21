@@ -179,9 +179,13 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
             info: (facts: any) => `Adult has a low BMI of ${facts.bmi}`
         },
         conditions: {
+            'selected_condition': {
+                condition: (condition: string) => condition === 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
+                pass: 50
+            },
             bmi: {
                 condition: (bmi: number) => bmi < 16,
-                pass: 100
+                pass: 50
             }
         }
     },
@@ -198,6 +202,10 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
             info: (facts: any) => `BMI of ${facts.bmi} is between 16 and 18`,
         },
         conditions: {
+            'selected_condition': {
+                condition: (condition: string) => condition === 'Moderate weight loss less than or equal to 10 percent, unexplained',
+                pass: 50
+            },
             bmi:{
                 condition: (bmi: number) => bmi >= 16.0 && bmi <= 18.5,
                 pass: 50 
@@ -218,9 +226,13 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
             info: () => 'Severe weight loss was already selected',
         },
         conditions: {
+            'selected_condition': {
+                condition: (condition: string) => condition === 'Moderate weight loss less than or equal to 10 percent, unexplained',
+                pass: 50
+            },
             'selected_conditions': {
                 condition: (conditions: Array<string>) => conditions.includes('Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained'),
-                pass: 100
+                pass: 50
             }
         }
     }
