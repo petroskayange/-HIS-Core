@@ -13,7 +13,7 @@ export interface ConditionInterface {
 export interface GuideLineInterface {
     concept?: string;
     minPass: number;
-    actions?: Record<string, 'alert' | 'disabled' | 'isChecked'>;
+    actions?: Record<string, any>;
     conditions: Record<string, ConditionInterface>;
 
 }
