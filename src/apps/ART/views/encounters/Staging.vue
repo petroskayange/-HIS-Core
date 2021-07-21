@@ -205,9 +205,7 @@ export default defineComponent({
                     label: concept.name,
                     value: concept.concept_id,
                     isChecked,
-                    other: {
-                        disabled
-                    }
+                    disabled
                 }
             })
         },
