@@ -79,6 +79,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
         actions: {
+            isChecked: false,
             disabled: true
         },
         conditions: {
