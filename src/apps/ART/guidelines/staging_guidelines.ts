@@ -1,7 +1,8 @@
 import { ConceptService } from "@/services/concept_service"
 import { alertConfirmation } from "@/utils/Alerts"
+import { GuideLineInterface } from "@/utils/GuidelineEngine"
 
-export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
+export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInterface> = {
     'Adults with a BMI less than 16': {
         concept: 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained',
         minPass: 100,
@@ -97,15 +98,15 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS = {
     }
 }
 
-export const CHILD_ART_ELIGIBILITY = {
+export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Has stage 4 conditions': {
         concept: 'WHO STAGE IV PEDS',
         minPass: 100,
         conditions: {
             stage: {
-                condition: () => (stage: number) => stage === 4
-            },
-            pass: 100
+                condition: () => (stage: number) => stage === 4,
+                pass: 100
+            }
         }
     },
     'Has stage 3 conditions': {
@@ -113,9 +114,9 @@ export const CHILD_ART_ELIGIBILITY = {
         minPass: 100,
         conditions: {
             stage: {
-                condition: (stage: number) => stage === 3 
+                condition: (stage: number) => stage === 3,
+                pass: 100
             },
-            pass: 100
         }
     },
     'Children under twelve months who tested positive on Rapid test and have presumed severe HIV': {
@@ -238,10 +239,11 @@ export const CHILD_ART_ELIGIBILITY = {
     }
 }
 
-export const ADULT_ART_ELIGIBILITY = {
+export const ADULT_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Has stage 4 conditions': {
         concept: 'WHO STAGE IV ADULT',
         minPass: 100,
+        priority: 1,
         conditions: {
             stage: {
                 condition: (stage: number) => stage === 4,
@@ -252,6 +254,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'Has HIV wasting syndrome identified in stage 3': {
         concept: 'WHO STAGE IV ADULT',
         minPass: 100,
+        priority: 2,
         conditions: {
             'selected_conditions': {
                 condition: (conditions: Array<string>) => {
@@ -266,6 +269,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'Has stage 3 conditions': {
         concept: 'WHO STAGE III ADULT',
         minPass: 100,
+        priority: 3,
         conditions: {
             stage: {
                 condition: (stage: number) => stage === 3,
@@ -276,6 +280,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'CD4 less than 350 for adults before 2014': {
         concept: 'cd4 less than or equal to 350',
         minPass: 100,
+        priority: 4,
         conditions: {
             date: {
                 condition: (date: string) => date < '2014-04-01',
@@ -294,6 +299,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'CD4 less than 250 for adults after 2014': {
         concept: 'cd4 less than or equal to 250',
         minPass: 100,
+        priority: 4,
         conditions: {
             date: {
                 condition: (date: string) => date >= '2014-04-01',
@@ -312,6 +318,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'CD4 less than 350 for adults after 2014': {
         concept: 'cd4 less than or equal to 350',
         minPass: 100,
+        priority: 5,
         conditions: {
             date: {
                 condition: (date: string) => date >= '2014-04-01',
@@ -330,6 +337,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'CD4 less than 500 for adults after 2014': {
         concept: 'cd4 less than or equal to 500',
         minPass: 100,
+        priority: 6,
         conditions: {
             date: {
                 condition: (date: string) => date >= '2014-04-01',
@@ -348,6 +356,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'Breast feeding women': {
         concept: 'BREASTFEEDING',
         minPass: 100,
+        priority: 7,
         conditions: {
             gender: {
                 condition: (gender: string) => gender === 'F',
@@ -366,6 +375,7 @@ export const ADULT_ART_ELIGIBILITY = {
     'Pregnant women': {
         concept: 'PATIENT PREGNANT',
         minPass: 100,
+        priority: 8,
         conditions: {
             gender: {
                 condition: (gender: string) => gender === 'F',
@@ -384,6 +394,7 @@ export const ADULT_ART_ELIGIBILITY = {
     "Asymptomatic patient with either stage one or stage two conditions": {
         concept: 'Asymptomatic',
         minPass: 100,
+        priority: 9,
         conditions: {
             stage: {
                 condition: (stage: number) => stage <= 2,
