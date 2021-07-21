@@ -188,24 +188,31 @@ export default defineComponent({
             const facts = {...this.facts}
             facts.stage = stage
             const guidelines = this.staging.getRecommendedConditionGuidelines()
-            const recommendations = matchToGuidelines(this.facts, guidelines)
+            const findings = matchToGuidelines(this.facts, guidelines)
 
             return this.staging.getStagingConditions(stage).map((concept: any) => {
                 let isChecked = false
                 let disabled = false
+                let description: unknown
 
-                const recommendation = recommendations.filter(i => i.concept === concept.name)
-    
-                if (!isEmpty(recommendation)) {
-                    isChecked = recommendation[0]?.actions?.isChecked ? true : false
-                    disabled = recommendation[0]?.actions?.disabled ? true : false 
-                }   
+                const conceptFindings = findings.filter(i => i.concept === concept.name)
+
+                if (!isEmpty(conceptFindings)) {
+                    const conceptFinding = conceptFindings[0] //get the first item only
+                    isChecked = conceptFinding?.actions?.isChecked ? true : false
+                    disabled = conceptFinding?.actions?.disabled ? true : false 
+                    
+                    if (conceptFinding.description) {
+                        description = conceptFinding.description
+                    }
+                }
 
                 return {
                     label: concept.name,
                     value: concept.concept_id,
                     isChecked,
-                    disabled
+                    disabled,
+                    description
                 }
             })
         },
