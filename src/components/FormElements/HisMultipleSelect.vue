@@ -8,8 +8,14 @@
       <ion-list class='view-port-content'>
         <ion-item v-for="(entry, index) in filtered" :key="index" :color="entry.isChecked ? 'light':''">
           <ion-label> 
-            {{ entry.label }} 
-            <span v-if="entry.other?.disableReason">({{entry.other?.disableReason}})</span>
+            <ion-text>
+              {{ entry.label }} 
+            </ion-text>
+            <ion-text
+              :color="entry.description.color" 
+              v-if="isDescription(entry.description, entry.isChecked)"> 
+              <p><small>{{ entry.description.text }}</small></p>
+            </ion-text>
           </ion-label>
           <ion-checkbox v-model="entry.isChecked" slot="end" :disabled="entry?.disabled"/>
       </ion-item>
@@ -19,7 +25,7 @@
     </div>
 </template>
 <script lang="ts">
-import { Option } from "../Forms/FieldInterface";
+import { Option, OptionDescriptionInterface } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
 import { find } from "lodash"
@@ -55,7 +61,17 @@ export default defineComponent({
     },
     getChecked(list: Array<Option>) {
       return list.filter((item: Option) => item.isChecked)
-    }
+    },
+    isDescription(description: OptionDescriptionInterface, isChecked=false) {
+      if (!description) return false
+
+      if (description?.show) {
+          return (description.show === 'onChecked' 
+                  && isChecked || description.show === 'always')
+      }
+
+      return true
+    },
   },
   computed: {
     checkedItems(): Array<Option> {
