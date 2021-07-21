@@ -20,6 +20,7 @@ export interface DescriptionInterface {
 export interface GuideLineInterface {
     concept?: string;
     minPass: number;
+    priority?: number;
     actions?: Record<string, any>;
     description?: DescriptionInterface;
     conditions: Record<string, ConditionInterface>;
@@ -49,6 +50,7 @@ function calculatePassMark(facts: Record<string, any>, conditions: Record<string
 
     return passMark
 }
+
 /**
  * Check the guideline for matching facts and return matching object 
  * when passMark is greater the minimum passmark
