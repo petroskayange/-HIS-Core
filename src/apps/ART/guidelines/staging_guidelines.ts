@@ -540,7 +540,7 @@ export const ADULT_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Women who are breast feeding': {
         concept: 'BREASTFEEDING',
         minPass: 100,
-        priority: 7,
+        priority: 8,
         conditions: {
             gender: {
                 condition: (gender: string) => gender === 'F',
@@ -559,7 +559,7 @@ export const ADULT_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
     'Women who are pregnant': {
         concept: 'PATIENT PREGNANT',
         minPass: 100,
-        priority: 8,
+        priority: 7,
         conditions: {
             gender: {
                 condition: (gender: string) => gender === 'F',
