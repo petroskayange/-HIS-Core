@@ -20,10 +20,6 @@ export default defineComponent({
     data: () => ({
         staging: {} as any,
         pregnancy: [] as any,
-        stageFour: [] as any,
-        stageThree: [] as any,
-        stageTwo: [] as any,
-        stageOne: [] as any,
         cd4Count: [] as any,
         cd4Available: false as boolean,
         cd4Date: [] as any,
@@ -38,6 +34,10 @@ export default defineComponent({
             stage: -1 as number,
             cd4: -1 as number,
             date: '' as string,
+            "stage_one_conditions": [] as Array<string>,
+            "stage_two_conditions": [] as Array<string>,
+            "stage_three_conditions": [] as Array<string>,
+            "stage_four_conditions": [] as Array<string>,
             "reason_for_art": '' as string,
             "test_type": '' as string,
             "pregnant": '' as 'Yes' | 'No',
@@ -46,7 +46,7 @@ export default defineComponent({
             "selected_conditions": [] as Array<string>,
             "weight_percentile": -1 as number,
             "age_in_months": -1 as number,
-            "cd4_modifier": ''
+            "cd4_modifier": '' as string
         }
     }),
     watch: {
@@ -115,7 +115,7 @@ export default defineComponent({
                 return true
 
             if (findings[0]?.actions && findings[0]?.actions.alert) {
-                const ok = await findings[0]?.actions.alert()
+                const ok = await findings[0]?.actions.alert(this.facts)
                 return ok ? true : false
             }
             return true
@@ -160,32 +160,32 @@ export default defineComponent({
             ]
         },
         updateStageFour(data: Array<Option>) {
-            this.stageFour = data.map(i => i.label)
+            this.facts['stage_four_conditions'] = data.map(i => i.label)
             this.updateStagingFacts(4, data)
         },
         updateStageThree(data: Array<Option>) {
-            this.stageThree = data.map(i => i.label)
+            this.facts['stage_three_conditions'] = data.map(i => i.label)
             this.updateStagingFacts(3, data)
         },
         updateStageTwo(data: Array<Option>) {
-            this.stageTwo = data.map(i => i.label)
+            this.facts['stage_two_conditions'] = data.map(i => i.label)
             this.updateStagingFacts(2, data)
         },
         updateStageOne(data: Array<Option>) {
-            this.stageOne = data.map(i => i.label)
+            this.facts['stage_one_conditions'] = data.map(i => i.label)
             this.updateStagingFacts(1, data)
         },
         updateStagingFacts(stage: number, data: any) {
             const activeStage = this.facts.stage === null ? 0 : this.facts.stage
-            
+
             if (stage >= activeStage && !isEmpty(data)) 
                 this.facts.stage = stage
 
             this.facts['selected_conditions'] = [
-                ...this.stageFour, 
-                ...this.stageThree,
-                ...this.stageTwo,
-                ...this.stageOne
+                ...this.facts['stage_four_conditions'], 
+                ...this.facts['stage_three_conditions'],
+                ...this.facts['stage_two_conditions'],
+                ...this.facts['stage_one_conditions']
             ]
         },
         buildStagingObs() {
