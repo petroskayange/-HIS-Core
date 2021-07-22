@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -46,7 +46,8 @@ export default defineComponent({
             selectedConditions: [] as Array<string>,
             weightPercentile: -1 as number,
             ageInMonths: -1 as number,
-            cd4Modifier: '' as string
+            cd4Modifier: '' as string,
+            whoStage: '' as string
         }
     }),
     watch: {
@@ -85,7 +86,7 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create encounter')
 
             const stagingConditions = this.buildStagingObs()
-            const reasonForArt = this.buildReasonForArtObs() // must always come before who stage
+            const reasonForArt = this.buildReasonForArtObs()
             const whoStage = this.buildWhoStageObs()
             const data = await Promise.all([
                 ...this.pregnancy, 
@@ -119,6 +120,10 @@ export default defineComponent({
                 return ok ? true : false
             }
             return true
+        },
+        onSummary(){
+            this.setWhoStage()
+            this.setReasonForArt()
         },
         getYesNoOptions() {
             return [
@@ -192,16 +197,10 @@ export default defineComponent({
             return this.facts.selectedConditions.map(item => this.staging.buildWhoCriteriaObs(item))
         },
         buildReasonForArtObs() {
-            const guidelines = this.staging.getProgramEligibilityGuidelines()
-            const recommendedReasons = matchToGuidelines(this.facts, guidelines)
-            const reason = recommendedReasons[0].concept
-            this.facts.reasonForArt = reason || ''
-            return [this.staging.buildReasonForArtObs(reason)]
+            return [this.staging.buildReasonForArtObs(this.facts.reasonForArt)]
         },
         buildWhoStageObs() {
-            const guidelines = this.staging.getWhoStageGuidelines()
-            const findings = matchToGuidelines(this.facts, guidelines)
-            return [this.staging.buildWhoStageObs(findings[0].concept)]
+            return [this.staging.buildWhoStageObs(this.facts.whoStage)]
         },
         buildStagingOptions(stage: number, previouslySelected=[] as Array<string>) {
             const guidelines = this.staging.getRecommendedConditionGuidelines()
@@ -233,6 +232,16 @@ export default defineComponent({
                 }
             })
         },
+        setWhoStage() {
+            const guidelines = this.staging.getWhoStageGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+            this.facts.whoStage = findings[0]?.concept || ''
+        },
+        setReasonForArt() {
+            const guidelines = this.staging.getProgramEligibilityGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+            this.facts.reasonForArt = findings[0]?.concept || ''
+        },
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
         },
@@ -241,6 +250,25 @@ export default defineComponent({
                 const asymptomatics = f.filter((i: Option) => i.label.match(/asymptomatic/i) && i.isChecked)
                 return !isEmpty(asymptomatics)
             }
+        },
+        summaryOptions() {
+            return [
+                { 
+                    label: 'WHO Stage', 
+                    value: this.facts.whoStage,
+                    other: {
+                        type: 'title-section'
+                    }
+                 },
+                { 
+                    label: 'Condition on starting ART', 
+                    value: this.facts.reasonForArt,
+                    other: {
+                        type: 'title-section'
+                    } 
+                },
+                ...this.facts.selectedConditions.map((i: string) => ({ label: i, value: i }))
+            ]
         },
         getFields(): Array<Field> {
             return [
@@ -303,7 +331,6 @@ export default defineComponent({
                     helpText: 'Stage 4 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
-                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: (data: any) => this.updateStageFour(data),
                     options: () => this.buildStagingOptions(4, this.facts.stageFourConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
@@ -313,7 +340,6 @@ export default defineComponent({
                     helpText: 'Stage 3 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
-                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: async (data: any) => this.updateStageThree(data),
                     options: () => this.buildStagingOptions(3, this.facts.stageThreeConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
@@ -323,7 +349,6 @@ export default defineComponent({
                     helpText: 'Stage 2 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
-                    appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     unload: async (data: any) => this.updateStageTwo(data),
                     options: () => this.buildStagingOptions(2, this.facts.stageTwoConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
@@ -381,7 +406,6 @@ export default defineComponent({
                     id: 'year',
                     helpText: 'Year of CD4 result',
                     type: FieldType.TT_NUMBER,
-                    appearInSummary: () => false,
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => this.year = `${d.value}`,
                     validation(val: any) {
@@ -397,7 +421,6 @@ export default defineComponent({
                     id: 'month',
                     helpText: 'Month of CD4 result',
                     type: FieldType.TT_SELECT,
-                    appearInSummary: () => false,
                     options: () => MonthOptions,
                     unload: (d: Option) => this.month = `${d.value}`,
                     condition: (f: any) => this.hasCd4Count(f),
@@ -412,10 +435,6 @@ export default defineComponent({
                     id: 'day',
                     helpText: 'Day of CD4 result',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    summaryMapValue: () => ({ 
-                        label: 'CD4 Results date',
-                        value: HisDate.toStandardHisDisplayFormat(this.cd4DateStr) 
-                    }),
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => {
                         this.cd4DateStr = `${this.year}-${this.month}-${d.value}`
@@ -441,6 +460,16 @@ export default defineComponent({
                     config: {
                         showKeyboard: true,
                         isFilterDataViaApi: true
+                    }
+                },
+                {
+                    id: 'summary',
+                    helpText: 'Summary',
+                    type: FieldType.TT_ART_STAGING_SUMMARY,
+                    onload: () => this.onSummary(),
+                    options: () => this.summaryOptions(),
+                    config: {
+                        title: 'Selected stage defining conditions',
                     }
                 }
             ]
