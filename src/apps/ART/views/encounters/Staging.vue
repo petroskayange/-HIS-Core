@@ -178,7 +178,7 @@ export default defineComponent({
         updateStagingFacts(stage: number, data: any) {
             const activeStage = this.facts.stage === null ? 0 : this.facts.stage
 
-            if (stage >= activeStage && !isEmpty(data)) 
+            if (stage >= activeStage && !isEmpty(data))
                 this.facts.stage = stage
 
             this.facts['selected_conditions'] = [
@@ -204,23 +204,26 @@ export default defineComponent({
             const findings = matchToGuidelines(this.facts, guidelines)
             return [this.staging.buildWhoStageObs(findings[0].concept)]
         },
-        buildStagingOptions(stage: number) {
+        buildStagingOptions(stage: number, previouslySelected=[] as Array<string>) {
             const guidelines = this.staging.getRecommendedConditionGuidelines()
 
             return this.staging.getStagingConditions(stage).map((concept: any) => {
-                let isChecked = false
                 let disabled = false
                 let description: unknown
+                let isChecked = previouslySelected.includes(concept.name)
                 this.facts['selected_condition'] = concept.name
                 const findings = matchToGuidelines(this.facts, guidelines)
 
                 if (!isEmpty(findings)) {
                     const conceptFinding = findings[0] //get the first item only
-                    isChecked = conceptFinding?.actions?.isChecked ? true : false
-                    disabled = conceptFinding?.actions?.disabled ? true : false 
+                    if (conceptFinding?.actions?.isChecked) {
+                        isChecked = true
+                    }
+                    if (conceptFinding?.actions?.disabled) {
+                        disabled = true
+                    }
                     description = conceptFinding.description
                 }
-
                 return {
                     label: concept.name,
                     value: concept.concept_id,
@@ -230,6 +233,7 @@ export default defineComponent({
                 }
             })
         },
+
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
         },
@@ -302,7 +306,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: (data: any) => this.updateStageFour(data),
-                    options: () => this.buildStagingOptions(4),
+                    options: () => this.buildStagingOptions(4, this.facts['stage_four_conditions']),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -312,7 +316,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: async (data: any) => this.updateStageThree(data),
-                    options: () => this.buildStagingOptions(3),
+                    options: () => this.buildStagingOptions(3, this.facts['stage_three_conditions']),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -322,7 +326,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     unload: async (data: any) => this.updateStageTwo(data),
-                    options: () => this.buildStagingOptions(2),
+                    options: () => this.buildStagingOptions(2, this.facts['stage_two_conditions']),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -334,7 +338,7 @@ export default defineComponent({
                             return ['Please provide atleast one staging condition']
                     },
                     unload: async (data: Array<Option>) => this.updateStageOne(data),
-                    options: () => this.buildStagingOptions(1),
+                    options: () => this.buildStagingOptions(1, this.facts['stage_one_conditions']),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {

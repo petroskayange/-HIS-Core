@@ -210,7 +210,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     'Adults whose BMI is between 16 and 18': {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
-        priority: 1,
+        priority: 3,
         actions: {
             isChecked: true
         },
@@ -233,7 +233,7 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
     "Disable Moderate weight loss if severe weightloss is selected": {
         concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         minPass: 100,
-        priority: 1,
+        priority: 2,
         actions: {
             isChecked: false,
             disabled: true
