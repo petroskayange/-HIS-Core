@@ -333,7 +333,11 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
             },
             cd4: {
                 condition: (cd4: number) => cd4 <= 750,
-                pass: 25
+                pass: 13
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 12
             },
             stage: {
                 condition: (stage: number) => stage <= 2,
@@ -348,7 +352,11 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         conditions: {
             cd4: {
                 condition: (cd4: number) => cd4 < 500,
-                pass: 50
+                pass: 25
+            },
+            'cd4_modifier': {
+                condition: (modifier: string) => modifier === '<',
+                pass: 25
             },
             stage: {
                 condition: (stage: number) => stage <= 2,
@@ -363,11 +371,19 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         conditions: {
            date: {
                condition: (date: string) => date >= '2014-04-01',
-               pass: 50
+               pass: 25
            },
            age: {
                condition: (age: number) => age > 5,
-               pass: 50
+               pass: 25
+           },
+           cd4: {
+               condition: (cd4: number) => cd4 < 500,
+               pass: 13
+           },
+           'cd4_modifier': {
+               condition: (modifier: string) => modifier === '<',
+               pass: 12
            }
         }
     },
