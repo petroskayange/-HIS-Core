@@ -31,8 +31,10 @@ function isCondition(facts: Record<string, any>, conditions: Record<string, Func
         if (!(prop in facts)) 
             continue
 
-        if (ignored.includes(facts[prop])) 
+        if (ignored.includes(facts[prop])) {
+            state.push(false)
             continue
+        }
 
         state.push(conditions[prop](facts[prop]))
     }
