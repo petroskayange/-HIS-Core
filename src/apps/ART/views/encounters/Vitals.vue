@@ -189,7 +189,7 @@ export default defineComponent({
       this.recentHeight = lastHeight == -1 ? null : lastHeight;
       this.vitals = new VitalsService(patientID);
       if (this.age <= 14) {
-        this.medianWeightandHeight = await patient.getMedianWeightandHeight();
+        this.medianWeightandHeight = await patient.getMedianWeightHeight();
         this.weightForHeight = await ProgramService.getWeightForHeightValues();
       }
       await VitalsService.getAll(patient.getID(), "Treatment status").then(
