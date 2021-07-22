@@ -6,7 +6,8 @@ import {
     ADULT_ART_ELIGIBILITY,
     ADULT_WHO_STAGE_CRITERIA,
     CHILD_WHO_STAGE_CRITERIA,
-    CONTRADICTING_STAGE_DEFINITIONS_ALERTS
+    CONTRADICTING_STAGE_DEFINITIONS_ALERTS,
+    RECOMMENDED_CHILD_STAGING_CONDITIONS
 } from "@/apps/ART/guidelines/staging_guidelines"
 
 /**
@@ -61,7 +62,7 @@ export class StagingService extends AppEncounterService {
     }
 
     getRecommendedConditionGuidelines() {
-        return this.isAdult() ? RECOMMENDED_ADULT_STAGING_CONDITIONS: {} //TODO replace with children guidelines
+        return this.isAdult() ? RECOMMENDED_ADULT_STAGING_CONDITIONS: RECOMMENDED_CHILD_STAGING_CONDITIONS
     }
 
     getStagingConditions(stage: number) {

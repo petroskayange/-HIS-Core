@@ -131,6 +131,67 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
     },
 }
 
+export const RECOMMENDED_CHILD_STAGING_CONDITIONS: Record<string, GuideLineInterface> = {
+    'For children whose current weight percentile is less than 70' : {
+        priority: 1,
+        actions: {
+            isChecked: true
+        },
+        description: {
+            color: 'danger',
+            show: 'always',
+            info: (facts: any) => `Child has a low weight percentile of ${facts.weightPercentile}`
+        },
+        conditions: {
+            selectedCondition(condition: string) {
+                return condition === 'Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)'
+            },
+            weightPercentile(weightPercentile: number){
+                return weightPercentile < 70
+            }
+        }
+    },
+    'Enable Moderate unexplained malnutrition for children whose weight for height is 70-79%': {
+        priority: 1,
+        actions: {
+            isChecked: true
+        },
+        description: {
+            color: 'danger',
+            show: 'always',
+            info: (facts: any) => `Child has weight percentile of ${facts.weightPercentile}`
+        },
+        conditions: {
+            selectedCondition(condition: string) {
+                return condition === 'Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)'
+            },
+            weightPercentile(weightPercentile: number){
+                return weightPercentile >= 70 && weightPercentile <= 79
+            }
+        }
+    },
+    'Disable moderate weight loss when Severe unexplained weight loss is chosen': {
+        priority: 2,
+        actions: {
+            isChecked: false,
+            disabled: true
+        },
+        description: {
+            color: 'secondary',
+            show: 'always',
+            info: () => 'Severe weight loss/manutrition was already selected',
+        },
+        conditions: {
+            selectedCondition(condition: string) {
+                return condition === 'Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)'
+            },
+            selectedConditions(conditions: Array<string>) {
+                return conditions.includes('Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)')
+            }
+        }
+    }
+}
+
 export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInterface> = {
     'Adults with a BMI less than 16': {
         priority: 1,
@@ -150,7 +211,6 @@ export const RECOMMENDED_ADULT_STAGING_CONDITIONS: Record<string, GuideLineInter
         }
     },
     'Adults whose BMI is between 16 and 18': {
-        concept: 'Moderate weight loss less than or equal to 10 percent, unexplained',
         priority: 3,
         actions: {
             isChecked: true
