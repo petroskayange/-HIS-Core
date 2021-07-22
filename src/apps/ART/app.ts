@@ -44,7 +44,8 @@ const ART: AppInterface = {
         { value: "Manage Appointments", selected: false },
         { value: "Drug Dispensations", selected: false },
         { value: "Prescriptions", selected: false },
-        { value: "Vitals", selected: false }
+        { value: "Vitals", selected: false },
+        { value: "Patient Type", selected: false }
     ],
     preferences: PREFERENCES,
     preferenceComponents: BasePrefernceComponents

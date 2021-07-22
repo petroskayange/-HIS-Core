@@ -8,7 +8,7 @@ export class VitalsService extends AppEncounterService{
     return `${vital.value}`.match(/^-?\d+\.?\d*$/) ? null : [`Invalid entry for ${vital.label}`]
   }
   isNotEmptyandFloat(vital: any) {
-    return `${vital.value}`.match(/^-?\d+\.\d*$/) ? null : [`Invalid entry for ${vital.label}`]
+    return `${vital.value}`.match(/^\d{1,3}\.\d{1,5}$/) ? null : [`Invalid entry for ${vital.label}`]
   }
   checkMinMax(val: any, min: number, max: number) {
     const p = [];
@@ -40,7 +40,7 @@ export class VitalsService extends AppEncounterService{
   }
   isValidBPReading(vital: any) {
     const p = [];
-    const isValidBP =  `${vital.value}`.match(/([0-9]\/[0-9])|([0-9]*0\b)/) ? null : ['Invalid BP reading']
+    const isValidBP =  `${vital.value}`.match(/^\d{1,3}\/\d{1,3}$/g) ? null : ['Invalid BP reading']
     p.push(isValidBP);
     if(isValidBP == null) {
       const value = `${vital.value}`.split('/');

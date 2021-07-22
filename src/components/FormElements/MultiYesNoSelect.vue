@@ -1,9 +1,12 @@
 <template>
   <div>
-    <view-port :showFull="false">
+    <view-port :showFull="true">
       <ion-grid>
-        <ion-row button v-for="(item, index) in listData" :key="index">
-          <ion-col size="6">
+        <ion-row >
+          <ion-col :size="getSize" v-for="(item, index) in listData" :key="index">
+            <ion-grid>
+            <ion-row>
+  <ion-col size="6">
             <h1>{{ item.label }}</h1>
           </ion-col>
           <ion-col size="6">
@@ -21,6 +24,11 @@
                 <ion-label>{{ option.label }}</ion-label>
               </ion-segment-button>
             </ion-segment>
+          </ion-col>
+
+            </ion-row>
+            </ion-grid>
+        
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -61,6 +69,11 @@ export default defineComponent({
       immediate: true,
     },
   },
+  computed: {
+    getSize(): string {
+      return this.listData.length > 6 ? '6' : '12'
+    }
+  },
   data() {
     return {
       values: {} as any,
@@ -89,7 +102,6 @@ ion-segment-button {
   margin: 1%;
   font-size: 1.6em;
   --indicator-color: #028000;
-  --border-color: red;
   --background: white;
 }
 

@@ -46,6 +46,9 @@ function anyEmpty(val: any): null | Array<string> {
 
     return null;
 }
+function notTheSame(val: any, comparison: string): null | Array<string> {
+    return val.value === comparison ? ['Values can not be the same'] : null;
+}
 export default {
     required,
     isMWPhoneNumber,
@@ -54,5 +57,6 @@ export default {
     hasLengthRangeOf,
     rangeOf,
     neitherOr,
-    anyEmpty
+    anyEmpty,
+    notTheSame
 }
