@@ -32,7 +32,6 @@
 import { Option, OptionDescriptionInterface } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
 import { IonCheckbox } from "@ionic/vue";
-import { find, isEmpty } from "lodash"
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 
 export default defineComponent({
@@ -52,24 +51,6 @@ export default defineComponent({
           } 
         }
         this.$emit('onValue', this.getChecked(this.listData))
-      })
-    },
-    /*
-      * Update existing list with new options while maintaining previously selected items
-    */
-    updateListData(newListData: Array<Option>) {
-      this.listData = newListData.map(item => {
-        const itemChecked = find(this.listData, { 
-          label: item.label, 
-          value: item.value, 
-          isChecked: true 
-        })
-
-        if (itemChecked) return itemChecked
-
-        if (!('isChecked' in item)) item.isChecked = false
-
-        return item
       })
     },
     uncheck(label: string) {
@@ -108,7 +89,8 @@ export default defineComponent({
   },
   async activated() {
     const data = await this.options(this.fdata)
-    this.updateListData(data)
+    this.listData = data
+    this.$emit('onValue', this.getChecked(this.listData))
   }
 });
 </script>
