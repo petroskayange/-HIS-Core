@@ -1,6 +1,76 @@
 export default [
    {
       "categories":[
+         "fast_track"
+      ],
+      "concept_id":9533,
+      "name":"Adult 18 years +"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id": 9534,
+      "name":"On ART for 12 months "
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9535,
+      "name":"On 1st line ART"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9537,
+      "name":"Good current adherence"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9536,
+      "name":"Last VL <1000"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9538,
+      "name":"Pregnant / Breastfeeding"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9539,
+      "name":"Side effects / HIV-rel. diseases"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9540,
+      "name":"Needs BP / diabetes treatment"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":9527,
+      "name":"Started IPT <12m ago"
+   },
+   {
+      "categories":[
+         "fast_track"
+      ],
+      "concept_id":2186,
+      "name":"Any sign for TB"
+   },
+   {
+      "categories":[
          "reasons_for_art",
          "stage_1_conditions_adults_who_reason"
       ],
