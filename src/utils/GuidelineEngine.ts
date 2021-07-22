@@ -30,15 +30,15 @@ function isCondition(facts: Record<string, any>, conditions: Record<string, Func
     for(const prop in conditions) {
         if (!(prop in facts)) 
             continue
-
-        if (ignored.includes(facts[prop])) {
+        
+        const value = facts[prop]
+        if (ignored.includes(value)) {
             state.push(false)
             continue
         }
 
-        state.push(conditions[prop](facts[prop]))
+        state.push(conditions[prop](value))
     }
-
     return state.every(Boolean)
 }
 
