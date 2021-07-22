@@ -45,11 +45,11 @@ export class Patientservice extends Service {
     }
 
     isMale() {
-        return this.getGender() === 'M'
+        return this.getGender() === 'Male'
     }
 
     isFemale() {
-        return this.getGender() === 'F'
+        return this.getGender() === 'Female'
     }
 
     async getRecentWeight() {
@@ -83,7 +83,7 @@ export class Patientservice extends Service {
 
         if (!(weight && height)) return 0
 
-        const gender = this.getGender() === 'M' ? 'M': 'F'
+        const gender = this.getGender() === 'Male' ? 'M': 'F'
         const bmi: any = await BMIService.getBMI(weight, height, gender, this.getAge())
 
         return bmi['index']

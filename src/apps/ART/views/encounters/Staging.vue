@@ -71,7 +71,7 @@ export default defineComponent({
             this.facts.age = patient.getAge()
             this.facts.bmi = await patient.getBMI()
             this.facts.date = StagingService.getSessionDate()
-            this.facts.gender = patient.getGender()
+            this.facts.gender = patient.isMale() ? 'M' : 'F' 
             this.facts['test_type'] = this.staging.getConfirmatoryTestType()
             this.facts['age_in_months'] = patient.getAgeInMonths()
 
@@ -139,7 +139,7 @@ export default defineComponent({
                 const factID: 'pregnant' | 'breast_feeding' = other.factID
                 this.facts[factID] = value.toString().match(/Yes/i) ? 'Yes' : 'No'
  
-                return this.staging.buildValueCoded(other.concept, other.value)
+                return this.staging.buildValueCoded(other.concept, value)
             })
         },
         updateCd4Count(count: number, modifier: string) {
@@ -196,7 +196,6 @@ export default defineComponent({
             const recommendedReasons = matchToGuidelines(this.facts, guidelines)
             const reason = recommendedReasons[0].concept
             this.facts['reason_for_art'] = reason || ''
-
             return [this.staging.buildReasonForArtObs(reason)]
         },
         buildWhoStageObs() {
