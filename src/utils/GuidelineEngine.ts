@@ -1,11 +1,6 @@
 /**
  * Compares patient facts against a predefined guideline Object.
- */
-export interface ConditionInterface {
-    condition: Function;
-    pass: number;
-}
-
+*/
 export interface DescriptionInterface {
     color?: 'primary' | 'secondary' | 'danger' | 'warning';
     info: Function;
@@ -16,37 +11,33 @@ export interface DescriptionInterface {
 export interface GuideLineInterface {
     title?: string;
     concept?: string;
-    minPass: number;
-    passMark?: number;
     priority: number;
     actions?: Record<string, any>;
     description?: DescriptionInterface;
-    conditions: Record<string, ConditionInterface>;
+    conditions: Record<string, Function>;
 }
 
 /**
- * Match the facts with guidelines and accumulate a passing mark score
+ * Match the facts with guidelines
  * @param facts 
  * @param conditions 
  * @returns 
  */
-function calculatePassMark(facts: Record<string, any>, conditions: Record<string, ConditionInterface>): number {
-    let passMark = 0
+function isCondition(facts: Record<string, any>, conditions: Record<string, Function>): boolean {
+    const state = [] 
+    const ignored = [-1, '', null, undefined]
 
     for(const prop in conditions) {
         if (!(prop in facts)) 
             continue
 
-        if (facts[prop] === null) 
+        if (ignored.includes(facts[prop])) 
             continue
 
-        const validator = conditions[prop]
-        if (validator.condition(facts[prop])) {
-            passMark += validator.pass
-        }
+        state.push(conditions[prop](facts[prop]))
     }
 
-    return passMark
+    return state.every(Boolean)
 }
 
 /**
@@ -55,15 +46,7 @@ function calculatePassMark(facts: Record<string, any>, conditions: Record<string
  * @returns 
  */
 function sortByRelevance(findings: Array<GuideLineInterface>) {
-    return findings.sort((a, b) => {
-        if (a.priority < b.priority || (
-            a.priority === b.priority 
-            && a.passMark && b.passMark 
-            && a.passMark > b.passMark)) {
-            return  -1
-        }
-        return 0
-    })
+    return findings.sort((a, b) => a.priority < b.priority ? -1 : 0)
 }
 
 /**
@@ -77,11 +60,9 @@ export function matchToGuidelines(facts: Record<string, any>, guidelines: Array<
     const matches = []
     for(const guidelineIndex in guidelines) {
         const data: GuideLineInterface = guidelines[guidelineIndex]
-        const passMark = calculatePassMark(facts, data.conditions)
 
-        if (passMark >= data.minPass) {
+        if (isCondition(facts, data.conditions)) {
             data.title = guidelineIndex
-            data.passMark = passMark
             if (data.description) {
                 data.description.text = data.description.info(facts)
             }

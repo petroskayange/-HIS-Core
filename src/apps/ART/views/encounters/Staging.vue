@@ -34,19 +34,19 @@ export default defineComponent({
             stage: -1 as number,
             cd4: -1 as number,
             date: '' as string,
-            "stage_one_conditions": [] as Array<string>,
-            "stage_two_conditions": [] as Array<string>,
-            "stage_three_conditions": [] as Array<string>,
-            "stage_four_conditions": [] as Array<string>,
-            "reason_for_art": '' as string,
-            "test_type": '' as string,
-            "pregnant": '' as 'Yes' | 'No',
-            "breast_feeding": '' as 'Yes' | 'No',
-            "selected_condition": '' as string,
-            "selected_conditions": [] as Array<string>,
-            "weight_percentile": -1 as number,
-            "age_in_months": -1 as number,
-            "cd4_modifier": '' as string
+            stageOneConditions: [] as Array<string>,
+            stageTwoConditions: [] as Array<string>,
+            stageThreeConditions: [] as Array<string>,
+            stageFourConditions: [] as Array<string>,
+            reasonForArt: '' as string,
+            testType: '' as string,
+            pregnant: '' as 'Yes' | 'No',
+            breastFeeding: '' as 'Yes' | 'No',
+            selectedCondition: '' as string,
+            selectedConditions: [] as Array<string>,
+            weightPercentile: -1 as number,
+            ageInMonths: -1 as number,
+            cd4Modifier: '' as string
         }
     }),
     watch: {
@@ -72,11 +72,11 @@ export default defineComponent({
             this.facts.bmi = await patient.getBMI()
             this.facts.date = StagingService.getSessionDate()
             this.facts.gender = patient.isMale() ? 'M' : 'F' 
-            this.facts['test_type'] = this.staging.getConfirmatoryTestType()
-            this.facts['age_in_months'] = patient.getAgeInMonths()
+            this.facts.testType = this.staging.getConfirmatoryTestType()
+            this.facts.ageInMonths = patient.getAgeInMonths()
 
             if (this.staging.isPedaid()) {
-                this.facts['weight_percentile'] = await this.patient.calculateWeightPercentile()
+                this.facts.weightPercentile = await this.patient.calculateWeightPercentile()
             }
         },
         async onSubmit() {
@@ -106,7 +106,7 @@ export default defineComponent({
             this.nextTask()
         },
         async onStagingCondition({ label }: Option) {
-            this.facts['selected_condition'] = label
+            this.facts.selectedCondition = label
  
             const guidelines =  this.staging.getAlertGuidelines()
             const findings = matchToGuidelines(this.facts, guidelines)
@@ -136,7 +136,7 @@ export default defineComponent({
             this.pregnancy = data.map((data: Option) => {
                 const  { value, other } = data
 
-                const factID: 'pregnant' | 'breast_feeding' = other.factID
+                const factID: 'pregnant' | 'breastFeeding' = other.factID
                 this.facts[factID] = value.toString().match(/Yes/i) ? 'Yes' : 'No'
  
                 return this.staging.buildValueCoded(other.concept, value)
@@ -147,7 +147,7 @@ export default defineComponent({
                this.staging.buildValueNumber('CD4 count', count, modifier)
            ]
            this.facts.cd4 = count
-           this.facts['cd4_modifier'] = modifier
+           this.facts.cd4Modifier = modifier
         },
         updateCd4Date(date: string) {
             this.cd4Date = [ 
@@ -160,19 +160,19 @@ export default defineComponent({
             ]
         },
         updateStageFour(data: Array<Option>) {
-            this.facts['stage_four_conditions'] = data.map(i => i.label)
+            this.facts.stageFourConditions = data.map(i => i.label)
             this.updateStagingFacts(4, data)
         },
         updateStageThree(data: Array<Option>) {
-            this.facts['stage_three_conditions'] = data.map(i => i.label)
+            this.facts.stageThreeConditions = data.map(i => i.label)
             this.updateStagingFacts(3, data)
         },
         updateStageTwo(data: Array<Option>) {
-            this.facts['stage_two_conditions'] = data.map(i => i.label)
+            this.facts.stageTwoConditions = data.map(i => i.label)
             this.updateStagingFacts(2, data)
         },
         updateStageOne(data: Array<Option>) {
-            this.facts['stage_one_conditions'] = data.map(i => i.label)
+            this.facts.stageOneConditions = data.map(i => i.label)
             this.updateStagingFacts(1, data)
         },
         updateStagingFacts(stage: number, data: any) {
@@ -181,21 +181,21 @@ export default defineComponent({
             if (stage >= activeStage && !isEmpty(data))
                 this.facts.stage = stage
 
-            this.facts['selected_conditions'] = [
-                ...this.facts['stage_four_conditions'], 
-                ...this.facts['stage_three_conditions'],
-                ...this.facts['stage_two_conditions'],
-                ...this.facts['stage_one_conditions']
+            this.facts.selectedConditions= [
+                ...this.facts.stageFourConditions, 
+                ...this.facts.stageThreeConditions,
+                ...this.facts.stageTwoConditions,
+                ...this.facts.stageOneConditions
             ]
         },
         buildStagingObs() {
-            return this.facts["selected_conditions"].map(item => this.staging.buildWhoCriteriaObs(item))
+            return this.facts.selectedConditions.map(item => this.staging.buildWhoCriteriaObs(item))
         },
         buildReasonForArtObs() {
             const guidelines = this.staging.getProgramEligibilityGuidelines()
             const recommendedReasons = matchToGuidelines(this.facts, guidelines)
             const reason = recommendedReasons[0].concept
-            this.facts['reason_for_art'] = reason || ''
+            this.facts.reasonForArt = reason || ''
             return [this.staging.buildReasonForArtObs(reason)]
         },
         buildWhoStageObs() {
@@ -210,7 +210,8 @@ export default defineComponent({
                 let disabled = false
                 let description: unknown
                 let isChecked = previouslySelected.includes(concept.name)
-                this.facts['selected_condition'] = concept.name
+                this.facts.selectedCondition = concept.name
+
                 const findings = matchToGuidelines(this.facts, guidelines)
 
                 if (!isEmpty(findings)) {
@@ -232,7 +233,6 @@ export default defineComponent({
                 }
             })
         },
-
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
         },
@@ -268,7 +268,7 @@ export default defineComponent({
                             other: {
                                 values: this.getYesNoOptions(),
                                 concept: 'Is patient breast feeding',
-                                factID: 'breast_feeding'
+                                factID: 'breastFeeding'
                             }
                         }
                     ]
@@ -305,7 +305,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: (data: any) => this.updateStageFour(data),
-                    options: () => this.buildStagingOptions(4, this.facts['stage_four_conditions']),
+                    options: () => this.buildStagingOptions(4, this.facts.stageFourConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -315,7 +315,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions), 
                     unload: async (data: any) => this.updateStageThree(data),
-                    options: () => this.buildStagingOptions(3, this.facts['stage_three_conditions']),
+                    options: () => this.buildStagingOptions(3, this.facts.stageThreeConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -325,7 +325,7 @@ export default defineComponent({
                     condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     appearInSummary: (f: any) => !this.asymptomatic(f.stage_1_conditions),
                     unload: async (data: any) => this.updateStageTwo(data),
-                    options: () => this.buildStagingOptions(2, this.facts['stage_two_conditions']),
+                    options: () => this.buildStagingOptions(2, this.facts.stageTwoConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
@@ -333,11 +333,11 @@ export default defineComponent({
                     helpText: 'Stage 1 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
                     validation: (val: any) => {
-                        if (isEmpty(val) && isEmpty(this.facts['selected_conditions']))
+                        if (isEmpty(val) && isEmpty(this.facts.selectedConditions))
                             return ['Please provide atleast one staging condition']
                     },
                     unload: async (data: Array<Option>) => this.updateStageOne(data),
-                    options: () => this.buildStagingOptions(1, this.facts['stage_one_conditions']),
+                    options: () => this.buildStagingOptions(1, this.facts.stageOneConditions),
                     onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
