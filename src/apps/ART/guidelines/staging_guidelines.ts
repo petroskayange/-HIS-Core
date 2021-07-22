@@ -151,15 +151,23 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
         minPass: 100,
         priority: 1,
         actions: {
-            alert: async () => {
+            alert: async (facts: any) => {
                 const action = await alertAction(
                     'CONTRADICTING STAGE DEFINING CONDITIONS',
                     [
-                        { text: 'Keep Asymptomatic', role: 'asympt'},
+                        { text: 'Keep Asymptomatic', role: 'asymptomatic'},
                         { text: 'Keep other(s)', role: 'keep'}
                     ]
                 )
-                return action === 'asympt'
+                if (action === 'asymptomatic') {
+                    facts['stage'] = 1
+                    facts['selected_conditions'] = []
+                    facts['stage_three_conditions'] = []
+                    facts['stage_four_conditions'] = []
+                    facts['stage_two_conditions'] = []
+                    return true
+                }
+                return false
             }
         },
         conditions: {
