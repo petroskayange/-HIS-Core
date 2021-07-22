@@ -141,7 +141,7 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
                 pass: 50
             },
             bmi: {
-                condition: (bmi: number) => bmi > 18.0,
+                condition: (bmi: number) => bmi > 18.5,
                 pass: 50 
             }
         }
