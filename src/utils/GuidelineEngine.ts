@@ -1,9 +1,5 @@
 /**
  * Compares patient facts against a predefined guideline Object.
- * 
- * When a fact matches a guideline condition, the guideline object is returned.
- * 
- * The passMark calculated from the 
  */
 export interface ConditionInterface {
     condition: Function;
@@ -60,7 +56,10 @@ function calculatePassMark(facts: Record<string, any>, conditions: Record<string
  */
 function sortByRelevance(findings: Array<GuideLineInterface>) {
     return findings.sort((a, b) => {
-        if (a.priority < b.priority || (a.priority === b.priority && a.minPass > b.minPass)) {
+        if (a.priority < b.priority || (
+            a.priority === b.priority 
+            && a.passMark && b.passMark 
+            && a.passMark > b.passMark)) {
             return  -1
         }
         return 0
