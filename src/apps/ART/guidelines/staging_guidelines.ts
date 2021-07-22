@@ -252,7 +252,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         concept: 'WHO STAGE IV PEDS',
         priority: 1,
         conditions: {
-            stage: () => (stage: number) => stage === 4
+            stage: (stage: number) => stage === 4
         }
     },
     'Has stage 3 conditions': {
@@ -266,7 +266,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         concept: 'PRESUMED SEVERE HIV',
         priority: 3,
         conditions: {
-            ageInMonth(age: number){
+            ageInMonths(age: number){
                 return age < 12 
             },
             selectedConditions: (conditions: Array<string>) => {
@@ -285,7 +285,7 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         concept: 'HIV DNA POLYMERASE CHAIN REACTION',
         priority: 4,
         conditions: {
-            ageInMonth: (age: number) => age < 12,
+            ageInMonths: (age: number) => age < 12,
             testType: (testType: string) => testType === "HIV DNA POLYMERASE CHAIN REACTION",
         }
     },
@@ -293,14 +293,14 @@ export const CHILD_ART_ELIGIBILITY: Record<string, GuideLineInterface> = {
         concept: 'HIV infected',
         priority: 5,
         conditions: {
-            age: (age: number) => age < 24
+            ageInMonths: (age: number) => age < 24
         }
     },
     "Children between 24 and 56 months who have stage 2 or 1 conditions": {
         concept: 'CD4 COUNT LESS THAN OR EQUAL TO 750',
         priority: 6,
         conditions: {
-            ageInMonth(age: number) {
+            ageInMonths(age: number) {
                 return age >= 24 && age <= 56
             },
             cd4(cd4: number) {
