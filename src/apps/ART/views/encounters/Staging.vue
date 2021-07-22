@@ -275,7 +275,7 @@ export default defineComponent({
                 },
                 {
                     id: 'patient_weight_chart',
-                    helpText: 'Patient weight chart',
+                    helpText: 'Weight history',
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
                         const history = await this.patient.getWeightHistory()
