@@ -124,15 +124,15 @@ export const CONTRADICTING_STAGE_DEFINITIONS_ALERTS: Record<string, GuideLineInt
         minPass: 100,
         priority: 1,
         actions: {
-            alert: async() => {
+            alert: async(facts: any) => {
                 const action = await alertAction(
-                    'Patient\'s current BMI is greater than 18.5, do you wish to proceed?',
+                    `Patient's BMI of ${facts.bmi} greater than 18.5, do you wish to proceed?`,
                     [
-                        { text: 'Yes, select severe weightloss', role: 'asympt'},
-                        { text: 'No, cancel', role: 'keep'}
+                        { text: 'Yes, keep severe weightloss', role: 'keep'},
+                        { text: 'No, cancel', role: 'discard'}
                     ]
                 )
-                return action === 'asympt'
+                return action === 'keep'
             },
         },
         conditions: {
