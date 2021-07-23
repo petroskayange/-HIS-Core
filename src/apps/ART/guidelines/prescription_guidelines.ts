@@ -1,0 +1,127 @@
+import { GuideLineInterface } from "@/utils/GuidelineEngine"
+import { actionSheet } from "@/utils/Alerts"
+
+export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
+    'Provide a reason for switching regimens when patient already has one': {
+        priority: 1,
+        actions : {
+            alert: async (facts: any) => {
+                const action = await actionSheet(
+                    `Are you sure you want to replace ${facts.currentRegimen}?`,
+                    'Specify reason for switching regimen',
+                    [ 
+                        'Policy change', 
+                        'Ease of administration (pill burden, swallowing)',
+                        'Drug drug interaction', 
+                        'Pregnancy intention',
+                        'Side effects', 
+                        'Treatment failure', 
+                        'Weight Change', 
+                        'Other',
+                        'Cancel'
+                    ]
+                )
+                if (action != 'cancel') {
+                    facts.reasonForSwitch = action
+                    return true
+                }
+                return false
+            }
+        },
+        conditions: {
+            currentRegimen(regimen: string) {
+                return regimen != 'N/A'
+            },
+            selectedRegimen(regimen: string, { currentRegimen }: any){
+                return regimen != currentRegimen
+            }
+        }
+    },
+    "Provide 14 day starter pack for NVP based regimens on newly initiated patients": {
+        priority: 2,
+        actions: {
+            alert: async (facts: any) => {
+                const action = await actionSheet(
+                    'First time initiation', 
+                    'Starter pack needed for 14 days',
+                    ['Prescribe starter pack', 'Cancel']
+                )
+
+                if (action === 'Prescribe starter pack') {
+                    facts.starterPack = true
+                    facts.currentField = 'selected_meds'
+                    return true
+                }
+                return false
+            },
+        },
+        conditions: {
+            selectedRegimen(regimen: string) {
+                return regimen.match(/NVP/i) ? true : false
+            },
+            treatmentInitiation(initiation: string) {
+                return initiation === 'Continuing'
+            }
+        }
+    },
+    "Ask to reuse hanging pills if any": {
+        priority: 3,
+        actions: {
+            alert: async (facts: any) => {
+                const action  = await actionSheet(
+                    'Do you want to use hanging pills?', '', ['Yes', 'No']
+                )
+                if (action === 'Yes') {
+                    facts.hangingPillsStatus = 'Optimize - including hanging pills'
+                } else {
+                    facts.hangingPillsStatus = 'Exact - excluding hanging pills'
+                }
+                return true
+            }
+        },
+        conditions: {
+           selectedDrugs(drugs: Array<string>, { hangingPills }: any){
+                const hanging = drugs.map(drug => hangingPills.includes(drug))
+                return hanging.some(Boolean)
+           }
+        }
+    }
+}
+
+export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
+    'Recommend 2 week interval for starterpack NVP regimens': {
+        priority: 1,
+        actions: {
+            isChecked: true
+        },
+        conditions: {
+            starterPack(selected: boolean) {
+                return selected
+            },
+            selectedRegimen(regimen: string) {
+                regimen.match(/NVP/i) ? true : false
+            }
+        }
+    }
+}
+
+export const DRUG_FREQUENCY_GUIDELINE: Record<string, GuideLineInterface> = {
+    'Rifapentine or isoniazid should be taken weekly': {
+        concept: 'Weekly (QW)',
+        priority: 1,
+        conditions: {
+            selectedDrug(drug: string) {
+                return drug.match(/Rifapentine|Isoniazid/i)
+            }
+        }
+    },
+    'Use daily frequency for any other drugs': {
+        concept: 'Daily (QOD)',
+        priority: 2,
+        conditions: {
+            selectedDrug(drug: string) {
+                return !drug.match(/Rifapentine|Isoniazid/i)
+            }
+        }
+    }
+}
