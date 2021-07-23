@@ -48,7 +48,10 @@ export default defineComponent({
           const ok = await this.onValue(option)
           if (!ok) {
             return event.target.checked = false
-          } 
+          }
+        }
+        if (this.onValueUpdate) {
+          this.listData = await this.onValueUpdate([...this.listData], option)
         }
         this.$emit('onValue', this.getChecked(this.listData))
       })

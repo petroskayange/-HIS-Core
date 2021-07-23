@@ -35,6 +35,9 @@ export default defineComponent({
         },
         onValue: {
             type: Function
+        },
+        onValueUpdate: {
+            type: Function
         }
     },
     data: () => ({ 
