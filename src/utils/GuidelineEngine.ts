@@ -37,7 +37,7 @@ function isCondition(facts: Record<string, any>, conditions: Record<string, Func
             continue
         }
 
-        state.push(conditions[prop](value))
+        state.push(conditions[prop](value, facts))
     }
     return state.every(Boolean)
 }
