@@ -1,63 +1,101 @@
 <template>
-    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
-import { StagingService, StagingCategory } from "@/apps/ART/services/staging_service"
+import { StagingService } from "@/apps/ART/services/staging_service"
 import EncounterMixinVue from './EncounterMixin.vue'
 import Validation from "@/components/Forms/validations/StandardValidations"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import HisDate from "@/utils/Date"
 import { isEmpty } from "lodash"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts.ts"
+import { matchToGuidelines } from "@/utils/GuidelineEngine"
+
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         staging: {} as any,
-        whoReasonsForArtObs: [] as any,
-        pregnancyObs: [] as any,
-        stageFourObs: [] as any,
-        stageThreeObs: [] as any,
-        stageTwoObs: [] as any,
-        stageOneObs: [] as any,
-        cd4Available: false as boolean,
+        pregnancy: [] as any,
         cd4Count: [] as any,
+        cd4Available: false as boolean,
         cd4Date: [] as any,
         cd4Location: [] as any,
         cd4DateStr: '' as string,
         month: '' as string,
-        year: '' as string
+        year: '' as string,
+        facts: {
+            age: -1 as number,
+            bmi: -1 as number,
+            gender: '' as 'M' | 'F',
+            stage: -1 as number,
+            cd4: -1 as number,
+            date: '' as string,
+            stageOneConditions: [] as Array<string>,
+            stageTwoConditions: [] as Array<string>,
+            stageThreeConditions: [] as Array<string>,
+            stageFourConditions: [] as Array<string>,
+            reasonForArt: '' as string,
+            testType: '' as string,
+            pregnant: '' as 'Yes' | 'No',
+            breastFeeding: '' as 'Yes' | 'No',
+            selectedCondition: '' as string,
+            selectedConditions: [] as Array<string>,
+            weightPercentile: -1 as number,
+            ageInMonths: -1 as number,
+            cd4Modifier: '' as string,
+            whoStage: '' as string
+        }
     }),
     watch: {
         patient: {
             async handler(patient: any){
-                if (!patient) return
-                this.staging = new StagingService(
-                    patient.getID(),
-                    patient.getAge(),
-                    patient.getGender()
-                )
-                this.fields = this.getFields()
+                if (patient) {
+
+                    this.staging = new StagingService(patient.getID(), patient.getAge())
+
+                    await this.initFacts(patient)
+
+                    this.fields = this.getFields()
+                }
             },
             immediate: true,
             deep: true
         }
     },
     methods: {
+        async initFacts(patient: any) {
+            await this.staging.loadHivConfirmatoryTestType()
+            this.facts.age = patient.getAge()
+            this.facts.bmi = await patient.getBMI()
+            this.facts.date = StagingService.getSessionDate()
+            this.facts.gender = patient.isMale() ? 'M' : 'F' 
+            this.facts.testType = this.staging.getConfirmatoryTestType()
+            this.facts.ageInMonths = patient.getAgeInMonths()
+
+            if (this.staging.isPedaid()) {
+                this.facts.weightPercentile = await this.patient.calculateWeightPercentile()
+            }
+        },
         async onSubmit() {
             const encounter = await this.staging.createEncounter()
 
             if (!encounter) return toastWarning('Unable to create encounter')
-            
+
+            const stagingConditions = this.buildStagingObs()
+            const reasonForArt = this.buildReasonForArtObs()
+            const whoStage = this.buildWhoStageObs()
             const data = await Promise.all([
-                ...this.pregnancyObs, ... this.stageFourObs, 
-                ...this.stageThreeObs, ...this.stageTwoObs, 
-                ...this.stageOneObs, ...this.cd4Count,
-                ...this.cd4Date, ...this.cd4Location,
-                ...this.whoReasonsForArtObs
+                ...this.pregnancy, 
+                ...stagingConditions, 
+                ...this.cd4Count,
+                ...this.cd4Date, 
+                ...this.cd4Location,
+                ...reasonForArt,
+                ...whoStage
             ])
 
             const obs = await this.staging.saveObservationList(data)
@@ -68,6 +106,25 @@ export default defineComponent({
 
             this.nextTask()
         },
+        async onStagingCondition({ label }: Option) {
+            this.facts.selectedCondition = label
+ 
+            const guidelines =  this.staging.getAlertGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+
+            if (isEmpty(findings)) 
+                return true
+
+            if (findings[0]?.actions && findings[0]?.actions.alert) {
+                const ok = await findings[0]?.actions.alert(this.facts)
+                return ok ? true : false
+            }
+            return true
+        },
+        onSummary(){
+            this.setWhoStage()
+            this.setReasonForArt()
+        },
         getYesNoOptions() {
             return [
                 { label: "Yes", value: "Yes" },
@@ -77,50 +134,152 @@ export default defineComponent({
         async getFacilities(filter=''){
             const facilities = await this.staging.getFacilities(filter)
             return facilities.map((facility: any) => ({
-                label: facility.name,
-                value: facility.location_id
+                label: facility.name, value: facility.location_id
             }))
         },
-        setPregnancyObsData(data: Array<Option>) {      
-            const payload = data.map((obs: Option) => {
-                return this.staging.buildValueCoded(obs.other.concept, obs.value)
-            })
-            this.pregnancyObs = payload
-        },
-        setArtStagingReasonObs(stage: number) {
-            const category = this.staging.getStagingCategoryByNum(stage)
-            const reason = this.staging.getWhoReasonForART(category)
+        updatePregnancy(data: Array<Option>) {      
+            this.pregnancy = data.map((data: Option) => {
+                const  { value, other } = data
 
-            this.whoReasonsForArtObs = [this.staging.buildValueCoded(
-                "Reason for ART eligibility", reason
-            )]
-        },
-        buildStagingData(data: Array<Option>) {
-            return data.map((item: Option) => {
-                return this.staging.buildValueCoded('Who stages criteria present', item.label)
+                const factID: 'pregnant' | 'breastFeeding' = other.factID
+                this.facts[factID] = value.toString().match(/Yes/i) ? 'Yes' : 'No'
+ 
+                return this.staging.buildValueCoded(other.concept, value)
             })
         },
-        getStagingOptions(stage: number) {
-            const group: StagingCategory = this.staging.getStagingCategoryByNum(stage)
-            return this.staging.getStagingConditions(group).map((concept: any) => ({
-                label: concept.name,
-                value: concept.concept_id,
-                isChecked: false
-            }))
+        updateCd4Count(count: number, modifier: string) {
+           this.cd4Count = [
+               this.staging.buildValueNumber('CD4 count', count, modifier)
+           ]
+           this.facts.cd4 = count
+           this.facts.cd4Modifier = modifier
+        },
+        updateCd4Date(date: string) {
+            this.cd4Date = [ 
+                this.staging.buildValueDate('Cd4 count datetime', date)
+            ]
+        },
+        updateCd4Location(location: string) {
+            this.cd4Location = [
+                this.staging.buildValueText('Cd4 count location', location)
+            ]
+        },
+        updateStageFour(data: Array<Option>) {
+            this.facts.stageFourConditions = data.map(i => i.label)
+            this.updateStagingFacts(4, data)
+        },
+        updateStageThree(data: Array<Option>) {
+            this.facts.stageThreeConditions = data.map(i => i.label)
+            this.updateStagingFacts(3, data)
+        },
+        updateStageTwo(data: Array<Option>) {
+            this.facts.stageTwoConditions = data.map(i => i.label)
+            this.updateStagingFacts(2, data)
+        },
+        updateStageOne(data: Array<Option>) {
+            this.facts.stageOneConditions = data.map(i => i.label)
+            this.updateStagingFacts(1, data)
+        },
+        updateStagingFacts(stage: number, data: any) {
+            const activeStage = this.facts.stage === null ? 0 : this.facts.stage
+
+            if (stage >= activeStage && !isEmpty(data))
+                this.facts.stage = stage
+
+            this.facts.selectedConditions= [
+                ...this.facts.stageFourConditions, 
+                ...this.facts.stageThreeConditions,
+                ...this.facts.stageTwoConditions,
+                ...this.facts.stageOneConditions
+            ]
+        },
+        buildStagingObs() {
+            return this.facts.selectedConditions.map(item => this.staging.buildWhoCriteriaObs(item))
+        },
+        buildReasonForArtObs() {
+            return [this.staging.buildReasonForArtObs(this.facts.reasonForArt)]
+        },
+        buildWhoStageObs() {
+            return [this.staging.buildWhoStageObs(this.facts.whoStage)]
+        },
+        buildStagingOptions(stage: number, previouslySelected=[] as Array<string>) {
+            const guidelines = this.staging.getRecommendedConditionGuidelines()
+
+            return this.staging.getStagingConditions(stage).map((concept: any) => {
+                let disabled = false
+                let description: unknown
+                let isChecked = previouslySelected.includes(concept.name)
+                this.facts.selectedCondition = concept.name
+
+                const findings = matchToGuidelines(this.facts, guidelines)
+
+                if (!isEmpty(findings)) {
+                    const conceptFinding = findings[0] //get the first item only
+                    if (conceptFinding?.actions?.isChecked) {
+                        isChecked = true
+                    }
+                    if (conceptFinding?.actions?.disabled) {
+                        disabled = true
+                    }
+                    description = conceptFinding.description
+                }
+                return {
+                    label: concept.name,
+                    value: concept.concept_id,
+                    isChecked,
+                    disabled,
+                    description
+                }
+            })
+        },
+        setWhoStage() {
+            const guidelines = this.staging.getWhoStageGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+            this.facts.whoStage = findings[0]?.concept || ''
+        },
+        setReasonForArt() {
+            const guidelines = this.staging.getProgramEligibilityGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+            this.facts.reasonForArt = findings[0]?.concept || ''
         },
         hasCd4Count(f: any) {
             return f.cd4_available && f.cd4_available.label === 'Yes'
         },
+        asymptomatic(f: any) {
+            if (f) {
+                const asymptomatics = f.filter((i: Option) => i.label.match(/asymptomatic/i) && i.isChecked)
+                return !isEmpty(asymptomatics)
+            }
+        },
+        summaryOptions() {
+            return [
+                { 
+                    label: 'WHO Stage', 
+                    value: this.facts.whoStage,
+                    other: {
+                        type: 'title-section'
+                    }
+                 },
+                { 
+                    label: 'Condition on starting ART', 
+                    value: this.facts.reasonForArt,
+                    other: {
+                        type: 'title-section'
+                    } 
+                },
+                ...this.facts.selectedConditions.map((i: string) => ({ label: i, value: i }))
+            ]
+        },
         getFields(): Array<Field> {
             return [
                 {
-                    id: 'pregnancyObs_status',
+                    id: 'pregnancy_status',
                     helpText: 'Pregnant / Breastfeeding',
                     type: FieldType.TT_MULTIPLE_YES_NO,
-                    validation: (val: any) => Validation.anyEmpty(val),
-                    condition: () => this.staging.isFemale(),
+                    validation: (v: any) => Validation.anyEmpty(v),
+                    condition: () => this.patient.isFemale(),
                     summaryMapValue: (d: Option) => ({ label: d.label, value: d.value }),
-                    unload: async (data: any) => this.setPregnancyObsData(data),
+                    unload: async (data: any) => this.updatePregnancy(data),
                     options: () => [
                         {
                             label: 'Pregnant?',
@@ -128,6 +287,7 @@ export default defineComponent({
                             other: {
                                 values: this.getYesNoOptions(),
                                 concept: 'Is patient pregnant',
+                                factID: 'pregnant'
                             }
                         },
                         {
@@ -135,14 +295,15 @@ export default defineComponent({
                             value: '',
                             other: {
                                 values: this.getYesNoOptions(),
-                                concept: 'Is patient breast feeding'
+                                concept: 'Is patient breast feeding',
+                                factID: 'breastFeeding'
                             }
                         }
                     ]
                 },
                 {
                     id: 'patient_weight_chart',
-                    helpText: 'Patient weight chart',
+                    helpText: 'Weight history',
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
                         const history = await this.patient.getWeightHistory()
@@ -169,61 +330,40 @@ export default defineComponent({
                     id: 'stage_4_conditions',
                     helpText: 'Stage 4 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: (data: any) => {
-                        this.stageFourObs = this.buildStagingData(data)
-                        if (!isEmpty(this.stageFourObs)) this.setArtStagingReasonObs(4)
-                    },
-                    options: () => this.getStagingOptions(4)
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    unload: (data: any) => this.updateStageFour(data),
+                    options: () => this.buildStagingOptions(4, this.facts.stageFourConditions),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_3_conditions',
                     helpText: 'Stage 3 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: async (data: any) => {
-                        this.stageThreeObs = this.buildStagingData(data)
-                        // prioritize stage 4 reason if stage 4 conditions are set
-                        if (!isEmpty(this.stageThreeObs) && isEmpty(this.stageFourObs)) 
-                            this.setArtStagingReasonObs(3)
-                    },
-                    options: () => this.getStagingOptions(3)
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    unload: async (data: any) => this.updateStageThree(data),
+                    options: () => this.buildStagingOptions(3, this.facts.stageThreeConditions),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_2_conditions',
                     helpText: 'Stage 2 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    unload: async (data: any) => {
-                        this.stageTwoObs = this.buildStagingData(data)
-                        // prioritize stage 3 and 4 reason if stage 3 and 4 conditions are set
-                        if (!isEmpty(this.stageTwoObs) && isEmpty([
-                            ...this.stageFourObs, ...this.stageThreeObs
-                            ])) 
-                            this.setArtStagingReasonObs(2)
-                    },
-                    options: () => this.getStagingOptions(2)
+                    condition: (f: any) => !this.asymptomatic(f.stage_1_conditions),
+                    unload: async (data: any) => this.updateStageTwo(data),
+                    options: () => this.buildStagingOptions(2, this.facts.stageTwoConditions),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'stage_1_conditions',
                     helpText: 'Stage 1 conditions',
                     type: FieldType.TT_MULTIPLE_SELECT,
                     validation: (val: any) => {
-                        const stages = [
-                            ...this.stageFourObs,
-                            ...this.stageThreeObs,
-                            ...this.stageTwoObs
-                        ]
-                        if (isEmpty(val) && isEmpty(stages))
+                        if (isEmpty(val) && isEmpty(this.facts.selectedConditions))
                             return ['Please provide atleast one staging condition']
                     },
-                    unload: async (data: any) => {
-                        this.stageOneObs = this.buildStagingData(data)
-                        // prioritize higher staging reasons if other conditions are set
-                        if (!isEmpty(this.stageOneObs) && isEmpty([
-                            ...this.stageFourObs, ...this.stageThreeObs,
-                            ...this.stageTwoObs
-                        ]))
-                            this.setArtStagingReasonObs(1)
-                    },
-                    options: () => this.getStagingOptions(1)
+                    unload: async (data: Array<Option>) => this.updateStageOne(data),
+                    options: () => this.buildStagingOptions(1, this.facts.stageOneConditions),
+                    onValue: (v: Option) => this.onStagingCondition(v)
                 },
                 {
                     id: 'cd4_available',
@@ -242,7 +382,8 @@ export default defineComponent({
                         const value = val.value.toString()
                         const modifier = value.charAt(0)
                         const count = value.substring(1)
-                        this.cd4Count = [this.staging.buildValueNumber('CD4 count', parseInt(count), modifier)]
+                        this.updateCd4Count(parseInt(count), modifier)
+                        this.buildReasonForArtObs()
                     },
                     validation: (val: any) => {
                         if (!val) return ['Value is required']
@@ -265,7 +406,6 @@ export default defineComponent({
                     id: 'year',
                     helpText: 'Year of CD4 result',
                     type: FieldType.TT_NUMBER,
-                    appearInSummary: false,
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => this.year = `${d.value}`,
                     validation(val: any) {
@@ -281,7 +421,6 @@ export default defineComponent({
                     id: 'month',
                     helpText: 'Month of CD4 result',
                     type: FieldType.TT_SELECT,
-                    appearInSummary: false,
                     options: () => MonthOptions,
                     unload: (d: Option) => this.month = `${d.value}`,
                     condition: (f: any) => this.hasCd4Count(f),
@@ -296,18 +435,10 @@ export default defineComponent({
                     id: 'day',
                     helpText: 'Day of CD4 result',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    summaryMapValue: () => ({ 
-                        label: 'CD4 Results date',
-                        value: HisDate.toStandardHisDisplayFormat(this.cd4DateStr) 
-                    }),
                     condition: (f: any) => this.hasCd4Count(f),
                     unload: (d: Option) => {
                         this.cd4DateStr = `${this.year}-${this.month}-${d.value}`
-                        this.cd4Date = [
-                            this.staging.buildValueDate(
-                                'Cd4 count datetime', this.cd4DateStr
-                            )
-                        ]
+                        this.updateCd4Date(this.cd4DateStr)
                     },
                     validation: (val: any) => {
                         const day = val.value
@@ -322,15 +453,26 @@ export default defineComponent({
                     helpText: 'CD4 Location',
                     type: FieldType.TT_SELECT,
                     group: 'person',
-                    unload: (d: Option) => {
-                        this.cd4Location = [this.staging.buildValueText('Cd4 count location', d.label)]
-                    },
+                    unload: (d: Option) => this.updateCd4Location(d.label),
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => this.hasCd4Count(f),
                     options: (_, filter='') => this.getFacilities(filter),
                     config: {
                         showKeyboard: true,
                         isFilterDataViaApi: true
+                    }
+                },
+                {
+                    id: 'summary',
+                    helpText: 'Summary',
+                    type: FieldType.TT_ART_STAGING_SUMMARY,
+                    onload: () => this.onSummary(),
+                    options: () => this.summaryOptions(),
+                    config: {
+                        title: 'Selected stage defining conditions',
+                        hiddenFooterBtns: [
+                            'Clear'
+                        ]
                     }
                 }
             ]

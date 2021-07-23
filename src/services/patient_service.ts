@@ -7,6 +7,7 @@ import { ConceptService } from './concept_service';
 import { Service } from "@/services/service"
 import HisDate from "@/utils/Date"
 import {Observation} from "@/interfaces/observation"
+import  { BMIService } from "@/services/bmi_service"
 
 export class Patientservice extends Service {
     patient: Patient;
@@ -43,6 +44,14 @@ export class Patientservice extends Service {
         })
     }
 
+    isMale() {
+        return this.getGender() === 'Male'
+    }
+
+    isFemale() {
+        return this.getGender() === 'Female'
+    }
+
     async getRecentWeight() {
         const concept = await ConceptService.getConceptID('weight', true)
         const obs = await ObservationService.getObs({
@@ -67,9 +76,33 @@ export class Patientservice extends Service {
             weight: obs.value_numeric, date: obs.obs_datetime
         }))
     }
-    getMedianWeightandHeight() {
-      return Service.getJson(`patients/${this.getID()}/median_weight_height`);
+
+    async getBMI() {
+        const weight = await this.getRecentWeight()
+        const height = await this.getRecentHeight()
+
+        if (!(weight && height)) return 0
+
+        const gender = this.getGender() === 'Male' ? 'M': 'F'
+        const bmi: any = await BMIService.getBMI(weight, height, gender, this.getAge())
+
+        return bmi['index']
     }
+
+    async calculateWeightPercentile() {
+        const currentWeight = await this.getRecentWeight()
+        const medianWeightHeight = await this.getMedianWeightHeight()
+        try {
+            return (parseFloat(currentWeight) / (parseFloat(medianWeightHeight["weight"])) * 100)
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    async getMedianWeightHeight() {
+        return Service.getJson(`patients/${this.getID()}/median_weight_height`)
+    }
+
     getObj() {
         return this.patient
     }
@@ -77,7 +110,6 @@ export class Patientservice extends Service {
     getID() {
         return this.patient.patient_id
     }
-
 
     getPatientInfoString() {
         const data =  [
@@ -96,9 +128,13 @@ export class Patientservice extends Service {
     getGender() {
         return this.patient.person.gender
     }
-
+    
     getAge() {
         return HisDate.getAgeInYears(this.patient.person.birthdate)
+    }
+
+    getAgeInMonths() {
+        return this.getAge() * 12
     }
 
     getBirthdate() {

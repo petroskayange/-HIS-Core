@@ -1,10 +1,18 @@
 import { FieldType } from "@/components/Forms/BaseFormElements"
 
+export interface OptionDescriptionInterface {
+    color: 'primary' | 'warning' | 'danger' | 'secondary' | 'light';
+    show?: 'onChecked' | 'always';
+    text: string;
+}
+
 export interface Option {
     label: string;
     value: string | number;
     other?: any;
     isChecked?: boolean;
+    disabled?: boolean;
+    description?: OptionDescriptionInterface;
 }
 
 export interface Field {
@@ -19,7 +27,7 @@ export interface Field {
     onload?: Function;
     unload?: Function;
     summaryMapValue?: Function;
-    appearInSummary?: boolean;
+    appearInSummary?: Function;
     options?(fdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
     config?: Record<string, any>;

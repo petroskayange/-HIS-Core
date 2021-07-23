@@ -24,15 +24,17 @@ export function toastDanger(message: string, duration=6000) {
 }
 
 export async function alertAction(message: string, buttons: any) {
-    const alert = await alertController
-   .create({
+    const alert = await alertController.create({
         cssClass: 'my-custom-class',
         mode: 'ios',
         message,
         backdropDismiss: false,
         buttons
-   });
- await alert.present();
+    });
+
+    alert.present();    
+    const { role } = await alert.onDidDismiss()
+    return role || ''
 }
 export async function actionSheet(header: string, subHeader: string, buttons: Array<string>) {
     const action = await actionSheetController.create({

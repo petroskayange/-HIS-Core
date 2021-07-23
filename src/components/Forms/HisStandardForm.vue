@@ -241,7 +241,7 @@ export default defineComponent({
                         const field = this.fields.filter((i: Field) => i.id === ref)[0]
                         const fdata = formData[ref]
                         
-                        if (!fdata || 'appearInSummary' in field && !field.appearInSummary)
+                        if (!fdata || field.appearInSummary != undefined && !field.appearInSummary(formData))
                             continue
                         
                         const values = Array.isArray(fdata) ? fdata : [fdata]

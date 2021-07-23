@@ -152,22 +152,32 @@ export default defineComponent({
             {
               label: "Foo",
               value: "Foo",
+              description: {
+                color: 'danger',
+                text: 'Optional description'
+              }
             },
             {
-              label: "Baz",
-              value: "Baz",
+              label: "This is prechecked by default",
+              value: "pre_checked",
+              isChecked: true
             },
             {
               label: "Bar",
               value: "Bar",
-            },
-            {
-              label: "Foo",
-              value: "Foo",
+              description: {
+                color: 'warning',
+                text: 'This has discription of different color'
+              }
             },
             {
               label: "Baz",
               value: "Baz",
+              description: {
+                color: 'secondary',
+                text: 'I only appear when checked',
+                show: 'onChecked'
+              }
             },
             {
               label: "Bar",
