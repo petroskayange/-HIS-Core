@@ -13,6 +13,7 @@ import WeightChart from "@/components/FormElements/HisWeightChart.vue"
 import VitalsEntry from "@/components/FormElements/HisVitalsEntry.vue"
 
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
+import ArtStagingSummary from "@/components/FormElements/ArtStagingSummary.vue"
 import AdherenceInput from "@/components/FormElements/HisAdherenceInput.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
@@ -31,7 +32,8 @@ export enum FieldType {
     TT_SUMMARY="summary-page",
     TT_WEIGHT_CHART = "weight-chart",
     TT_VITALS_ENTRY="vitals-entry",
-    TT_ADHERENCE_INPUT = "adherence-input"
+    TT_ADHERENCE_INPUT = "adherence-input",
+    TT_ART_STAGING_SUMMARY = "art-staging-summary"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -49,5 +51,6 @@ export const BaseFormComponents = {
     MultiYesNo,
     WeightChart,
     VitalsEntry,
-    AdherenceInput
+    AdherenceInput,
+    ArtStagingSummary
 }

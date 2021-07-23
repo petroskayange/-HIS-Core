@@ -9,6 +9,8 @@
       :clear="isClear"
       :fdata="formData"
       :activationState="state"
+      :onValue="activeField.onValue"
+      :onValueUpdate="activeField.onValueUpdate"
       @onValue="onValue"
       @onClear="isClear=false"
     />
@@ -107,15 +109,7 @@ export default defineComponent({
       return i >= 0 && i <= this.fields.length    
     },
     async setActiveFieldValue(value: any) {
-      let newValue = value
-      if (this.activeField?.onValue) {
-        const isValue = await this.activeField?.onValue(value) 
-        if (!isValue) {
-          this.isClear = true // undo value in active component
-          newValue = null
-        }
-      }
-      this.formData[this.activeField.id] = newValue;
+      this.formData[this.activeField.id] = value;
     },
     async onNext() {
       const totalFields = this.fields.length
@@ -165,11 +159,10 @@ export default defineComponent({
 
       if (this.activeField.onload) await this.activeField.onload()
     },
-    async onValue(value: string | number | Option | Array<Option>) {
-      await this.setActiveFieldValue(value);
+    onValue(value: string | number | Option | Array<Option>) {
+      this.setActiveFieldValue(value);
 
-      if ('requireNext' in this.activeField && 
-          !this.activeField.requireNext) this.onNext()
+      if ('requireNext' in this.activeField && !this.activeField.requireNext) this.onNext()
     },
     emitState() {
       this.$emit("onState", { field: this.activeField, 

@@ -634,6 +634,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_pedaids",
          "stage_4_conditions_adults",
          "who_staging_conditions",
@@ -644,6 +645,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_pedaids",
          "stage_4_conditions_adults",
          "who_staging_conditions",
@@ -713,6 +715,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_pedaids",
          "stage_4_conditions_adults",
          "who_staging_conditions",
@@ -741,6 +744,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_adults",
          "who_staging_conditions"
       ],
@@ -824,6 +828,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_pedaids",
          "who_staging_conditions"
       ],
@@ -855,6 +860,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_4_conditions_pedaids",
          "who_staging_conditions",
          "staging_4_conditions"
@@ -872,6 +878,7 @@ export default [
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
@@ -880,6 +887,7 @@ export default [
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "who_staging_conditions"
       ],
@@ -888,6 +896,7 @@ export default [
    },
    {
       "categories": [
+         "severe_hiv_wasting_syndrome",
          "stage_3_conditions_adults",
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
@@ -1008,6 +1017,7 @@ export default [
    },
    {
       "categories": [
+         "pshd_condition",
          "stage_3_conditions_pedaids",
          "who_staging_conditions"
       ],

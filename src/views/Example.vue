@@ -9,10 +9,11 @@
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Field } from "@/components/Forms/FieldInterface"
+import { Field, Option } from "@/components/Forms/FieldInterface"
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
+import { findIndex } from "lodash"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -29,6 +30,69 @@ export default defineComponent({
     },
     getFields(): Array<Field> {
       return [
+        {
+          id: "onvalue_hooks_multiple_select",
+          helpText: "Dynamically toggling values",
+          type: FieldType.TT_MULTIPLE_SELECT,
+          config: {
+            showKeyboard: false
+          },
+          onValueUpdate: (listData: Array<Option>, value: Option) => {
+            if (value.isChecked && value.label === 'None') {
+              return listData.map(i => {
+                if (i.label != 'None') 
+                  i.isChecked = false
+                return i
+              })
+            } else if (value.label != 'None' && value.isChecked) {
+              const noneIndex = findIndex(listData, {label: 'None'})
+              listData[noneIndex].isChecked = false
+            }
+            return listData
+          },
+          validation(value: any): null | Array<string> {
+            return !value ? ["Value is required"] : null;
+          },
+          options:()=> ([
+            {
+              label: "Foo",
+              value: "Foo",
+              description: {
+                color: 'danger',
+                text: 'Optional description'
+              }
+            },
+            {
+              label: "This is prechecked by default",
+              value: "pre_checked",
+            },
+            {
+              label: "Bar",
+              value: "Bar",
+              description: {
+                color: 'warning',
+                text: 'This has discription of different color'
+              }
+            },
+            {
+              label: "Baz",
+              value: "Baz",
+              description: {
+                color: 'secondary',
+                text: 'I only appear when checked',
+                show: 'onChecked'
+              }
+            },
+            {
+              label: "Bar",
+              value: "Bar",
+            },
+            {
+              label: "None",
+              value: "None",
+            }
+          ]),
+        },
         {
           id: "name_field",
           helpText: "What is your name",
@@ -152,22 +216,32 @@ export default defineComponent({
             {
               label: "Foo",
               value: "Foo",
+              description: {
+                color: 'danger',
+                text: 'Optional description'
+              }
             },
             {
-              label: "Baz",
-              value: "Baz",
+              label: "This is prechecked by default",
+              value: "pre_checked",
+              isChecked: true
             },
             {
               label: "Bar",
               value: "Bar",
-            },
-            {
-              label: "Foo",
-              value: "Foo",
+              description: {
+                color: 'warning',
+                text: 'This has discription of different color'
+              }
             },
             {
               label: "Baz",
               value: "Baz",
+              description: {
+                color: 'secondary',
+                text: 'I only appear when checked',
+                show: 'onChecked'
+              }
             },
             {
               label: "Bar",

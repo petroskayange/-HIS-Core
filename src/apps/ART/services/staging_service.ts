@@ -1,7 +1,19 @@
 import { AppEncounterService } from "@/services/app_encounter_service"
 import { LocationService } from "@/services/location_service"
-import { isEmpty } from "lodash"
-export enum StagingCategory {
+import {
+    RECOMMENDED_ADULT_STAGING_CONDITIONS,
+    CHILD_ART_ELIGIBILITY,
+    ADULT_ART_ELIGIBILITY,
+    ADULT_WHO_STAGE_CRITERIA,
+    CHILD_WHO_STAGE_CRITERIA,
+    CONTRADICTING_STAGE_DEFINITIONS_ALERTS,
+    RECOMMENDED_CHILD_STAGING_CONDITIONS
+} from "@/apps/ART/guidelines/staging_guidelines"
+
+/**
+ * Enable for filtering staging categories in ConceptName Dictionary
+ */
+enum StagingCategory {
     ADULT_STAGE_4 = 'stage_4_conditions_adults',
     ADULT_STAGE_3 = 'stage_3_conditions_adults',
     ADULT_STAGE_2 = 'stage_2_conditions_adults',
@@ -13,33 +25,21 @@ export enum StagingCategory {
 }
 
 export class StagingService extends AppEncounterService {
-    gender: 'M' | 'F';
-    ageInMonths: number;
-    ageInYears: number;
+    age: number
     confirmatoryTest: string | null;
-    stagingConditions: Array<any>;
-    constructor(patientID: number, age: number, gender: 'M' | 'F') {
+    constructor(patientID: number, age: number) {
         super(patientID, 52) //TODO: Use encounter type reference name
-        this.gender = gender
-        this.ageInYears = age
-        this.ageInMonths = age * 12
+        this.age = age
         this.confirmatoryTest = null
-        this.stagingConditions = []
     }
 
-    isMale() { return this.gender === 'M'}
+    isAdult() { return this.age >= 15 }
 
-    isFemale() { return this.gender === 'F' }
-
-    isAdult() { return this.ageInYears >= 15 }
-
-    isPedaid() { return this.ageInYears <= 14 }
+    isPedaid() { return this.age <= 14 }
 
     getFacilities (filter='') { return LocationService.getFacilities({name: filter}) }
     
-    getStagingConditions(stage: StagingCategory) {
-        return AppEncounterService.getConceptsByCategory(stage)
-    }
+    getConfirmatoryTestType() { return this.confirmatoryTest }
 
     cd4CountIsValid(value: string) {
         try {
@@ -49,7 +49,40 @@ export class StagingService extends AppEncounterService {
         }
     }
 
-    getStagingCategoryByNum(stageNumber: number) {
+    getAlertGuidelines() {
+        return CONTRADICTING_STAGE_DEFINITIONS_ALERTS
+    }
+
+    getWhoStageGuidelines() {
+        return this.isAdult() ? ADULT_WHO_STAGE_CRITERIA : CHILD_WHO_STAGE_CRITERIA
+    }
+
+    getProgramEligibilityGuidelines() {
+        return this.isAdult() ? ADULT_ART_ELIGIBILITY: CHILD_ART_ELIGIBILITY
+    }
+
+    getRecommendedConditionGuidelines() {
+        return this.isAdult() ? RECOMMENDED_ADULT_STAGING_CONDITIONS: RECOMMENDED_CHILD_STAGING_CONDITIONS
+    }
+
+    getStagingConditions(stage: number) {
+        const category = this.getStagingCategoryByNum(stage)
+        return AppEncounterService.getConceptsByCategory(category)
+    }
+
+    buildWhoStageObs(stage: string) {
+        return this.buildValueCoded('Who stage', stage)
+    }
+    
+    buildWhoCriteriaObs(condition: string) {
+        return this.buildValueCoded('Who stages criteria present', condition)
+    }
+
+    buildReasonForArtObs(reason: string) {
+        return this.buildValueCoded('Reason for ART eligibility', reason)
+    }
+
+    private getStagingCategoryByNum(stageNumber: number) {
         switch(stageNumber) {
             case 1:
                 return this.isAdult() ? StagingCategory.ADULT_STAGE_1 : StagingCategory.PEDAID_STAGE_1
@@ -59,13 +92,9 @@ export class StagingService extends AppEncounterService {
                 return this.isAdult() ? StagingCategory.ADULT_STAGE_3 : StagingCategory.PEDAID_STAGE_3
             case 4:
                 return this.isAdult() ? StagingCategory.ADULT_STAGE_4 : StagingCategory.PEDAID_STAGE_4
+            default: 
+                return ''
         }
-    }
-
-    getWhoReasonForART(stage: StagingCategory) {
-        const reasons = AppEncounterService.getConceptsByCategory(`${stage}_who_reason`)
-
-        return !isEmpty(reasons) ? reasons[0].name: null
     }
 
     async loadHivConfirmatoryTestType() {

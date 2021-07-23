@@ -8,7 +8,6 @@ import { Option } from '../Forms/FieldInterface'
 import { QWERTY } from "@/components/Keyboard/HisKbConfigurations"
 import SelectConfig from "@/components/FormElements/Interfaces/SelectConfig"
 import ViewPort from "@/components/DataViews/ViewPort.vue"
-import { isEmpty } from "lodash"
 export default defineComponent({
     components: { IonList, IonItem, IonLabel, HisTextInput, HisKeyboard, ViewPort },
     props: {
@@ -33,6 +32,12 @@ export default defineComponent({
         activationState: {
             type: String,
             default: ''
+        },
+        onValue: {
+            type: Function
+        },
+        onValueUpdate: {
+            type: Function
         }
     },
     data: () => ({ 
