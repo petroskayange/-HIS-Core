@@ -24,6 +24,7 @@ export interface Field {
     condition?: Function;
     validation?: Function;
     onValue?: Function;
+    onValueUpdate?: Function;
     onload?: Function;
     unload?: Function;
     summaryMapValue?: Function;

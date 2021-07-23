@@ -10,6 +10,7 @@
       :fdata="formData"
       :activationState="state"
       :onValue="activeField.onValue"
+      :onValueUpdate="activeField.onValueUpdate"
       @onValue="onValue"
       @onClear="isClear=false"
     />
