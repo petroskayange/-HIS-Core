@@ -470,6 +470,9 @@ export default defineComponent({
                     options: () => this.summaryOptions(),
                     config: {
                         title: 'Selected stage defining conditions',
+                        hiddenFooterBtns: [
+                            'Clear'
+                        ]
                     }
                 }
             ]
