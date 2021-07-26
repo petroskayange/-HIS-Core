@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :activeField="fieldComponent" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :activeField="facts.currentField" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -19,11 +19,7 @@ export default defineComponent({
         drugs: [] as Array<RegimenInterface>,
         nextInterval: 0,
         prescription: {} as any,
-        fieldComponent: '',
         patientToolbar: [] as Array<Option>,
-        regimenSwitchReason: '' as string | undefined,
-        hangingPillOptimization: '' as string,
-        patientWeight: 0 as number,
         starterPackSelected: false as boolean,
         facts: {
             age: -1 as number,
@@ -69,7 +65,7 @@ export default defineComponent({
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
                     this.drugs = this.prescription.getFastTrackMedications()
-                    this.fieldComponent = 'next_visit_interval'
+                    this.facts.currentField = 'next_visit_interval'
 
                 } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
                     this.drugs = this.prescription.getRegimenExtras()
@@ -106,12 +102,12 @@ export default defineComponent({
 
             if(!drugOrder) return toastWarning('Unable to create drug orders!')
 
-            if (this.regimenSwitchReason) {
-                await this.prescription.createRegimenSwitchObs(this.regimenSwitchReason)
+            if (this.facts.reasonForSwitch) {
+                await this.prescription.createRegimenSwitchObs(this.facts.reasonForSwitch)
             }
 
-            if (this.hangingPillOptimization) {
-                await this.prescription.createHangingPillsObs(this.hangingPillOptimization)
+            if (this.facts.hangingPillsStatus) {
+                await this.prescription.createHangingPillsObs(this.facts.hangingPillsStatus)
             }
 
             toastSuccess('Drug order has been created')
@@ -119,6 +115,8 @@ export default defineComponent({
             this.nextTask()
         },
         async onRegimen({ value, other }: Option) {
+            this.facts.hangingPillsStatus = ''
+            this.facts.starterPackNeeded = false
             this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
             this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
             this.facts.selectedDrugContraIndications = this.prescription.getRegimenContraIndications(
@@ -229,7 +227,7 @@ export default defineComponent({
             })
         },
         hasCustomRegimen() {
-            return this.fieldComponent === "custom_regimen"
+            return this.facts.currentField === "custom_regimen"
         },
         async getPatientToolBar() {
             const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
@@ -237,7 +235,7 @@ export default defineComponent({
                 { label: 'Age', value: `${this.patient.getAge()} Year(s)` },
                 { label: 'Gender', value: this.patient.getGender() },
                 { label: 'Current Regimen', value: this.programInfo.current_regimen },
-                { label: 'Current weight', value: `${this.patientWeight} kg(s)` || 'Unknown' },
+                { label: 'Current weight', value: `${this.facts.weight} kg(s)` || 'Unknown' },
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
@@ -250,7 +248,7 @@ export default defineComponent({
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
                     unload: (data: any) => {
-                        if (!this.starterPackSelected) {
+                        if (!this.facts.starterPackNeeded) {
                             this.drugs = [
                                 ...this.prescription.getRegimenExtras(), ...data.other.regimenDrugs
                             ]
@@ -271,7 +269,7 @@ export default defineComponent({
                                     return state.index === 0
                                 },
                                 onClick: () => {
-                                    this.fieldComponent = 'custom_regimen'
+                                    this.facts.currentField = 'custom_regimen'
                                 }
                             }
                         ]
@@ -305,7 +303,7 @@ export default defineComponent({
                                     return state.index === 1
                                 },
                                 onClick: () => {
-                                    this.fieldComponent = 'arv_regimens'
+                                    this.facts.currentField = 'arv_regimens'
                                 }
                             }
                         ]
