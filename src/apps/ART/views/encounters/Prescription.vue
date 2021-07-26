@@ -73,7 +73,6 @@ export default defineComponent({
                 } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
                     this.drugs = this.prescription.getRegimenExtras()
                 }
-
                 await this.init(patient)
                 this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
@@ -153,9 +152,9 @@ export default defineComponent({
             return options
         },
         extractRegimenCode(regimen: string): number {
-           if (regimen.match(/n\/a/i)) {
+           if (regimen.match(/n\/a/i))
                return -1
-           }
+
            return parseInt(regimen.substring(0, regimen.length))
         },
         getDosageTableOptions(regimen: any) {
