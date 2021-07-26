@@ -120,6 +120,39 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         }
     },
+    "Provide 14 day starter pack for LPV regimens for children under 3 years old": {
+        priority: 3,
+        actions: {
+            alert: async (facts: any) => {
+                const action = await actionSheet(
+                    'First time initiation', 
+                    'Starter pack needed for 14 days',
+                    [
+                        'Prescribe starter pack', 
+                        'Cancel'
+                    ]
+                )
+
+                if (action === 'prescribe starter pack') {
+                    facts.starterPackNeeded = true
+                    facts.currentField = 'selected_meds'
+                    return 'continue'
+                }
+                return 'exit'
+            }
+        },
+        conditions: {
+            age(age: number) {
+                return age < 3
+            },
+            selectedRegimenCode(code: number) {
+                return code === 11
+            },
+            treatmentInitiationState(state: string) {
+                return ['Initiation', 'Re-initiation'].includes(state)
+            }
+        }
+    },
     "Provide 14 day starter pack for NVP based regimens on newly initiated/re-initiation patients": {
         priority: 3,
         actions: {
