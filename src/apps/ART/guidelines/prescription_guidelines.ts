@@ -83,7 +83,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             currentRegimen(regimen: string) {
                 return regimen != 'N/A'
             },
-            selectedRegimen(regimen: string, { currentRegimen }: any){
+            selectedRegimenName(regimen: string, { currentRegimen }: any){
                 return regimen != currentRegimen
             }
         }
@@ -95,11 +95,14 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 const action = await actionSheet(
                     'First time initiation', 
                     'Starter pack needed for 14 days',
-                    ['Prescribe starter pack', 'Cancel']
+                    [
+                        'Prescribe starter pack', 
+                        'Cancel'
+                    ]
                 )
 
                 if (action === 'Prescribe starter pack') {
-                    facts.starterPack = true
+                    facts.starterPackNeeded = true
                     facts.currentField = 'selected_meds'
                     return true
                 }
@@ -107,10 +110,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             },
         },
         conditions: {
-            selectedRegimen(regimen: string) {
+            selectedRegimenName(regimen: string) {
                 return regimen.match(/NVP/i) ? true : false
             },
-            treatmentInitiation(initiation: string) {
+            treatmentInitiationState(initiation: string) {
                 return initiation === 'Continuing'
             }
         }
@@ -207,10 +210,10 @@ export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
             isChecked: true
         },
         conditions: {
-            starterPack(selected: boolean) {
+            starterPackNeeded(selected: boolean) {
                 return selected
             },
-            selectedRegimen(regimen: string) {
+            selectedRegimenName(regimen: string) {
                 regimen.match(/NVP/i) ? true : false
             }
         }
