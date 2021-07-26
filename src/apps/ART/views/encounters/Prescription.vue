@@ -41,8 +41,7 @@ export default defineComponent({
             hangingPillsStatus: '' as string,
             treatmentInitiationState: '' as string,
             lpvType: '' as string,
-            threeHpDrugs: [] as Array<any>
-
+            medicationOrders: [] as Array<any>
         }
     }),
     watch: {
@@ -50,7 +49,6 @@ export default defineComponent({
             async handler(patient: any){
                 if (!patient) return
 
-                this.patientWeight = await patient.getRecentWeight()
                 this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadMedicationOrders()
                 await this.prescription.loadFastTrackStatus()
@@ -59,10 +57,9 @@ export default defineComponent({
                     toastWarning('Patient is not eligible for treatment Today! Please check HIV Clinic Consultation')
                     return this.nextTask()
                 }
-                
+
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
-                await this.prescription.load3HpStatus()
                 await this.prescription.loadTreatmentState()
                 await this.init(patient)
 
@@ -89,6 +86,7 @@ export default defineComponent({
             this.facts.hangingPills = this.prescription.getHangingPills()
             this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
             this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
+            this.facts.medicationOrders = this.prescription.getMedicationOrders()
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
@@ -100,7 +98,7 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create treatment encounter')
 
             const drugOrder = await this.prescription.createDrugOrder(payload) 
-            
+
             if(!drugOrder) return toastWarning('Unable to create drug orders!')
 
             if (this.regimenSwitchReason) {
