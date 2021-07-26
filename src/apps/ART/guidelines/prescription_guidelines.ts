@@ -29,7 +29,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         },
         conditions: {
             selectedRegimenCode(code: number) {
-                return [9, 11].includes(code)
+                return [7, 8, 9, 10, 11, 12].includes(code)
             },
             medicationOrders(orders: Array<string>) {
                 const threeHp = ['Rifapentine', 'INH']
