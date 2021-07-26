@@ -64,6 +64,7 @@ export default defineComponent({
                 await this.prescription.loadHangingPills()
                 await this.prescription.load3HpStatus()
                 await this.prescription.loadTreatmentState()
+                await this.init(patient)
 
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
@@ -73,7 +74,6 @@ export default defineComponent({
                 } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
                     this.drugs = this.prescription.getRegimenExtras()
                 }
-                await this.init(patient)
                 this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
@@ -140,7 +140,9 @@ export default defineComponent({
             const options = []
             for(const value in regimenCategories) {
                 const regimenDrugs = regimenCategories[value]
-                const label = regimenDrugs.map((r: RegimenInterface) => r.alternative_drug_name).join(' + ')
+                const label = regimenDrugs.map((r: RegimenInterface) => 
+                    r.alternative_drug_name || r.concept_name).join(' + ')
+
                 options.push({ 
                     label, 
                     value, 
