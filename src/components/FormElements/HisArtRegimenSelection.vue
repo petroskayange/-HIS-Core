@@ -43,7 +43,16 @@ export default defineComponent({
                 if (item) this.onselect(item)
             }
         },
-        onselect(item: Option): void {
+        async onselect(item: Option) {
+            if (this.onValue) {
+               const ok = await this.onValue(item)
+               if (!ok) {
+                   return
+               }
+            }
+            if (this.onValueUpdate) {
+                this.listData = await this.onValueUpdate([...this.listData], item)
+            }
             this.selected = item.label
             this.$emit('onValue', item)
         }
@@ -58,4 +67,3 @@ export default defineComponent({
     height: 100%;
 }
 </style>
-
