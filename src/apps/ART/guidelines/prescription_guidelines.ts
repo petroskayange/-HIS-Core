@@ -1,3 +1,14 @@
+/**
+ * QUICK FACTS ABOUT ART REGIMENS (Malawi Clinical HIV Guidelines 2018 Version 1)
+ *  - ART regimens are grouped into first and secondline
+ *  - Each regimen is identified by a number. 
+ *    [0, 2, 4, 5, 6, 8, 9, 10, 11, 13, 14]
+ *  - Firstline regimens include [0, 2, 4, 5, 6, 13, 14]
+ *  - Secondline regimens include [7, 8, 9, 10, 11]
+ *  - Some regimens a "phased in" on initiation (Due to adverse reaction). As such, 
+ *    a starter pack is provided for atleast two weeks. Regimens that require a
+ *    starter pack include [0, 2, 6]
+ */
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
 import { actionSheet } from "@/utils/Alerts"
 
