@@ -119,7 +119,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         }
     },
-    "Provide 14 day starter pack for NVP based regimens on newly initiated patients": {
+    "Provide 14 day starter pack for NVP based regimens on newly initiated/re-initiation patients": {
         priority: 3,
         actions: {
             alert: async (facts: any) => {
@@ -142,10 +142,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         },
         conditions: {
             selectedRegimenCode(code: number) {
-                return [0, 2, 5].includes(code)
+                return [0, 2, 6].includes(code)
             },
-            treatmentInitiationState(initiation: string) {
-                return initiation === 'Continuing'
+            treatmentInitiationState(state: string) {
+                return ['Initiation', 'Re-initiation'].includes(state)
             }
         }
     },
