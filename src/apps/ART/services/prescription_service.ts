@@ -64,6 +64,10 @@ export class PrescriptionService extends AppEncounterService {
         return DRUG_FREQUENCY_GUIDELINE
     }
 
+    getHangingPills() {
+        return this.hangingPills
+    }
+
     getRegimenExtras() { return this.regimenExtras }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
