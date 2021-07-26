@@ -43,7 +43,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             alert: async (facts: any) => {
                 const action = await actionSheet(
                     'Contraindications / Side effects',
-                    facts.selectedDrugEffects.join(','),
+                    facts.patientAdverseEffects.join(','),
                     [
                         'Select other regimen', 
                         'Keep selected regimen'
@@ -53,8 +53,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-            selectedDrugEffects(effects: Array<string>) {
-                return effects.length >= 1
+            selectedDrugContraIndications(
+                effects: Array<string>, 
+                { patientAdverseEffects }: any) {
+
+                return patientAdverseEffects.filter((i: string) => effects.includes(i)).length >= 1
             }
         }
     },

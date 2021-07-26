@@ -29,11 +29,12 @@ export default defineComponent({
             age: -1 as number,
             gender: '' as string,
             weight: -1 as number,
+            patientAdverseEffects: [] as Array<string>,
             currentRegimenCode: -1 as number,
             currentField: '' as string,
             selectedDrug: '' as string,
             selectedDrugs: [] as Array<any>,
-            selectedDrugEffects: [] as Array<any>,
+            selectedDrugContraIndications: [] as Array<any>,
             selectedRegimenCode: -1 as number,
             hangingPills: [] as Array<any>,
             reasonForSwitch: '' as string,
@@ -61,6 +62,8 @@ export default defineComponent({
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
                 await this.prescription.loadTreatmentState()
+                await this.prescription.loadAdverseEffects()
+
                 await this.init(patient)
 
                 if (this.prescription.isFastTrack()) {
@@ -71,6 +74,7 @@ export default defineComponent({
                 } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
                     this.drugs = this.prescription.getRegimenExtras()
                 }
+
                 this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
@@ -87,6 +91,7 @@ export default defineComponent({
             this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
             this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
+            this.facts.patientAdverseEffects = this.prescription.getAdverseEffects()
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
@@ -116,7 +121,9 @@ export default defineComponent({
         async onRegimen({ value, other }: Option) {
             this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
             this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
-
+            this.facts.selectedDrugContraIndications = this.prescription.getRegimenContraIndications(
+                this.facts.selectedRegimenCode
+            ) 
             const guidelines = this.prescription.getRegimenGuidelines()
             const findings = matchToGuidelines(this.facts, guidelines)
 
