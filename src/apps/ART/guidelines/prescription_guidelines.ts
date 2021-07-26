@@ -5,7 +5,7 @@
  *    [0, 2, 4, 5, 6, 8, 9, 10, 11, 13, 14]
  *  - Firstline regimens include [0, 2, 4, 5, 6, 13, 14]
  *  - Secondline regimens include [7, 8, 9, 10, 11]
- *  - Some regimens a "phased in" on initiation (Due to adverse reaction). As such, 
+ *  - Some regimens are "phased in" on initiation (Due to adverse reaction). As such, 
  *    a starter pack is provided for atleast two weeks. Regimens that require a
  *    starter pack include [0, 2, 6]
  */
@@ -31,8 +31,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             selectedRegimenCode(code: number) {
                 return [9, 11].includes(code)
             },
-            threeHpDrugs(drugs: Array<string>) {
-                return drugs.length >= 1
+            medicationOrders(orders: Array<string>) {
+                const threeHp = ['Rifapentine', 'INH']
+                return orders.filter(i => threeHp.includes(i)).length >= 1
             }
         }
     },
