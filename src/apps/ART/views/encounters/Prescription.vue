@@ -7,8 +7,8 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import Validation from "@/components/Forms/validations/StandardValidations"
-import { PrescriptionService, HangingPill, REGIMEN_SWITCH_REASONS } from "@/apps/ART/services/prescription_service"
-import { toastWarning, toastSuccess, actionSheet } from "@/utils/Alerts"
+import { PrescriptionService } from "@/apps/ART/services/prescription_service"
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import HisDate from "@/utils/Date"
 import { matchToGuidelines } from "@/utils/GuidelineEngine"
 import EncounterMixinVue from './EncounterMixin.vue'
@@ -22,7 +22,7 @@ export default defineComponent({
         fieldComponent: '',
         patientToolbar: [] as Array<Option>,
         regimenSwitchReason: '' as string | undefined,
-        hangingPillOptimization: '' as HangingPill | '',
+        hangingPillOptimization: '' as string,
         patientWeight: 0 as number,
         starterPackSelected: false as boolean,
         facts: {
@@ -85,7 +85,7 @@ export default defineComponent({
     methods: {
         async init(patient: any) {
             this.facts.age = patient.getAge()
-            this.facts.gender = patient.getGender()
+            this.facts.gender = patient.getGender() === 'Female' ? 'F' : 'M'
             this.facts.weight = await patient.getRecentWeight()
             this.facts.hangingPills = this.prescription.getHangingPills()
             this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
@@ -156,7 +156,7 @@ export default defineComponent({
            if (regimen.match(/n\/a/i)) {
                return -1
            }
-           return parseInt(regimen.substring(0, 1))
+           return parseInt(regimen.substring(0, regimen.length))
         },
         getDosageTableOptions(regimen: any) {
             const rowColors: any = [ 
