@@ -94,12 +94,8 @@ export class PrescriptionService extends AppEncounterService {
         return !isEmpty(effects) ? effects.map(i => i.name) : []
     }
 
-    getRegimenStarterpack(regimenCode: string, patientWeight: number) {
-        const regimenNumber = regimenCode.match(/\d+/) //Get the first proceeding digits
-       
-        if (!regimenNumber) return []
-
-        const params = { weight: patientWeight, regimen: parseInt(regimenNumber[0])}
+    getRegimenStarterpack(regimenCode: number, patientWeight: number) {
+        const params = { weight: patientWeight, regimen: regimenCode }
 
         return AppEncounterService.getJson(
             `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
