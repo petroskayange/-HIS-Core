@@ -568,20 +568,21 @@ export default [
    },
    {
       "categories": [
-         "art_extra_medication_order"
+     
       ],
       "concept_id": 5090,
       "name": "Height"
    },
    {
       "categories": [
-         ""
+         "art_medication_order"
       ],
       "concept_id": 9974,
       "name": "Rifapentine"
    },
    {
       "categories": [
+         "art_medication_order",
          "art_extra_medication_order"
       ],
       "concept_id": 916,
@@ -589,6 +590,7 @@ export default [
    },
    {
       "categories": [
+         "art_medication_order",
          "art_extra_medication_order"
       ],
       "concept_id": 916,
