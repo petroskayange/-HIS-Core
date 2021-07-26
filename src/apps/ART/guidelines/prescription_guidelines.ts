@@ -38,7 +38,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         }
     },
     "Provide 14 day starter pack for NVP based regimens on newly initiated patients": {
-        priority: 2,
+        priority: 3,
         actions: {
             alert: async (facts: any) => {
                 const action = await actionSheet(
@@ -65,7 +65,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         }
     },
     "Ask to reuse hanging pills if any": {
-        priority: 3,
+        priority: 4,
         actions: {
             alert: async (facts: any) => {
                 const action  = await actionSheet(
@@ -84,6 +84,33 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 const hanging = drugs.map(drug => hangingPills.includes(drug))
                 return hanging.some(Boolean)
            }
+        }
+    },
+    "Provide warning of use of DTG regimen to women of reproductive age" : {
+        priority: 2,
+        actions: {
+            alert: async () => {
+                const action = await actionSheet(
+                    'Use of DTG or EFV in women of reproductive age',
+                    ['There is currently no confirmation',
+                    'that DTG is safe in very early preganancy',
+                    'DTG-based regimens are therefore not used as standard 1st line regimens for',
+                    'girls and women who may get preganant'].join(' '),
+                    ['Select another regimen', 'Continue with regimen']
+                )
+                return action === 'Continue with regimen'
+            }
+        },
+        conditions: {
+            selectedRegimenCode(code: number) {
+                return code >= 12
+            },
+            gender(gender: string) {
+                return gender === 'F'
+            },
+            age(age: number) {
+                return age >= 14 && age <= 45
+            }
         }
     }
 }
