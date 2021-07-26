@@ -20,6 +20,7 @@ export class PrescriptionService extends AppEncounterService {
     fastTrackMedications: Array<Record<string, any>>;
     medicationOrders: Array<number>;
     treatmentState: string;
+    adverseEffects: Array<string>;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -30,6 +31,7 @@ export class PrescriptionService extends AppEncounterService {
         this.hangingPills = []
         this.medicationOrders = []
         this.treatmentState = ''
+        this.adverseEffects = []
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -58,6 +60,8 @@ export class PrescriptionService extends AppEncounterService {
         })
     }
 
+    getAdverseEffects() { return this.adverseEffects }
+
     getRegimenExtras() { return this.regimenExtras }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
@@ -76,11 +80,18 @@ export class PrescriptionService extends AppEncounterService {
         const arvs = AppEncounterService.getCachedConceptID("Antiretroviral drugs")
         return this.medicationOrders.includes(arvs)
     }
-    
+
     shouldPrescribeExtras() {
         const extras = AppEncounterService.getConceptsByCategory('art_extra_medication_order')
         const extrasAvailable = extras.map((i: any) => this.medicationOrders.includes(i.concept_id))
         return extrasAvailable.some(Boolean)
+    }
+
+    getRegimenContraIndications(regimenCode: number) {
+        const category = `${regimenCode}_regimen_adverse_reaction`
+        const effects =  AppEncounterService.getConceptsByCategory(category)
+
+        return !isEmpty(effects) ? effects.map(i => i.name) : []
     }
 
     getRegimenStarterpack(regimenCode: string, patientWeight: number) {
@@ -94,6 +105,17 @@ export class PrescriptionService extends AppEncounterService {
             `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
             params
         )
+    }
+
+    async loadAdverseEffects() {
+        const effects = AppEncounterService.getConceptsByCategory('side_effect')
+        effects.forEach(async (i: any) => {
+            const sideEffect = await AppEncounterService.getFirstValueCoded(this.patientID, i.name)
+
+            if (sideEffect === 'Yes') {
+                this.adverseEffects.push(i.name)
+            }
+        })
     }
 
     async loadFastTrackStatus() {
