@@ -48,6 +48,15 @@ export default defineComponent({
               const noneIndex = findIndex(listData, {label: 'None'})
               listData[noneIndex].isChecked = false
             }
+
+            if (value.isChecked && value.label === 'Disable') {
+              const disableIndex = findIndex(listData, {label: 'Disable'})
+              listData[disableIndex].disabled = true
+            }
+            if (value.isChecked && value.label === 'Enable') {
+              const disableIndex = findIndex(listData, {label: 'Disable'})
+              listData[disableIndex].disabled = false
+            }
             return listData
           },
           validation(value: any): null | Array<string> {
@@ -75,8 +84,8 @@ export default defineComponent({
               }
             },
             {
-              label: "Baz",
-              value: "Baz",
+              label: "Enable",
+              value: "enabled",
               description: {
                 color: 'secondary',
                 text: 'I only appear when checked',
@@ -84,8 +93,8 @@ export default defineComponent({
               }
             },
             {
-              label: "Bar",
-              value: "Bar",
+              label: "Disable",
+              value: "disable",
             },
             {
               label: "None",
