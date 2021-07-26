@@ -3,4 +3,5 @@ export class ConsultationService extends AppEncounterService {
   constructor(patientID: number) {
     super(patientID, 53);
   }
+  
 }

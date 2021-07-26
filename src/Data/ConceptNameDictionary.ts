@@ -1,6 +1,12 @@
 export default [
    {
       "categories":[
+      ],
+      "concept_id":1588,
+      "name":"TB treatment history"
+   },
+   {
+      "categories":[
          "fast_track"
       ],
       "concept_id":9533,
