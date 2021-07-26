@@ -9,7 +9,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 const action = await actionSheet(
                     'Contraindications / Side effects',
                     facts.selectedRegimenEffects.join(','),
-                    ['Select other regimen', 'Keep selected regimen']
+                    [
+                        'Select other regimen', 
+                        'Keep selected regimen'
+                    ]
                 )
                 return action === 'Keep selected regimen'
             }            
@@ -27,13 +30,16 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 const action = await actionSheet(
                     'Secondline treatment recommendation',
                     [
-                        "Children under 3 years often have a high viral load and may ",
+                        "Children under 3 ye</b>ars often have a high viral load and may ",
                         "be infected with drug-resistant HIV from previous exposure ",
                         "to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
                         "Therefore, children under 3 years respond better when ",
                         "started immediately on 2nd line regimen (Regimen 11)"
                     ].join(' '),
-                    ['Cancel', 'Keep selected regimen']
+                    [
+                        'Cancel', 
+                        'Keep selected regimen'
+                    ]
                 )
                 return action === 'Keep selected regimen'
             }
@@ -114,7 +120,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async (facts: any) => {
                 const action  = await actionSheet(
-                    'Do you want to use hanging pills?', '', ['Yes', 'No']
+                    'Do you want to use hanging pills?', '', 
+                    [
+                        'Yes', 
+                        'No'
+                    ]
                 )
                 if (action === 'Yes') {
                     facts.hangingPillsStatus = 'Optimize - including hanging pills'
@@ -137,11 +147,16 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             alert: async () => {
                 const action = await actionSheet(
                     'Use of DTG or EFV in women of reproductive age',
-                    ['There is currently no confirmation',
-                    'that DTG is safe in very early preganancy',
-                    'DTG-based regimens are therefore not used as standard 1st line regimens for',
-                    'girls and women who may get preganant'].join(' '),
-                    ['Select another regimen', 'Continue with regimen']
+                    [
+                        'There is currently no confirmation',
+                        'that DTG is safe in very early preganancy',
+                        'DTG-based regimens are therefore not used as standard 1st line regimens for',
+                        'girls and women who may get preganant'
+                    ].join(' '),
+                    [
+                        'Select another regimen', 
+                        'Continue with regimen'
+                    ]
                 )
                 return action === 'Continue with regimen'
             }
@@ -164,7 +179,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             alert: async (facts: any) => {
                 const action = await actionSheet(
                     'Prescribe LPV/r in Pellets (cups) or Tablets?', '',
-                    ['Granules', 'Pellets', 'Tabs']
+                    [
+                        'Granules', 
+                        'Pellets', 
+                        'Tabs'
+                    ]
                 )
                 facts.lpvType = action
                 return true
