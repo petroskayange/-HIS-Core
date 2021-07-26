@@ -8,18 +8,45 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             alert: async (facts: any) => {
                 const action = await actionSheet(
                     'Contraindications / Side effects',
-                    facts.selectedRegimenContraIndications.join(','),
+                    facts.selectedRegimenEffects.join(','),
                     ['Select other regimen', 'Keep selected regimen']
                 )
                 return action === 'Keep selected regimen'
             }            
         },
         conditions: {
-            selectedRegimenContraIndications(indications: Array<string>) {
-                return indications.length >= 1
+            selectedRegimenEffects(effects: Array<string>) {
+                return effects.length >= 1
             }
         }
     },
+    "Recommend 2nd line regimen to children under 3": {
+        priority: 1,
+        actions: {
+            alert: async () => {
+                const action = await actionSheet(
+                    'Secondline treatment recommendation',
+                    [
+                        "Children under 3 years often have a high viral load and may ",
+                        "be infected with drug-resistant HIV from previous exposure ",
+                        "to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
+                        "Therefore, children under 3 years respond better when ",
+                        "started immediately on 2nd line regimen (Regimen 11)"
+                    ].join(' '),
+                    ['Cancel', 'Keep selected regimen']
+                )
+                return action === 'Keep selected regimen'
+            }
+        },
+        conditions: {
+            age(age: number) {
+                return age < 3
+            },
+            selectedRegimenCode(code: number) {
+                return code != 11
+            }
+        }
+    }, 
     'Provide a reason for switching regimens when patient already has one': {
         priority: 1,
         actions : {
