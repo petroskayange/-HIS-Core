@@ -10,20 +10,6 @@ import {
     INTERVAL_RECOMMENDATION,
     DRUG_FREQUENCY_GUIDELINE
 } from "@/apps/ART/guidelines/prescription_guidelines"
-export const REGIMEN_SWITCH_REASONS = [
-    'Policy change', 'Ease of administration (pill burden, swallowing)',
-    'Drug drug interaction', 'Pregnancy intention',
-    'Side effects', 'Treatment failure', 'Weight Change', 'Other'
-]
-export enum HangingPill {
-   OPTIMIZE = 'Optimize - including hanging pills',
-   EXACT = 'Exact - excluding hanging pills'
-}
-export enum TreatmentState {
-    CONTINUING = 'Continuing',
-    INITIATION = 'Initiation',
-    RE_INITIATION = 'Re-initiated'
-}
 
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
@@ -191,13 +177,6 @@ export class PrescriptionService extends AppEncounterService {
         `, params)
     }
 
-    starterPackNeeded(regimenName: string) {
-        if (this.treatmentState != TreatmentState.CONTINUING 
-            && regimenName.match(/NVP/i)) {
-            return true
-        }
-    }
-
     calculatePillsPerDay(am: number, noon: number, pm: number) {
         return parseFloat(am.toString()) + noon + pm
     }
@@ -279,7 +258,7 @@ export class PrescriptionService extends AppEncounterService {
         })
     }
 
-    async createHangingPillsObs(response: HangingPill) {
+    async createHangingPillsObs(response: string) {
         return this.saveValueTextObs('appointment type', response)
     }
 
