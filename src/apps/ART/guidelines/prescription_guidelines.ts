@@ -24,7 +24,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Close'
                     ]
                 )
-                return false
+                return 'exit'
             }
         },
         conditions: {
@@ -42,17 +42,17 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             alert: async (facts: any) => {
                 const action = await actionSheet(
                     'Contraindications / Side effects',
-                    facts.selectedRegimenEffects.join(','),
+                    facts.selectedDrugEffects.join(','),
                     [
                         'Select other regimen', 
                         'Keep selected regimen'
                     ]
                 )
-                return action === 'Keep selected regimen'
+                return action === 'Select other regimen' ? 'exit' : 'continue'
             }
         },
         conditions: {
-            selectedRegimenEffects(effects: Array<string>) {
+            selectedDrugEffects(effects: Array<string>) {
                 return effects.length >= 1
             }
         }
@@ -75,7 +75,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Keep selected regimen'
                     ]
                 )
-                return action === 'Keep selected regimen'
+                return action === 'Cancel' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -92,7 +92,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions : {
             alert: async (facts: any) => {
                 const action = await actionSheet(
-                    `Are you sure you want to replace ${facts.currentRegimen}?`,
+                    `Are you sure you want to replace ${facts.currentRegimenCode}?`,
                     'Specify reason for switching regimen',
                     [ 
                         'Policy change', 
@@ -108,17 +108,14 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 )
                 if (action != 'cancel') {
                     facts.reasonForSwitch = action
-                    return true
+                    return 'continue'
                 }
-                return false
+                return 'exit'
             }
         },
         conditions: {
-            currentRegimen(regimen: string) {
-                return regimen != 'N/A'
-            },
-            selectedRegimenName(regimen: string, { currentRegimen }: any){
-                return regimen != currentRegimen
+            selectedRegimenCode(code: string, { currentRegimenCode }: any){
+                return code != currentRegimenCode
             }
         }
     },
@@ -138,9 +135,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 if (action === 'Prescribe starter pack') {
                     facts.starterPackNeeded = true
                     facts.currentField = 'selected_meds'
-                    return true
+                    return 'continue'
                 }
-                return false
+                return 'exit'
             },
         },
         conditions: {
@@ -168,7 +165,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 } else {
                     facts.hangingPillsStatus = 'Exact - excluding hanging pills'
                 }
-                return true
+                return 'continue'
             }
         },
         conditions: {
@@ -195,7 +192,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Continue with regimen'
                     ]
                 )
-                return action === 'Continue with regimen'
+                return action === 'Select another regimen' ? 'exit': 'continue'
             }
         },
         conditions: {
@@ -223,7 +220,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ]
                 )
                 facts.lpvType = action
-                return true
+                return 'continue'
             }
         },
         conditions: {
