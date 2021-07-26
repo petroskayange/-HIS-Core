@@ -37,11 +37,6 @@ export default defineComponent({
         async init() {
             const options = await this.options(this.fdata)
             this.listData = Transformer.convertArrayToTurples(options)
-
-            if (this.preset) {
-                const item = find(options, this.preset)
-                if (item) this.onselect(item)
-            }
         },
         async onselect(item: Option) {
             if (this.onValue) {
