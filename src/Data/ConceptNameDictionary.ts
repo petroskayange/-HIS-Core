@@ -1,6 +1,9 @@
 export default [
    {
       "categories":[
+         "0_regimen_adverse_reaction",
+         "9_regimen_adverse_reaction",
+         "14_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -9,6 +12,18 @@ export default [
    },
    {
       "categories":[
+         "0_regimen_adverse_reaction",
+         "2_regimen_adverse_reaction",
+         "4_regimen_adverse_reaction",
+         "8_regimen_adverse_reaction",
+         "9_regimen_adverse_reaction",
+         "10_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
+         "12_regimen_adverse_reaction",
+         "13_regimen_adverse_reaction",
+         "14_regimen_adverse_reaction",
+         "16_regimen_adverse_reaction",
+         "17_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -17,6 +32,10 @@ export default [
    },
    {
       "categories":[
+         "5_regimen_adverse_reaction",
+         "9_regimen_adverse_reaction",
+         "10_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -25,6 +44,11 @@ export default [
    },
    {
       "categories":[
+         "9_regimen_adverse_reaction",
+         "10_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
+         "13_regimen_adverse_reaction",
+         "14_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -33,6 +57,8 @@ export default [
    },
    {
       "categories":[
+         "13_regimen_adverse_reaction",
+         "14_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -41,6 +67,19 @@ export default [
    },
    {
       "categories":[
+         "0_regimen_adverse_reaction",
+         "2_regimen_adverse_reaction",
+         "4_regimen_adverse_reaction",
+         "5_regimen_adverse_reaction",
+         "6_regimen_adverse_reaction",
+         "7_regimen_adverse_reaction",
+         "8_regimen_adverse_reaction",
+         "9_regimen_adverse_reaction",
+         "10_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
+         "12_regimen_adverse_reaction",
+         "13_regimen_adverse_reaction",
+         "14_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -49,6 +88,10 @@ export default [
    },
    {
       "categories":[
+         "2_regimen_adverse_reaction",
+         "4_regimen_adverse_reaction",
+         "8_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -57,6 +100,11 @@ export default [
    },
    {
       "categories":[
+         "0_regimen_adverse_reaction",
+         "9_regimen_adverse_reaction",
+         "15_regimen_adverse_reaction",
+         "16_regimen_adverse_reaction",
+         "17_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
@@ -65,6 +113,7 @@ export default [
    }
    ,{
       "categories":[
+         "11_regimen_adverse_reaction",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -74,6 +123,11 @@ export default [
    },
    {
       "categories":[
+         "0_regimen_contraindication",
+         "2_regimen_contraindication",
+         "6_regimen_contraindication",
+         "7_regimen_contraindication",
+         "8_regimen_contraindication",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -83,6 +137,10 @@ export default [
    },
    {
       "categories":[
+         "2_regimen_adverse_reaction",
+         "4_regimen_adverse_reaction",
+         "8_regimen_adverse_reaction",
+         "11_regimen_adverse_reaction",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -92,6 +150,10 @@ export default [
    },
    {
       "categories":[
+         "5_regimen_adverse_reaction",
+         "6_regimen_adverse_reaction",
+         "7_regimen_adverse_reaction",
+         "10_regimen_adverse_reaction",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -101,6 +163,8 @@ export default [
    },
    {
       "categories":[
+         "4_regimen_adverse_reaction",
+         "5_regimen_adverse_reaction",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -110,6 +174,8 @@ export default [
    },
    {
       "categories":[
+         "4_regimen_adverse_reaction",
+         "5_regimen_adverse_reaction",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -119,6 +185,10 @@ export default [
    },
    {
       "categories":[
+         "2_regimen_contraindication",
+         "4_regimen_contraindication",
+         "8_regimen_contraindication",
+         "11_regimen_contraindication",
          "severe_contraindication",
          "contraindication",
          "side_effect"
@@ -128,6 +198,7 @@ export default [
    },
    {
       "categories":[
+         "0_regimen_adverse_reaction",
          "contraindication",
          "side_effect"
       ],
