@@ -2,6 +2,24 @@ import { GuideLineInterface } from "@/utils/GuidelineEngine"
 import { actionSheet } from "@/utils/Alerts"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
+    "Check for any adverse effects or contraindications associated with the regimen": {
+        priority: 1,
+        actions: {
+            alert: async (facts: any) => {
+                const action = await actionSheet(
+                    'Contraindications / Side effects',
+                    facts.selectedRegimenContraIndications.join(','),
+                    ['Select other regimen', 'Keep selected regimen']
+                )
+                return action === 'Keep selected regimen'
+            }            
+        },
+        conditions: {
+            selectedRegimenContraIndications(indications: Array<string>) {
+                return indications.length >= 1
+            }
+        }
+    },
     'Provide a reason for switching regimens when patient already has one': {
         priority: 1,
         actions : {
