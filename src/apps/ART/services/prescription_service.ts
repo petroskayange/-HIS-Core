@@ -3,7 +3,7 @@ import { DrugOrderService } from "@/services/drug_order_service";
 import { Observation } from "@/interfaces/observation";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
-import { find, isEmpty } from "lodash"
+import { isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
 import {
     REGIMEN_SELECTION_GUIDELINES,
@@ -14,19 +14,17 @@ import {
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
     fastTrack: boolean;
-    useHangingPills: boolean;
     received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
-    medicationOrders: Array<Observation>;
+    medicationOrders: Array<number>;
     treatmentState: string;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
         this.fastTrack = false
         this.received3HP = false
-        this.useHangingPills = false
         this.regimenExtras = []
         this.fastTrackMedications = []
         this.hangingPills = []
@@ -54,6 +52,12 @@ export class PrescriptionService extends AppEncounterService {
         return this.hangingPills
     }
 
+    getMedicationOrders() {
+        return this.medicationOrders.map((i: number) => {
+            return AppEncounterService.getCachedConceptName(i)
+        })
+    }
+
     getRegimenExtras() { return this.regimenExtras }
 
     getPatientRegimens() { return RegimenService.getRegimens(this.patientID) }
@@ -79,21 +83,6 @@ export class PrescriptionService extends AppEncounterService {
         return extrasAvailable.some(Boolean)
     }
 
-    hasHangingPills(drugs: any) {
-        let isHanging = false
-        for(const index in drugs) {
-            const drug = drugs[index]
-            const filter = find(this.hangingPills, {
-                drug: drug.drug_id, hasRemaining: true
-            })
-            if (filter) {
-                isHanging = true
-                break;
-            }
-        }
-        return isHanging
-    }
-
     getRegimenStarterpack(regimenCode: string, patientWeight: number) {
         const regimenNumber = regimenCode.match(/\d+/) //Get the first proceeding digits
        
@@ -105,18 +94,6 @@ export class PrescriptionService extends AppEncounterService {
             `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
             params
         )
-    }
-
-    async load3HpStatus() {
-        const orders = await AppEncounterService.getAll(this.patientID, 'Medication orders')
-      
-        if (!orders) return
-
-        const rifapentine = await AppEncounterService.getConceptID('Rifapentine')
-
-        const ordered = find(orders, {'value_coded': rifapentine})
-
-        if (ordered) this.received3HP = true
     }
 
     async loadFastTrackStatus() {
