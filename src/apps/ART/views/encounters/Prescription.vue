@@ -118,7 +118,7 @@ export default defineComponent({
         },
         async onRegimen({ value, other }: Option) {
             this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
-            this.facts.selectedDrugs = other.regimens.map((d: any) => d.drug_id)
+            this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
 
             const guidelines = this.prescription.getRegimenGuidelines()
             const findings = matchToGuidelines(this.facts, guidelines)
@@ -126,15 +126,31 @@ export default defineComponent({
             for(const index in findings) {
                 const finding = findings[index]
 
-                if (finding?.actions?.alert) {
-                    const state = await finding?.actions?.alert(this.facts)
+                if (!finding?.actions?.alert) 
+                    continue
 
-                    if (state === 'exit') {
-                        return false
-                    }
-                }
+                const state = await finding?.actions?.alert(this.facts)
+
+                if (state === 'exit')
+                    return false
             }
             return true
+        },
+        async buildRegimenOptions() {
+            const regimenCategories = await this.prescription.getPatientRegimens()
+            const options = []
+            for(const value in regimenCategories) {
+                const regimenDrugs = regimenCategories[value]
+                const label = regimenDrugs.map((r: RegimenInterface) => r.alternative_drug_name).join(' + ')
+                options.push({ 
+                    label, 
+                    value, 
+                    other: {
+                        regimenDrugs 
+                    } 
+                })
+            }
+            return options
         },
         extractRegimenCode(regimen: string): number {
            if (regimen.match(/n\/a/i)) {
@@ -219,26 +235,6 @@ export default defineComponent({
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
         },
-        async promptHangingPill() {
-            return actionSheet(
-                'Do you want to use hanging pills?', '',
-                ['Yes', 'No']
-            )
-        },
-        async promptAcceptStarterPack() {
-            return actionSheet(
-                'First time initiation', 
-                'Starter pack needed for 14 days',
-                ['Prescribe starter pack', 'Cancel'] 
-            )
-        },
-        async promptWhySwitchingRegimen() {
-            return actionSheet(
-                `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
-                'Specify reason for switching regimen',
-                [...REGIMEN_SWITCH_REASONS, 'Cancel']
-            )
-        },
         getFields(): Array<Field> {
             return [
                 {
@@ -250,20 +246,11 @@ export default defineComponent({
                     unload: (data: any) => {
                         if (!this.starterPackSelected) {
                             this.drugs = [
-                                ...this.prescription.getRegimenExtras(), ...data.other.regimens
+                                ...this.prescription.getRegimenExtras(), ...data.other.regimenDrugs
                             ]
                         }
                     },
-                    options: async () => {
-                        const regimenCategories = await this.prescription.getPatientRegimens()
-                        const options = []
-                        for(const index in regimenCategories) {
-                            const regimens = regimenCategories[index]
-                            const drug = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
-                            options.push({ label: drug, value: index, other: { regimens } })
-                        }
-                        return options
-                    },
+                    options: () => this.buildRegimenOptions(),
                     onValue: (regimen: Option) => this.onRegimen(regimen),
                     config: {
                         toolbarInfo: this.patientToolbar,
@@ -367,18 +354,8 @@ export default defineComponent({
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_NEXT_VISIT_INTERVAL_SELECTION,
                     validation: (val: Option) => Validation.required(val),
-                    unload: async (data: any, state: string) => {
+                    unload: async (data: any) => {
                         this.nextInterval = data.value
-                        if (this.prescription.hasHangingPills(this.drugs) && state==='next') {
-                            
-                            const hangingPillOption = await this.promptHangingPill()
-
-                            if (hangingPillOption === 'yes') {
-                                return this.hangingPillOptimization = HangingPill.OPTIMIZE
-                            }
-                            return this.hangingPillOptimization = HangingPill.EXACT
-                        }
-                        this.hangingPillOptimization = ''
                     },
                     options: () => {
                         const intervals = [
