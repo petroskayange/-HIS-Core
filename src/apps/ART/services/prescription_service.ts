@@ -172,9 +172,12 @@ export class PrescriptionService extends AppEncounterService {
     async loadTreatmentState() {
         const params = { date: AppEncounterService.getSessionDate()}
 
-        this.treatmentState = await AppEncounterService.getJson(`
-            programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status
-        `, params)
+        const req = await AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status`,
+            params
+        )
+
+        if (req) this.treatmentState = req['status']
     }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
