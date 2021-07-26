@@ -10,7 +10,9 @@ import Validation from "@/components/Forms/validations/StandardValidations"
 import { PrescriptionService, HangingPill, REGIMEN_SWITCH_REASONS } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess, actionSheet } from "@/utils/Alerts"
 import HisDate from "@/utils/Date"
+import { matchToGuidelines } from "@/utils/GuidelineEngine"
 import EncounterMixinVue from './EncounterMixin.vue'
+
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
@@ -22,7 +24,26 @@ export default defineComponent({
         regimenSwitchReason: '' as string | undefined,
         hangingPillOptimization: '' as HangingPill | '',
         patientWeight: 0 as number,
-        starterPackSelected: false as boolean
+        starterPackSelected: false as boolean,
+        facts: {
+            age: -1 as number,
+            gender: '' as string,
+            weight: -1 as number,
+            currentRegimenCode: -1 as number,
+            currentField: '' as string,
+            selectedDrug: '' as string,
+            selectedDrugs: [] as Array<any>,
+            selectedDrugEffects: [] as Array<any>,
+            selectedRegimenCode: -1 as number,
+            hangingPills: [] as Array<any>,
+            reasonForSwitch: '' as string,
+            starterPackNeeded: false as boolean,
+            hangingPillsStatus: '' as string,
+            treatmentInitiationState: '' as string,
+            lpvType: '' as string,
+            threeHpDrugs: [] as Array<any>
+
+        }
     }),
     watch: {
         patient: {
@@ -53,6 +74,7 @@ export default defineComponent({
                     this.drugs = this.prescription.getRegimenExtras()
                 }
 
+                await this.init(patient)
                 this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
@@ -61,6 +83,14 @@ export default defineComponent({
         }
     },
     methods: {
+        async init(patient: any) {
+            this.facts.age = patient.getAge()
+            this.facts.gender = patient.getGender()
+            this.facts.weight = await patient.getRecentWeight()
+            this.facts.hangingPills = this.prescription.getHangingPills()
+            this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
+            this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
+        },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
 
@@ -85,6 +115,32 @@ export default defineComponent({
             toastSuccess('Drug order has been created')
 
             this.nextTask()
+        },
+        async onRegimen({ value, other }: Option) {
+            this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
+            this.facts.selectedDrugs = other.regimens.map((d: any) => d.drug_id)
+
+            const guidelines = this.prescription.getRegimenGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+
+            for(const index in findings) {
+                const finding = findings[index]
+
+                if (finding?.actions?.alert) {
+                    const state = await finding?.actions?.alert(this.facts)
+
+                    if (state === 'exit') {
+                        return false
+                    }
+                }
+            }
+            return true
+        },
+        extractRegimenCode(regimen: string): number {
+           if (regimen.match(/n\/a/i)) {
+               return -1
+           }
+           return parseInt(regimen.substring(0, 1))
         },
         getDosageTableOptions(regimen: any) {
             const rowColors: any = [ 
@@ -189,7 +245,6 @@ export default defineComponent({
                     id: 'arv_regimens',
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
-                    preset: { value: this.programInfo.current_regimen },
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
                     unload: (data: any) => {
@@ -209,35 +264,7 @@ export default defineComponent({
                         }
                         return options
                     },
-                    onValue: async ({ label, value }: Option) => {
-                        this.starterPackSelected = false
-                        const currentRegimen = this.programInfo.current_regimen
-
-                        if (currentRegimen !='N/A' && value != currentRegimen) {
-                            const reasonOption = await this.promptWhySwitchingRegimen()
-                            if (reasonOption != 'cancel') {
-                                this.regimenSwitchReason = reasonOption
-                            } else {
-                                this.regimenSwitchReason = '' 
-                                return false
-                            }
-                        }
-
-                        if (this.prescription.starterPackNeeded(label)) {
-                            const starterPackOption = await this.promptAcceptStarterPack()
-
-                            if (starterPackOption === 'cancel') return false
-
-                            this.drugs = await this.prescription.getRegimenStarterpack(
-                                value, this.patientWeight
-                            )
-                            this.drugs = [...this.prescription.getRegimenExtras(), ...this.drugs]
-                            this.starterPackSelected = true
-                            this.fieldComponent = 'selected_meds'
-                        }
-
-                        return true
-                    },
+                    onValue: (regimen: Option) => this.onRegimen(regimen),
                     config: {
                         toolbarInfo: this.patientToolbar,
                         footerBtns: [
