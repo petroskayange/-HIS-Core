@@ -13,6 +13,29 @@ import { GuideLineInterface } from "@/utils/GuidelineEngine"
 import { actionSheet } from "@/utils/Alerts"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
+    "Do not prescribe LPV regimens together with 3HP": {
+        priority: 1,
+        actions: {
+            alert: async () => {
+                await actionSheet(
+                    '3HP - LPV/r conflict',
+                    'Regimens containing LPV/r cannot be prescribed together with 3HP',
+                    [
+                        'Close'
+                    ]
+                )
+                return false
+            }
+        },
+        conditions: {
+            selectedRegimenCode(code: number) {
+                return [9, 11].includes(code)
+            },
+            threeHpDrugs(drugs: Array<string>) {
+                return drugs.length >= 1
+            }
+        }
+    },
     "Check for any adverse effects or contraindications associated with the regimen": {
         priority: 1,
         actions: {
