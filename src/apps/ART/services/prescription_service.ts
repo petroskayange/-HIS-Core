@@ -159,17 +159,10 @@ export class PrescriptionService extends AppEncounterService {
 
     async loadHangingPills() {
         const pills = await AppEncounterService.getAll(this.patientID, 'Pills brought')
-
-        if (pills) this.hangingPills = pills.map((item: any)=> {
-            try {
-                return {
-                    drug: item.order.drug_order.drug_inventory_id,
-                    hasRemaining: item.value_numeric >= 1
-                }
-            }catch(e) {
-                return { drug: 0, hasRemaining: false }
-            }
-        })
+        if (pills) {
+            this.hangingPills = pills.filter((o: any) => o.value_numeric >= 1)
+                                     .map((o: any) => o.order.drug_order.drug_inventory_id)
+        }
     }
 
     async loadFastTrackMedications() {
