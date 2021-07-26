@@ -15,7 +15,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ]
                 )
                 return action === 'Keep selected regimen'
-            }            
+            }
         },
         conditions: {
             selectedRegimenEffects(effects: Array<string>) {
@@ -30,7 +30,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 const action = await actionSheet(
                     'Secondline treatment recommendation',
                     [
-                        "Children under 3 ye</b>ars often have a high viral load and may ",
+                        "Children under 3 years often have a high viral load and may ",
                         "be infected with drug-resistant HIV from previous exposure ",
                         "to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
                         "Therefore, children under 3 years respond better when ",
