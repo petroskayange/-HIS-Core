@@ -48,7 +48,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Keep selected regimen'
                     ]
                 )
-                return action === 'Select other regimen' ? 'exit' : 'continue'
+                return action === 'select other regimen' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -75,7 +75,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Keep selected regimen'
                     ]
                 )
-                return action === 'Cancel' ? 'exit' : 'continue'
+                return action === 'cancel' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -115,7 +115,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         },
         conditions: {
             selectedRegimenCode(code: string, { currentRegimenCode }: any){
-                return code != currentRegimenCode
+                return currentRegimenCode != -1 && code != currentRegimenCode
             }
         }
     },
@@ -132,7 +132,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ]
                 )
 
-                if (action === 'Prescribe starter pack') {
+                if (action === 'prescribe starter pack') {
                     facts.starterPackNeeded = true
                     facts.currentField = 'selected_meds'
                     return 'continue'
@@ -192,7 +192,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Continue with regimen'
                     ]
                 )
-                return action === 'Select another regimen' ? 'exit': 'continue'
+                return action === 'select another regimen' ? 'exit': 'continue'
             }
         },
         conditions: {
