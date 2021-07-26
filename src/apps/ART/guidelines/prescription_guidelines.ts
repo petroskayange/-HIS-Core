@@ -138,7 +138,6 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 
                 if (action === 'prescribe starter pack') {
                     facts.starterPackNeeded = true
-                    facts.currentField = 'selected_meds'
                     return 'continue'
                 }
                 return 'exit'
@@ -171,7 +170,6 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 
                 if (action === 'prescribe starter pack') {
                     facts.starterPackNeeded = true
-                    facts.currentField = 'selected_meds'
                     return 'continue'
                 }
                 return 'exit'
@@ -272,17 +270,37 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 }
 
 export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
-    'Recommend 2 week interval for starterpack NVP regimens': {
+    'Use 14 day Starterpack for NVP or LVP regimen(s)': {
         priority: 1,
         actions: {
-            isChecked: true
+            enabled: true
         },
         conditions: {
+            selectedInterval(interval: number) {
+                return interval === 14
+            },
             starterPackNeeded(isNeeded: boolean) {
                 return isNeeded
             },
             selectedRegimenCode(code: number) {
-                return [0, 2, 6].includes(code)
+                return [0, 2, 6, 11].includes(code)
+            }
+        }
+    },
+    "Disable none 14 day intervals Starter pack(s) for NVP or LVP regimens": {
+        priority: 1,
+        actions: {
+            enabled: false
+        },
+        conditions: {
+            selectedInterval(interval: number) {
+                return interval > 14
+            },
+            starterPackNeeded(isNeeded: boolean) {
+                return isNeeded
+            },
+            selectedRegimenCode(code: number) {
+                return [0, 2, 6, 11].includes(code)
             }
         }
     }

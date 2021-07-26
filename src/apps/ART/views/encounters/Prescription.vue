@@ -11,6 +11,7 @@ import { PrescriptionService } from "@/apps/ART/services/prescription_service"
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import HisDate from "@/utils/Date"
 import { matchToGuidelines } from "@/utils/GuidelineEngine"
+import { isEmpty } from "lodash"
 import EncounterMixinVue from './EncounterMixin.vue'
 
 export default defineComponent({
@@ -20,7 +21,6 @@ export default defineComponent({
         nextInterval: 0,
         prescription: {} as any,
         patientToolbar: [] as Array<Option>,
-        starterPackSelected: false as boolean,
         facts: {
             age: -1 as number,
             gender: '' as string,
@@ -38,7 +38,8 @@ export default defineComponent({
             hangingPillsStatus: '' as string,
             treatmentInitiationState: '' as string,
             lpvType: '' as string,
-            medicationOrders: [] as Array<any>
+            medicationOrders: [] as Array<any>,
+            selectedInterval: 0 as number
         }
     }),
     watch: {
@@ -76,6 +77,17 @@ export default defineComponent({
             },
             immediate: true,
             deep: true
+        },
+        'facts.starterPackNeeded': {
+            async handler(starterPackNeeded: boolean) {
+                if (starterPackNeeded){
+                    this.drugs = await this.prescription.getRegimenStarterpack(
+                        this.facts.selectedRegimenCode, this.facts.weight
+                    )
+                    this.facts.currentField = 'selected_meds'
+                }
+            },
+            immediate: true
         }
     },
     methods: {
@@ -155,6 +167,42 @@ export default defineComponent({
                 })
             }
             return options
+        },
+        buildIntervalOptions() {
+            const intervals = [
+                { label: '2 weeks', value: 14 },
+                { label: '1 month', value: 28 },
+                { label: '2 months', value: 56 },
+                { label: '3 months', value: 84 },
+                { label: '4 months', value: 112 },
+                { label: '5 months', value: 140 },
+                { label: '6 months', value: 168 },
+                { label: '7 months', value: 196 },
+                { label: '8 months', value: 224 },
+                { label: '9 months', value: 252 },
+                { label: '10 months', value: 280 },
+                { label: '11 months', value: 308 },                        
+                { label: '12 months', value: 336 },
+            ]
+            const guidelines = this.prescription.getIntervalGuidelines()
+
+            return intervals.map(({label, value}: Option) => {
+                let enabled = true
+                this.facts.selectedInterval = parseInt(value.toString())
+                const findings = matchToGuidelines(this.facts, guidelines)
+
+                if (!isEmpty(findings) && findings[0]?.actions)
+                    enabled = findings[0].actions.enabled
+
+                return {
+                    label,
+                    value,
+                    other: {
+                        enabled,
+                        ...this.getDrugEstimates(this.drugs, this.facts.selectedInterval)
+                    }
+                }
+            })
         },
         extractRegimenCode(regimen: string): number {
            if (regimen.match(/n\/a/i))
@@ -361,31 +409,7 @@ export default defineComponent({
                     unload: async (data: any) => {
                         this.nextInterval = data.value
                     },
-                    options: () => {
-                        const intervals = [
-                            { label: '2 weeks', value: 14 },
-                            { label: '1 month', value: 28 },
-                            { label: '2 months', value: 56 },
-                            { label: '3 months', value: 84 },
-                            { label: '4 months', value: 112 },
-                            { label: '5 months', value: 140 },
-                            { label: '6 months', value: 168 },
-                            { label: '7 months', value: 196 },
-                            { label: '8 months', value: 224 },
-                            { label: '9 months', value: 252 },
-                            { label: '10 months', value: 280 },
-                            { label: '11 months', value: 308 },                        
-                            { label: '12 months', value: 336 },
-                        ]
-                        return intervals.map(interval => ({
-                            ...interval, other: { 
-                                ...this.getDrugEstimates(this.drugs, interval.value),
-                                enabled: (this.starterPackSelected 
-                                            && interval.value <= 14 || !this.starterPackSelected)
-                                }
-                            })
-                        )
-                    },
+                    options: () => this.buildIntervalOptions(),
                     config: {
                         showRegimenCardTitle: false
                     }
