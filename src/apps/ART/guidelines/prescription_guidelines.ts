@@ -65,7 +65,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         }
     },
     "Ask to reuse hanging pills if any": {
-        priority: 4,
+        priority: 5,
         actions: {
             alert: async (facts: any) => {
                 const action  = await actionSheet(
@@ -110,6 +110,27 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             },
             age(age: number) {
                 return age >= 14 && age <= 45
+            }
+        }
+    },
+    "Provide pallet options for LPV regimens for patient's whose weight is between 3 and 25 kgs" : {
+        priority: 6,
+        actions: {
+            alert: async (facts: any) => {
+                const action = await actionSheet(
+                    'Prescribe LPV/r in Pellets (cups) or Tablets?', '',
+                    ['Granules', 'Pellets', 'Tabs']
+                )
+                facts.lpvType = action
+                return true
+            }
+        },
+        conditions: {
+            weight(weight: number){
+                return weight >= 3 && weight <= 25
+            },
+            selectedRegimenCode(code: number){
+                return code === 11 || code === 9
             }
         }
     }
