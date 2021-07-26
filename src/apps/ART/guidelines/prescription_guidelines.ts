@@ -121,8 +121,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             },
         },
         conditions: {
-            selectedRegimenName(regimen: string) {
-                return regimen.match(/NVP/i) ? true : false
+            selectedRegimenCode(code: number) {
+                return [0, 2, 5].includes(code)
             },
             treatmentInitiationState(initiation: string) {
                 return initiation === 'Continuing'
@@ -221,11 +221,11 @@ export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
             isChecked: true
         },
         conditions: {
-            starterPackNeeded(selected: boolean) {
-                return selected
+            starterPackNeeded(isNeeded: boolean) {
+                return isNeeded
             },
-            selectedRegimenName(regimen: string) {
-                regimen.match(/NVP/i) ? true : false
+            selectedRegimenCode(code: number) {
+                return [0, 2, 6].includes(code)
             }
         }
     }
