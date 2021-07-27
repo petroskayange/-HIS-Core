@@ -204,6 +204,15 @@ export default defineComponent({
                 }
             })
         },
+        getDrugFrequency(drugName: string){
+            this.facts.selectedDrug = drugName
+            const guidelines = this.prescription.getDrugFrequencyGuidelines()
+            const findings = matchToGuidelines(this.facts, guidelines)
+
+            if (!isEmpty(findings)) {
+                return findings[0].concept
+            }
+        },
         extractRegimenCode(regimen: string): number {
            if (regimen.match(/n\/a/i))
                return -1
@@ -230,7 +239,7 @@ export default defineComponent({
                     regimen.am,
                     regimen.noon,
                     regimen.pm,
-                    regimen.frequency || this.prescription.getDrugFrequency(regimen.drug_name)
+                    regimen.frequency || this.getDrugFrequency(regimen.drug_name)
                 ]              
             })
             return [
@@ -270,7 +279,7 @@ export default defineComponent({
                     regimen.units, 
                     regimen.am, 
                     regimen.pm,
-                    regimen.frequency || ''
+                    regimen.frequency || this.getDrugFrequency(regimen.drug_name)
                 )
             })
         },
@@ -298,7 +307,8 @@ export default defineComponent({
                     unload: (data: any) => {
                         if (!this.facts.starterPackNeeded) {
                             this.drugs = [
-                                ...this.prescription.getRegimenExtras(), ...data.other.regimenDrugs
+                                ...this.prescription.getRegimenExtras(), 
+                                ...data.other.regimenDrugs
                             ]
                         }
                     },
@@ -387,7 +397,7 @@ export default defineComponent({
                                 'am': 0,
                                 'noon': 0,
                                 'pm': 0,
-                                'frequency': 'Daily (QOD)'
+                                'frequency': this.getDrugFrequency(regimen.label)
                             }
                         }))
                     }

@@ -14,7 +14,6 @@ import {
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
     fastTrack: boolean;
-    received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
@@ -25,7 +24,6 @@ export class PrescriptionService extends AppEncounterService {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
         this.fastTrack = false
-        this.received3HP = false
         this.regimenExtras = []
         this.fastTrackMedications = []
         this.hangingPills = []
@@ -224,13 +222,6 @@ export class PrescriptionService extends AppEncounterService {
         return `${drugName} :- Morning: ${morningTabs} ${units}, Evening: ${eveningTabs} ${units}`
     }
 
-    getDrugFrequency(drugName: string): string {
-        if (this.received3HP && drugName.match(/Rifapentine|Isoniazid/i)) {
-            return 'Weekly (QW)'
-        }
-        return 'Daily (QOD)'
-    }
-
     toOrderObj(id: number, name: string, units: string, am=0, pm=0, frequency=''): DrugInterface {
         return {
             'drug_inventory_id': id,
@@ -240,7 +231,7 @@ export class PrescriptionService extends AppEncounterService {
             'units': units,
             'instructions': this.getInstructions(name, am, pm, units),
             'dose': this.calculateDosage(am, pm),
-            'frequency': frequency || this.getDrugFrequency(name)
+            'frequency': frequency
         }
     }
 
