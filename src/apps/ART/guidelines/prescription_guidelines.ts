@@ -262,7 +262,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 6,
         actions: {
             alert: async (facts: any) => {
-                const modal = await hisDecisionActionSheet(
+                const action = await hisDecisionActionSheet(
                     'Pellets (cups) / Tabs', 
                     '',
                     'Prescribe LPV/r in <b>Pellets (cups)</b> or <b>Tablets</b>?',
@@ -273,9 +273,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     'his-info-color'
                 )
-                if (modal.selection && modal.action === 'Continue') {
-                    facts.lpvType = modal.selection
-                }
+                facts.lpvType = action
                 return 'continue'
             }
         },
