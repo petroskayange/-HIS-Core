@@ -27,6 +27,7 @@ export default defineComponent({
             weight: -1 as number,
             patientAdverseEffects: [] as Array<string>,
             currentRegimenCode: -1 as number,
+            currentRegimenStr: '' as string,
             currentField: '' as string,
             selectedDrug: '' as string,
             selectedDrugs: [] as Array<any>,
@@ -98,6 +99,7 @@ export default defineComponent({
             this.facts.weight = await patient.getRecentWeight()
             this.facts.hangingPills = this.prescription.getHangingPills()
             this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
+            this.facts.currentRegimenStr = this.programInfo.current_regimen
             this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
             this.facts.patientAdverseEffects = this.prescription.getAdverseEffects()
