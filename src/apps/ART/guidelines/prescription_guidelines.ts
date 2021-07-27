@@ -10,18 +10,19 @@
  *    starter pack include [0, 2, 6]
  */
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
-import { hisOptionsActionSheet, actionSheet } from "@/utils/Alerts"
+import { hisOptionsActionSheet, hisDecisionActionSheet, actionSheet } from "@/utils/Alerts"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Do not prescribe LPV regimens together with 3HP": {
         priority: 1,
         actions: {
-            alert: async () => {
-                await actionSheet(
+            alert: async (facts: any) => {
+                await hisDecisionActionSheet(
+                    `Can't prescribe regimen`,
                     '3HP - LPV/r conflict',
-                    'Regimens containing LPV/r cannot be prescribed together with 3HP',
+                    `Regimens containing LPV/r (${facts.selectedDrug}) cannot be prescribed together with 3HP`,
                     [
-                        'Close'
+                       { name: 'Close', slot: 'end', color: 'danger' }
                     ]
                 )
                 return 'exit'
@@ -96,7 +97,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions : {
             alert: async (facts: any) => {
                 const modal = await hisOptionsActionSheet(
-                    `Are you sure you want to replace ${facts.currentRegimenCode}?`,
+                    `Are you sure you want to replace ${facts.selectedDrug}?`,
                     'Specify reason for switching regimen',
                     [ 
                         'Policy change', 
@@ -192,11 +193,13 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 5,
         actions: {
             alert: async (facts: any) => {
-                const action  = await actionSheet(
-                    'Do you want to use hanging pills?', '', 
+                const action  = await hisDecisionActionSheet(
+                    'Hanging Pills', 
+                    'Do you want to use hanging pills?',
+                    facts.selectedDrug,
                     [
-                        'Yes', 
-                        'No'
+                        { name: 'No', slot: 'start', color: 'secondary'},
+                        { name: 'Yes', slot: 'end'}
                     ]
                 )
                 if (action === 'Yes') {
