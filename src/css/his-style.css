@@ -77,6 +77,10 @@
     box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
 }
 
+.full-width-ion-btn {
+    width: 1600px !important;
+}
+
 body {
  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
 }

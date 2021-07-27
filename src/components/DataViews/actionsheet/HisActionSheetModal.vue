@@ -20,7 +20,9 @@
         :items="items"> 
       </component>
     </ion-content>
-  <dynamic-nav color="light" :btns="btns"> </dynamic-nav>
+    <div :style="{padding: '10px'}">
+      <dynamic-nav color="light" :btns="btns"> </dynamic-nav>
+    </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
@@ -84,6 +86,7 @@ export default defineComponent({
           btn.size = 'large'
           btn.color = btn.color || 'primary'
           btn.visible = true
+          btn.styleClass = 'full-width-ion-btn'
           btn.onClick = () => {
             let selection = ''
             if (!isEmpty(this.selected)) {

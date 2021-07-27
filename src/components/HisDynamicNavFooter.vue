@@ -7,6 +7,7 @@
         v-show="btn.visible" 
         @click="btn.onClick(btn)"
         :color="btn.color"
+        :class="btn.styleClass"
         :size="btn.size">
         {{btn.name}}
       </ion-button>
