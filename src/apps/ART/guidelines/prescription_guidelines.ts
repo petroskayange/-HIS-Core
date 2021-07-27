@@ -10,7 +10,7 @@
  *    starter pack include [0, 2, 6]
  */
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
-import { actionSheet } from "@/utils/Alerts"
+import { hisOptionsActionSheet, actionSheet } from "@/utils/Alerts"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Do not prescribe LPV regimens together with 3HP": {
@@ -95,7 +95,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 1,
         actions : {
             alert: async (facts: any) => {
-                const action = await actionSheet(
+                const modal = await hisOptionsActionSheet(
                     `Are you sure you want to replace ${facts.currentRegimenCode}?`,
                     'Specify reason for switching regimen',
                     [ 
@@ -106,12 +106,16 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Side effects', 
                         'Treatment failure', 
                         'Weight Change', 
-                        'Other',
-                        'Cancel'
+                        'Other'
+                    ],
+                    [
+                        { name: 'Cancel', slot:'start' },
+                        { name: 'Continue', slot: 'end' }
                     ]
                 )
-                if (action != 'cancel') {
-                    facts.reasonForSwitch = action
+
+                if (modal.action != 'Cancel') {
+                    facts.reasonForSwitch = modal.selection
                     return 'continue'
                 }
                 return 'exit'
