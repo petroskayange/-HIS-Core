@@ -43,6 +43,7 @@ export default defineComponent({
                const ok = await this.onValue(item)
                if (!ok) {
                    this.selected = ''
+                   this.$emit('onValue', null)
                    return
                }
             }
