@@ -116,7 +116,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ]
                 )
 
-                if (modal.action != 'Cancel') {
+                if (modal.selection && modal.action != 'Cancel') {
                     facts.reasonForSwitch = modal.selection
                     return 'continue'
                 }
