@@ -18,12 +18,13 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async ({ selectedRegimenName }: any) => {
                 await hisDecisionActionSheet(
-                    selectedRegimenName,
                     '3HP - LPV/r conflict',
+                    selectedRegimenName,
                     `Regimens containing LPV/r cannot be prescribed together with 3HP`,
                     [
                        { name: 'Close', slot: 'end', color: 'danger' }
-                    ]
+                    ],
+                    'his-danger-color'
                 )
                 return 'exit'
             }
@@ -68,8 +69,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async () => {
                 const action = await hisListActionSheet(
-                    '',
                     'Recommendation',
+                    '',
                     [
                         "Children under 3 years often have a high viral load and may be infected with drug-resistant HIV from previous exposure to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
                         "Therefore, children under <b>3 years</b> respond better when <b>started immediately on 2nd line regimen</b> (Regimen <b>11</b>)",
@@ -77,7 +78,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'Cancel', slot: 'start' }, 
                         { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
-                    ]
+                    ],
+                    'his-warning-color'
                 )
                 return action === 'Cancel' ? 'exit' : 'continue'
             }
@@ -138,7 +140,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'Cancel', slot: 'start', color: 'secondary'},
                         { name: 'Prescribe starter pack', slot: 'end' }
-                    ]
+                    ],
+                    'his-info-color'
                 )
 
                 if (action === 'Prescribe starter pack') {
@@ -171,7 +174,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'Cancel', slot: 'start', color: 'secondary'},
                         { name: 'Prescribe starter pack', slot: 'end' }
-                    ]
+                    ],
+                    'his-info-color'
                 )
 
                 if (action === 'Prescribe starter pack') {
@@ -201,7 +205,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'No', slot: 'start', color: 'secondary'},
                         { name: 'Yes', slot: 'end'}
-                    ]
+                    ],
+                    'his-info-color'
                 )
                 if (action === 'Yes') {
                     facts.hangingPillsStatus = 'Optimize - including hanging pills'
@@ -223,8 +228,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async ({selectedRegimenName}: any) => {
                 const action = await hisDecisionActionSheet(
-                    selectedRegimenName,
                     `Use of DTG or EFV in women of reproductive age`,
+                    selectedRegimenName,
                     [
                         'There is currently <u>no confirmation</u>',
                         'that <b>DTG</b> is safe in <u>very early preganancy</u>',
@@ -234,7 +239,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'Select another regimen', slot: 'start' }, 
                         { name: 'Continue with regimen', slot: 'end', color: 'danger'}
-                    ]
+                    ],
+                    'his-danger-color'
                 )
                 return action === 'Select another regimen' ? 'exit': 'continue'
             }
@@ -263,7 +269,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         { name: 'Granules', slot: 'start' },
                         { name: 'Pellets', slot: 'start' },
                         { name: 'Tabs', slot:'end' }
-                    ]
+                    ],
+                    'his-info-color'
                 )
                 facts.lpvType = action
                 return 'continue'

@@ -30,6 +30,17 @@
    background-color: rgb(235, 235, 235);
 }
 
+.his-danger-color {
+    color: brown !important;
+}
+.his-warning-color {
+    color: orange !important;
+}
+
+.his-info-color {
+    color: green
+}
+
 .his-table {
     border-collapse: collapse;
     width: 100%;

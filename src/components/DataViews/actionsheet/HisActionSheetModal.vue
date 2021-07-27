@@ -3,7 +3,7 @@
     <ion-toolbar>
       <ion-title>
         <center>
-          <h4>  {{ title }} </h4>
+          <h4 :class="color">  {{ title }} </h4>
           <b v-if="subtitle"> {{ subtitle }} </b>
         </center>
       </ion-title>
@@ -16,6 +16,7 @@
         v-bind:is="sheetType"
         :title="sheetTitle"
         :description="sheetDescription"
+        :color="color"
         :items="items"> 
       </component>
     </ion-content>
@@ -72,6 +73,9 @@ export default defineComponent({
           slot: 'end'
         },
       ])
+    },
+    color: {
+      type: String
     }
   },
   computed: {

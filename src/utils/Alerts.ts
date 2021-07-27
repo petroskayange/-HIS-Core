@@ -1,6 +1,5 @@
 import { toastController, alertController, modalController, actionSheetController } from "@ionic/vue";
 import HisActionSheet from "@/components/DataViews/actionsheet/HisActionSheetModal.vue"
-import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
 
 async function toast(message: string, color="primary", duration=6000) {
     const toast = await toastController.create({
@@ -43,7 +42,8 @@ export async function hisListActionSheet(
     title: string,
     subtitle: string,
     items: Array<string>,
-    actionButtons: Array<any>)
+    actionButtons: Array<any>,
+    color = '')
     {
         const modal = await modalController.create({
         component: HisActionSheet,
@@ -55,6 +55,7 @@ export async function hisListActionSheet(
             actionButtons,
             sheetType: 'list-sheet',
             items,
+            color
         }
         })
         modal.present()
@@ -66,7 +67,8 @@ export async function hisDecisionActionSheet(
     title: string, 
     sheetTitle: string,
     sheetDescription: string,
-    actionButtons: Array<any>)
+    actionButtons: Array<any>,
+    color = '')
     {
         const modal = await modalController.create({
         component: HisActionSheet,
@@ -77,6 +79,7 @@ export async function hisDecisionActionSheet(
             sheetTitle,
             sheetDescription,
             actionButtons,
+            color,
             sheetType: 'info-sheet',
         }
         })
@@ -89,7 +92,8 @@ export async function hisOptionsActionSheet(
     title: string, 
     subtitle: string, 
     items: Array<string>, 
-    actionButtons: Array<any>)
+    actionButtons: Array<any>,
+    color = '')
     {
         const modal = await modalController.create({
         component: HisActionSheet,
@@ -99,6 +103,7 @@ export async function hisOptionsActionSheet(
             title,
             subtitle,
             actionButtons,
+            color,
             sheetType: 'button-sheet',
             items: items.map((b: string) => ({ label: b, value: b })),
         }

@@ -1,6 +1,6 @@
 <template>
     <div class="info-content"> 
-        <h3 class='title'> 
+        <h3 :class="color"> 
             {{ title }} 
         </h3>
         <p class='description' v-html="description"> </p> 
@@ -17,14 +17,15 @@ export default defineComponent({
         description: {
             type: String,
             required: true
+        },
+        color: {
+            type: String,
+            default: 'his-info-color'
         }
     }
 })
 </script>
 <style scoped>
-    .title {
-        color: green;
-    }
     .info-content {
         margin: auto;
         padding: 80px 0;
