@@ -50,9 +50,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     [
                         { name: 'Select other regimen', slot: 'start'},
                         { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
-                    ]
+                    ],
+                    'his-danger-color'
                 )
-                return action === 'select other regimen' ? 'exit' : 'continue'
+                return action === 'Select other regimen' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -76,7 +77,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         "Therefore, children under <b>3 years</b> respond better when <b>started immediately on 2nd line regimen</b> (Regimen <b>11</b>)",
                     ],
                     [
-                        { name: 'Cancel', slot: 'start' }, 
+                        { name: 'Cancel', slot: 'start', color: 'danger' }, 
                         { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
                     ],
                     'his-warning-color'
@@ -98,7 +99,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions : {
             alert: async (facts: any) => {
                 const modal = await hisOptionsActionSheet(
-                    `Are you sure you want to replace ${facts.currentRegimenCode}?`,
+                    `Are you sure you want to replace ${facts.currentRegimenStr}?`,
                     'Specify reason for switching regimen',
                     [ 
                         'Policy change', 
@@ -111,7 +112,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'Other'
                     ],
                     [
-                        { name: 'Cancel', slot:'start' },
+                        { name: 'Cancel', slot:'start', color: 'danger' },
                         { name: 'Continue', slot: 'end' }
                     ]
                 )
@@ -138,7 +139,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     `${ facts.treatmentInitiationState}`, 
                     `${ facts.selectedRegimenName }`,
                     [
-                        { name: 'Cancel', slot: 'start', color: 'secondary'},
+                        { name: 'Cancel', slot: 'start', color: 'danger'},
                         { name: 'Prescribe starter pack', slot: 'end' }
                     ],
                     'his-info-color'
@@ -172,7 +173,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     `${ facts.treatmentInitiationState}`, 
                     `${ facts.selectedRegimenName }`,
                     [
-                        { name: 'Cancel', slot: 'start', color: 'secondary'},
+                        { name: 'Cancel', slot: 'start', color: 'danger'},
                         { name: 'Prescribe starter pack', slot: 'end' }
                     ],
                     'his-info-color'
@@ -203,7 +204,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     'Hanging Pills', 
                     'Do you want to use hanging pills?',
                     [
-                        { name: 'No', slot: 'start', color: 'secondary'},
+                        { name: 'No', slot: 'start', color: 'danger'},
                         { name: 'Yes', slot: 'end'}
                     ],
                     'his-info-color'
@@ -232,9 +233,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     selectedRegimenName,
                     [
                         'There is currently <u>no confirmation</u>',
-                        'that <b>DTG</b> is safe in <u>very early preganancy</u>',
+                        'that <b>DTG</b> is safe in <u>very early pregnancy</u>',
                         'DTG-based regimens are therefore not used as standard 1st line regimens for',
-                        '<u>girls and women</u> who may get preganant'
+                        '<u>girls and women</u> who may get pregnancy'
                     ].join(' '),
                     [
                         { name: 'Select another regimen', slot: 'start' }, 
