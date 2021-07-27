@@ -101,6 +101,16 @@ export class PrescriptionService extends AppEncounterService {
         )
     }
 
+    async getLvpDrugsByType(type: string, regimen: number) {
+        return AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/regimens/${regimen}`,
+            {
+                'patient_id': this.patientID,
+                'lpv_drug_type': type
+            }
+        )
+    }
+
     async loadAdverseEffects() {
         const effects = AppEncounterService.getConceptsByCategory('side_effect')
         effects.forEach(async (i: any) => {

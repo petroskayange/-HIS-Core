@@ -80,13 +80,23 @@ export default defineComponent({
             immediate: true,
             deep: true
         },
+        'facts.lpvType': {
+            async handler(lpvType: string){
+                if (lpvType) {
+                    const drugs = await this.prescription.getLvpDrugsByType(
+                        lpvType.toLowerCase(), this.facts.selectedRegimenCode
+                    ) 
+                    this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
+                }
+            },
+            immediate: true
+        },
         'facts.starterPackNeeded': {
             async handler(starterPackNeeded: boolean) {
                 if (starterPackNeeded){
                     this.drugs = await this.prescription.getRegimenStarterpack(
                         this.facts.selectedRegimenCode, this.facts.weight
                     )
-                    this.facts.currentField = 'selected_meds'
                 }
             },
             immediate: true
