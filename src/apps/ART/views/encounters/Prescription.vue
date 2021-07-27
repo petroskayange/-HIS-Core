@@ -126,9 +126,10 @@ export default defineComponent({
 
             this.nextTask()
         },
-        async onRegimen({ value, other }: Option) {
+        async onRegimen({ label, value, other }: Option) {
             this.facts.hangingPillsStatus = ''
             this.facts.starterPackNeeded = false
+            this.facts.selectedDrug = label
             this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
             this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
             this.facts.selectedDrugContraIndications = this.prescription.getRegimenContraIndications(

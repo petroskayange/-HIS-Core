@@ -13,7 +13,9 @@
       <div class="clear-fix"> </div>
       <component 
         @onSelect="onSelect" 
-        v-bind:is="sheetType" 
+        v-bind:is="sheetType"
+        :title="sheetTitle"
+        :description="sheetDescription"
         :items="items"> 
       </component>
     </ion-content>
@@ -41,7 +43,12 @@ export default defineComponent({
     },
     subtitle: {
       type: String,
-      default: ''
+    },
+    sheetTitle: {
+      type: String
+    },
+    sheetDescription: {
+      type: String
     },
     items: {
       type: Object as PropType<Option[]>,
