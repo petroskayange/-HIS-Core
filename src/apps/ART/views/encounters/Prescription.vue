@@ -32,6 +32,7 @@ export default defineComponent({
             selectedDrugs: [] as Array<any>,
             selectedDrugContraIndications: [] as Array<any>,
             selectedRegimenCode: -1 as number,
+            selectedRegimenName: '' as string,
             hangingPills: [] as Array<any>,
             reasonForSwitch: '' as string,
             starterPackNeeded: false as boolean,
@@ -129,7 +130,7 @@ export default defineComponent({
         async onRegimen({ label, value, other }: Option) {
             this.facts.hangingPillsStatus = ''
             this.facts.starterPackNeeded = false
-            this.facts.selectedDrug = label
+            this.facts.selectedRegimenName = `${value} (${label})`
             this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
             this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
             this.facts.selectedDrugContraIndications = this.prescription.getRegimenContraIndications(

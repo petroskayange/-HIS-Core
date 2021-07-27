@@ -10,17 +10,17 @@
  *    starter pack include [0, 2, 6]
  */
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
-import { hisOptionsActionSheet, hisDecisionActionSheet, actionSheet } from "@/utils/Alerts"
+import { hisOptionsActionSheet, hisListActionSheet, hisDecisionActionSheet } from "@/utils/Alerts"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Do not prescribe LPV regimens together with 3HP": {
         priority: 1,
         actions: {
-            alert: async (facts: any) => {
+            alert: async ({ selectedRegimenName }: any) => {
                 await hisDecisionActionSheet(
-                    `Can't prescribe regimen`,
+                    selectedRegimenName,
                     '3HP - LPV/r conflict',
-                    `Regimens containing LPV/r (${facts.selectedDrug}) cannot be prescribed together with 3HP`,
+                    `Regimens containing LPV/r cannot be prescribed together with 3HP`,
                     [
                        { name: 'Close', slot: 'end', color: 'danger' }
                     ]
@@ -41,13 +41,14 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
     "Check for any adverse effects or contraindications associated with the regimen": {
         priority: 1,
         actions: {
-            alert: async (facts: any) => {
-                const action = await actionSheet(
+            alert: async ({ selectedRegimenName, patientAdverseEffects }: any) => {
+                const action = await hisDecisionActionSheet(
+                    selectedRegimenName,
                     'Contraindications / Side effects',
-                    facts.patientAdverseEffects.join(','),
+                    patientAdverseEffects.join(','),
                     [
-                        'Select other regimen', 
-                        'Keep selected regimen'
+                        { name: 'Select other regimen', slot: 'start'},
+                        { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
                     ]
                 )
                 return action === 'select other regimen' ? 'exit' : 'continue'
@@ -66,21 +67,19 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 1,
         actions: {
             alert: async () => {
-                const action = await actionSheet(
-                    'Secondline treatment recommendation',
+                const action = await hisListActionSheet(
+                    '',
+                    'Recommendation',
                     [
-                        "Children under 3 years often have a high viral load and may ",
-                        "be infected with drug-resistant HIV from previous exposure ",
-                        "to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
-                        "Therefore, children under 3 years respond better when ",
-                        "started immediately on 2nd line regimen (Regimen 11)"
-                    ].join(' '),
+                        "Children under 3 years often have a high viral load and may be infected with drug-resistant HIV from previous exposure to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
+                        "Therefore, children under 3 years respond better when started immediately on 2nd line regimen (Regimen 11)",
+                    ],
                     [
-                        'Cancel', 
-                        'Keep selected regimen'
+                        { name: 'Cancel', slot: 'start' }, 
+                        { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
                     ]
                 )
-                return action === 'cancel' ? 'exit' : 'continue'
+                return action === 'Cancel' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -97,7 +96,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions : {
             alert: async (facts: any) => {
                 const modal = await hisOptionsActionSheet(
-                    `Are you sure you want to replace ${facts.selectedDrug}?`,
+                    `Are you sure you want to replace ${facts.currentRegimenCode}?`,
                     'Specify reason for switching regimen',
                     [ 
                         'Policy change', 
@@ -133,9 +132,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async (facts: any) => {
                 const action = await hisDecisionActionSheet(
-                    'Regimen starter pack',
-                    `${facts.treatmentInitiationState} (${facts.selectedDrug})`, 
                     'Starter pack needed for 14 days',
+                    `${ facts.treatmentInitiationState}`, 
+                    `${ facts.selectedRegimenName }`,
                     [
                         { name: 'Cancel', slot: 'start', color: 'secondary'},
                         { name: 'Prescribe starter pack', slot: 'end' }
@@ -166,9 +165,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async (facts: any) => {
                 const action = await hisDecisionActionSheet(
-                    'Regimen starter pack',
-                    `${facts.treatmentInitiationState} (${facts.selectedDrug})`, 
                     'Starter pack needed for 14 days',
+                    `${ facts.treatmentInitiationState}`, 
+                    `${ facts.selectedRegimenName }`,
                     [
                         { name: 'Cancel', slot: 'start', color: 'secondary'},
                         { name: 'Prescribe starter pack', slot: 'end' }
@@ -196,9 +195,9 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async (facts: any) => {
                 const action  = await hisDecisionActionSheet(
+                    facts.selectedRegimenName,
                     'Hanging Pills', 
                     'Do you want to use hanging pills?',
-                    facts.selectedDrug,
                     [
                         { name: 'No', slot: 'start', color: 'secondary'},
                         { name: 'Yes', slot: 'end'}
@@ -222,9 +221,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
     "Provide warning of use of DTG regimen to women of reproductive age" : {
         priority: 2,
         actions: {
-            alert: async () => {
-                const action = await actionSheet(
-                    'Use of DTG or EFV in women of reproductive age',
+            alert: async ({selectedRegimenName}: any) => {
+                const action = await hisDecisionActionSheet(
+                    selectedRegimenName,
+                    `Use of DTG or EFV in women of reproductive age`,
                     [
                         'There is currently no confirmation',
                         'that DTG is safe in very early preganancy',
@@ -232,11 +232,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         'girls and women who may get preganant'
                     ].join(' '),
                     [
-                        'Select another regimen', 
-                        'Continue with regimen'
+                        { name: 'Select another regimen', slot: 'start' }, 
+                        { name: 'Continue with regimen', slot: 'end', color: 'danger'}
                     ]
                 )
-                return action === 'select another regimen' ? 'exit': 'continue'
+                return action === 'Select another regimen' ? 'exit': 'continue'
             }
         },
         conditions: {
@@ -255,12 +255,14 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 6,
         actions: {
             alert: async (facts: any) => {
-                const action = await actionSheet(
-                    'Prescribe LPV/r in Pellets (cups) or Tablets?', '',
+                const action = await hisDecisionActionSheet(
+                    'Select unit', 
+                    'Prescribe LPV/r in Pellets (cups) or Tablets?',
+                    '',
                     [
-                        'Granules', 
-                        'Pellets', 
-                        'Tabs'
+                        { name: 'Granules', slot: 'start' },
+                        { name: 'Pellets', slot: 'start' },
+                        { name: 'Tabs', slot:'end' }
                     ]
                 )
                 facts.lpvType = action
