@@ -132,21 +132,22 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 3,
         actions: {
             alert: async (facts: any) => {
-                const action = await actionSheet(
-                    'First time initiation', 
+                const action = await hisDecisionActionSheet(
+                    'Regimen starter pack',
+                    `${facts.treatmentInitiationState} (${facts.selectedDrug})`, 
                     'Starter pack needed for 14 days',
                     [
-                        'Prescribe starter pack', 
-                        'Cancel'
+                        { name: 'Cancel', slot: 'start', color: 'secondary'},
+                        { name: 'Prescribe starter pack', slot: 'end' }
                     ]
                 )
 
-                if (action === 'prescribe starter pack') {
+                if (action === 'Prescribe starter pack') {
                     facts.starterPackNeeded = true
                     return 'continue'
                 }
                 return 'exit'
-            }
+            },
         },
         conditions: {
             age(age: number) {
@@ -164,16 +165,17 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 3,
         actions: {
             alert: async (facts: any) => {
-                const action = await actionSheet(
-                    'First time initiation', 
+                const action = await hisDecisionActionSheet(
+                    'Regimen starter pack',
+                    `${facts.treatmentInitiationState} (${facts.selectedDrug})`, 
                     'Starter pack needed for 14 days',
                     [
-                        'Prescribe starter pack', 
-                        'Cancel'
+                        { name: 'Cancel', slot: 'start', color: 'secondary'},
+                        { name: 'Prescribe starter pack', slot: 'end' }
                     ]
                 )
 
-                if (action === 'prescribe starter pack') {
+                if (action === 'Prescribe starter pack') {
                     facts.starterPackNeeded = true
                     return 'continue'
                 }
