@@ -3,9 +3,7 @@
         <h3 class='title'> 
             {{ title }} 
         </h3>
-        <p class='description'> 
-            {{ description }} 
-        </p>
+        <p class='description' v-html="description"> </p> 
     </div>
 </template>
 <script lang="ts">
@@ -26,14 +24,14 @@ export default defineComponent({
 <style scoped>
     .title {
         color: green;
-        text-align: center;
     }
     .info-content {
-       padding: 80px 0;
+        margin: auto;
+        padding: 80px 0;
+        text-align: center;
     }
     .description {
         font-size: 1.3em;
-        text-align: center;
         padding: 10px;
     }
 </style>

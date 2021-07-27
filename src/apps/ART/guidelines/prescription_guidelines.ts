@@ -72,7 +72,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     'Recommendation',
                     [
                         "Children under 3 years often have a high viral load and may be infected with drug-resistant HIV from previous exposure to ARVs (mother's ART and/or infant nevirapine prophylaxis)",
-                        "Therefore, children under 3 years respond better when started immediately on 2nd line regimen (Regimen 11)",
+                        "Therefore, children under <b>3 years</b> respond better when <b>started immediately on 2nd line regimen</b> (Regimen <b>11</b>)",
                     ],
                     [
                         { name: 'Cancel', slot: 'start' }, 
@@ -226,10 +226,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     selectedRegimenName,
                     `Use of DTG or EFV in women of reproductive age`,
                     [
-                        'There is currently no confirmation',
-                        'that DTG is safe in very early preganancy',
+                        'There is currently <u>no confirmation</u>',
+                        'that <b>DTG</b> is safe in <u>very early preganancy</u>',
                         'DTG-based regimens are therefore not used as standard 1st line regimens for',
-                        'girls and women who may get preganant'
+                        '<u>girls and women</u> who may get preganant'
                     ].join(' '),
                     [
                         { name: 'Select another regimen', slot: 'start' }, 

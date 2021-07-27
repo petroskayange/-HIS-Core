@@ -1,7 +1,7 @@
 <template>
     <ul> 
         <li v-for="(item, index) in items" :key="index">
-            {{ item }}
+           <span v-html="item"> </span>
         </li>
     </ul>
 </template>
@@ -18,8 +18,6 @@ export default defineComponent({
 </script>
 <style scoped>
     ul li {
-        font-weight: bold;
         margin: 5%;
-
     }
 </style>
