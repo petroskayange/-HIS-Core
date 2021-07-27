@@ -13,4 +13,12 @@ export class UserService extends Service {
       );
       return roles.length > 0;
 	}
+  static isNurse() {
+    const roles = super.getUserRoles().filter(
+        (role: Role) => {
+          return role.role.match(/Nurse/i);
+        }
+      );
+      return roles.length > 0;
+	}
 }

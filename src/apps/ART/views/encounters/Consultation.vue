@@ -10,16 +10,15 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { FieldType } from "@/components/Forms/BaseFormElements";
-import { Field, Option } from "@/components/Forms/FieldInterface";
+import { Option } from "@/components/Forms/FieldInterface";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations";
 import EncounterMixinVue from "./EncounterMixin.vue";
 import { toastSuccess, toastWarning } from "@/utils/Alerts";
 import HisDate from "@/utils/Date";
 import { findIndex } from "lodash";
-import MonthOptions from "@/components/FormElements/Presets/MonthOptions";
 import { ConsultationService } from "@/apps/ART/services/consultation_service";
-import { Patientservice } from "@/services/patient_service";
+import { UserService } from "@/services/user_service";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -27,7 +26,8 @@ export default defineComponent({
   data: () => ({
     fields: [] as any,
     consultation: {} as any,
-    hasTBTherapyObs: false
+    hasTBTherapyObs: false,
+    allergicToSulphur: false
   }),
   watch: {
     ready: {
@@ -126,6 +126,18 @@ export default defineComponent({
       }
       return listData;
     },
+    disablePrescriptions(listData: Array<Option>, value: Option) {
+      if (value.isChecked && value.label === "NONE OF THE ABOVE") {
+        return listData.map((i) => {
+          if (i.label != "NONE OF THE ABOVE") i.isChecked = false;
+          return i;
+        });
+      } else if (value.label != "NONE OF THE ABOVE" && value.isChecked) {
+        const noneIndex = findIndex(listData, { label: "NONE OF THE ABOVE" });
+        listData[noneIndex].isChecked = false;
+      }
+      return listData;
+    },
     declinedFPM(formData: any) {
       if(!formData.fp_methods) return false
       return (
@@ -150,12 +162,27 @@ export default defineComponent({
       if(!formData.offer_cxca) return false
       return formData.offer_cxca.value === "No"
     },
+    updateAllergicToSulphur(formData: any) {
+      if(formData.value === "Yes") {
+        this.allergicToSulphur = true;
+      }else if(formData.value === "No" || formData.value === "Unknown"){
+        this.allergicToSulphur = false;
+      }
+    },
+    updateCompletedTPT(formData: any) {
+      if(formData.value.match(/Complete/ig)) {
+        this.hasTBTherapyObs = true;
+      }else {
+        this.hasTBTherapyObs = false;
+      }
+    },
     showOtherSideEffects(formData: any) {
       return formData.side_effects.filter((data: any) => {
         return data.label === "Other" && data.value === "Yes"
       }).length > 0
     },
     hasTBSymptoms(formData: any) {
+      if(!formData.tb_side_effects) return false
       return formData.tb_side_effects.filter((data: any) => {
         return data.value === "Yes"
       }).length > 0
@@ -237,6 +264,36 @@ export default defineComponent({
         "Weight loss / Failure to thrive / malnutrition",
       ];
       return this.getOptions(contraIndications);
+    },
+    getPrescriptionFields() {
+      const vals =[
+              { label: "ARVs", value: "ARVs", isChecked: true},
+              { label: "CPT", value: "CPT", isChecked: true},
+              { label: "3HP (RFP + INH)", value: "3HP (RFP + INH)", isChecked: true},
+              { label: "IPT", value: "IPT" },
+              { label: "NONE OF THE ABOVE", value: "NONE OF THE ABOVE" },
+            ];
+      const exclusions = [];
+      if(this.allergicToSulphur) {
+        exclusions.push({value: "CPT", description: "Allergic to CPT"});
+      }
+      if(this.hasTBTherapyObs) {
+        exclusions.push({value: "IPT", description: "Completed TPT"}, {value: "3HP (RFP + INH)", description: "Completed TPT"});
+      }
+      return [...this.removeAndDisable(vals, exclusions)]
+      // if(this.isAllergic)
+    },
+    removeAndDisable(initialFields: any[], exclusionList: any[]) {
+      return initialFields.map(data => {
+        const isAvailable = exclusionList.filter(val => val.value === data.value);
+        const checked = isAvailable.length > 0 ? false : data.isChecked;
+        const disabled = isAvailable.length > 0 ? true : false;
+        const vals =  { label: data.label, value: data.value, isChecked: checked, disabled: disabled };
+        if(disabled) {
+          Object.assign(vals, {description: {show: 'always', text: isAvailable[0].description, color: 'danger'}})
+        }
+        return vals;
+      });
     },
     getFields(): any {
       return [
@@ -410,104 +467,6 @@ export default defineComponent({
           options: () => this.getFPMethods(),
         },
         {
-          id: "offer_cxca",
-          helpText: "Refer client for CxCa screening",
-          condition: () => this.offerCxCa(),
-          type: FieldType.TT_SELECT,
-          options: () => this.getYesNo(),
-        },
-        {
-          id: "reason_for_no_cxca",
-          helpText: "Reason for denying CxCa screening",
-          condition: (formData: any) => this.declinedCxCa(formData),
-          type: FieldType.TT_SELECT,
-          options: () => {
-            return [
-              {
-                label: "Not due for screening",
-                value: "Not due for screening",
-              },
-              {
-                label: "Client preferred counselling",
-                value: "Client preferred counselling",
-              },
-              { label: "Not applicable", value: "Not applicable" },
-            ];
-          },
-        },
-        {
-          id: "birth_year",
-          helpText: "Previous CxCa test year",
-          condition: (formData: any) => this.declinedCxCa(formData),
-          type: FieldType.TT_NUMBER,
-          validation(val: any) {
-            if (Validation.required(val)) return ["Year value is required"];
-
-            const minYr = HisDate.getYearFromAge(100);
-            const maxYr = HisDate.getCurrentYear();
-            const notNum = Validation.isNumber(val);
-            const notInRange = Validation.rangeOf(val, minYr, maxYr);
-
-            if (val.label.match(/Unknown/i)) return;
-
-            return notNum || notInRange;
-          },
-        },
-        {
-          id: "cxca_estimate",
-          helpText: "Estimated time since last CxCa screening",
-          type: FieldType.TT_SELECT,
-          condition: (form: any) => form.birth_year && form.birth_year.value.match(/Unknown/i),
-          options: () => {
-            return [
-              { label: "6 months", value: "6 months" },
-              { label: "12 months", value: "12 months" },
-              { label: "18 months", value: "18 months" },
-              { label: "24 months", value: "24 months" },
-              { label: "Over 2 years", value: "Over 2 years" },
-            ];
-          },
-        },
-        {
-          id: "birth_month",
-          helpText: "Month of Birth",
-          type: FieldType.TT_SELECT,
-          options: () => MonthOptions,
-          condition: (form: any) => form.birth_year && !form.birth_year.value.match(/Unknown/i),
-          validation: (val: any, form: any) => {
-            const month = val.value;
-            const year = form.birth_year.value;
-            const date = `${year}-${month}-01`;
-            const notValid = HisDate.dateIsAfter(date)
-              ? null
-              : ["Month is greater than current month"];
-            const noMonth = Validation.required(val);
-
-            return noMonth || notValid;
-          },
-        },
-
-        {
-          id: "birth_day",
-          helpText: "Birth day",
-          type: FieldType.TT_MONTHLY_DAYS,
-          condition: (form: any) =>
-            form.birth_month != null &&
-            !form.birth_month.label.match(/Unknown/i),
-          validation: (val: any, form: any) => {
-            const day = val.value;
-            const year = form.birth_year.value;
-            const month = form.birth_month.value;
-            const date = `${year}-${month}-${day}`;
-            const notValid = HisDate.dateIsAfter(date)
-              ? null
-              : ["Date is greater than current date"];
-            const noDay = Validation.required(val);
-
-            return noDay || notValid;
-          },
-        },
-        {
           id: "side_effects",
           helpText:
             "Contraindications / Side effects (select either 'Yes' or 'No')",
@@ -526,6 +485,7 @@ export default defineComponent({
           id: "on_tb_treatment",
           helpText: "On TB Treatment?",
           type: FieldType.TT_SELECT,
+          condition: (formData: any) => this.hasTBSymptoms(formData),
           options: () => this.getYesNo(),
         },
         {
@@ -554,6 +514,7 @@ export default defineComponent({
         {
           id: "routine_tb_therapy",
           helpText: "TB preventive therapy (TPT) history",
+          unload: async (data: any) => this.updateCompletedTPT(data),
           type: FieldType.TT_SELECT,
           options: () => {
             return [
@@ -584,6 +545,7 @@ export default defineComponent({
           id: "allergic_to_sulphur",
           helpText: "Allergic to Cotrimoxazole",
           type: FieldType.TT_SELECT,
+          unload: async (data: any) => this.updateAllergicToSulphur(data),
           options: () => {
             return [...this.getYesNo(), { label: "Unknown", value: "Unknown" }];
           },
@@ -591,6 +553,7 @@ export default defineComponent({
         {
           id: "refer_to_clinician",
           helpText: "Refer to clinician",
+          condition: () => UserService.isNurse(),
           type: FieldType.TT_SELECT,
           options: () => this.getYesNo(),
         },
@@ -598,15 +561,10 @@ export default defineComponent({
           id: "prescription",
           helpText: "Medication to prescribe during this visit",
           type: FieldType.TT_MULTIPLE_SELECT,
-          options: () => {
-            return [
-              { label: "ARVs", value: "ARVs" },
-              { label: "CPT", value: "CPT" },
-              { label: "3HP (RFP + INH)", value: "3HP (RFP + INH)" },
-              { label: "IPT", value: "IPT" },
-              { label: "NONE OF THE ABOVE", value: "NONE OF THE ABOVE" },
-            ];
+          onValueUpdate: (listData: Array<Option>, value: Option) => {
+            return this.disablePrescriptions(listData, value);
           },
+          options: () => this.getPrescriptionFields(), 
         },
       ];
     },
