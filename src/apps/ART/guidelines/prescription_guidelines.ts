@@ -77,12 +77,12 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                         "Therefore, children under <b>3 years</b> respond better when <b>started immediately on 2nd line regimen</b> (Regimen <b>11</b>)",
                     ],
                     [
-                        { name: 'Cancel', slot: 'start', color: 'danger' }, 
+                        { name: 'Select another regimen', slot: 'start' }, 
                         { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
                     ],
                     'his-warning-color'
                 )
-                return action === 'Cancel' ? 'exit' : 'continue'
+                return action === 'Select another regimen' ? 'exit' : 'continue'
             }
         },
         conditions: {
@@ -262,18 +262,20 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 6,
         actions: {
             alert: async (facts: any) => {
-                const action = await hisDecisionActionSheet(
-                    'Select unit', 
-                    'Prescribe LPV/r in Pellets (cups) or Tablets?',
+                const modal = await hisDecisionActionSheet(
+                    'Pellets (cups) / Tabs', 
                     '',
+                    'Prescribe LPV/r in <b>Pellets (cups)</b> or <b>Tablets</b>?',
                     [
                         { name: 'Granules', slot: 'start' },
-                        { name: 'Pellets', slot: 'start' },
+                        { name: 'Pellets', slot:'end' },
                         { name: 'Tabs', slot:'end' }
                     ],
                     'his-info-color'
                 )
-                facts.lpvType = action
+                if (modal.selection && modal.action === 'Continue') {
+                    facts.lpvType = modal.selection
+                }
                 return 'continue'
             }
         },
