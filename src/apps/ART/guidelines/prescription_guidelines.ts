@@ -20,7 +20,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 await hisDecisionActionSheet(
                     '3HP - LPV/r conflict',
                     selectedRegimenName,
-                    `Regimens containing LPV/r cannot be prescribed together with 3HP`,
+                    `Regimens containing LPV/r <b>cannot</b> be prescribed together with 3HP`,
                     [
                        { name: 'Close', slot: 'end', color: 'danger' }
                     ],
