@@ -29,10 +29,11 @@ export default defineComponent({
         text-align: center;
     }
     .info-content {
-       padding: 70px 0;
+       padding: 80px 0;
     }
     .description {
         font-size: 1.3em;
         text-align: center;
+        padding: 10px;
     }
 </style>

@@ -1,24 +1,25 @@
 <template>
     <ul> 
-        <li v-for="(item, index) in options" :key="index">
-            {{ item.value }}
+        <li v-for="(item, index) in items" :key="index">
+            {{ item }}
         </li>
     </ul>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { Option } from "@/components/Forms/FieldInterface"
+import { defineComponent } from 'vue'
 export default defineComponent({
     props: {
-        options: {
-            type: Object as PropType<Option[]>,
+        items: {
+            type: Array,
             required: true
         }
     }
 })
 </script>
 <style scoped>
-    ul {
+    ul li {
         font-weight: bold;
+        margin: 5%;
+
     }
 </style>

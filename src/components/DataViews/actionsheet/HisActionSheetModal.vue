@@ -27,12 +27,13 @@ import { Option } from "@/components/Forms/FieldInterface"
 import DynamicNav from "@/components/HisDynamicNavFooter.vue"
 import ButtonSheet from "@/components/DataViews/actionsheet/ButtonSheet.vue"
 import InfoSheet from "@/components/DataViews/actionsheet/InfoSheet.vue"
+import ListSheet from "@/components/DataViews/actionsheet/ListSheet.vue"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface";
 import { modalController } from '@ionic/vue';
 import { isEmpty } from "lodash"
 
 export default defineComponent({
-  components: { DynamicNav, ButtonSheet, InfoSheet },
+  components: { DynamicNav, ButtonSheet, InfoSheet, ListSheet },
   data: () => ({
     selected: {} as Option
   }),
@@ -51,7 +52,7 @@ export default defineComponent({
       type: String
     },
     items: {
-      type: Object as PropType<Option[]>,
+      type: Array,
       default: ()=> []
     },
     sheetType: {

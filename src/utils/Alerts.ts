@@ -39,6 +39,29 @@ export async function alertAction(message: string, buttons: any) {
     return role || ''
 }
 
+export async function hisListActionSheet(
+    title: string,
+    subtitle: string,
+    items: Array<string>,
+    actionButtons: Array<any>)
+    {
+        const modal = await modalController.create({
+        component: HisActionSheet,
+        backdropDismiss: false,
+        cssClass: "action-sheet-modal",
+        componentProps: {
+            title,
+            subtitle,
+            actionButtons,
+            sheetType: 'list-sheet',
+            items,
+        }
+        })
+        modal.present()
+        const { data } = await modal.onDidDismiss()
+        return data.action
+    }
+
 export async function hisDecisionActionSheet(
     title: string, 
     sheetTitle: string,
