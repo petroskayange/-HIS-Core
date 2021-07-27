@@ -131,7 +131,9 @@ export class PrescriptionService extends AppEncounterService {
         const medicationOrders = await AppEncounterService.getConceptID("Medication orders")
         const orders = await AppEncounterService.getObs({
             'concept_id': medicationOrders,
-            'obs_datetime': AppEncounterService.getSessionDate()
+            'date': AppEncounterService.getSessionDate(),
+            'person_id': this.patientID,
+            'page_size': 5
         })
         this.medicationOrders = orders.map((i: Observation) => i.value_coded)
     }
