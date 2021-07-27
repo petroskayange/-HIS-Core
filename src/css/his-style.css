@@ -85,6 +85,11 @@ body {
     height: 80%;
 }
 
+.action-sheet-modal .modal-wrapper {
+    width: 80%;
+    height: 94%;
+}
+
 #view-port {
     border: 1px solid #ccc;
     background: #f8f8f8;

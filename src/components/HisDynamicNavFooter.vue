@@ -1,6 +1,6 @@
 <template>
   <ion-footer>
-    <ion-toolbar color="dark"> 
+    <ion-toolbar :color="color">
       <ion-button
         v-for="(btn, index) in footerBtns" :key="index"
         :slot="btn.slot"
@@ -23,6 +23,10 @@ export default defineComponent({
     footerBtns: [] as Array<NavBtnInterface>
   }),
   props: {
+    color: {
+      type: String,
+      default: 'dark'
+    },
     state: {
       type: Object as PropType<Record<string, any>>,
     },
