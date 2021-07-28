@@ -5,11 +5,6 @@ import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
 import { isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
-import {
-    REGIMEN_SELECTION_GUIDELINES,
-    INTERVAL_RECOMMENDATION,
-    DRUG_FREQUENCY_GUIDELINE
-} from "@/apps/ART/guidelines/prescription_guidelines"
 
 export enum AdverseEffectsCategories {
     CONTRAINDICATION = "contraindication",
@@ -43,18 +38,6 @@ export class PrescriptionService extends AppEncounterService {
 
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
-    }
-
-    getRegimenGuidelines() {
-        return REGIMEN_SELECTION_GUIDELINES
-    }
-
-    getIntervalGuidelines() {
-        return INTERVAL_RECOMMENDATION
-    }
-
-    getDrugFrequencyGuidelines() {
-        return DRUG_FREQUENCY_GUIDELINE
     }
 
     getHangingPills() {

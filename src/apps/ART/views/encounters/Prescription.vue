@@ -13,6 +13,7 @@ import HisDate from "@/utils/Date"
 import { matchToGuidelines } from "@/utils/GuidelineEngine"
 import { isEmpty } from "lodash"
 import EncounterMixinVue from './EncounterMixin.vue'
+import { PRESCRIPTION_GUIDELINES, TargetEvent, Target, FlowState } from "@/apps/ART/guidelines/prescription_guidelines"
 
 export default defineComponent({
     mixins: [EncounterMixinVue],
@@ -39,6 +40,7 @@ export default defineComponent({
             regimenCode: -1 as number,
             regimenCodeStr: '' as string,
             regimenName: '' as string,
+            regimenDrugs: [] as any,
             hangingPills: [] as Array<any>,
             reasonForSwitch: '' as string,
             starterPackNeeded: false as boolean,
@@ -84,27 +86,6 @@ export default defineComponent({
             },
             immediate: true,
             deep: true
-        },
-        'facts.lpvType': {
-            async handler(lpvType: string){
-                if (lpvType) {
-                    const drugs = await this.prescription.getLvpDrugsByType(
-                        lpvType.toLowerCase(), this.facts.regimenCode
-                    ) 
-                    this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
-                }
-            },
-            immediate: true
-        },
-        'facts.starterPackNeeded': {
-            async handler(starterPackNeeded: boolean) {
-                if (starterPackNeeded){
-                    this.drugs = await this.prescription.getRegimenStarterpack(
-                        this.facts.regimenCode, this.facts.weight
-                    )
-                }
-            },
-            immediate: true
         }
     },
     methods: {
@@ -151,12 +132,31 @@ export default defineComponent({
 
             this.nextTask()
         },
+        async onEvent(target: Target, targetEvent: TargetEvent) {
+            const findings = matchToGuidelines(this.facts, PRESCRIPTION_GUIDELINES, target, targetEvent)
+            for(const index in findings) {
+                const finding = findings[index]
+
+                if (finding?.actions?.alert) {
+                    const state = await finding?.actions?.alert(this.facts)
+                    if (state === FlowState.EXIT)
+                        return false
+                }
+
+                if (finding?.data) {
+                    return finding?.data
+                }
+            }
+            return true
+        },
         async onRegimen({ label, value, other }: Option) {
+            this.facts.lpvType = ''
             this.facts.hangingPillsStatus = ''
             this.facts.starterPackNeeded = false
             this.facts.regimenName = `${value} (${label})`
             this.facts.regimenCodeStr = value.toString()
             this.facts.regimenCode = this.extractRegimenCode(value.toString())
+            this.facts.regimenDrugs = other.regimenDrugs
             this.facts.drugs = other.regimenDrugs.map((d: any) => d.drug_id)
             this.facts.regimenKnownSideEffects = this.prescription.getRegimenSideEffects(
                 this.facts.regimenCode
@@ -164,21 +164,36 @@ export default defineComponent({
             this.facts.regimenKnownContraindications = this.prescription.getRegimenContraindications(
                 this.facts.regimenCode
             )
-            const guidelines = this.prescription.getRegimenGuidelines()
-            const findings = matchToGuidelines(this.facts, guidelines)
+        },
+        async onBeforeRegimenNext() {
+            const event = await this.onEvent(Target.ARV_REGIMENS, TargetEvent.BEFORE_NEXT)
 
-            for(const index in findings) {
-                const finding = findings[index]
+            if (!event) return false
 
-                if (!finding?.actions?.alert) 
-                    continue
-
-                const state = await finding?.actions?.alert(this.facts)
-
-                if (state === 'exit')
-                    return false
+            if (!(this.facts.lpvType && this.facts.starterPackNeeded)){
+                this.drugs = [
+                    ...this.prescription.getRegimenExtras(), 
+                    ...this.facts.regimenDrugs
+                ]
+                return true
             }
+
+            if (this.facts.starterPackNeeded) await this.setStarterPackDrugs()
+            
+            if (this.facts.lpvType) await this.setLpvDrugs()
+            
             return true
+        },
+        async setLpvDrugs() {
+            const drugs = await this.prescription.getLvpDrugsByType(
+                this.facts.lpvType, this.facts.regimenCode
+            ) 
+            this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
+        },
+        async setStarterPackDrugs() {
+            this.drugs = await this.prescription.getRegimenStarterpack(
+                this.facts.regimenCode, this.facts.weight
+            )
         },
         convertAdverseEffectsToTable(adverseEffects: Record<string, Array<any>>) {
             const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
@@ -227,21 +242,14 @@ export default defineComponent({
                 { label: '11 months', value: 308 },                        
                 { label: '12 months', value: 336 },
             ]
-            const guidelines = this.prescription.getIntervalGuidelines()
-
             return intervals.map(({label, value}: Option) => {
-                let enabled = true
                 this.facts.selectedInterval = parseInt(value.toString())
-                const findings = matchToGuidelines(this.facts, guidelines)
-
-                if (!isEmpty(findings) && findings[0]?.actions)
-                    enabled = findings[0].actions.enabled
-
+                const config = this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.ON_BUILD) || {}
                 return {
                     label,
                     value,
                     other: {
-                        enabled,
+                        ...config,
                         ...this.getDrugEstimates(this.drugs, this.facts.selectedInterval)
                     }
                 }
@@ -343,21 +351,17 @@ export default defineComponent({
         getFields(): Array<Field> {
             return [
                 {
-                    id: 'arv_regimens',
+                    id: Target.ARV_REGIMENS,
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
-                    unload: (data: any) => {
-                        if (!this.facts.starterPackNeeded) {
-                            this.drugs = [
-                                ...this.prescription.getRegimenExtras(), 
-                                ...data.other.regimenDrugs
-                            ]
-                        }
-                    },
                     options: () => this.buildRegimenOptions(),
-                    onValue: (regimen: Option) => this.onRegimen(regimen),
+                    onValue: (regimen: Option) => {
+                        this.onRegimen(regimen)
+                        return this.onEvent(Target.ARV_REGIMENS, TargetEvent.ON_VALUE)
+                    },
+                    beforeNext: () => this.onBeforeRegimenNext(),
                     config: {
                         toolbarInfo: this.patientToolbar,
                         footerBtns: [
@@ -456,14 +460,14 @@ export default defineComponent({
                     }
                 },
                 {
-                    id: 'next_visit_interval',
+                    id: Target.INTERVAL_SELECTION,
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_NEXT_VISIT_INTERVAL_SELECTION,
                     validation: (val: Option) => Validation.required(val),
-                    unload: async (data: any) => {
-                        this.nextInterval = data.value
-                    },
+                    unload: async (data: any) => this.nextInterval = data.value,
                     options: () => this.buildIntervalOptions(),
+                    onValue: () => this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.ON_VALUE),
+                    beforeNext: () => this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.BEFORE_NEXT), 
                     config: {
                         showRegimenCardTitle: false
                     }
