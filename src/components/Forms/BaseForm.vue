@@ -67,7 +67,7 @@ export default defineComponent({
         this.$emit("onClear")
       }
     },
-    next(val: boolean): void {
+    async next(val: boolean): Promise<void> {
       if (val) {
         if (this.activeField.validation) {
           const value = this.formData[this.activeField.id]
@@ -76,6 +76,12 @@ export default defineComponent({
             this.emitState()
             return this.$emit('onErrors', errors)
           }
+        }
+        if (this.activeField.beforeNext) {
+          const ok = await this.activeField.beforeNext()
+          if (!ok) {
+            return this.emitState()
+          } 
         }
         this.onNext();
         return 
