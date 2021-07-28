@@ -12,7 +12,20 @@
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
 import { tableActionSheet, listActionSheet, infoActionSheet, optionsActionSheet } from "@/utils/ActionSheets"
 
-export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
+export enum Target {
+    ARV_REGIMENS = 'arv_regimens',
+    INTERVAL_SELECTION = 'next_visit_interval'
+}
+export enum FlowState {
+    EXIT = 'exit',
+    CONTINUE = 'continue'
+}
+export enum TargetEvent {
+    ON_VALUE = 'onValue',
+    ON_BUILD = 'onBuild',
+    BEFORE_NEXT = 'beforeNext',
+}
+export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Do not prescribe LPV regimens together with 3HP": {
         priority: 1,
         actions: {
@@ -22,13 +35,15 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     regimenName,
                     `Regimens containing LPV/r <b>cannot</b> be prescribed together with 3HP`,
                     [
-                       { name: 'Close', slot: 'end', color: 'danger' }
+                        { name: 'Close', slot: 'end', color: 'danger' }
                     ],
                     'his-danger-color'
-                )
-                return 'exit'
-            }
+                    )
+                    return FlowState.EXIT
+                }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.ON_VALUE,
         conditions: {
             regimenCode(code: number) {
                 return [7, 8, 9, 10, 11, 12].includes(code)
@@ -53,9 +68,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     'his-danger-color'
                 )
-                return action === 'Select other regimen' ? 'exit' : 'continue'
+                return action === 'Select other regimen' ? FlowState.EXIT : FlowState.CONTINUE
             }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             allPatientAdverseEffects(patientAdverseEffects: Array<string>, facts: any) {
                 const knownRegimenAdverseEffects = [
@@ -85,9 +102,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     'his-warning-color'
                 )
-                return action === 'Select another regimen' ? 'exit' : 'continue'
+                return action === 'Select another regimen' ? FlowState.EXIT : FlowState.CONTINUE
             }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             age(age: number) {
                 return age < 3
@@ -122,11 +141,13 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 
                 if (modal.selection && modal.action != 'Cancel') {
                     facts.reasonForSwitch = modal.selection
-                    return 'continue'
+                    return FlowState.CONTINUE
                 }
-                return 'exit'
+                return FlowState.EXIT
             }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.ON_VALUE,
         conditions: {
             regimenCode(code: string, { currentRegimenCode }: any){
                 return currentRegimenCode != -1 && code != currentRegimenCode
@@ -150,11 +171,13 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 
                 if (action === 'Prescribe starter pack') {
                     facts.starterPackNeeded = true
-                    return 'continue'
+                    return FlowState.CONTINUE
                 }
-                return 'exit'
+                return FlowState.EXIT
             },
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             age(age: number) {
                 return age < 3
@@ -184,11 +207,13 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
 
                 if (action === 'Prescribe starter pack') {
                     facts.starterPackNeeded = true
-                    return 'continue'
+                    return FlowState.CONTINUE
                 }
-                return 'exit'
+                return FlowState.EXIT
             },
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             regimenCode(code: number) {
                 return [0, 2, 6].includes(code)
@@ -203,11 +228,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         actions: {
             alert: async (facts: any) => {
                 const action  = await infoActionSheet(
-                    facts.regimenName,
-                    'Hanging Pills', 
-                    'Do you want to use hanging pills?',
+                    'Hanging pills recommendation',
+                    'Add hanging pills?', '',
                     [
-                        { name: 'No', slot: 'start', color: 'danger'},
+                        { name: 'No', slot: 'start', color: 'warning'},
                         { name: 'Yes', slot: 'end'}
                     ],
                     'his-info-color'
@@ -217,9 +241,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 } else {
                     facts.hangingPillsStatus = 'Exact - excluding hanging pills'
                 }
-                return 'continue'
+                return FlowState.CONTINUE
             }
         },
+        target: Target.INTERVAL_SELECTION,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
            drugs(d: Array<string>, { hangingPills }: any){
                 const hanging = d.map(drug => hangingPills.includes(drug))
@@ -246,9 +272,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     'his-danger-color'
                 )
-                return action === 'Select another regimen' ? 'exit': 'continue'
+                return action === 'Select another regimen' ? FlowState.EXIT : FlowState.CONTINUE
             }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             regimenCode(code: number) {
                 return code >= 12
@@ -276,10 +304,12 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     'his-info-color'
                 )
-                facts.lpvType = action
-                return 'continue'
+                facts.lpvType = action.toLowerCase()
+                return FlowState.CONTINUE
             }
         },
+        target: Target.ARV_REGIMENS,
+        targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
             weight(weight: number){
                 return weight >= 3 && weight <= 25
@@ -288,15 +318,15 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                 return code === 11 || code === 9
             }
         }
-    }
-}
-
-export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
+    },
     'Use 14 day Starterpack for NVP or LVP regimen(s)': {
         priority: 1,
-        actions: {
+        data: {
+            selected: true,
             enabled: true
         },
+        target: Target.INTERVAL_SELECTION,
+        targetEvent: TargetEvent.ON_BUILD,
         conditions: {
             selectedInterval(interval: number) {
                 return interval === 14
@@ -311,9 +341,11 @@ export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
     },
     "Disable none 14 day intervals Starter pack(s) for NVP or LVP regimens": {
         priority: 1,
-        actions: {
+        data: {
             enabled: false
         },
+        target: Target.INTERVAL_SELECTION,
+        targetEvent: TargetEvent.ON_BUILD,
         conditions: {
             selectedInterval(interval: number) {
                 return interval > 14
