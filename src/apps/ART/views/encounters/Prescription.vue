@@ -25,15 +25,20 @@ export default defineComponent({
             age: -1 as number,
             gender: '' as string,
             weight: -1 as number,
-            patientAdverseEffects: [] as Array<string>,
+            patientContraindications: [] as Array<string>,
+            allPatientAdverseEffects: [] as Array<string>,
+            patientSideEffects: [] as Array<string>,
+            patientAdverseEffectsTable: {} as Record<string, any>,
             currentRegimenCode: -1 as number,
             currentRegimenStr: '' as string,
             currentField: '' as string,
-            selectedDrug: '' as string,
-            selectedDrugs: [] as Array<any>,
-            selectedDrugContraIndications: [] as Array<any>,
-            selectedRegimenCode: -1 as number,
-            selectedRegimenName: '' as string,
+            drug: '' as string,
+            drugs: [] as Array<any>,
+            regimenKnownContraindications: [] as Array<any>,
+            regimenKnownSideEffects: [] as Array<any>,
+            regimenCode: -1 as number,
+            regimenCodeStr: '' as string,
+            regimenName: '' as string,
             hangingPills: [] as Array<any>,
             reasonForSwitch: '' as string,
             starterPackNeeded: false as boolean,
@@ -84,7 +89,7 @@ export default defineComponent({
             async handler(lpvType: string){
                 if (lpvType) {
                     const drugs = await this.prescription.getLvpDrugsByType(
-                        lpvType.toLowerCase(), this.facts.selectedRegimenCode
+                        lpvType.toLowerCase(), this.facts.regimenCode
                     ) 
                     this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
                 }
@@ -95,7 +100,7 @@ export default defineComponent({
             async handler(starterPackNeeded: boolean) {
                 if (starterPackNeeded){
                     this.drugs = await this.prescription.getRegimenStarterpack(
-                        this.facts.selectedRegimenCode, this.facts.weight
+                        this.facts.regimenCode, this.facts.weight
                     )
                 }
             },
@@ -112,7 +117,14 @@ export default defineComponent({
             this.facts.currentRegimenStr = this.programInfo.current_regimen
             this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
-            this.facts.patientAdverseEffects = this.prescription.getAdverseEffects()
+            this.facts.patientSideEffects = this.prescription.getSideEffects()
+            this.facts.patientContraindications = this.prescription.getContraindications()
+            this.facts.allPatientAdverseEffects = [
+                ... this.facts.patientSideEffects, ...this.facts.patientContraindications
+            ]
+            this.facts.patientAdverseEffectsTable = this.convertAdverseEffectsToTable(
+                this.prescription.getAdverseEffectsByDate()
+            )
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
@@ -142,12 +154,16 @@ export default defineComponent({
         async onRegimen({ label, value, other }: Option) {
             this.facts.hangingPillsStatus = ''
             this.facts.starterPackNeeded = false
-            this.facts.selectedRegimenName = `${value} (${label})`
-            this.facts.selectedRegimenCode = this.extractRegimenCode(value.toString())
-            this.facts.selectedDrugs = other.regimenDrugs.map((d: any) => d.drug_id)
-            this.facts.selectedDrugContraIndications = this.prescription.getRegimenContraIndications(
-                this.facts.selectedRegimenCode
-            ) 
+            this.facts.regimenName = `${value} (${label})`
+            this.facts.regimenCodeStr = value.toString()
+            this.facts.regimenCode = this.extractRegimenCode(value.toString())
+            this.facts.drugs = other.regimenDrugs.map((d: any) => d.drug_id)
+            this.facts.regimenKnownSideEffects = this.prescription.getRegimenSideEffects(
+                this.facts.regimenCode
+            )
+            this.facts.regimenKnownContraindications = this.prescription.getRegimenContraindications(
+                this.facts.regimenCode
+            )
             const guidelines = this.prescription.getRegimenGuidelines()
             const findings = matchToGuidelines(this.facts, guidelines)
 
@@ -163,6 +179,19 @@ export default defineComponent({
                     return false
             }
             return true
+        },
+        convertAdverseEffectsToTable(adverseEffects: Record<string, Array<any>>) {
+            const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
+            const rows = []
+            for(const date in adverseEffects) {
+                const [ contraindications, sideEffects] = adverseEffects[date]
+                rows.push([
+                    date, 
+                    contraindications.join(', '),
+                    sideEffects.join(', ')
+                ])
+            }
+            return { columns, rows}
         },
         async buildRegimenOptions() {
             const regimenCategories = await this.prescription.getPatientRegimens()
@@ -219,7 +248,7 @@ export default defineComponent({
             })
         },
         getDrugFrequency(drugName: string){
-            this.facts.selectedDrug = drugName
+            this.facts.drug = drugName
             const guidelines = this.prescription.getDrugFrequencyGuidelines()
             const findings = matchToGuidelines(this.facts, guidelines)
 
