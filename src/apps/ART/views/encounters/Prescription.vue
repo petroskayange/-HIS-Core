@@ -13,7 +13,13 @@ import HisDate from "@/utils/Date"
 import { matchToGuidelines } from "@/utils/GuidelineEngine"
 import { isEmpty } from "lodash"
 import EncounterMixinVue from './EncounterMixin.vue'
-import { PRESCRIPTION_GUIDELINES, TargetEvent, Target, FlowState } from "@/apps/ART/guidelines/prescription_guidelines"
+import { 
+    PRESCRIPTION_GUIDELINES,
+    DRUG_FREQUENCY_GUIDELINE,
+    TargetEvent, 
+    Target, 
+    FlowState 
+} from "@/apps/ART/guidelines/prescription_guidelines"
 
 export default defineComponent({
     mixins: [EncounterMixinVue],
@@ -257,8 +263,7 @@ export default defineComponent({
         },
         getDrugFrequency(drugName: string){
             this.facts.drug = drugName
-            const guidelines = this.prescription.getDrugFrequencyGuidelines()
-            const findings = matchToGuidelines(this.facts, guidelines)
+            const findings = matchToGuidelines(this.facts, DRUG_FREQUENCY_GUIDELINE)
 
             if (!isEmpty(findings)) {
                 return findings[0].concept
