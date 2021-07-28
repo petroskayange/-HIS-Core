@@ -236,7 +236,7 @@ export default defineComponent({
         getDosageTableOptions(regimen: any) {
             const rowColors: any = [ 
                 { indexes: [], class: 'adult-regimen-formulation' },
-                { indexes: [], class: 'pedaid-regimen-formulation' }
+                { indexes: [], class: 'peads-regimen-formulation' }
             ]
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
             const rows = regimen.map((regimen: any, index: number) => {
@@ -246,6 +246,7 @@ export default defineComponent({
                         break
                     case 'P':
                         rowColors[1].indexes.push(index)
+                        break
                 }
                 return [
                     regimen.drug_name,
