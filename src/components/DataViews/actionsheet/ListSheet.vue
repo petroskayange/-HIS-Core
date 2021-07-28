@@ -19,5 +19,6 @@ export default defineComponent({
 <style scoped>
     ul li {
         margin: 5%;
+        font-size: 1.4em;
     }
 </style>
