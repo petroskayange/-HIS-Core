@@ -41,9 +41,9 @@ import { defineComponent, PropType } from "vue";
 import { IonPage, IonContent,IonRow, IonToolbar, IonCol, IonHeader } from "@ionic/vue";
 import { alertConfirmation, toastWarning } from "@/utils/Alerts"
 import { NavBtnInterface } from "@/components/HisDynamicNavFooterInterface"
-import { find, findIndex} from "lodash"
+import { findIndex} from "lodash"
 import { isEmpty } from "lodash"
-import InfoCard from "@/components/DataViews/DashboardSecondaryInfoCard.vue"
+import InfoCard from "@/components/DataViews/HisFormInfoCard.vue"
 export default defineComponent({
     name: "HisStandardForm",
     components: { InfoCard, BaseForm, IonPage, IonContent, HisFooter, IonRow, IonToolbar, IonCol, IonHeader },
@@ -120,13 +120,17 @@ export default defineComponent({
         },
         changeIndex(fieldID: string) {
            const index = findIndex(this.formFields, { id: fieldID })
-           if (index >= 0) this.skipToIndex = index 
+           if (index >= 0) {
+               this.skipToIndex = index 
+               this.$emit('onIndex')
+           } 
         },
         onState({ field, index }: any){
             this.index = index
             this.field = field
             this.isNext = false
             this.isPrev = false
+            this.skipToIndex = -1
             this.onNextRequired = field.requireNext != undefined ? field.requireNext : true
         },
         onFinish(formData: Record<string, any>) {
