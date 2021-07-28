@@ -11,6 +11,11 @@ import {
     DRUG_FREQUENCY_GUIDELINE
 } from "@/apps/ART/guidelines/prescription_guidelines"
 
+export enum AdverseEffectsCategories {
+    CONTRAINDICATION = "contraindication",
+    SIDE_EFFECT = "side_effect"
+}
+
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
     fastTrack: boolean;
@@ -19,7 +24,9 @@ export class PrescriptionService extends AppEncounterService {
     fastTrackMedications: Array<Record<string, any>>;
     medicationOrders: Array<number>;
     treatmentState: string;
-    adverseEffects: Array<string>;
+    contraindications: Array<string>;
+    sideEffects: Array<string>;
+    adverseEffectsByDate: Record<string, any>;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -29,7 +36,9 @@ export class PrescriptionService extends AppEncounterService {
         this.hangingPills = []
         this.medicationOrders = []
         this.treatmentState = ''
-        this.adverseEffects = []
+        this.contraindications = []
+        this.sideEffects = []
+        this.adverseEffectsByDate = {}
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -58,7 +67,11 @@ export class PrescriptionService extends AppEncounterService {
         })
     }
 
-    getAdverseEffects() { return this.adverseEffects }
+    getContraindications() { return this.contraindications }
+
+    getSideEffects() { return this.sideEffects }
+
+    getAdverseEffectsByDate() { return this.adverseEffectsByDate }
 
     getRegimenExtras() { return this.regimenExtras }
 
@@ -85,8 +98,15 @@ export class PrescriptionService extends AppEncounterService {
         return extrasAvailable.some(Boolean)
     }
 
-    getRegimenContraIndications(regimenCode: number) {
-        const category = `${regimenCode}_regimen_adverse_reaction`
+    getRegimenContraindications(regimenCode: number) {
+        return this.getRegimenAdverseEffectByType(`${regimenCode}_art_regimen_contraindication`)
+    }
+
+    getRegimenSideEffects(regimenCode: number) {
+        return this.getRegimenAdverseEffectByType(`${regimenCode}_art_regimen_side_effect`)
+    } 
+
+    private getRegimenAdverseEffectByType(category: string) {
         const effects =  AppEncounterService.getConceptsByCategory(category)
 
         return !isEmpty(effects) ? effects.map(i => i.name) : []
@@ -111,13 +131,40 @@ export class PrescriptionService extends AppEncounterService {
         )
     }
 
+    /**
+     * Sets contraindications, side effects and groups them by date
+     */
     async loadAdverseEffects() {
-        const effects = AppEncounterService.getConceptsByCategory('side_effect')
-        effects.forEach(async (i: any) => {
-            const sideEffect = await AppEncounterService.getFirstValueCoded(this.patientID, i.name)
+        const yesConcept = await AppEncounterService.getConceptID('Yes')
+        const adverseEffects = AppEncounterService.getConceptsByCategory('adverse_effect')
 
-            if (sideEffect === 'Yes') {
-                this.adverseEffects.push(i.name)
+        adverseEffects.forEach(async (e: any) => {
+            const obs = await AppEncounterService.getObs({
+                'concept_id': e.concept_id, 'person_id': this.patientID
+            })
+
+            if (isEmpty(obs)) return
+
+            for(const index in obs) {
+                const effect = obs[index]
+                const date = HisDate.toStandardHisFormat(effect.obs_datetime)
+                
+                // check if patient does not have the side effect
+                if (effect.value_coded != yesConcept) continue
+
+                if (isEmpty(this.adverseEffectsByDate[date])) 
+                    this.adverseEffectsByDate[date] = [[],[]]
+
+                if (e.categories.includes('contraindication')) {
+                    this.contraindications.push(e.name)
+                    this.adverseEffectsByDate[date][0].push(e.name)
+                }
+
+                if (e.categories.includes('side_effect')) {
+                    this.sideEffects.push(e.name)
+                    this.adverseEffectsByDate[date][1].push(e.name)
+                }
+                
             }
         })
     }
