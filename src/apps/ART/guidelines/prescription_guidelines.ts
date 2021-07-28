@@ -10,16 +10,16 @@
  *    starter pack include [0, 2, 6]
  */
 import { GuideLineInterface } from "@/utils/GuidelineEngine"
-import { hisOptionsActionSheet, hisListActionSheet, hisDecisionActionSheet } from "@/utils/Alerts"
+import { tableActionSheet, listActionSheet, infoActionSheet, optionsActionSheet } from "@/utils/ActionSheets"
 
 export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Do not prescribe LPV regimens together with 3HP": {
         priority: 1,
         actions: {
-            alert: async ({ selectedRegimenName }: any) => {
-                await hisDecisionActionSheet(
+            alert: async ({ regimenName }: any) => {
+                await infoActionSheet(
                     '3HP - LPV/r conflict',
-                    selectedRegimenName,
+                    regimenName,
                     `Regimens containing LPV/r <b>cannot</b> be prescribed together with 3HP`,
                     [
                        { name: 'Close', slot: 'end', color: 'danger' }
@@ -30,7 +30,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return [7, 8, 9, 10, 11, 12].includes(code)
             },
             medicationOrders(orders: Array<string>) {
@@ -42,11 +42,11 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
     "Check for any adverse effects or contraindications associated with the regimen": {
         priority: 1,
         actions: {
-            alert: async ({ selectedRegimenName, patientAdverseEffects }: any) => {
-                const action = await hisDecisionActionSheet(
-                    selectedRegimenName,
-                    'Contraindications / Side effects',
-                    patientAdverseEffects.join(','),
+            alert: async ({ regimenCodeStr, patientAdverseEffectsTable }: any) => {
+                const { columns, rows } = patientAdverseEffectsTable
+                const action = await tableActionSheet(
+                    `Contraindications / Side effects for ${regimenCodeStr}`,'',
+                    columns, rows,
                     [
                         { name: 'Select other regimen', slot: 'start'},
                         { name: 'Keep selected regimen', slot: 'end', color: 'danger' }
@@ -57,19 +57,22 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-            selectedDrugContraIndications(
-                effects: Array<string>, 
-                { patientAdverseEffects }: any) {
-
-                return patientAdverseEffects.filter((i: string) => effects.includes(i)).length >= 1
-            }
+            allPatientAdverseEffects(patientAdverseEffects: Array<string>, facts: any) {
+                const knownRegimenAdverseEffects = [
+                    ...facts.regimenKnownSideEffects, 
+                    ...facts.regimenKnownContraindications
+                ]
+                return patientAdverseEffects.filter((i: string) => {
+                    return knownRegimenAdverseEffects.includes(i)
+                }).length >= 1
+            } 
         }
     },
     "Recommend 2nd line regimen to children under 3": {
         priority: 1,
         actions: {
             alert: async () => {
-                const action = await hisListActionSheet(
+                const action = await listActionSheet(
                     'Recommendation',
                     '',
                     [
@@ -89,7 +92,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             age(age: number) {
                 return age < 3
             },
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return code != 11
             }
         }
@@ -98,7 +101,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 1,
         actions : {
             alert: async (facts: any) => {
-                const modal = await hisOptionsActionSheet(
+                const modal = await optionsActionSheet(
                     `Are you sure you want to replace ${facts.currentRegimenStr}?`,
                     'Specify reason for switching regimen',
                     [ 
@@ -113,7 +116,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
                     ],
                     [
                         { name: 'Cancel', slot:'start', color: 'danger' },
-                        { name: 'Continue', slot: 'end' }
+                        { name: 'Continue', slot: 'end', role: 'action' }
                     ]
                 )
 
@@ -125,7 +128,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-            selectedRegimenCode(code: string, { currentRegimenCode }: any){
+            regimenCode(code: string, { currentRegimenCode }: any){
                 return currentRegimenCode != -1 && code != currentRegimenCode
             }
         }
@@ -134,10 +137,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 3,
         actions: {
             alert: async (facts: any) => {
-                const action = await hisDecisionActionSheet(
+                const action = await infoActionSheet(
                     'Starter pack needed for 14 days',
                     `${ facts.treatmentInitiationState}`, 
-                    `${ facts.selectedRegimenName }`,
+                    `${ facts.regimenName }`,
                     [
                         { name: 'Cancel', slot: 'start', color: 'danger'},
                         { name: 'Prescribe starter pack', slot: 'end' }
@@ -156,7 +159,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             age(age: number) {
                 return age < 3
             },
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return code === 11
             },
             treatmentInitiationState(state: string) {
@@ -168,10 +171,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 3,
         actions: {
             alert: async (facts: any) => {
-                const action = await hisDecisionActionSheet(
+                const action = await infoActionSheet(
                     'Starter pack needed for 14 days',
                     `${ facts.treatmentInitiationState}`, 
-                    `${ facts.selectedRegimenName }`,
+                    `${ facts.regimenName }`,
                     [
                         { name: 'Cancel', slot: 'start', color: 'danger'},
                         { name: 'Prescribe starter pack', slot: 'end' }
@@ -187,7 +190,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             },
         },
         conditions: {
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return [0, 2, 6].includes(code)
             },
             treatmentInitiationState(state: string) {
@@ -199,8 +202,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 5,
         actions: {
             alert: async (facts: any) => {
-                const action  = await hisDecisionActionSheet(
-                    facts.selectedRegimenName,
+                const action  = await infoActionSheet(
+                    facts.regimenName,
                     'Hanging Pills', 
                     'Do you want to use hanging pills?',
                     [
@@ -218,8 +221,8 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-           selectedDrugs(drugs: Array<string>, { hangingPills }: any){
-                const hanging = drugs.map(drug => hangingPills.includes(drug))
+           drugs(d: Array<string>, { hangingPills }: any){
+                const hanging = d.map(drug => hangingPills.includes(drug))
                 return hanging.some(Boolean)
            }
         }
@@ -227,10 +230,10 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
     "Provide warning of use of DTG regimen to women of reproductive age" : {
         priority: 2,
         actions: {
-            alert: async ({selectedRegimenName}: any) => {
-                const action = await hisDecisionActionSheet(
+            alert: async ({regimenName}: any) => {
+                const action = await infoActionSheet(
                     `Use of DTG or EFV in women of reproductive age`,
-                    selectedRegimenName,
+                    regimenName,
                     [
                         'There is currently <u>no confirmation</u>',
                         'that <b>DTG</b> is safe in <u>very early pregnancy</u>',
@@ -247,7 +250,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             }
         },
         conditions: {
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return code >= 12
             },
             gender(gender: string) {
@@ -262,7 +265,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
         priority: 6,
         actions: {
             alert: async (facts: any) => {
-                const action = await hisDecisionActionSheet(
+                const action = await infoActionSheet(
                     'Pellets (cups) / Tabs', 
                     '',
                     'Prescribe LPV/r in <b>Pellets (cups)</b> or <b>Tablets</b>?',
@@ -281,7 +284,7 @@ export const REGIMEN_SELECTION_GUIDELINES: Record<string, GuideLineInterface> = 
             weight(weight: number){
                 return weight >= 3 && weight <= 25
             },
-            selectedRegimenCode(code: number){
+            regimenCode(code: number){
                 return code === 11 || code === 9
             }
         }
@@ -301,7 +304,7 @@ export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
             starterPackNeeded(isNeeded: boolean) {
                 return isNeeded
             },
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return [0, 2, 6, 11].includes(code)
             }
         }
@@ -318,7 +321,7 @@ export const INTERVAL_RECOMMENDATION: Record<string, GuideLineInterface> = {
             starterPackNeeded(isNeeded: boolean) {
                 return isNeeded
             },
-            selectedRegimenCode(code: number) {
+            regimenCode(code: number) {
                 return [0, 2, 6, 11].includes(code)
             }
         }
@@ -330,8 +333,8 @@ export const DRUG_FREQUENCY_GUIDELINE: Record<string, GuideLineInterface> = {
         concept: 'Weekly (QW)',
         priority: 1,
         conditions: {
-            selectedDrug(drug: string) {
-                return drug.match(/Rifapentine|Isoniazid/i)
+            drug(d: string) {
+                return d.match(/Rifapentine|Isoniazid/i)
             }
         }
     },
@@ -339,8 +342,8 @@ export const DRUG_FREQUENCY_GUIDELINE: Record<string, GuideLineInterface> = {
         concept: 'Daily (QOD)',
         priority: 2,
         conditions: {
-            selectedDrug(drug: string) {
-                return !drug.match(/Rifapentine|Isoniazid/i)
+            drug(d: string) {
+                return !d.match(/Rifapentine|Isoniazid/i)
             }
         }
     }
