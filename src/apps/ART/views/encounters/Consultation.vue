@@ -27,15 +27,17 @@ export default defineComponent({
     fields: [] as any,
     consultation: {} as any,
     hasTBTherapyObs: false,
-    allergicToSulphur: false
+    allergicToSulphur: false,
+    TBSuspected: false,
+    presentedTBSymptoms: false,
   }),
   watch: {
     ready: {
       async handler(value: boolean) {
-        if(value) {
+        if (value) {
           this.fields = this.getFields();
           this.consultation = new ConsultationService(this.patientID);
-          this.completedTBTherapy()
+          this.completedTBTherapy();
         }
       },
       deep: true,
@@ -63,13 +65,15 @@ export default defineComponent({
       return this.patient.getGender() === gender;
     },
     async completedTBTherapy() {
-    const data = await ConsultationService.getAll(this.patientID, "TB treatment history");
-    if(!data) return 
-    const obs = await data.filter((data: any) => {
-        return data.value_text.match(/Complete/i); 
-    });
-      this.hasTBTherapyObs = obs.length > 0; 
-      
+      const data = await ConsultationService.getAll(
+        this.patientID,
+        "TB treatment history"
+      );
+      if (!data) return;
+      const obs = await data.filter((data: any) => {
+        return data.value_text.match(/Complete/i);
+      });
+      this.hasTBTherapyObs = obs.length > 0;
     },
     isOfChildBearingAge() {
       const age = this.patient.getAge();
@@ -116,7 +120,6 @@ export default defineComponent({
     disableFPMethods(listData: Array<Option>, value: Option) {
       if (value.isChecked && value.label === "NONE") {
         return listData.map((i) => {
-          console.log("Here")
           if (i.label != "NONE") i.isChecked = false;
           return i;
         });
@@ -139,53 +142,64 @@ export default defineComponent({
       return listData;
     },
     declinedFPM(formData: any) {
-      if(!formData.fp_methods) return false
+      if (!formData.fp_methods) return false;
       return (
-        formData.fp_methods.filter(
-          (data: any) => data.value === "NONE"
-        ).length > 0
+        formData.fp_methods.filter((data: any) => data.value === "NONE")
+          .length > 0
       );
     },
     riskOfUnplannedPregnancy(formData: any) {
-      if(!formData.reason_for_no_fpm) return false
-      return formData.reason_for_no_fpm.value === "At risk of unplanned pregnancy"
+      if (!formData.reason_for_no_fpm) return false;
+      return (
+        formData.reason_for_no_fpm.value === "At risk of unplanned pregnancy"
+      );
     },
     acceptedIntervention(formData: any) {
-      if(!formData.offer_contraceptives) return false
-      return formData.offer_contraceptives.value === "Accepted"
+      if (!formData.offer_contraceptives) return false;
+      return formData.offer_contraceptives.value === "Accepted";
     },
     notOnTBTreatment(formData: any) {
-      if(!formData.on_tb_treatment) return false
-      return formData.on_tb_treatment.value === "No"
+      if (!formData.on_tb_treatment) return false;
+      return formData.on_tb_treatment.value === "No";
     },
     declinedCxCa(formData: any) {
-      if(!formData.offer_cxca) return false
-      return formData.offer_cxca.value === "No"
+      if (!formData.offer_cxca) return false;
+      return formData.offer_cxca.value === "No";
     },
     updateAllergicToSulphur(formData: any) {
-      if(formData.value === "Yes") {
+      if (formData.value === "Yes") {
         this.allergicToSulphur = true;
-      }else if(formData.value === "No" || formData.value === "Unknown"){
+      } else if (formData.value === "No" || formData.value === "Unknown") {
         this.allergicToSulphur = false;
       }
     },
     updateCompletedTPT(formData: any) {
-      if(formData.value.match(/Complete/ig)) {
+      if (formData.value.match(/Complete/gi)) {
         this.hasTBTherapyObs = true;
-      }else {
+      } else {
         this.hasTBTherapyObs = false;
       }
     },
     showOtherSideEffects(formData: any) {
-      return formData.side_effects.filter((data: any) => {
-        return data.label === "Other" && data.value === "Yes"
-      }).length > 0
+      return (
+        formData.side_effects.filter((data: any) => {
+          return data.label === "Other" && data.value === "Yes";
+        }).length > 0
+      );
     },
     hasTBSymptoms(formData: any) {
-      if(!formData.tb_side_effects) return false
-      return formData.tb_side_effects.filter((data: any) => {
-        return data.value === "Yes"
-      }).length > 0
+      if (!formData.tb_side_effects) return false;
+      const val =
+        formData.tb_side_effects.filter((data: any) => {
+          return data.value === "Yes";
+        }).length > 0;
+      this.presentedTBSymptoms = val;
+      return val;
+    },
+    getFieldPreset() {
+      if (this.presentedTBSymptoms) {
+        return { label: "TB Suspected", value: "TB Suspected" };
+      }
     },
     getYesNo() {
       return [
@@ -199,7 +213,7 @@ export default defineComponent({
         },
       ];
     },
-    getFPMethods() {
+    getFPMethods(exclusionList: string[] = []) {
       const methods = [
         "ORAL CONTRACEPTIVE PILLS",
         "DEPO-PROVERA",
@@ -210,7 +224,8 @@ export default defineComponent({
         "TUBAL LIGATION",
         "NONE",
       ];
-      return methods.map((method) => {
+      const filtered = methods.filter(data => !exclusionList.includes(data)); 
+      return filtered.map((method) => {
         return { label: method, value: method };
       });
     },
@@ -266,31 +281,53 @@ export default defineComponent({
       return this.getOptions(contraIndications);
     },
     getPrescriptionFields() {
-      const vals =[
-              { label: "ARVs", value: "ARVs", isChecked: true},
-              { label: "CPT", value: "CPT", isChecked: true},
-              { label: "3HP (RFP + INH)", value: "3HP (RFP + INH)", isChecked: true},
-              { label: "IPT", value: "IPT" },
-              { label: "NONE OF THE ABOVE", value: "NONE OF THE ABOVE" },
-            ];
+      const vals = [
+        { label: "ARVs", value: "ARVs", isChecked: true },
+        { label: "CPT", value: "CPT", isChecked: true },
+        { label: "3HP (RFP + INH)", value: "3HP (RFP + INH)", isChecked: true },
+        { label: "IPT", value: "IPT" },
+        { label: "NONE OF THE ABOVE", value: "NONE OF THE ABOVE" },
+      ];
       const exclusions = [];
-      if(this.allergicToSulphur) {
-        exclusions.push({value: "CPT", description: "Allergic to CPT"});
+      if (this.allergicToSulphur) {
+        exclusions.push({ value: "CPT", description: "Allergic to CPT" });
       }
-      if(this.hasTBTherapyObs) {
-        exclusions.push({value: "IPT", description: "Completed TPT"}, {value: "3HP (RFP + INH)", description: "Completed TPT"});
+      if (this.TBSuspected) {
+        exclusions.push(
+          { value: "IPT", description: "TB Suspect" },
+          { value: "3HP (RFP + INH)", description: "TB Suspect" }
+        );
       }
-      return [...this.removeAndDisable(vals, exclusions)]
+      if (this.hasTBTherapyObs) {
+        exclusions.push(
+          { value: "IPT", description: "Completed TPT" },
+          { value: "3HP (RFP + INH)", description: "Completed TPT" }
+        );
+      }
+      return [...this.removeAndDisable(vals, exclusions)];
       // if(this.isAllergic)
     },
     removeAndDisable(initialFields: any[], exclusionList: any[]) {
-      return initialFields.map(data => {
-        const isAvailable = exclusionList.filter(val => val.value === data.value);
+      return initialFields.map((data) => {
+        const isAvailable = exclusionList.filter(
+          (val) => val.value === data.value
+        );
         const checked = isAvailable.length > 0 ? false : data.isChecked;
         const disabled = isAvailable.length > 0 ? true : false;
-        const vals =  { label: data.label, value: data.value, isChecked: checked, disabled: disabled };
-        if(disabled) {
-          Object.assign(vals, {description: {show: 'always', text: isAvailable[0].description, color: 'danger'}})
+        const vals = {
+          label: data.label,
+          value: data.value,
+          isChecked: checked,
+          disabled: disabled,
+        };
+        if (disabled) {
+          Object.assign(vals, {
+            description: {
+              show: "always",
+              text: isAvailable[0].description,
+              color: "danger",
+            },
+          });
         }
         return vals;
       });
@@ -330,6 +367,7 @@ export default defineComponent({
           helpText: `Patient Pregnant or breastfeeding?`,
           condition: () => this.showPregnancyQuestions(),
           type: FieldType.TT_MULTIPLE_YES_NO,
+          validation: (data: any) => Validation.anyEmpty(data), 
           options: () => [
             {
               label: "Pregnant",
@@ -378,6 +416,7 @@ export default defineComponent({
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disableFPMethods(listData, value);
           },
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) =>
             this.showCurrentContraceptionMethods(formData),
           type: FieldType.TT_MULTIPLE_SELECT,
@@ -388,6 +427,7 @@ export default defineComponent({
           condition: (formData: any) =>
             this.showNewContraceptionMethods(formData),
           helpText: "What method are you providing today?",
+          validation: (data: any) => Validation.required(data), 
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disableFPMethods(listData, value);
           },
@@ -397,6 +437,7 @@ export default defineComponent({
         {
           id: "reason_for_no_fpm",
           helpText: "Main reason for not using family planning methods",
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) => this.declinedFPM(formData),
           type: FieldType.TT_SELECT,
           options: () => {
@@ -420,6 +461,7 @@ export default defineComponent({
         {
           id: "specific_reason_for_no_fpm",
           helpText: "Specific reason for not using family planning methods",
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) => this.riskOfUnplannedPregnancy(formData),
           type: FieldType.TT_SELECT,
           options: () => {
@@ -445,9 +487,10 @@ export default defineComponent({
           },
         },
         {
-          id: "offer_contraceptive",
+          id: "offer_contraceptives",
           helpText: "Offer contraceptives",
           //show when previous one has a value
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) => this.riskOfUnplannedPregnancy(formData),
           type: FieldType.TT_SELECT,
           options: () => {
@@ -462,20 +505,23 @@ export default defineComponent({
           id: "offered_intervention",
           helpText: "Offered intervention",
           //show when the previous one is accepted
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) => this.acceptedIntervention(formData),
           type: FieldType.TT_SELECT,
-          options: () => this.getFPMethods(),
+          options: () => this.getFPMethods(['NONE']),
         },
         {
           id: "side_effects",
           helpText:
             "Contraindications / Side effects (select either 'Yes' or 'No')",
           type: FieldType.TT_MULTIPLE_YES_NO,
+          validation: (data: any) => Validation.anyEmpty(data), 
           options: () => this.getContraindications(),
         },
         {
           id: "other side_effects",
           condition: (formData: any) => this.showOtherSideEffects(formData),
+          validation: (data: any) => Validation.anyEmpty(data), 
           helpText:
             "Other Contraindications / Side effects (select either 'Yes' or 'No')",
           type: FieldType.TT_MULTIPLE_YES_NO,
@@ -484,14 +530,29 @@ export default defineComponent({
         {
           id: "on_tb_treatment",
           helpText: "On TB Treatment?",
+          validation: (data: any) => Validation.required(data), 
           type: FieldType.TT_SELECT,
-          condition: (formData: any) => this.hasTBSymptoms(formData),
+          unload: async (data: any) => {
+            if (data.value === "Yes") {
+              this.TBSuspected = true;
+            } else {
+              this.TBSuspected = false;
+            }
+          },
           options: () => this.getYesNo(),
         },
         {
           id: "tb_side_effects",
           helpText: "TB Associated symptoms",
+          validation: (data: any) => Validation.anyEmpty(data), 
           condition: (formData: any) => this.notOnTBTreatment(formData),
+          unload: async (vals: any) => {
+            const val =
+              vals.filter((data: any) => {
+                return data.value === "Yes";
+              }).length > 0;
+            this.presentedTBSymptoms = val;
+          },
           type: FieldType.TT_MULTIPLE_YES_NO,
           options: () => this.getTBSymptoms(),
         },
@@ -499,11 +560,21 @@ export default defineComponent({
           id: "tb_status",
           helpText: "TB Status",
           type: FieldType.TT_SELECT,
+          // pre select yb suspected when the patient has TB symptoms 
+          preset: this.getFieldPreset(),
+          validation: (data: any) => Validation.required(data), 
           condition: (formData: any) => this.hasTBSymptoms(formData),
+          unload: async (data: any) => {
+            if (data.value === "TB Suspected") {
+              this.TBSuspected = true;
+            } else {
+              this.TBSuspected = false;
+            }
+          },
           options: () => {
             return [
               { label: "TB NOT suspected", value: "TB NOT suspected" },
-              { label: "TB Suspected", value: "TB Suspected" },
+              { label: "TB Suspected", value: "TB Suspected"},
               {
                 label: "Confirmed TB Not on treatment",
                 value: "Confirmed TB Not on treatment",
@@ -515,6 +586,8 @@ export default defineComponent({
           id: "routine_tb_therapy",
           helpText: "TB preventive therapy (TPT) history",
           unload: async (data: any) => this.updateCompletedTPT(data),
+          validation: (data: any) => Validation.required(data), 
+          condition: () => !this.hasTBTherapyObs,
           type: FieldType.TT_SELECT,
           options: () => {
             return [
@@ -545,6 +618,7 @@ export default defineComponent({
           id: "allergic_to_sulphur",
           helpText: "Allergic to Cotrimoxazole",
           type: FieldType.TT_SELECT,
+          validation: (data: any) => Validation.required(data), 
           unload: async (data: any) => this.updateAllergicToSulphur(data),
           options: () => {
             return [...this.getYesNo(), { label: "Unknown", value: "Unknown" }];
@@ -554,6 +628,7 @@ export default defineComponent({
           id: "refer_to_clinician",
           helpText: "Refer to clinician",
           condition: () => UserService.isNurse(),
+          validation: (data: any) => Validation.required(data), 
           type: FieldType.TT_SELECT,
           options: () => this.getYesNo(),
         },
@@ -561,10 +636,11 @@ export default defineComponent({
           id: "prescription",
           helpText: "Medication to prescribe during this visit",
           type: FieldType.TT_MULTIPLE_SELECT,
+          validation: (data: any) => Validation.required(data), 
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disablePrescriptions(listData, value);
           },
-          options: () => this.getPrescriptionFields(), 
+          options: () => this.getPrescriptionFields(),
         },
       ];
     },

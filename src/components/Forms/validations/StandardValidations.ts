@@ -40,9 +40,8 @@ function neitherOr(val: any): null | Array<string> {
     return null;
 }
 function anyEmpty(val: any): null | Array<string> {
-    const allNo = val.map((i: any) => i.value === '' || i.other.value === '')
-
-    if(allNo.every((i: any) => i)) return ['all must be selected']
+    const allNo = val.filter((i: any) => i.value === '')
+    if(allNo.length > 0) return ['all must be selected']
 
     return null;
 }
