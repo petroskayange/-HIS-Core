@@ -1,5 +1,27 @@
 export default [
    {
+      "categories": [],
+      "concept_id": 8260,
+      "name": "Past medical history"
+   },
+   {
+      "categories": [],
+      "concept_id": 9661,
+      "name": "Contraindications"   
+   },
+   {
+      "categories": [],
+      "concept_id": 7567,
+      "name": "Drug induced"
+   },
+   {
+      "categories": [
+         "adverse_effect"
+      ],
+      "concept_id": 6029,
+      name: "Night sweat"
+   },
+   {
       "categories":[
          "0_art_regimen_side_effect",
          "9_art_regimen_side_effect",
