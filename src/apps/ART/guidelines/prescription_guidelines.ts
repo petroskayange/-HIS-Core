@@ -328,6 +328,9 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
         target: Target.INTERVAL_SELECTION,
         targetEvent: TargetEvent.ON_BUILD,
         conditions: {
+            prescriptionType(type: string){
+                return type === 'Regimen'
+            },
             selectedInterval(interval: number) {
                 return interval === 14
             },
@@ -347,6 +350,9 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
         target: Target.INTERVAL_SELECTION,
         targetEvent: TargetEvent.ON_BUILD,
         conditions: {
+            prescriptionType(type: string){
+                return type === 'Regimen'
+            },
             selectedInterval(interval: number) {
                 return interval > 14
             },

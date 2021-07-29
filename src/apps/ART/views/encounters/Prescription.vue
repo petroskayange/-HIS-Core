@@ -33,6 +33,7 @@ export default defineComponent({
             age: -1 as number,
             gender: '' as string,
             weight: -1 as number,
+            prescriptionType: '' as 'Custom' | 'Regimen',
             patientContraindications: [] as Array<string>,
             allPatientAdverseEffects: [] as Array<string>,
             patientSideEffects: [] as Array<string>,
@@ -377,6 +378,7 @@ export default defineComponent({
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
                     options: () => this.buildRegimenOptions(),
+                    onload: () => this.facts.prescriptionType = 'Regimen',
                     onValue: (regimen: Option) => {
                         this.onRegimen(regimen)
                         return this.onEvent(Target.ARV_REGIMENS, TargetEvent.ON_VALUE)
@@ -405,7 +407,8 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: (f: any) => !isEmpty(f.custom_regimen),
+                    condition: () => this.fieldComponent === 'custom_regimen',
+                    onload: () => this.facts.prescriptionType = 'Custom',
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await this.prescription.getCustomIngridients()
