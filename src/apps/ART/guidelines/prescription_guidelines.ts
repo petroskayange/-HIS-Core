@@ -319,7 +319,7 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
             }
         }
     },
-    "Keep the 14 day interval selected for NVP or LVP regimen starter pack": {
+    "Provide 14 day interval for NVP or LVP Regimen starter pack": {
         priority: 1,
         data: {
             enabled: false
@@ -338,6 +338,26 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
             },
             regimenCode(code: number) {
                 return [0, 2, 6, 11].includes(code)
+            }
+        }
+    },
+    "Provide intervals upto 1 month, 2nd up to 2 months, and 3rd up to 6 months for Patients receiving TPT" : {
+        priority: 2,
+        data: {
+            enabled: false
+        },
+        target: Target.INTERVAL_SELECTION,
+        targetEvent: TargetEvent.ON_BUILD,
+        conditions: {
+            prescriptionType(type: string){
+                return type === 'Regimen'
+            },
+            medicationOrders(orders: Array<string>) {
+                const threeHp = ['Rifapentine', 'INH']
+                return orders.filter(i => threeHp.includes(i)).length >= 1
+            },
+            tptPrescriptionCount(count: number, {selectedInterval}: any){
+                return Math.round(selectedInterval / 30) > count  
             }
         }
     }

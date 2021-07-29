@@ -34,6 +34,7 @@ export default defineComponent({
             gender: '' as string,
             weight: -1 as number,
             prescriptionType: '' as 'Custom' | 'Regimen',
+            tptPrescriptionCount: 0,
             patientContraindications: [] as Array<string>,
             allPatientAdverseEffects: [] as Array<string>,
             patientSideEffects: [] as Array<string>,
@@ -76,6 +77,7 @@ export default defineComponent({
                 await this.prescription.loadHangingPills()
                 await this.prescription.loadTreatmentState()
                 await this.prescription.loadAdverseEffects()
+                await this.prescription.loadTptPrescriptionCount()
 
                 await this.initFacts(patient)
 
@@ -114,6 +116,7 @@ export default defineComponent({
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
             this.facts.patientSideEffects = this.prescription.getSideEffects()
             this.facts.patientContraindications = this.prescription.getContraindications()
+            this.facts.tptPrescriptionCount = this.prescription.getTptPrescriptionCount()
             this.facts.allPatientAdverseEffects = [
                 ... this.facts.patientSideEffects, ...this.facts.patientContraindications
             ]

@@ -22,6 +22,7 @@ export class PrescriptionService extends AppEncounterService {
     contraindications: Array<string>;
     sideEffects: Array<string>;
     adverseEffectsByDate: Record<string, any>;
+    tptPrescriptionCount: number;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -34,6 +35,7 @@ export class PrescriptionService extends AppEncounterService {
         this.contraindications = []
         this.sideEffects = []
         this.adverseEffectsByDate = {}
+        this.tptPrescriptionCount = 0
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -48,6 +50,10 @@ export class PrescriptionService extends AppEncounterService {
         return this.medicationOrders.map((i: number) => {
             return AppEncounterService.getCachedConceptName(i)
         })
+    }
+
+    getTptPrescriptionCount() {
+        return this.tptPrescriptionCount
     }
 
     getContraindications() { return this.contraindications }
@@ -150,6 +156,20 @@ export class PrescriptionService extends AppEncounterService {
                 
             }
         })
+    }
+
+    async loadTptPrescriptionCount() {
+        const res = await AppEncounterService.getJson(
+            `tpt_prescription_count`, {
+                'patient_id': this.patientID,
+                'date': AppEncounterService.getSessionDate()
+            }
+        )
+
+        if (res) {
+            const count = res.count + 1
+            this.tptPrescriptionCount = count > 3 ? 3 : count
+        } 
     }
 
     async loadFastTrackStatus() {
