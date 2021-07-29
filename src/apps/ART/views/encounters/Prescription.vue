@@ -221,7 +221,7 @@ export default defineComponent({
             for(const date in adverseEffects) {
                 const [ contraindications, sideEffects] = adverseEffects[date]
                 rows.push([
-                    date, 
+                    HisDate.toStandardHisDisplayFormat(date), 
                     contraindications.join(', '),
                     sideEffects.join(', ')
                 ])
