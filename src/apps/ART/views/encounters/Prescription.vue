@@ -190,9 +190,9 @@ export default defineComponent({
             }
 
             if (this.facts.starterPackNeeded) await this.setStarterPackDrugs()
-            
+
             if (this.facts.lpvType) await this.setLpvDrugs()
-            
+
             return true
         },
         async setLpvDrugs() {
@@ -205,6 +205,10 @@ export default defineComponent({
             this.drugs = await this.prescription.getRegimenStarterpack(
                 this.facts.regimenCode, this.facts.weight
             )
+        },
+        setCustomDrugs(drugs: any) {
+            this.drugs = drugs.map((drug: Option) => drug.other)
+            this.facts.drugs = this.drugs.map(d => d.drug_id)
         },
         convertAdverseEffectsToTable(adverseEffects: Record<string, Array<any>>) {
             const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
@@ -436,7 +440,7 @@ export default defineComponent({
                         const empty = val.map(({ other }: Option) => other.am <= 0 && other.pm <= 0)
                         return empty.some(Boolean) ? ['Missing dosage configuration on some drugs'] : null
                     },
-                    unload: (data: any) => this.drugs = data.map((drug: Option) => drug.other),
+                    unload: (data: any) => this.setCustomDrugs(data),
                     summaryMapValue: ({other}: any) => ({
                         label: 'Dosages', 
                         value: this.prescription.getInstructions(
