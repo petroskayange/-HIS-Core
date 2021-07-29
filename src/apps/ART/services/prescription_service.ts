@@ -21,7 +21,6 @@ export class PrescriptionService extends AppEncounterService {
     treatmentState: string;
     contraindications: Record<string, any>;
     sideEffects: Record<string, any>;
-    adverseEffectsByDate: Record<string, any>;
     tptPrescriptionCount: number;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
@@ -34,7 +33,6 @@ export class PrescriptionService extends AppEncounterService {
         this.treatmentState = ''
         this.contraindications = {}
         this.sideEffects = {}
-        this.adverseEffectsByDate = {}
         this.tptPrescriptionCount = 0
     }
 
@@ -59,8 +57,6 @@ export class PrescriptionService extends AppEncounterService {
     getContraindications() { return this.contraindications }
 
     getSideEffects() { return this.sideEffects }
-
-    getAdverseEffectsByDate() { return this.adverseEffectsByDate }
 
     getRegimenExtras() { return this.regimenExtras }
 
@@ -87,20 +83,6 @@ export class PrescriptionService extends AppEncounterService {
         return extrasAvailable.some(Boolean)
     }
 
-    getRegimenContraindications(regimenCode: number) {
-        return this.getRegimenAdverseEffectByType(`${regimenCode}_art_regimen_contraindication`)
-    }
-
-    getRegimenSideEffects(regimenCode: number) {
-        return this.getRegimenAdverseEffectByType(`${regimenCode}_art_regimen_side_effect`)
-    } 
-
-    private getRegimenAdverseEffectByType(category: string) {
-        const effects =  AppEncounterService.getConceptsByCategory(category)
-
-        return !isEmpty(effects) ? effects.map(i => i.name) : []
-    }
-
     getRegimenStarterpack(regimenCode: number, patientWeight: number) {
         const params = { weight: patientWeight, regimen: regimenCode }
 
@@ -125,9 +107,12 @@ export class PrescriptionService extends AppEncounterService {
         const obs = await AppEncounterService.getObs({
             'concept_id': contraindication, 'person_id': this.patientID 
         })
+
         obs.forEach((o: any) => {
             const date = HisDate.toStandardHisFormat(o.obs_datetime)
+
             if (!this.contraindications[date]) this.contraindications[date] = []
+
             const concept = AppEncounterService.getCachedConceptName(o.value_coded)
 
             this.contraindications[date].push(concept)
