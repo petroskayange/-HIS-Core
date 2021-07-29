@@ -77,7 +77,7 @@ export default defineComponent({
                 await this.prescription.loadTreatmentState()
                 await this.prescription.loadAdverseEffects()
 
-                await this.init(patient)
+                await this.initFacts(patient)
 
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
@@ -103,7 +103,7 @@ export default defineComponent({
         }
     },
     methods: {
-        async init(patient: any) {
+        async initFacts(patient: any) {
             this.facts.age = patient.getAge()
             this.facts.gender = patient.getGender() === 'Female' ? 'F' : 'M'
             this.facts.weight = await patient.getRecentWeight()
