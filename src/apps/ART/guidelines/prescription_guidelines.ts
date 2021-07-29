@@ -319,30 +319,7 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
             }
         }
     },
-    'Use 14 day Starterpack for NVP or LVP regimen(s)': {
-        priority: 1,
-        data: {
-            selected: true,
-            enabled: true
-        },
-        target: Target.INTERVAL_SELECTION,
-        targetEvent: TargetEvent.ON_BUILD,
-        conditions: {
-            prescriptionType(type: string){
-                return type === 'Regimen'
-            },
-            selectedInterval(interval: number) {
-                return interval === 14
-            },
-            starterPackNeeded(isNeeded: boolean) {
-                return isNeeded
-            },
-            regimenCode(code: number) {
-                return [0, 2, 6, 11].includes(code)
-            }
-        }
-    },
-    "Disable none 14 day intervals Starter pack(s) for NVP or LVP regimens": {
+    "Keep the 14 day interval selected for NVP or LVP regimen starter pack": {
         priority: 1,
         data: {
             enabled: false
