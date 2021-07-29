@@ -148,12 +148,17 @@ export default defineComponent({
                     if (state === FlowState.EXIT)
                         return false
                 }
-
-                if (finding?.data) {
-                    return finding?.data
-                }
             }
             return true
+        },
+        onBuildOptions(target: Target, targetEvent: TargetEvent){
+            const findings = matchToGuidelines(this.facts, PRESCRIPTION_GUIDELINES, target, targetEvent)
+            for(const index in findings) {
+                const finding = findings[index]
+
+                if (finding.data) return finding.data
+            }
+            return {}
         },
         async onRegimen({ label, value, other }: Option) {
             this.facts.lpvType = ''
@@ -250,7 +255,7 @@ export default defineComponent({
             ]
             return intervals.map(({label, value}: Option) => {
                 this.facts.selectedInterval = parseInt(value.toString())
-                const config = this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.ON_BUILD) || {}
+                const config = this.onBuildOptions(Target.INTERVAL_SELECTION, TargetEvent.ON_BUILD)
                 return {
                     label,
                     value,
