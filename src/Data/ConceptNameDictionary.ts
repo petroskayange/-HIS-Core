@@ -2,6 +2,12 @@ export default [
    {
       "categories":[
       ],
+      "concept_id": 6029,
+      "name":"Night sweats"
+   },
+   {
+      "categories":[
+      ],
       "concept_id":1588,
       "name":"TB treatment history"
    },
