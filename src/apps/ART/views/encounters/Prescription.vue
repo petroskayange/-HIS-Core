@@ -474,6 +474,7 @@ export default defineComponent({
                     type: FieldType.TT_TABLE_VIEWER,
                     options: () => this.getDosageTableOptions(this.drugs),
                     config: {
+                        toolbarInfo: this.patientToolbar,
                         hiddenFooterBtns: [ 'Clear' ]
                     }
                 },
