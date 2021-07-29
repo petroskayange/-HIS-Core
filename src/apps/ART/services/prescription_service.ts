@@ -19,8 +19,8 @@ export class PrescriptionService extends AppEncounterService {
     fastTrackMedications: Array<Record<string, any>>;
     medicationOrders: Array<number>;
     treatmentState: string;
-    contraindications: Array<string>;
-    sideEffects: Array<string>;
+    contraindications: Record<string, any>;
+    sideEffects: Record<string, any>;
     adverseEffectsByDate: Record<string, any>;
     tptPrescriptionCount: number;
     constructor(patientID: number) {
@@ -32,8 +32,8 @@ export class PrescriptionService extends AppEncounterService {
         this.hangingPills = []
         this.medicationOrders = []
         this.treatmentState = ''
-        this.contraindications = []
-        this.sideEffects = []
+        this.contraindications = {}
+        this.sideEffects = {}
         this.adverseEffectsByDate = {}
         this.tptPrescriptionCount = 0
     }
@@ -120,41 +120,40 @@ export class PrescriptionService extends AppEncounterService {
         )
     }
 
-    /**
-     * Sets contraindications, side effects and groups them by date
-     */
-    async loadAdverseEffects() {
-        const yesConcept = await AppEncounterService.getConceptID('Yes')
-        const adverseEffects = AppEncounterService.getConceptsByCategory('adverse_effect')
+    async loadContraindications() {
+        const contraindication = await AppEncounterService.getConceptID('Contraindications')
+        const obs = await AppEncounterService.getObs({
+            'concept_id': contraindication, 'person_id': this.patientID 
+        })
+        obs.forEach((o: any) => {
+            const date = HisDate.toStandardHisFormat(o.obs_datetime)
+            if (!this.contraindications[date]) this.contraindications[date] = []
+            const concept = AppEncounterService.getCachedConceptName(o.value_coded)
 
-        adverseEffects.forEach(async (e: any) => {
-            const obs = await AppEncounterService.getObs({
-                'concept_id': e.concept_id, 'person_id': this.patientID
-            })
+            this.contraindications[date].push(concept)
+        })
+    }
 
-            if (isEmpty(obs)) return
+    async loadDrugInduced() {
+        const drugInduced = await AppEncounterService.getConceptID('Drug induced')
+        const obs = await AppEncounterService.getObs({
+            'concept_id': drugInduced, 'person_id': this.patientID 
+        })
 
-            for(const index in obs) {
-                const effect = obs[index]
-                const date = HisDate.toStandardHisFormat(effect.obs_datetime)
-                
-                // check if patient does not have the side effect
-                if (effect.value_coded != yesConcept) continue
+        if (!obs) return
 
-                if (isEmpty(this.adverseEffectsByDate[date])) 
-                    this.adverseEffectsByDate[date] = [[],[]]
+        obs.forEach((o: any) => {
+            const date = HisDate.toStandardHisFormat(o.obs_datetime)
 
-                if (e.categories.includes('contraindication')) {
-                    this.contraindications.push(e.name)
-                    this.adverseEffectsByDate[date][0].push(e.name)
-                }
+            if (!o.value_drug || !o.value_coded) return
 
-                if (e.categories.includes('side_effect')) {
-                    this.sideEffects.push(e.name)
-                    this.adverseEffectsByDate[date][1].push(e.name)
-                }
-                
-            }
+            if (!this.sideEffects[date]) this.sideEffects[date] = {}
+
+            if (!this.sideEffects[date][o.value_drug]) this.sideEffects[date][o.value_drug] = []
+
+            const concept = AppEncounterService.getCachedConceptName(o.value_coded)
+
+            this.sideEffects[date][o.value_drug].push(concept)
         })
     }
 
@@ -233,6 +232,25 @@ export class PrescriptionService extends AppEncounterService {
         )
 
         if (req) this.treatmentState = req['status']
+    }
+
+    findAndGroupDrugSideEffects(drugs: Array<number>) {
+        const allSideEffects: any = {}
+
+        for (const date in this.sideEffects) {
+            const drugInduced = this.sideEffects[date]
+
+            for(const drug in drugInduced) {
+                if (!drugs.includes(parseInt(drug))) continue
+
+                if (!allSideEffects[date]) allSideEffects[date] = []
+
+                allSideEffects[date] = [
+                    ...allSideEffects[date], ...drugInduced[drug]
+                ]
+            }
+        }
+        return allSideEffects
     }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
