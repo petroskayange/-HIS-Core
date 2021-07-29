@@ -407,7 +407,7 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: () => this.fieldComponent === 'custom_regimen',
+                    condition: () => this.facts.prescriptionType === 'Custom',
                     onload: () => this.facts.prescriptionType = 'Custom',
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
