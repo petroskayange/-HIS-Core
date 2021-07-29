@@ -92,6 +92,13 @@ export default defineComponent({
             },
             immediate: true,
             deep: true
+        },
+        drugs: {
+            handler(drugs: Array<any>) {
+                this.facts.drugs = drugs.map(d => d.drug_id)
+            },
+            immediate: true,
+            deep: true
         }
     },
     methods: {
@@ -179,7 +186,8 @@ export default defineComponent({
         async onBeforeRegimenNext() {
             const event = await this.onEvent(Target.ARV_REGIMENS, TargetEvent.BEFORE_NEXT)
 
-            if (!event) return false
+            if (!event) 
+                return false
 
             if (!(this.facts.lpvType && this.facts.starterPackNeeded)){
                 this.drugs = [
@@ -189,9 +197,11 @@ export default defineComponent({
                 return true
             }
 
-            if (this.facts.starterPackNeeded) await this.setStarterPackDrugs()
+            if (this.facts.starterPackNeeded) 
+                await this.setStarterPackDrugs()
 
-            if (this.facts.lpvType) await this.setLpvDrugs()
+            if (this.facts.lpvType) 
+                await this.setLpvDrugs()
 
             return true
         },
@@ -208,7 +218,6 @@ export default defineComponent({
         },
         setCustomDrugs(drugs: any) {
             this.drugs = drugs.map((drug: Option) => drug.other)
-            this.facts.drugs = this.drugs.map(d => d.drug_id)
         },
         convertAdverseEffectsToTable(adverseEffects: Record<string, Array<any>>) {
             const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
