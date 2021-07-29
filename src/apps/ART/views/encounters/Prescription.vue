@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :activeField="facts.currentField" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form @onIndex="fieldComponent=''" :activeField="fieldComponent" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -28,6 +28,7 @@ export default defineComponent({
         nextInterval: 0,
         prescription: {} as any,
         patientToolbar: [] as Array<Option>,
+        fieldComponent: '' as string,
         facts: {
             age: -1 as number,
             gender: '' as string,
@@ -38,7 +39,6 @@ export default defineComponent({
             patientAdverseEffectsTable: {} as Record<string, any>,
             currentRegimenCode: -1 as number,
             currentRegimenStr: '' as string,
-            currentField: '' as string,
             drug: '' as string,
             drugs: [] as Array<any>,
             regimenKnownContraindications: [] as Array<any>,
@@ -81,7 +81,7 @@ export default defineComponent({
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
                     this.drugs = this.prescription.getFastTrackMedications()
-                    this.facts.currentField = 'next_visit_interval'
+                    this.fieldComponent = 'next_visit_interval'
 
                 } else if (!this.prescription.shouldPrescribeArvs() && this.prescription.shouldPrescribeExtras()) {
                     this.drugs = this.prescription.getRegimenExtras()
@@ -358,9 +358,6 @@ export default defineComponent({
                 )
             })
         },
-        hasCustomRegimen() {
-            return this.facts.currentField === "custom_regimen"
-        },
         async getPatientToolBar() {
             const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
             return [
@@ -398,7 +395,7 @@ export default defineComponent({
                                     return state.index === 0
                                 },
                                 onClick: () => {
-                                    this.facts.currentField = 'custom_regimen'
+                                    this.fieldComponent = 'custom_regimen'
                                 }
                             }
                         ]
@@ -408,7 +405,7 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: () => this.hasCustomRegimen(),
+                    condition: (f: any) => !isEmpty(f.custom_regimen),
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await this.prescription.getCustomIngridients()
@@ -432,7 +429,7 @@ export default defineComponent({
                                     return state.index === 1
                                 },
                                 onClick: () => {
-                                    this.facts.currentField = 'arv_regimens'
+                                    this.fieldComponent = 'arv_regimens'
                                 }
                             }
                         ]
@@ -442,7 +439,7 @@ export default defineComponent({
                     id: 'custom_dosage',
                     helpText: 'Custom dose',
                     type: FieldType.TT_DOSAGE_INPUT,
-                    condition: () => this.hasCustomRegimen(),
+                    condition: (f: any) => !isEmpty(f.custom_regimen),
                     validation: (val: Array<Option>) => {
                         if (Validation.required(val)) return ['Drugs are not available']
 
