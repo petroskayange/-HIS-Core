@@ -35,16 +35,13 @@ export default defineComponent({
             weight: -1 as number,
             prescriptionType: '' as 'Custom' | 'Regimen',
             tptPrescriptionCount: 0,
-            patientContraindications: [] as Array<string>,
-            allPatientAdverseEffects: [] as Array<string>,
-            patientSideEffects: [] as Array<string>,
-            patientAdverseEffectsTable: {} as Record<string, any>,
             currentRegimenCode: -1 as number,
             currentRegimenStr: '' as string,
             drug: '' as string,
             drugs: [] as Array<any>,
-            regimenKnownContraindications: [] as Array<any>,
-            regimenKnownSideEffects: [] as Array<any>,
+            contraindications: {} as any,
+            hasSideEffects: false as boolean,
+            sideEffectsTable: {} as any,
             regimenCode: -1 as number,
             regimenCodeStr: '' as string,
             regimenName: '' as string,
@@ -76,7 +73,8 @@ export default defineComponent({
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
                 await this.prescription.loadTreatmentState()
-                await this.prescription.loadAdverseEffects()
+                await this.prescription.loadDrugInduced()
+                await this.prescription.loadContraindications()
                 await this.prescription.loadTptPrescriptionCount()
 
                 await this.initFacts(patient)
@@ -114,15 +112,8 @@ export default defineComponent({
             this.facts.currentRegimenStr = this.programInfo.current_regimen
             this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
-            this.facts.patientSideEffects = this.prescription.getSideEffects()
-            this.facts.patientContraindications = this.prescription.getContraindications()
+            this.facts.contraindications = this.prescription.getContraindications()
             this.facts.tptPrescriptionCount = this.prescription.getTptPrescriptionCount()
-            this.facts.allPatientAdverseEffects = [
-                ... this.facts.patientSideEffects, ...this.facts.patientContraindications
-            ]
-            this.facts.patientAdverseEffectsTable = this.convertAdverseEffectsToTable(
-                this.prescription.getAdverseEffectsByDate()
-            )
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
@@ -180,12 +171,10 @@ export default defineComponent({
             this.facts.regimenCode = this.extractRegimenCode(value.toString())
             this.facts.regimenDrugs = other.regimenDrugs
             this.facts.drugs = other.regimenDrugs.map((d: any) => d.drug_id)
-            this.facts.regimenKnownSideEffects = this.prescription.getRegimenSideEffects(
-                this.facts.regimenCode
-            )
-            this.facts.regimenKnownContraindications = this.prescription.getRegimenContraindications(
-                this.facts.regimenCode
-            )
+
+            const sideEffects = this.prescription.findAndGroupDrugSideEffects(this.facts.drugs)
+            this.facts.hasSideEffects = !isEmpty(sideEffects)
+            this.facts.sideEffectsTable = this.buildSideEffectsTable(sideEffects)
         },
         async onBeforeRegimenNext() {
             const event = await this.onEvent(Target.ARV_REGIMENS, TargetEvent.BEFORE_NEXT)
@@ -218,18 +207,18 @@ export default defineComponent({
         setCustomDrugs(drugs: any) {
             this.drugs = drugs.map((drug: Option) => drug.other)
         },
-        convertAdverseEffectsToTable(adverseEffects: Record<string, Array<any>>) {
+        buildSideEffectsTable(sideEffects: any) {
             const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
             const rows = []
-            for(const date in adverseEffects) {
-                const [ contraindications, sideEffects] = adverseEffects[date]
+            for(const date in sideEffects) {
+                const contraindications = this.facts.contraindications[date] || []
                 rows.push([
                     HisDate.toStandardHisDisplayFormat(date), 
                     contraindications.join(', '),
-                    sideEffects.join(', ')
+                    sideEffects[date].join(', ')
                 ])
             }
-            return { columns, rows}
+            return { columns, rows }
         },
         async buildRegimenOptions() {
             const regimenCategories = await this.prescription.getPatientRegimens()

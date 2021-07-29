@@ -57,8 +57,8 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
     "Check for any adverse effects or contraindications associated with the regimen": {
         priority: 1,
         actions: {
-            alert: async ({ regimenCodeStr, patientAdverseEffectsTable }: any) => {
-                const { columns, rows } = patientAdverseEffectsTable
+            alert: async ({ regimenCodeStr, sideEffectsTable }: any) => {
+                const { columns, rows } = sideEffectsTable
                 const action = await tableActionSheet(
                     `Contraindications / Side effects for ${regimenCodeStr}`,'',
                     columns, rows,
@@ -74,15 +74,9 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
         target: Target.ARV_REGIMENS,
         targetEvent: TargetEvent.BEFORE_NEXT,
         conditions: {
-            allPatientAdverseEffects(patientAdverseEffects: Array<string>, facts: any) {
-                const knownRegimenAdverseEffects = [
-                    ...facts.regimenKnownSideEffects, 
-                    ...facts.regimenKnownContraindications
-                ]
-                return patientAdverseEffects.filter((i: string) => {
-                    return knownRegimenAdverseEffects.includes(i)
-                }).length >= 1
-            } 
+            hasSideEffects(isTrue: boolean){
+                return isTrue
+            }
         }
     },
     "Recommend 2nd line regimen to children under 3": {
