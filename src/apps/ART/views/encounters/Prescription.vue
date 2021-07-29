@@ -186,34 +186,29 @@ export default defineComponent({
         },
         async onBeforeRegimenNext() {
             const event = await this.onEvent(Target.ARV_REGIMENS, TargetEvent.BEFORE_NEXT)
+            let drugs = []
 
-            if (!event) 
-                return false
+            if (!event) return false
 
-            if (!(this.facts.lpvType && this.facts.starterPackNeeded)){
-                this.drugs = [
-                    ...this.prescription.getRegimenExtras(), 
-                    ...this.facts.regimenDrugs
-                ]
-                return true
+            if (this.facts.lpvType) {
+               drugs = await this.getLpvDrugs()
+            } else if (this.facts.starterPackNeeded) {
+               drugs = await this.getStarterPackDrugs()
+            } else {
+                drugs = this.facts.regimenDrugs
             }
 
-            if (this.facts.starterPackNeeded) 
-                await this.setStarterPackDrugs()
-
-            if (this.facts.lpvType) 
-                await this.setLpvDrugs()
+            this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
 
             return true
         },
-        async setLpvDrugs() {
-            const drugs = await this.prescription.getLvpDrugsByType(
+        getLpvDrugs() {
+            return this.prescription.getLvpDrugsByType(
                 this.facts.lpvType, this.facts.regimenCode
             ) 
-            this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
         },
-        async setStarterPackDrugs() {
-            this.drugs = await this.prescription.getRegimenStarterpack(
+        getStarterPackDrugs() {
+            return this.prescription.getRegimenStarterpack(
                 this.facts.regimenCode, this.facts.weight
             )
         },
