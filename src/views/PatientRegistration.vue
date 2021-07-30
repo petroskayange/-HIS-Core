@@ -21,6 +21,7 @@ import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
 import { PatientPrintoutService } from "@/services/patient_printout_service";
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -51,6 +52,7 @@ export default defineComponent({
   methods: {
     async onFinish(form: Record<string, Option> | Record<string, null>) {
       const personPayload: NewPerson = this.resolvePerson(form)
+      console.log(form)
       try {
         const person: Person = await new PersonService(personPayload).create()
         if (person.person_id) {
@@ -72,9 +74,9 @@ export default defineComponent({
                 })
             });
         }
-        alert('Record has been Created!')
+        toastSuccess('Record has been Created!')
       }catch(e) {
-        alert('Unable to create record')
+        toastWarning('Unable to create record')
       } 
     },
     resolvePersonAttributes(form: Record<string, Option> | Record<string, null>, personId: number) {
