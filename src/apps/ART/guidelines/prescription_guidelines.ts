@@ -76,6 +76,9 @@ export const PRESCRIPTION_GUIDELINES: Record<string, GuideLineInterface> = {
         conditions: {
             hasSideEffects(isTrue: boolean){
                 return isTrue
+            },
+            lastSideEffectDate(date: string, { currentDate }: any){
+                return date >= currentDate
             }
         }
     },

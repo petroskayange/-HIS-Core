@@ -33,6 +33,7 @@ export default defineComponent({
             age: -1 as number,
             gender: '' as string,
             weight: -1 as number,
+            currentDate: '' as string,
             prescriptionType: '' as 'Custom' | 'Regimen',
             tptPrescriptionCount: 0,
             currentRegimenCode: -1 as number,
@@ -42,6 +43,7 @@ export default defineComponent({
             contraindications: {} as any,
             hasSideEffects: false as boolean,
             sideEffectsTable: {} as any,
+            lastSideEffectDate: '' as string,
             regimenCode: -1 as number,
             regimenCodeStr: '' as string,
             regimenName: '' as string,
@@ -114,6 +116,8 @@ export default defineComponent({
             this.facts.medicationOrders = this.prescription.getMedicationOrders()
             this.facts.contraindications = this.prescription.getContraindications()
             this.facts.tptPrescriptionCount = this.prescription.getTptPrescriptionCount()
+            this.facts.lastSideEffectDate = this.prescription.getLastSideEffectDate()
+            this.facts.currentDate = PrescriptionService.getSessionDate()
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()

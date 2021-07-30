@@ -22,6 +22,7 @@ export class PrescriptionService extends AppEncounterService {
     contraindications: Record<string, any>;
     sideEffects: Record<string, any>;
     tptPrescriptionCount: number;
+    lastSideEffectDate: string;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
@@ -34,6 +35,7 @@ export class PrescriptionService extends AppEncounterService {
         this.contraindications = {}
         this.sideEffects = {}
         this.tptPrescriptionCount = 0
+        this.lastSideEffectDate = ''
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
@@ -52,6 +54,10 @@ export class PrescriptionService extends AppEncounterService {
 
     getTptPrescriptionCount() {
         return this.tptPrescriptionCount
+    }
+
+    getLastSideEffectDate() {
+        return this.lastSideEffectDate
     }
 
     getContraindications() { return this.contraindications }
@@ -129,6 +135,8 @@ export class PrescriptionService extends AppEncounterService {
 
         obs.forEach((o: any) => {
             const date = HisDate.toStandardHisFormat(o.obs_datetime)
+
+            if (!this.lastSideEffectDate) this.lastSideEffectDate = date
 
             if (!o.value_drug || !o.value_coded) return
 
