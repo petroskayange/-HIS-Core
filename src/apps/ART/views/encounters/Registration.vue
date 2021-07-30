@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :skipSummary="isShowStaging" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 
 <script lang="ts">
@@ -123,7 +123,7 @@ export default defineComponent({
                 },
                 {
                     id: 'year_started_art',
-                    helpText: 'Year started ARTs',
+                    helpText: 'Year started ART',
                     type: FieldType.TT_NUMBER,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     validation: (val: any) => Validation.required(val)
@@ -162,7 +162,7 @@ export default defineComponent({
                     helpText: 'Has staging information?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    unload: (d: any) => d.value === 'Yes' ? this.isShowStaging = true : null,
+                    unload: (d: any) => d.value === 'Yes' ? this.isShowStaging = true : this.isShowStaging = false,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     options: () => this.getYesNoOptions()
                 },
