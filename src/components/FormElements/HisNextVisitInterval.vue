@@ -67,7 +67,6 @@ export default defineComponent({
     },
     async mounted() {
         this.init()
-        if (this.preset) this.onselect(this.preset)
     },
     methods: {
         async init() {

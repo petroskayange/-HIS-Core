@@ -13,7 +13,7 @@ export class ConceptService extends Service {
     }
 
     static async getConceptName(conceptId: number) {
-        const concept = await this.getCachedConceptName(conceptId)
+        const concept = this.getCachedConceptName(conceptId)
 
         if (concept) return concept
 
@@ -49,7 +49,7 @@ export class ConceptService extends Service {
         if (concept) return concept.concept_names[0].name
     }
 
-    static async getCachedConceptName(conceptId: number) {
+    static getCachedConceptName(conceptId: number) {
         const concepts = ConceptNameDictionary.filter(item => {
             return item.concept_id === conceptId
         })

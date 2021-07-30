@@ -1,0 +1,42 @@
+<template>
+    <tool-bar-medium-card>
+        <ion-grid>
+            <ion-row v-for="(row, rIndex) in rowItems" :key="rIndex">
+                <ion-col class='col'  
+                    v-for="(item, iIndex) in row" 
+                    :key="iIndex">
+                    <b>{{ item.label }}:</b> {{ item.value }}
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </tool-bar-medium-card>
+</template>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
+import { Option } from "@/components/Forms/FieldInterface";
+import ToolBarMediumCard from "@/components/Cards/ToolbarMediumCard.vue"
+import Transformer from "@/utils/Transformers"
+
+export default defineComponent({
+  name: "HisResultCard",
+  components: {ToolBarMediumCard},
+  props: {
+    items: {
+      type: Object as PropType<Option[]>,
+      required: true,
+    },
+  },
+  computed: {
+    rowItems(): any {
+      return Transformer.convertArrayToTurples(this.items, 2)
+    }
+  }
+});
+</script>
+<style scoped>
+.col {
+    margin: 0;
+    padding: 2px;
+    text-align: left;
+}
+</style>

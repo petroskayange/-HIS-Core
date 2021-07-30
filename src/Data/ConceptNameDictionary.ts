@@ -1,5 +1,234 @@
 export default [
    {
+      "categories": [],
+      "concept_id": 8260,
+      "name": "Past medical history"
+   },
+   {
+      "categories": [],
+      "concept_id": 9661,
+      "name": "Contraindications"   
+   },
+   {
+      "categories": [],
+      "concept_id": 7567,
+      "name": "Drug induced"
+   },
+   {
+      "categories": [
+         "adverse_effect"
+      ],
+      "concept_id": 6029,
+      name: "Night sweat"
+   },
+   {
+      "categories":[
+         "0_art_regimen_side_effect",
+         "9_art_regimen_side_effect",
+         "14_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":5945,
+      "name":"Fever"
+   },
+   {
+      "categories":[
+         "0_art_regimen_side_effect",
+         "2_art_regimen_side_effect",
+         "4_art_regimen_side_effect",
+         "8_art_regimen_side_effect",
+         "9_art_regimen_side_effect",
+         "10_art_regimen_side_effect",
+         "11_art_regimen_side_effect",
+         "12_art_regimen_side_effect",
+         "13_art_regimen_side_effect",
+         "14_art_regimen_side_effect",
+         "16_art_regimen_side_effect",
+         "17_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":5980,
+      "name":"Vomiting"
+   },
+   {
+      "categories":[
+         "5_art_regimen_side_effect",
+         "9_art_regimen_side_effect",
+         "10_art_regimen_side_effect",
+         "11_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":877,
+      "name":"Dizziness"
+   },
+   {
+      "categories":[
+         "9_art_regimen_side_effect",
+         "10_art_regimen_side_effect",
+         "11_art_regimen_side_effect",
+         "13_art_regimen_side_effect",
+         "14_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":620,
+      "name":"Headache"
+   },
+   {
+      "categories":[
+         "13_art_regimen_side_effect",
+         "14_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":5978,
+      "name":"Nausea"
+   },
+   {
+      "categories":[
+         "0_art_regimen_side_effect",
+         "2_art_regimen_side_effect",
+         "4_art_regimen_side_effect",
+         "5_art_regimen_side_effect",
+         "6_art_regimen_side_effect",
+         "7_art_regimen_side_effect",
+         "8_art_regimen_side_effect",
+         "9_art_regimen_side_effect",
+         "10_art_regimen_side_effect",
+         "11_art_regimen_side_effect",
+         "12_art_regimen_side_effect",
+         "13_art_regimen_side_effect",
+         "14_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":843,
+      "name":"Treatment failure"
+   },
+   {
+      "categories":[
+         "2_art_regimen_side_effect",
+         "4_art_regimen_side_effect",
+         "8_art_regimen_side_effect",
+         "11_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":1458,
+      "name":"Lactic acidosis"
+   },
+   {
+      "categories":[
+         "0_art_regimen_side_effect",
+         "9_art_regimen_side_effect",
+         "15_art_regimen_side_effect",
+         "16_art_regimen_side_effect",
+         "17_art_regimen_side_effect",
+         "side_effect",
+         "adverse_effect"
+      ],
+      "concept_id":107,
+      "name":"Cough"
+   }
+   ,{
+      "categories":[
+         "11_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":821,
+      "name":"Peripheral neuropathy"
+   },
+   {
+      "categories":[
+         "0_art_regimen_contraindication",
+         "2_art_regimen_contraindication",
+         "6_art_regimen_contraindication",
+         "7_art_regimen_contraindication",
+         "8_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":215,
+      "name":"Jaundice"
+   },
+   {
+      "categories":[
+         "2_art_regimen_contraindication",
+         "4_art_regimen_contraindication",
+         "8_art_regimen_contraindication",
+         "11_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":2148,
+      "name":"Lipodystrophy"
+   },
+   {
+      "categories":[
+         "5_art_regimen_contraindication",
+         "6_art_regimen_contraindication",
+         "7_art_regimen_contraindication",
+         "10_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":9242,
+      "name":"Kidney Failure"
+   },
+   {
+      "categories":[
+         "4_art_regimen_contraindication",
+         "5_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":219,
+      "name":"Psychosis"
+   },
+   {
+      "categories":[
+         "4_art_regimen_contraindication",
+         "5_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":9440,
+      "name":"Gynaecomastia"
+   },
+   {
+      "categories":[
+         "2_art_regimen_contraindication",
+         "4_art_regimen_contraindication",
+         "8_art_regimen_contraindication",
+         "11_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":3,
+      "name":"Anemia"
+   },
+   {
+      "categories":[
+         "0_art_regimen_contraindication",
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":512,
+      "name":"Skin rash"
+   },
+   {
+      "categories":[
+         "contraindication",
+         "adverse_effect"
+      ],
+      "concept_id":867,
+      "name":"Insomnia"
+   }
+   ,{
       "categories":[
          "fast_track"
       ],
@@ -354,20 +583,21 @@ export default [
    },
    {
       "categories": [
-         "art_extra_medication_order"
+     
       ],
       "concept_id": 5090,
       "name": "Height"
    },
    {
       "categories": [
-         ""
+         "art_medication_order"
       ],
       "concept_id": 9974,
       "name": "Rifapentine"
    },
    {
       "categories": [
+         "art_medication_order",
          "art_extra_medication_order"
       ],
       "concept_id": 916,
@@ -375,6 +605,7 @@ export default [
    },
    {
       "categories": [
+         "art_medication_order",
          "art_extra_medication_order"
       ],
       "concept_id": 916,

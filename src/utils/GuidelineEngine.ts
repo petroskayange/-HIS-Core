@@ -12,9 +12,12 @@ export interface GuideLineInterface {
     title?: string;
     concept?: string;
     priority: number;
-    actions?: Record<string, any>;
-    description?: DescriptionInterface;
     conditions: Record<string, Function>;
+    actions?: Record<string, any>; //TODO: should <key, Function>
+    data?: Record<string, any>;
+    description?: DescriptionInterface;
+    target?: string;
+    targetEvent?: string;
 }
 
 /**
@@ -37,7 +40,7 @@ function isCondition(facts: Record<string, any>, conditions: Record<string, Func
             continue
         }
 
-        state.push(conditions[prop](value))
+        state.push(conditions[prop](value, facts))
     }
     return state.every(Boolean)
 }
@@ -53,15 +56,31 @@ function sortByRelevance(findings: Array<GuideLineInterface>) {
 
 /**
  * Check the guideline for matching facts and return matching object 
- * when passMark is greater the minimum passmark
- * @param facts 
- * @param guidelines 
- * @returns 
+ * @param facts: key value pair for used for searching in guidelines
+ * @param guidelines: A dictionary containing fixed rules/validations that conforms to GuideLineInterface
+ * @param target: Used for matching a target defined in a guidlines before executing conditions
+ * @param targetEvent: used for matching a target event in a guideline before executing conditions
+ * @returns
  */
-export function matchToGuidelines(facts: Record<string, any>, guidelines: Array<GuideLineInterface>) {
+export function matchToGuidelines(
+    facts: Record<string, any>, 
+    guidelines: Record<string, GuideLineInterface>,
+    target='', 
+    targetEvent=''): Array<GuideLineInterface> {
+
     const matches = []
     for(const guidelineIndex in guidelines) {
         const data: GuideLineInterface = guidelines[guidelineIndex]
+ 
+        const targetValidations = [
+            (data.target && target && data.target != target),
+            (data.targetEvent && targetEvent 
+                && data.targetEvent != targetEvent)
+        ]
+
+        if (targetValidations.some(Boolean)) {
+            continue
+        }
 
         if (isCondition(facts, data.conditions)) {
             data.title = guidelineIndex

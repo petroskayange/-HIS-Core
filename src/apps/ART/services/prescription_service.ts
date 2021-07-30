@@ -3,50 +3,66 @@ import { DrugOrderService } from "@/services/drug_order_service";
 import { Observation } from "@/interfaces/observation";
 import HisDate from "@/utils/Date"
 import { RegimenService } from "@/services/regimen_service";
-import { find, isEmpty } from "lodash"
+import { isEmpty } from "lodash"
 import { AppEncounterService } from "@/services/app_encounter_service"
 
-export const REGIMEN_SWITCH_REASONS = [
-    'Policy change', 'Ease of administration (pill burden, swallowing)',
-    'Drug drug interaction', 'Pregnancy intention',
-    'Side effects', 'Treatment failure', 'Weight Change', 'Other'
-]
-export enum HangingPill {
-   OPTIMIZE = 'Optimize - including hanging pills',
-   EXACT = 'Exact - excluding hanging pills'
-}
-export enum TreatmentState {
-    CONTINUING = 'Continuing',
-    INITIATION = 'Initiation',
-    RE_INITIATION = 'Re-initiated'
+export enum AdverseEffectsCategories {
+    CONTRAINDICATION = "contraindication",
+    SIDE_EFFECT = "side_effect"
 }
 
 export class PrescriptionService extends AppEncounterService {
     nextVisitInterval: number;
     fastTrack: boolean;
-    useHangingPills: boolean;
-    received3HP: boolean;
     regimenExtras: Array<Record<string, any>>;
     hangingPills: Array<Record<string, any>>;
     fastTrackMedications: Array<Record<string, any>>;
-    medicationOrders: Array<Observation>;
+    medicationOrders: Array<number>;
     treatmentState: string;
+    contraindications: Record<string, any>;
+    sideEffects: Record<string, any>;
+    tptPrescriptionCount: number;
+    lastSideEffectDate: string;
     constructor(patientID: number) {
         super(patientID, 25) //TODO: Use encounter type reference name
         this.nextVisitInterval = 0
         this.fastTrack = false
-        this.received3HP = false
-        this.useHangingPills = false
         this.regimenExtras = []
         this.fastTrackMedications = []
         this.hangingPills = []
         this.medicationOrders = []
         this.treatmentState = ''
+        this.contraindications = {}
+        this.sideEffects = {}
+        this.tptPrescriptionCount = 0
+        this.lastSideEffectDate = ''
     }
 
     setNextVisitInterval(nextVisitInterval: number) {
         this.nextVisitInterval = nextVisitInterval
     }
+
+    getHangingPills() {
+        return this.hangingPills
+    }
+
+    getMedicationOrders() {
+        return this.medicationOrders.map((i: number) => {
+            return AppEncounterService.getCachedConceptName(i)
+        })
+    }
+
+    getTptPrescriptionCount() {
+        return this.tptPrescriptionCount
+    }
+
+    getLastSideEffectDate() {
+        return this.lastSideEffectDate
+    }
+
+    getContraindications() { return this.contraindications }
+
+    getSideEffects() { return this.sideEffects }
 
     getRegimenExtras() { return this.regimenExtras }
 
@@ -66,34 +82,15 @@ export class PrescriptionService extends AppEncounterService {
         const arvs = AppEncounterService.getCachedConceptID("Antiretroviral drugs")
         return this.medicationOrders.includes(arvs)
     }
-    
+
     shouldPrescribeExtras() {
         const extras = AppEncounterService.getConceptsByCategory('art_extra_medication_order')
         const extrasAvailable = extras.map((i: any) => this.medicationOrders.includes(i.concept_id))
         return extrasAvailable.some(Boolean)
     }
 
-    hasHangingPills(drugs: any) {
-        let isHanging = false
-        for(const index in drugs) {
-            const drug = drugs[index]
-            const filter = find(this.hangingPills, {
-                drug: drug.drug_id, hasRemaining: true
-            })
-            if (filter) {
-                isHanging = true
-                break;
-            }
-        }
-        return isHanging
-    }
-
-    getRegimenStarterpack(regimenCode: string, patientWeight: number) {
-        const regimenNumber = regimenCode.match(/\d+/) //Get the first proceeding digits
-       
-        if (!regimenNumber) return []
-
-        const params = { weight: patientWeight, regimen: parseInt(regimenNumber[0])}
+    getRegimenStarterpack(regimenCode: number, patientWeight: number) {
+        const params = { weight: patientWeight, regimen: regimenCode }
 
         return AppEncounterService.getJson(
             `programs/${AppEncounterService.getProgramID()}/regimen_starter_packs`,
@@ -101,16 +98,70 @@ export class PrescriptionService extends AppEncounterService {
         )
     }
 
-    async load3HpStatus() {
-        const orders = await AppEncounterService.getAll(this.patientID, 'Medication orders')
-      
-        if (!orders) return
+    async getLvpDrugsByType(type: string, regimen: number) {
+        return AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/regimens/${regimen}`,
+            {
+                'patient_id': this.patientID,
+                'lpv_drug_type': type
+            }
+        )
+    }
 
-        const rifapentine = await AppEncounterService.getConceptID('Rifapentine')
+    async loadContraindications() {
+        const contraindication = await AppEncounterService.getConceptID('Contraindications')
+        const obs = await AppEncounterService.getObs({
+            'concept_id': contraindication, 'person_id': this.patientID 
+        })
 
-        const ordered = find(orders, {'value_coded': rifapentine})
+        obs.forEach((o: any) => {
+            const date = HisDate.toStandardHisFormat(o.obs_datetime)
 
-        if (ordered) this.received3HP = true
+            if (!this.contraindications[date]) this.contraindications[date] = []
+
+            const concept = AppEncounterService.getCachedConceptName(o.value_coded)
+
+            this.contraindications[date].push(concept)
+        })
+    }
+
+    async loadDrugInduced() {
+        const drugInduced = await AppEncounterService.getConceptID('Drug induced')
+        const obs = await AppEncounterService.getObs({
+            'concept_id': drugInduced, 'person_id': this.patientID 
+        })
+
+        if (!obs) return
+
+        obs.forEach((o: any) => {
+            const date = HisDate.toStandardHisFormat(o.obs_datetime)
+
+            if (!this.lastSideEffectDate) this.lastSideEffectDate = date
+
+            if (!o.value_drug || !o.value_coded) return
+
+            if (!this.sideEffects[date]) this.sideEffects[date] = {}
+
+            if (!this.sideEffects[date][o.value_drug]) this.sideEffects[date][o.value_drug] = []
+
+            const concept = AppEncounterService.getCachedConceptName(o.value_coded)
+
+            this.sideEffects[date][o.value_drug].push(concept)
+        })
+    }
+
+    async loadTptPrescriptionCount() {
+        const res = await AppEncounterService.getJson(
+            `tpt_prescription_count`, {
+                'patient_id': this.patientID,
+                'date': AppEncounterService.getSessionDate()
+            }
+        )
+
+        if (res) {
+            const count = res.count + 1
+            this.tptPrescriptionCount = count > 3 ? 3 : count
+        } 
     }
 
     async loadFastTrackStatus() {
@@ -132,24 +183,19 @@ export class PrescriptionService extends AppEncounterService {
         const medicationOrders = await AppEncounterService.getConceptID("Medication orders")
         const orders = await AppEncounterService.getObs({
             'concept_id': medicationOrders,
-            'obs_datetime': AppEncounterService.getSessionDate()
+            'date': AppEncounterService.getSessionDate(),
+            'person_id': this.patientID,
+            'page_size': 5
         })
         this.medicationOrders = orders.map((i: Observation) => i.value_coded)
     }
 
     async loadHangingPills() {
         const pills = await AppEncounterService.getAll(this.patientID, 'Pills brought')
-
-        if (pills) this.hangingPills = pills.map((item: any)=> {
-            try {
-                return {
-                    drug: item.order.drug_order.drug_inventory_id,
-                    hasRemaining: item.value_numeric >= 1
-                }
-            }catch(e) {
-                return { drug: 0, hasRemaining: false }
-            }
-        })
+        if (pills) {
+            this.hangingPills = pills.filter((o: any) => o.value_numeric >= 1)
+                                     .map((o: any) => o.order.drug_order.drug_inventory_id)
+        }
     }
 
     async loadFastTrackMedications() {
@@ -173,16 +219,31 @@ export class PrescriptionService extends AppEncounterService {
     async loadTreatmentState() {
         const params = { date: AppEncounterService.getSessionDate()}
 
-        this.treatmentState = await AppEncounterService.getJson(`
-            programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status
-        `, params)
+        const req = await AppEncounterService.getJson(
+            `programs/${AppEncounterService.getProgramID()}/patients/${this.patientID}/status`,
+            params
+        )
+
+        if (req) this.treatmentState = req['status']
     }
 
-    starterPackNeeded(regimenName: string) {
-        if (this.treatmentState != TreatmentState.CONTINUING 
-            && regimenName.match(/NVP/i)) {
-            return true
+    findAndGroupDrugSideEffects(drugs: Array<number>) {
+        const allSideEffects: any = {}
+
+        for (const date in this.sideEffects) {
+            const drugInduced = this.sideEffects[date]
+
+            for(const drug in drugInduced) {
+                if (!drugs.includes(parseInt(drug))) continue
+
+                if (!allSideEffects[date]) allSideEffects[date] = []
+
+                allSideEffects[date] = [
+                    ...allSideEffects[date], ...drugInduced[drug]
+                ]
+            }
         }
+        return allSideEffects
     }
 
     calculatePillsPerDay(am: number, noon: number, pm: number) {
@@ -234,13 +295,6 @@ export class PrescriptionService extends AppEncounterService {
         return `${drugName} :- Morning: ${morningTabs} ${units}, Evening: ${eveningTabs} ${units}`
     }
 
-    getDrugFrequency(drugName: string): string {
-        if (this.received3HP && drugName.match(/Rifapentine|Isoniazid/i)) {
-            return 'Weekly (QW)'
-        }
-        return 'Daily (QOD)'
-    }
-
     toOrderObj(id: number, name: string, units: string, am=0, pm=0, frequency=''): DrugInterface {
         return {
             'drug_inventory_id': id,
@@ -250,7 +304,7 @@ export class PrescriptionService extends AppEncounterService {
             'units': units,
             'instructions': this.getInstructions(name, am, pm, units),
             'dose': this.calculateDosage(am, pm),
-            'frequency': frequency || this.getDrugFrequency(name)
+            'frequency': frequency
         }
     }
 
@@ -266,7 +320,7 @@ export class PrescriptionService extends AppEncounterService {
         })
     }
 
-    async createHangingPillsObs(response: HangingPill) {
+    async createHangingPillsObs(response: string) {
         return this.saveValueTextObs('appointment type', response)
     }
 

@@ -1,6 +1,6 @@
 <template>
     <div :class="`his-card ${state}`"  @click="onclick"> 
-        <div v-if="showTitle"> <b> {{ value }} </b></div> 
+        <div class='title' v-if="showTitle"> <b> {{ value }} </b></div> 
         <div>{{ label }}</div>
         <div> </div>
     </div>
@@ -43,6 +43,13 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+ .title {
+    border-style: solid;
+    border-width: 0px 1px 0px 0px;
+    text-align: center;
+    width: 35px;
+    font-weight: bold;
+ }
  .his-card {
     display: flex;
     flex-direction: row;

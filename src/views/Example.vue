@@ -31,6 +31,15 @@ export default defineComponent({
     getFields(): Array<Field> {
       return [
         {
+          id: 'hello_world',
+          helpText: 'BeforeNext',
+          type: FieldType.TT_TEXT,
+          beforeNext: () => {
+            const confirmation = confirm('Do you want to continue')
+            return confirmation
+          }
+        },
+        {
           id: "onvalue_hooks_multiple_select",
           helpText: "Dynamically toggling values",
           type: FieldType.TT_MULTIPLE_SELECT,
