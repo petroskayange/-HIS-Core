@@ -1,6 +1,16 @@
 export default [
    {
       "categories": [],
+      "concept_id": 9685,
+      "name": "Phone"
+   },
+   {
+      "categories": [],
+      "concept_id": 9686,
+      "name": "Home visit"
+   },
+   {
+      "categories": [],
       "concept_id": 8260,
       "name": "Past medical history"
    },
