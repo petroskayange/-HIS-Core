@@ -52,7 +52,6 @@ export default defineComponent({
   methods: {
     async onFinish(form: Record<string, Option> | Record<string, null>) {
       const personPayload: NewPerson = this.resolvePerson(form)
-      console.log(form)
       try {
         const person: Person = await new PersonService(personPayload).create()
         if (person.person_id) {
