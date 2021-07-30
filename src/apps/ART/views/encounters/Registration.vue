@@ -133,7 +133,7 @@ export default defineComponent({
                     helpText: 'Month last taken ARVs',
                     type: FieldType.TT_SELECT,
                     options: () => MonthOptions,
-                    condition: (f: any) => f.year_started_art && !f.year_started_art.value.match(/Unknown/i),
+                    condition: (f: any) => !f.year_started_art.value.match(/Unknown/i),
                     validation: (val: any) => Validation.required(val)
                 },
                 {
@@ -148,7 +148,7 @@ export default defineComponent({
                     helpText: 'Estimated time since ART initiation',
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
-                    condition: (f: any) => f.year_started_art && f.year_started_art.value.match(/unknown/i),
+                    condition: (f: any) => f.year_started_art.value.match(/unknown/i),
                     options: () => ([
                         { label: '6 months', value: '6 months' },
                         { label: '12 months', value: '12 months' },
