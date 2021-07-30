@@ -21,6 +21,7 @@ import { Encounter } from "@/interfaces/encounter";
 import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
 import { PatientPrintoutService } from "@/services/patient_printout_service";
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -72,9 +73,9 @@ export default defineComponent({
                 })
             });
         }
-        alert('Record has been Created!')
+        toastSuccess('Record has been Created!')
       }catch(e) {
-        alert('Unable to create record')
+        toastWarning('Unable to create record')
       } 
     },
     resolvePersonAttributes(form: Record<string, Option> | Record<string, null>, personId: number) {
