@@ -123,11 +123,14 @@ export default defineComponent({
       for(let i=this.activeIndex; i < totalFields; ++i) {
         const field = this.fields[i]
 
-        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
-          continue
-        
-        if (field.condition && !field.condition(this.formData)) {
-          this.formData[field.id] = null
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) continue
+
+        try {
+          if (field.condition && !field.condition(this.formData)) {
+            this.formData[field.id] = null
+            continue
+          }
+        }catch(e){
           continue
         }
         await this.setActiveField(i, 'next')
@@ -138,15 +141,17 @@ export default defineComponent({
     async onPrev() {
       for(let i=this.activeIndex; i >= 0; --i) {
         const field = this.fields[i]
-        
-        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
-          continue
-        
-        if (field.condition && !field.condition(this.formData)) {
-          this.formData[field.id] = null
+
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) continue
+
+        try {
+          if (field.condition && !field.condition(this.formData)) {
+            this.formData[field.id] = null
+            continue
+          }
+        } catch(e) {
           continue
         }
-
         await this.setActiveField(i, 'prev')
         return
       }
