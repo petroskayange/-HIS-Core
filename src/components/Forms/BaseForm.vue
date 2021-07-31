@@ -49,6 +49,7 @@ export default defineComponent({
       isClear: false,
       activeIndex: 0,
       formData: {} as any,
+      computedFormData: {} as any,
       activeField: {} as Field,
       state: '' as 'init' | 'next' | 'prev', 
     };
@@ -112,10 +113,15 @@ export default defineComponent({
       fields.forEach((field) => (this.formData[field.id] = null));
     },
     isIndexValid(i: number): boolean {
-      return i >= 0 && i <= this.fields.length    
+      return i >= 0 && i <= this.fields.length
     },
     async setActiveFieldValue(value: any) {
-      this.formData[this.activeField.id] = value;
+      const { id } = this.activeField
+      this.formData[id] = value;
+      // Set computed field values seperately
+      if (this.activeField.output)  {
+        this.computedFormData[id] = value != null ? this.activeField.output(value, this.formData): null
+      }
     },
     async onNext() {
       const totalFields = this.fields.length
@@ -136,7 +142,7 @@ export default defineComponent({
         await this.setActiveField(i, 'next')
         return
       }
-      this.$emit("onFinish", this.formData);
+      this.$emit("onFinish", this.formData, this.computedFormData);
     },
     async onPrev() {
       for(let i=this.activeIndex; i >= 0; --i) {
