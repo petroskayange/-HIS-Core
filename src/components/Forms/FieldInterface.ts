@@ -20,6 +20,7 @@ export interface Field {
     helpText: string;
     type: FieldType;
     group?: string;  // Categories fields with related data
+    output?: Function;
     preset?: Option | Record<string, any>;
     condition?: Function;
     validation?: Function;

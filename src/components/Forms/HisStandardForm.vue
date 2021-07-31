@@ -133,8 +133,8 @@ export default defineComponent({
             this.skipToIndex = -1
             this.onNextRequired = field.requireNext != undefined ? field.requireNext : true
         },
-        onFinish(formData: Record<string, any>) {
-            this.$emit('onFinish', formData)
+        onFinish(formData: Record<string, any>, computedFormData: Record<string, any>) {
+            this.$emit('onFinish', formData, computedFormData)
         },
         cancel(): NavBtnInterface {
             return {
