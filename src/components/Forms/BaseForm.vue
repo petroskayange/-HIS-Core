@@ -167,7 +167,7 @@ export default defineComponent({
       // load callback before changing active component
       if (!isEmpty(this.activeField) && this.activeField.unload) {
         const data = this.formData[this.activeField.id]
-        if (data) await this.activeField.unload(data, state)
+        if (data) await this.activeField.unload(data, state, this.formData)
       }
       this.state = state
       this.activeIndex = index;
