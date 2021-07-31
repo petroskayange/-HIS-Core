@@ -15,6 +15,10 @@ export class AppEncounterService extends ObservationService {
         this.date = ObservationService.getSessionDate()
     }
 
+    getDate() {
+        return this.date
+    }
+
     setDate(date: string) {
         this.date = date
     }
@@ -28,19 +32,19 @@ export class AppEncounterService extends ObservationService {
     }
     
     buildValueText(conceptName: string, value: string) {
-        return AppEncounterService.buildValueText(conceptName, value)
+        return AppEncounterService.buildValueText(conceptName, value, this.date)
     }
 
     buildValueCoded(conceptName: string, value: string) {
-        return AppEncounterService.buildValueCoded(conceptName, value)
+        return AppEncounterService.buildValueCoded(conceptName, value, this.date)
     }
 
     buildValueNumber(conceptName: string, value: number, modifier=null, orderId: number | null = null) {
-        return AppEncounterService.buildValueNumber(conceptName, value, modifier, orderId)
+        return AppEncounterService.buildValueNumber(conceptName, value, modifier, orderId, this.date)
     }
 
     buildValueDate(conceptName: string, value: string) {
-        return AppEncounterService.buildValueDate(conceptName, value)
+        return AppEncounterService.buildValueDate(conceptName, value, this.date)
     }
 
     async saveObservationList(obs: Array<ObsValue>) {
