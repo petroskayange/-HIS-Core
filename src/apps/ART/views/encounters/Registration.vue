@@ -8,20 +8,25 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import StagingMixin from "@/apps/ART/views/encounters/StagingMixin.vue"
+import {ClinicRegistrationService} from "@/apps/ART/services/registration_service"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts"
+import { toastWarning, toastSuccess} from "@/utils/Alerts"
 
 export default defineComponent({
     mixins: [StagingMixin],
+    data: () => ({
+        registration: {} as any
+    }),
     watch: {
         patient: {
             async handler(patient: any){
                 if (!patient) return
 
+                this.registration = new ClinicRegistrationService(patient.getID())
                 await this.initStaging(this.patient)
 
                 this.isShowStaging = false
                 this.showStagingWeightChart = false
-
                 this.fields = this.getRegistrationFields()
             },
             immediate: true,
@@ -30,7 +35,20 @@ export default defineComponent({
     },
     methods: {
         async onSubmit() {
-            console.log('Save something')
+            const encounter = this.registration.createEncounter()
+
+            if (!encounter) return toastWarning('Unable to create registration encounter')
+
+            try {
+                if (this.isShowStaging) {
+                    await this.submitStaging()
+                }
+            } catch(e) {
+                return toastWarning(e)
+            }
+
+            toastSuccess('Clinic registration complete!')
+            this.nextTask()
         },
         getRegistrationFields() {
             return [
@@ -180,6 +198,9 @@ export default defineComponent({
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     validation: (val: any) => Validation.required(val)
                 },
+                /*** 
+                    Load staging fields here!
+                ***/
                 ...this.getStagingFields(),
                 {
                     id: 'new_cd4_percent_available',
