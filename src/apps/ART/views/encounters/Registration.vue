@@ -214,7 +214,7 @@ export default defineComponent({
                     id: 'cd4_percent',
                     helpText: 'CD4 Percent',
                     type: FieldType.TT_TEXT,
-                    condition: (f: any) => f.has_transfer_letter.value === 'Yes',
+                    condition: (f: any) => f.new_cd4_percent_available.value === 'Yes',
                     validation: (val: any) => {
                         if (!val) return ['Value is required']
 
