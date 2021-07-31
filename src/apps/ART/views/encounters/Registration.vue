@@ -12,12 +12,14 @@ import StagingMixin from "@/apps/ART/views/encounters/StagingMixin.vue"
 import {ClinicRegistrationService} from "@/apps/ART/services/registration_service"
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts"
 import { toastWarning, toastSuccess} from "@/utils/Alerts"
+import { VitalsService } from "@/apps/ART/services/vitals_service";
 import HisDate from "@/utils/Date"
 
 export default defineComponent({
     mixins: [StagingMixin],
     data: () => ({
-        registration: {} as any
+        registration: {} as any,
+        vitals: {} as any
     }),
     watch: {
         patient: {
@@ -25,7 +27,8 @@ export default defineComponent({
                 if (!patient) return
 
                 this.registration = new ClinicRegistrationService(patient.getID())
-
+                this.vitals = new VitalsService(patient.getID())
+        
                 await this.initStaging(this.patient)
 
                 this.isShowStaging = false
@@ -38,17 +41,28 @@ export default defineComponent({
     },
     methods: {
         async onSubmit(f: any, formObservations: any) {
+            const fObs = {...formObservations}
             const encounter = await this.registration.createEncounter()
 
             if (!encounter) return toastWarning('Unable to create registration encounter')
 
             try {
-                if (this.isShowStaging) await this.submitStaging()
+                if (this.isShowStaging) {
+                    await this.submitStaging()
+
+                    const vitalsObs = await this.resolveObs({weight: fObs.weight, height: fObs.height})
+
+                    await this.vitals.createEncounter()
+                    await this.vitals.saveObservationList(vitalsObs)
+
+                    delete fObs.weight
+                    delete fObs.height
+                } 
             } catch(e) {
                 return toastWarning(e)
             }
 
-            const data = await this.resolveObs(formObservations)
+            const data = await this.resolveObs(fObs)
 
             const obs = await this.registration.saveObservationList(data)
 
@@ -105,8 +119,8 @@ export default defineComponent({
                     id: 'received_arvs',
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Ever registered at ART clinic', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Ever registered at ART clinic', value
                     ),
                     validation: (v: any) => Validation.required(v),
                     options: () => this.getYesNoOptions()
@@ -130,11 +144,11 @@ export default defineComponent({
                     id: 'day_last_taken_arvs',
                     helpText: 'Day last taken ARVs',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    output: (d: Option, f: any) => {
+                    output: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_last_taken_arvs.value,
                             f.month_last_taken_arvs.value,
-                            d.value
+                            value
                         )
                         return this.registration.buildValueDate('Date ART last taken', date)
                     },
@@ -146,8 +160,8 @@ export default defineComponent({
                     helpText: 'Taken ARVs in the last two months?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Has the patient taken ART in the last two months', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Has the patient taken ART in the last two months', value
                     ),
                     condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown',
                     options: () => [...this.getYesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
@@ -156,8 +170,8 @@ export default defineComponent({
                     id: 'taken_art_in_last_two_weeks',
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Has the patient taken ART in the last two weeks', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Has the patient taken ART in the last two weeks', value
                     ),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.taken_art_in_last_two_months.value === 'Yes',
@@ -167,8 +181,8 @@ export default defineComponent({
                     id: 'ever_registered_at_art_clinic',
                     helpText: 'Ever registered at an ART clinic?',
                     type: FieldType.TT_SELECT,
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Ever registered at ART clinic', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Ever registered at ART clinic', value
                     ),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.received_arvs.value === 'Yes',
@@ -178,8 +192,8 @@ export default defineComponent({
                     id: 'location_of_art_initialization',
                     helpText: 'Location of ART initiation',
                     type: FieldType.TT_SELECT,
-                    output: (d: Option) => this.registration.buildValueText(
-                        'Location of ART initiation', d.label
+                    output: ({label}: Option) => this.registration.buildValueText(
+                        'Location of ART initiation', label
                     ),
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
@@ -208,11 +222,11 @@ export default defineComponent({
                     id: 'day_started_art',
                     helpText: 'Day started ART',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    output: (d: Option, f: any) => {
+                    output: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_started_art.value,
                             f.month_started_art.value,
-                            d.value
+                            value
                         )
                         return this.registration.buildValueDate('Drug start date', date)
                     },
@@ -225,9 +239,9 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.year_started_art.value === "Unknown",
-                    output: (d: Option) => {
+                    output: ({value}: Option) => {
                         const date = new Date()
-                        date.setDate(date.getDate() - parseInt(d.value.toString()))
+                        date.setDate(date.getDate() - parseInt(value.toString()))
                         return this.registration.buildValueDate(
                             'Drug start date', HisDate.toStandardHisFormat(date)
                         )
@@ -245,10 +259,10 @@ export default defineComponent({
                     helpText: 'Has staging information?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Has transfer letter', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Has transfer letter', value
                     ),
-                    unload: (d: any) => this.isShowStaging = d.value === 'Yes',
+                    unload: ({value}: any) => this.isShowStaging = value === 'Yes',
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     options: () => this.getYesNoOptions()
                 },
@@ -257,12 +271,14 @@ export default defineComponent({
                     helpText: 'Height (CM)',
                     type: FieldType.TT_NUMBER,
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
+                    output: ({ value }: Option) => this.vitals.buildValueNumber('Height', value),
                     validation: (val: any) => Validation.required(val)
                 },
                 {
                     id: 'weight',
                     helpText: 'Weight (Kg)',
                     type: FieldType.TT_NUMBER,
+                    output: ({ value }: Option) => this.vitals.buildValueNumber('weight', value),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     validation: (val: any) => Validation.required(val)
                 },
@@ -308,8 +324,8 @@ export default defineComponent({
                     helpText: 'Confirmatory HIV test',
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
-                    output: (d: Option) => this.registration.buildValueCoded(
-                        'Confirmatory hiv test type', d.value
+                    output: ({value}: Option) => this.registration.buildValueCoded(
+                        'Confirmatory hiv test type', value
                     ),
                     options: () => ([
                         { label: 'Rapid antibody test', value: 'HIV rapid test'},
@@ -344,7 +360,7 @@ export default defineComponent({
                     helpText: 'Confirmatory HIV test month',
                     type: FieldType.TT_SELECT,
                     options: () => MonthOptions,
-                    condition: (f: any) => !f.confirmatory_hiv_test_year.value.match(/Unknown/i),
+                    condition: (f: any) => f.confirmatory_hiv_test_year.value != "Unknown",
                     validation: (val: any) => Validation.required(val)
                 },
                 {
