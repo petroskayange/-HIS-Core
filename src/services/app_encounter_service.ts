@@ -6,11 +6,17 @@ export class AppEncounterService extends ObservationService {
     encounterTypeID: number;
     encounterID: number;
     patientID: number;
+    date: string;
     constructor(patientID: number, encounterTypeID: number) {
         super()
         this.encounterTypeID = encounterTypeID
         this.patientID = patientID
         this.encounterID = 0
+        this.date = ObservationService.getSessionDate()
+    }
+
+    setDate(date: string) {
+        this.date = date
     }
 
     setEncounterID(encounterID: number) {
@@ -74,7 +80,8 @@ export class AppEncounterService extends ObservationService {
     async createEncounter():  Promise<Encounter | undefined>  {
         const encounter = await EncounterService.create({
             'encounter_type_id': this.encounterTypeID,
-            'patient_id': this.patientID
+            'patient_id': this.patientID,
+            'encounter_datetime': this.date
         })
 
         if (encounter) {
