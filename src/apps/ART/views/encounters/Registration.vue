@@ -228,6 +228,8 @@ export default defineComponent({
                             f.month_started_art.value,
                             value
                         )
+                        this.staging.setDate(date)
+                        this.vitals.setDate(date)
                         return this.registration.buildValueDate('Drug start date', date)
                     },
                     condition: (f: any) => f.month_started_art.value != 'Unknown',
@@ -242,8 +244,13 @@ export default defineComponent({
                     output: ({value}: Option) => {
                         const date = new Date()
                         date.setDate(date.getDate() - parseInt(value.toString()))
+                        const hisDate = HisDate.toStandardHisFormat(date)
+
+                        this.staging.setDate(hisDate)
+                        this.vitals.setDate(hisDate)
+
                         return this.registration.buildValueDate(
-                            'Drug start date', HisDate.toStandardHisFormat(date)
+                            'Drug start date', hisDate
                         )
                     },
                     options: () => ([
