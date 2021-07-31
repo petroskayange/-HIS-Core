@@ -13,6 +13,7 @@ import {ClinicRegistrationService} from "@/apps/ART/services/registration_servic
 import { CD4_COUNT_PAD_LO } from "@/components/Keyboard/KbLayouts"
 import { toastWarning, toastSuccess} from "@/utils/Alerts"
 import { VitalsService } from "@/apps/ART/services/vitals_service";
+import { BMIService } from "@/services/bmi_service"
 import HisDate from "@/utils/Date"
 
 export default defineComponent({
@@ -285,6 +286,28 @@ export default defineComponent({
                     id: 'weight',
                     helpText: 'Weight (Kg)',
                     type: FieldType.TT_NUMBER,
+                    unload: async (d: any, s: string, f: any) => {
+                        const weight = f.weight.value
+                        const height = f.height.value
+                        const bmi = await BMIService.getBMI(
+                            weight, height, 
+                            this.patient.getGender(),
+                            this.patient.getAge()
+                        )
+
+                        this.stagingFacts.bmi = bmi['index']
+
+                        if (!this.staging.isPedaid()) return
+
+                        const medianWh = await this.patient.getMedianWeightHeight()
+
+                        try {
+                            //TODO: this calculation is already defined in patient_service.. must refactor it to make it reusable here
+                            this.stagingFacts.weightPercentile = parseFloat(weight) / (parseFloat(medianWh["weight"])) * 100
+                        } catch (e) {
+                            this.stagingFacts.weightPercentile = 0
+                        }
+                    },
                     output: ({ value }: Option) => this.vitals.buildValueNumber('weight', value),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     validation: (val: any) => Validation.required(val)
