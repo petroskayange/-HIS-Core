@@ -40,7 +40,7 @@ function dateIsAfter(date: string) { return dayjs().isAfter(date) }
 
 function getCurrentYear() { return dayjs().year() }
 
-function stitchDate(year: number | string, month='01', day='01') {
+function stitchDate(year: number | string, month='01' as number | string, day='01' as number | string) {
     return toStandardHisFormat(`${year}-${month}-${day}`)
 }
 
