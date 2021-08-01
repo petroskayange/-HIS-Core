@@ -50,10 +50,9 @@ export default defineComponent({
             try {
                 if (this.isShowStaging) {
                     await this.submitStaging()
+                    await this.vitals.createEncounter()
 
                     const vitalsObs = await this.resolveObs({weight: fObs.weight, height: fObs.height})
-
-                    await this.vitals.createEncounter()
                     await this.vitals.saveObservationList(vitalsObs)
 
                     delete fObs.weight
@@ -63,11 +62,11 @@ export default defineComponent({
                 return toastWarning(e)
             }
 
-            const data = await this.resolveObs(fObs)
+            const registrationData = await this.resolveObs(fObs)
 
-            const obs = await this.registration.saveObservationList(data)
+            const registrationObs = await this.registration.saveObservationList(registrationData)
 
-            if (!obs) return toastWarning('Unable to save observations')
+            if (!registrationObs) return toastWarning('Unable to save observations')
 
             toastSuccess('Clinic registration complete!')
 
