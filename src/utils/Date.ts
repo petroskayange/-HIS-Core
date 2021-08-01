@@ -36,6 +36,10 @@ function getYearFromAge(age: number) {
     return dayjs().subtract(age, 'years').year()
 }
 
+function getYear(date: string) {
+    return dayjs(date).year()
+}
+
 function dateIsAfter(date: string) { return dayjs().isAfter(date) }
 
 function getCurrentYear() { return dayjs().year() }
@@ -58,6 +62,7 @@ function stitchDate(year: number | string, month=-1 as number | string, day=-1 a
 }
 
 export default {
+    getYear,
     dateDiffInDays,
     getAgeInYears,
     toStandardHisTimeFormat,
