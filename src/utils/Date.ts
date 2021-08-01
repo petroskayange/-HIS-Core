@@ -40,8 +40,21 @@ function dateIsAfter(date: string) { return dayjs().isAfter(date) }
 
 function getCurrentYear() { return dayjs().year() }
 
-function stitchDate(year: number | string, month='01' as number | string, day='01' as number | string) {
-    return toStandardHisFormat(`${year}-${month}-${day}`)
+function stitchDate(year: number | string, month=-1 as number | string, day=-1 as number | string) {
+    let fmonth = month
+    let fday = day
+
+    const unknown = (d: number | string) => d.toString().match(/Unknown/i) 
+
+    if (!month || unknown(month)) {
+        fmonth = dayjs().month()
+    }
+
+    if (!day || unknown(day)) {
+        fday = dayjs().day()
+    }
+
+    return toStandardHisFormat(`${year}-${fmonth}-${fday}`)
 }
 
 export default {
