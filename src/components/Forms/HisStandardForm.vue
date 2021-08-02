@@ -239,20 +239,20 @@ export default defineComponent({
                 config: {
                     hiddenFooterBtns: [ 'Clear' ]
                 },
-                options: (formData: Record<string, any>) => {
+                options: (formData: Record<string, any>, computedData: Record<string, any>) => {
                     const data: Array<Option> = [];
                     for(const ref in formData) {
                         const field = this.fields.filter((i: Field) => i.id === ref)[0]
                         const fdata = formData[ref]
-                        
+
                         if (!fdata || field.appearInSummary != undefined && !field.appearInSummary(formData))
                             continue
-                        
+
                         const values = Array.isArray(fdata) ? fdata : [fdata]
-                    
+
                         values.forEach(item => {
                             if (field.summaryMapValue) {
-                                data.push(field.summaryMapValue(item, formData))
+                                data.push(field.summaryMapValue(item, formData, computedData[ref]))
                                 return
                             }
                             data.push({ label: field.helpText, value: item.label })
