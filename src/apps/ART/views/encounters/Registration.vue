@@ -461,7 +461,7 @@ export default defineComponent({
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.new_cd4_percent_available.value === 'Yes',
                     computedValue: ({ value }: Option) => ({
-                        tag:'reg',
+                        tag:'staging',
                         obs: this.registration.buildValueNumber(
                             'CD4 percent', parseInt(value.toString().substring(1)), '%'
                         )
