@@ -442,7 +442,10 @@ export default defineComponent({
                         obs: this.vitals.buildValueNumber('weight', value)
                     }),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
-                    validation: (val: any) => Validation.required(val),
+                    validation: (val: any) => this.validateSeries([
+                        this.vitals.isNotEmptyandFloat(val),
+                        Validation.rangeOf(val, 1, 300)
+                    ]),
                     config: {
                         customKeyboard: [
                             [
