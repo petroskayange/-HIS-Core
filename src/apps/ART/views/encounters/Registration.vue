@@ -48,7 +48,7 @@ export default defineComponent({
 
             try {
                 if (this.isShowStaging) {
-                    await this.submitStaging()
+                    await this.submitStaging(computedData)
                     await this.vitals.createEncounter()
 
                     const vitalsObs = await this.resolveObs(fObs, 'vitals')
@@ -65,36 +65,6 @@ export default defineComponent({
             toastSuccess('Clinic registration complete!')
 
             this.nextTask()
-        },
-        resolveObs(obs: any, tag='') {
-            let values: Array<any> = []
-            Object.values(obs)
-                  .filter((d: any) => d.tag === tag || tag === '')
-                  .forEach((data: any) => {
-                    if (Array.isArray(data.obs)) {
-                        values = [...values, ...data.obs]
-                    } else {
-                        values.push(data.obs)
-                    }
-                })
-            return Promise.all(values)
-        },
-        yearNotHundredAgo(year: string) {
-            const oldestYear = HisDate.getYearFromAge(100)
-            return parseInt(year) < oldestYear ? ['Year is too long ago'] : null
-        },
-        dateBeforeBirthDate(date: string) {
-            return date < this.patient.getBirthdate() ? ['Date is before Date of birth'] : null
-        },
-        dateInFuture(date: string) {
-            return date > this.registration.getDate() ? ['Date is out of range'] : null
-        },
-        validateSeries(conditions: Array<any>){
-            for(const i in conditions) {
-                const condition = conditions[i]
-
-                if (condition) return condition
-            }
         },
         getRegistrationFields() {
             return [
@@ -120,14 +90,14 @@ export default defineComponent({
                             label: 'Phone',
                             value: '',
                             other: {
-                                values: this.getYesNoOptions(),
+                                values: this.yesNoOptions(),
                             }
                         },
                         {
                             label: 'Home visit',
                             value: '',
                             other: {
-                                values: this.getYesNoOptions()
+                                values: this.yesNoOptions()
                             }
                         }
                     ])
@@ -143,7 +113,7 @@ export default defineComponent({
                         )
                     }),
                     validation: (v: any) => Validation.required(v),
-                    options: () => this.getYesNoOptions()
+                    options: () => this.yesNoOptions()
                 },
                 {
                     id: 'year_last_taken_arvs',
@@ -226,7 +196,7 @@ export default defineComponent({
                         )
                     }),
                     condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown',
-                    options: () => [...this.getYesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
+                    options: () => [...this.yesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
                 },
                 {
                     id: 'taken_art_in_last_two_weeks',
@@ -240,7 +210,7 @@ export default defineComponent({
                     }),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.taken_art_in_last_two_months.value === 'Yes',
-                    options: () => [...this.getYesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
+                    options: () => [...this.yesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
                 },
                 {
                     id: 'ever_registered_at_art_clinic',
@@ -254,7 +224,7 @@ export default defineComponent({
                     }),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.received_arvs.value === 'Yes',
-                    options: () => this.getYesNoOptions()
+                    options: () => this.yesNoOptions()
                 },
                 {
                     id: 'location_of_art_initialization',
@@ -405,7 +375,7 @@ export default defineComponent({
                     }),
                     unload: ({value}: any) => this.isShowStaging = value === 'Yes',
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
-                    options: () => this.getYesNoOptions()
+                    options: () => this.yesNoOptions()
                 },
                 {
                     id: 'height',
@@ -481,7 +451,7 @@ export default defineComponent({
                     id: 'new_cd4_percent_available',
                     helpText: 'CD4 percent available',
                     type: FieldType.TT_SELECT,
-                    options: () => this.getYesNoOptions(),
+                    options: () => this.yesNoOptions(),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     validation: (val: any) => Validation.required(val)
                 },
