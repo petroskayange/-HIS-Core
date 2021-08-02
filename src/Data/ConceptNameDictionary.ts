@@ -1,6 +1,24 @@
 export default [
    {
       "categories": [],
+      "concept_id": 9974,
+      "name": "3HP (RFP + INH)"
+   },{
+      "categories": [],
+      "concept_id": 916,
+      "name": "CPT"
+   },{
+      "categories": [],
+      "concept_id": 656,
+      "name": "IPT"
+   },
+   {
+      "categories": [],
+      "concept_id": 1773,
+      "name": "Heavy alcohol use"
+   },
+   {
+      "categories": [],
       "concept_id": 8260,
       "name": "Past medical history"
    },
@@ -227,12 +245,6 @@ export default [
       ],
       "concept_id":867,
       "name":"Insomnia"
-   }
-   ,{
-      "categories":[
-      ],
-      "concept_id": 6029,
-      "name":"Night sweats"
    },
    {
       "categories":[

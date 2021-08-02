@@ -6,7 +6,7 @@ export class OrderService extends Service {
         super()
     }
 
-    static getOrders(patientID: number, params={}) {
+    static getOrders(patientID: number, params = {}) {
         return super.getJson('/lab/orders', {
             'patient_id': patientID,
             ...params
@@ -31,5 +31,40 @@ export class OrderService extends Service {
         const resultDate = HisDate.toStandardHisFormat(result.date);
         return `${test.name} ${result.value_modifier}${result.value} ${resultDate}`;
     }
+
+    static formatLabs(orders: Order[]) {
+        const formatted = [];
+        for (let x = 0; x < orders.length; x++) {
+            const accessionNumber = orders[x].accession_number;
+            const testStatus = (orders[x].specimen.name == "Unknown" ? "N/A" : orders[x].specimen.name);
+            const dateOrdered = orders[x].order_date;
+            const tests = orders[x].tests;
+
+            for (let i = 0; i < tests.length; i++) {
+                const results = (tests[i].result ? tests[i].result : []);
+                const resultsArr = [];
+                let resultDate = '';
+
+                for (let r = 0; r < results.length; r++) {
+                    resultDate = (results[r].date == null ? "" : `${results[r].date}`);
+                    const name = results[r].indicator.name;
+                    const value = results[r].value;
+                    const valueModifier = results[r].value_modifier === '<' ? '&lt;' : results[r].value_modifier;
+                    resultsArr.push(name + "   " + valueModifier + value);
+                }
+                formatted.push({
+                    'accession_number': accessionNumber,
+                    'test_name': tests[i].name,
+                    specimen: testStatus,
+                    ordered: HisDate.toStandardHisFormat(dateOrdered),
+                    result: resultsArr,
+                    released: HisDate.toStandardHisFormat(resultDate)
+                })
+
+            }
+        }
+        return formatted;
+    }
+
 
 }

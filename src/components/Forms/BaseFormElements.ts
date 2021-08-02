@@ -15,6 +15,7 @@ import VitalsEntry from "@/components/FormElements/HisVitalsEntry.vue"
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 import ArtStagingSummary from "@/components/FormElements/ArtStagingSummary.vue"
 import AdherenceInput from "@/components/FormElements/HisAdherenceInput.vue"
+import LabOrders from "@/components/FormElements/HisLabOrders.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
     TT_MONTHLY_DAYS="monthly-days",
@@ -33,7 +34,8 @@ export enum FieldType {
     TT_WEIGHT_CHART = "weight-chart",
     TT_VITALS_ENTRY="vitals-entry",
     TT_ADHERENCE_INPUT = "adherence-input",
-    TT_ART_STAGING_SUMMARY = "art-staging-summary"
+    TT_ART_STAGING_SUMMARY = "art-staging-summary",
+    TT_LAB_ORDERS = "lab-orders"
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -52,5 +54,6 @@ export const BaseFormComponents = {
     WeightChart,
     VitalsEntry,
     AdherenceInput,
-    ArtStagingSummary
+    ArtStagingSummary,
+    LabOrders
 }

@@ -19,6 +19,7 @@ import HisDate from "@/utils/Date";
 import { findIndex, isEmpty } from "lodash";
 import { ConsultationService } from "@/apps/ART/services/consultation_service";
 import { UserService } from "@/services/user_service";
+import { OrderService } from "@/services/order_service";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -43,7 +44,8 @@ export default defineComponent({
     tbStatusObs: {} as any,
     treatmentStatusObs: {} as any,
     sulphurObs: {} as any,
-    referObs: {} as any
+    referObs: {} as any,
+    medicationObs: [] as any
   }),
   watch: {
     ready: {
@@ -60,6 +62,7 @@ export default defineComponent({
   },
   methods: {
     async onFinish(formData: any) {
+            this.setDrugOrderObs(formData.prescription);
             const encounter = await this.consultation.createEncounter()
 
             if (!encounter) return toastWarning('Unable to create encounter')
@@ -79,6 +82,7 @@ export default defineComponent({
                 this.treatmentStatusObs,
                 this.sulphurObs,
                 this.referObs,
+                ...this.medicationObs
             ])
             const filtered = data.filter(d => !isEmpty(d));
             const obs = await this.consultation.saveObservationList(filtered)
@@ -88,20 +92,6 @@ export default defineComponent({
             toastSuccess('Observations and encounter created!')
 
             this.nextTask()
-      //       const pts = new PatientTypeService(this.patientID);
-      //       const encounter = await pts.createEncounter();
-      //       if (encounter) {
-      //         const observations = await pts.saveValueCodedObs(
-      //           "Type of patient",
-      //           formData.patient_type.value
-      //         );
-      //         if (!observations)
-      //           return toastWarning("Unable to save patient observations");
-      //         toastSuccess("Observations and encounter created!");
-      //         this.nextTask();
-      //       } else {
-      //         return toastWarning("Unable to create treatment encounter");
-      //       }
     },
     isGender(gender: string) {
       return this.patient.getGender() === gender;
@@ -182,6 +172,16 @@ export default defineComponent({
         listData[noneIndex].isChecked = false;
       }
       return listData;
+    },
+    setDrugOrderObs(listData: Array<Option>) {
+      listData.forEach(element => {
+        if (element.label != "NONE OF THE ABOVE" && element.isChecked) {
+          this.medicationObs.push(this.consultation.buildValueCoded('Medication orders', element.label));
+        }
+        if (element.label === "NONE OF THE ABOVE" && element.isChecked) {
+          this.medicationObs.push(this.consultation.buildValueCoded('Prescribe drugs', 'No'));
+        }
+      });
     },
     declinedFPM(formData: any) {
       if (!formData.fp_methods) return false;
@@ -303,7 +303,7 @@ export default defineComponent({
         "Vomiting",
         "Dizziness",
         "Headache",
-        "Night Sweats",
+        "Night sweats",
         "Nausea",
         "Weight loss / Failure to thrive / malnutrition",
         "Lactic acidosis",
@@ -317,7 +317,7 @@ export default defineComponent({
       const contraIndications = [
         "Cough of any duration",
         "Fever",
-        "Night Sweats",
+        "Night sweats",
         "Weight loss / Failure to thrive / malnutrition",
       ];
       return this.getOptions(contraIndications);
@@ -377,31 +377,35 @@ export default defineComponent({
     getFields(): any {
       return [
         {
-          id: "guardian_only_prescription",
+          id: "prescription",
           helpText: "Medication to prescribe during this visit",
           type: FieldType.TT_MULTIPLE_SELECT,
+          validation: (data: any) => Validation.required(data), 
           onValueUpdate: (listData: Array<Option>, value: Option) => {
-            if (value.isChecked && value.label === "NONE OF THE ABOVE") {
-              return listData.map((i) => {
-                if (i.label != "NONE OF THE ABOVE") i.isChecked = false;
-                return i;
-              });
-            } else if (value.label != "NONE OF THE ABOVE" && value.isChecked) {
-              const noneIndex = findIndex(listData, {
-                label: "NONE OF THE ABOVE",
-              });
-              listData[noneIndex].isChecked = false;
-            }
-            return listData;
+            return this.disablePrescriptions(listData, value);
           },
+          options: () => this.getPrescriptionFields(),
           condition: () => false, // show if guardian only visit
-          options: () => {
-            return [
-              { label: "ARVs", value: "ARVs" },
-              { label: "CPT", value: "CPT" },
-              { label: "IPT", value: "IPT" },
-              { label: "NONE OF THE ABOVE", value: "NONE OF THE ABOVE" },
+        },
+        {
+          id: "patient_lab_orders",
+          helpText: "Lab orders",
+          type: FieldType.TT_LAB_ORDERS,
+          options: async () => {
+          const orders = await OrderService.getOrders(this.patientID);
+          const VLOrders = OrderService.formatLabs(orders);
+          return [
+              {
+                label: "Lab orders",
+                value: "order trail",
+                other: {
+                  values: VLOrders,
+                },
+              },
             ];
+          },
+          config: {
+            hiddenFooterBtns: ["Clear"],
           },
         },
         {
