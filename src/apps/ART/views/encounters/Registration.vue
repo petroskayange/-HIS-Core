@@ -40,8 +40,8 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit(f: any, formObservations: any) {
-            const fObs = {...formObservations}
+        async onSubmit(f: any, computedData: any) {
+            const fObs = {...computedData}
             const encounter = await this.registration.createEncounter()
 
             if (!encounter) return toastWarning('Unable to create registration encounter')
@@ -62,7 +62,6 @@ export default defineComponent({
             }
 
             const registrationData = await this.resolveObs(fObs)
-
             const registrationObs = await this.registration.saveObservationList(registrationData)
 
             if (!registrationObs) return toastWarning('Unable to save observations')
@@ -73,11 +72,11 @@ export default defineComponent({
         },
         resolveObs(obs: any) {
             let values: Array<any> = []
-            Object.values(obs).forEach((o: any) => {
-                if (Array.isArray(o)) {
-                    values = [...values, ...o]
+            Object.values(obs).forEach((data: any) => {
+                if (Array.isArray(data.obs)) {
+                    values = [...values, ...data.obs]
                 } else {
-                    values.push(o)
+                    values.push(data.obs)
                 }
             })
             return Promise.all(values)
@@ -106,17 +105,16 @@ export default defineComponent({
                     helpText: 'Agrees to follow-up',
                     type: FieldType.TT_MULTIPLE_YES_NO,
                     summaryMapValue: ({value, label}: Option) => ({
-                        label: `${label} followup`, 
-                        value: value
+                        label: `${label} followup`, value: value
                     }),
                     validation: (v: any) => Validation.anyEmpty(v),
-                    output: (d: Array<Option>) => {
+                    computedValue: (d: Array<Option>) => {
                         const obs: any = []
                         d.forEach(({ label, value }: Option) => {
                             obs.push(this.registration.buildValueCoded('Agrees to followup', label))
                             obs.push(this.registration.buildValueCoded(label, value))
                         })
-                        return obs
+                        return { obs }
                     },
                     options: () => ([
                         {
@@ -139,9 +137,11 @@ export default defineComponent({
                     id: 'received_arvs',
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Ever registered at ART clinic', value
-                    ),
+                    computedValue: ({value}: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Ever registered at ART clinic', value
+                        )
+                    }),
                     validation: (v: any) => Validation.required(v),
                     options: () => this.getYesNoOptions()
                 },
@@ -188,19 +188,10 @@ export default defineComponent({
                     id: 'day_last_taken_arvs',
                     helpText: 'Day last taken ARVs',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    summaryMapValue: (d: Option, f: any) => ({
-                        label: 'Date last taken Arvs', value : HisDate.stitchDate(
-                           f.year_last_taken_arvs.value, 
-                           f.month_last_taken_arvs.value,
-                           d.value
-                        )
+                    summaryMapValue: (d: Option, f: any, computedValue: any) => ({
+                        label: 'Date last taken Arvs', value : computedValue.date
                     }),
-                    validation: (val: any, f: any) => {
-                        const date = HisDate.stitchDate(
-                           f.year_last_taken_arvs.value, 
-                           f.month_last_taken_arvs.value,
-                           val.value
-                        )
+                    validation: (val: any, f: any, { date }: any) => {
                         return this.validateSeries([
                             Validation.required(val),
                             Validation.isNumber(val),
@@ -208,13 +199,16 @@ export default defineComponent({
                             this.dateInFuture(date)
                         ])
                     },
-                    output: ({value}: Option, f: any) => {
+                    computedValue: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_last_taken_arvs.value,
                             f.month_last_taken_arvs.value,
                             value
                         )
-                        return this.registration.buildValueDate('Date ART last taken', date)
+                        return {
+                            date,
+                            obs: this.registration.buildValueDate('Date ART last taken', date) 
+                        }
                     },
                     condition: (f: any) => f.month_last_taken_arvs.value,
                 },
@@ -223,9 +217,11 @@ export default defineComponent({
                     helpText: 'Taken ARVs in the last two months?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Has the patient taken ART in the last two months', value
-                    ),
+                    computedValue: ({value}: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Has the patient taken ART in the last two months', value
+                        )
+                    }),
                     condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown',
                     options: () => [...this.getYesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
                 },
@@ -233,9 +229,11 @@ export default defineComponent({
                     id: 'taken_art_in_last_two_weeks',
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Has the patient taken ART in the last two weeks', value
-                    ),
+                    computedValue: ({value}: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Has the patient taken ART in the last two weeks', value
+                        ) 
+                    }),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.taken_art_in_last_two_months.value === 'Yes',
                     options: () => [...this.getYesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
@@ -244,9 +242,11 @@ export default defineComponent({
                     id: 'ever_registered_at_art_clinic',
                     helpText: 'Ever registered at an ART clinic?',
                     type: FieldType.TT_SELECT,
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Ever registered at ART clinic', value
-                    ),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Ever registered at ART clinic', value
+                        )
+                    }),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.received_arvs.value === 'Yes',
                     options: () => this.getYesNoOptions()
@@ -255,9 +255,11 @@ export default defineComponent({
                     id: 'location_of_art_initialization',
                     helpText: 'Location of ART initiation',
                     type: FieldType.TT_SELECT,
-                    output: ({label}: Option) => this.registration.buildValueText(
-                        'Location of ART initiation', label
-                    ),
+                    computedValue: ({label}: Option) => ({
+                        obs: this.registration.buildValueText(
+                            'Location of ART initiation', label
+                        )
+                    }),
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     options: (_: any, filter='') => this.getFacilities(filter),
@@ -309,14 +311,10 @@ export default defineComponent({
                     id: 'day_started_art',
                     helpText: 'Day started ART',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    summaryMapValue: ({value}: Option, f: any) => ({
-                        label: 'Date started Art', value: HisDate.stitchDate(
-                            f.year_started_art.value,
-                            f.month_started_art.value,
-                            value
-                        )
+                    summaryMapValue: (_: Option, f: any, computedValue: any) => ({
+                        label: 'Date started Art', value: computedValue.date
                     }),
-                    output: ({value}: Option, f: any) => {
+                    computedValue: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_started_art.value,
                             f.month_started_art.value,
@@ -324,15 +322,13 @@ export default defineComponent({
                         )
                         this.staging.setDate(date)
                         this.vitals.setDate(date)
-                        return this.registration.buildValueDate('Drug start date', date)
+                        return {
+                            date,
+                            obs: this.registration.buildValueDate('Drug start date', date)
+                        }
                     },
                     condition: (f: any) => f.month_started_art.value != 'Unknown',
-                    validation: (val: any, f: any) => {
-                        const date = HisDate.stitchDate(
-                           f.year_started_art.value, 
-                           f.month_started_art.value,
-                           val.value
-                        )
+                    validation: (val: any, f: any, { date }: any) => {
                         return this.validateSeries([
                             Validation.required(val),
                             Validation.isNumber(val),
@@ -347,7 +343,7 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.year_started_art.value === "Unknown",
-                    output: ({value}: Option) => {
+                    computedValue: ({value}: Option) => {
                         const date = new Date()
                         date.setDate(date.getDate() - parseInt(value.toString()))
                         const hisDate = HisDate.toStandardHisFormat(date)
@@ -355,7 +351,10 @@ export default defineComponent({
                         this.staging.setDate(hisDate)
                         this.vitals.setDate(hisDate)
 
-                        return this.registration.buildValueDate('Drug start date', hisDate)
+                        return {
+                            date: hisDate,
+                            obs: this.registration.buildValueDate('Drug start date', hisDate)
+                        }
                     },
                     options: () => ([
                         { label: '6 months', value: 180 },
@@ -370,9 +369,11 @@ export default defineComponent({
                     helpText: 'ART number at previous location',
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
-                    output: (d: Option) => this.registration.buildValueText(
-                        'ART number at previous location', d.value
-                    ),
+                    computedValue: (d: Option) => ({
+                        obs: this.registration.buildValueText(
+                            'ART number at previous location', d.value
+                        )
+                    }),
                     validation: (val: Option) => Validation.required(val)
                 },
                 {
@@ -380,9 +381,11 @@ export default defineComponent({
                     helpText: 'Has staging information?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Has transfer letter', value
-                    ),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Has transfer letter', value
+                        )
+                    }),
                     unload: ({value}: any) => this.isShowStaging = value === 'Yes',
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     options: () => this.getYesNoOptions()
@@ -392,7 +395,9 @@ export default defineComponent({
                     helpText: 'Height (CM)',
                     type: FieldType.TT_NUMBER,
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
-                    output: ({ value }: Option) => this.vitals.buildValueNumber('Height', value),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.vitals.buildValueNumber('Height', value)
+                    }),
                     validation: (val: any) => Validation.required(val)
                 },
                 {
@@ -421,7 +426,9 @@ export default defineComponent({
                             this.stagingFacts.weightPercentile = 0
                         }
                     },
-                    output: ({ value }: Option) => this.vitals.buildValueNumber('weight', value),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.vitals.buildValueNumber('weight', value)
+                    }),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     validation: (val: any) => Validation.required(val),
                     config: {
@@ -458,9 +465,11 @@ export default defineComponent({
                     helpText: 'CD4 Percent',
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.new_cd4_percent_available.value === 'Yes',
-                    output: ({ value }: Option) => this.registration.buildValueNumber(
-                        'CD4 percent', parseInt(value.toString().substring(1)), '%'
-                    ),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.registration.buildValueNumber(
+                            'CD4 percent', parseInt(value.toString().substring(1)), '%'
+                        )
+                    }),
                     onValue: (d: Option) => {
                         if (d.value && !this.staging.cd4CountIsValid(d.value)) {
                             toastWarning('Cd4 percentage invalid. Use one modifier or start with either of these symbols: >, < or =')
@@ -483,9 +492,11 @@ export default defineComponent({
                     helpText: 'Confirmatory HIV test',
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
-                    output: ({value}: Option) => this.registration.buildValueCoded(
-                        'Confirmatory hiv test type', value
-                    ),
+                    computedValue: ({ value }: Option) => ({
+                        obs: this.registration.buildValueCoded(
+                            'Confirmatory hiv test type', value
+                        )
+                    }),
                     options: () => ([
                         { label: 'Rapid antibody test', value: 'HIV rapid test'},
                         { label: 'DNA PCR', value: 'HIV DNA polymerase chain reaction'},
@@ -496,9 +507,11 @@ export default defineComponent({
                     id: 'confirmatory_hiv_test_location',
                     helpText: 'Location of confirmatory HIV test',
                     type: FieldType.TT_SELECT,
-                    output: (d: Option) => this.registration.buildValueText(
-                        'Confirmatory HIV test location', d.label
-                    ),
+                    computedValue: (d: Option) => ({
+                        obs: this.registration.buildValueText(
+                            'Confirmatory HIV test location', d.label
+                        ) 
+                    }),
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.type_of_confirmatory_hiv_test.value != 'Not done',
                     options: (_: any, filter='') => this.getFacilities(filter),
@@ -551,29 +564,22 @@ export default defineComponent({
                     id: 'day_confirmatory_hiv_test',
                     helpText: 'Confirmatory HIV test day',
                     type: FieldType.TT_MONTHLY_DAYS,
-                    summaryMapValue: ({ value }: Option, f: any) => ({
-                        label: 'Confirmatory test Date',
-                        value: HisDate.stitchDate(
-                            f.confirmatory_hiv_test_year.value,
-                            f.confirmatory_hiv_test_month.value,
-                            value
-                        )
+                    summaryMapValue: (_: Option, f: any, computedValue: any) => ({
+                        label: 'Confirmatory test Date', value: computedValue.date
                     }),
-                    output: (d: Option, f: any) => {
+                    computedValue: (d: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.confirmatory_hiv_test_year.value,
                             f.confirmatory_hiv_test_month.value,
                             d.value
                         )
-                        return this.registration.buildValueDate('Confirmatory HIV test date', date)
+                        return {
+                            date: date,
+                            obs: this.registration.buildValueDate('Confirmatory HIV test date', date),
+                        }
                     },
                     condition: (f: any) => f.confirmatory_hiv_test_month.value != 'Unknown',
-                    validation: (val: any, f: any) => {
-                        const date = HisDate.stitchDate(
-                           f.confirmatory_hiv_test_year.value, 
-                           f.confirmatory_hiv_test_month.value,
-                           val.value
-                        )
+                    validation: (val: any, f: any, { date }: any) => {
                         return this.validateSeries([
                             Validation.required(val),
                             Validation.isNumber(val),
