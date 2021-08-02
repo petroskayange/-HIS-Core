@@ -588,7 +588,7 @@ export default defineComponent({
                         ])
                     }
                 },
-                this.getStagingSummaryField()
+                this.getStagingSummaryField('Staging summary')
             ]
         }
     }
