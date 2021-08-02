@@ -103,14 +103,15 @@ export default defineComponent({
                     helpText: 'Agrees to follow-up',
                     type: FieldType.TT_MULTIPLE_YES_NO,
                     summaryMapValue: ({value, label}: Option) => ({
-                        label: `${label} followup`, value: value
+                        value,
+                        label: `${label} followup`
                     }),
                     validation: (v: any) => Validation.anyEmpty(v),
                     computedValue: (d: Array<Option>) => {
                         const obs: any = []
                         d.forEach(({ label, value }: Option) => {
-                            obs.push(this.registration.buildValueCoded('Agrees to followup', label))
                             obs.push(this.registration.buildValueCoded(label, value))
+                            obs.push(this.registration.buildValueCoded('Agrees to followup', label))
                         })
                         return { tag:'reg', obs }
                     },
@@ -151,17 +152,17 @@ export default defineComponent({
                     appearInSummary: () => false,
                     condition: (f: any) => f.received_arvs.value === 'Yes',
                     validation: (val: any) => {
+                        if (val.value === 'Unknown') 
+                            return null
+
                         const date = HisDate.stitchDate(val.value)
-                        if (val.value != 'Unknown') {
-                            return this.validateSeries([
-                                Validation.required(val),
-                                Validation.isNumber(val),
-                                this.yearNotHundredAgo(val.value),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
-                        return null
+                        return this.validateSeries([
+                            Validation.required(val),
+                            Validation.isNumber(val),
+                            this.yearNotHundredAgo(val.value),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])
                     }
                 },
                 {
@@ -172,15 +173,18 @@ export default defineComponent({
                     options: () => MonthOptions,
                     condition: (f: any) => f.year_last_taken_arvs.value != 'Unknown',
                     validation: (val: any, f: any) => {
-                        if (val.value != 'Unknown') {
-                            const date = HisDate.stitchDate(f.year_last_taken_arvs.value, val.value)
-                            return this.validateSeries([
-                                Validation.required(val),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
-                        return null
+                        if (val.value === 'Unknown') 
+                            return null 
+
+                        const date = HisDate.stitchDate(
+                            f.year_last_taken_arvs.value, 
+                            val.value
+                        )
+                        return this.validateSeries([
+                            Validation.required(val),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])
                     } 
                 },
                 {
@@ -190,14 +194,12 @@ export default defineComponent({
                     summaryMapValue: (d: Option, f: any, computedValue: any) => ({
                         label: 'Date last taken Arvs', value : computedValue.date
                     }),
-                    validation: (val: any, f: any, { date }: any) => {
-                        return this.validateSeries([
-                            Validation.required(val),
-                            Validation.isNumber(val),
-                            this.dateBeforeBirthDate(date),
-                            this.dateInFuture(date)
-                        ])
-                    },
+                    validation: (val: any, f: any, { date }: any) => this.validateSeries([
+                        Validation.required(val),
+                        Validation.isNumber(val),
+                        this.dateBeforeBirthDate(date),
+                        this.dateInFuture(date)
+                    ]),
                     computedValue: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_last_taken_arvs.value,
@@ -205,8 +207,8 @@ export default defineComponent({
                             value
                         )
                         return {
-                            tag:'reg', 
                             date,
+                            tag:'reg',
                             obs: this.registration.buildValueDate('Date ART last taken', date) 
                         }
                     },
@@ -279,17 +281,17 @@ export default defineComponent({
                     appearInSummary: () => false,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     validation: (val: any) => {
-                        if (val.value != 'Unknown') {
-                            const date = HisDate.stitchDate(val.value)
-                            return this.validateSeries([
-                                Validation.required(val),
-                                Validation.isNumber(val),
-                                this.yearNotHundredAgo(val.value),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
-                        return null
+                        if (val.value === 'Unknown') 
+                            return null  
+
+                        const date = HisDate.stitchDate(val.value)
+                        return this.validateSeries([
+                            Validation.required(val),
+                            Validation.isNumber(val),
+                            this.yearNotHundredAgo(val.value),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])                        
                     }
                 },
                 {
@@ -300,15 +302,18 @@ export default defineComponent({
                     options: () => MonthOptions,
                     condition: (f: any) => f.year_started_art.value != 'Unknown',
                     validation: (val: any, f: any) => {
-                        if (val.value != 'Unknown') {
-                            const date = HisDate.stitchDate(f.year_started_art.value, val.value)
-                            return this.validateSeries([
-                                Validation.required(val),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
-                        return null
+                        if (val.value === 'Unknown') 
+                            return null
+
+                        const date = HisDate.stitchDate(
+                            f.year_started_art.value, 
+                            val.value
+                        )
+                        return this.validateSeries([
+                            Validation.required(val),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])
                     }
                 },
                 {
@@ -316,7 +321,8 @@ export default defineComponent({
                     helpText: 'Day started ART',
                     type: FieldType.TT_MONTHLY_DAYS,
                     summaryMapValue: (_: Option, f: any, computedValue: any) => ({
-                        label: 'Date started Art', value: computedValue.date
+                        label: 'Date started Art', 
+                        value: computedValue.date
                     }),
                     computedValue: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
@@ -350,15 +356,19 @@ export default defineComponent({
                     computedValue: ({value}: Option) => {
                         const date = new Date()
                         date.setDate(date.getDate() - parseInt(value.toString()))
-                        const hisDate = HisDate.toStandardHisFormat(date)
 
+                        const hisDate = HisDate.toStandardHisFormat(date)
                         this.staging.setDate(hisDate)
                         this.vitals.setDate(hisDate)
 
                         return {
                             tag:'reg',
                             date: hisDate,
-                            obs: this.registration.buildValueDate('Drug start date', hisDate)
+                            obs: this.registration.buildObs(
+                            'Drug start date', {
+                                'value_datetime': hisDate,
+                                'value_text': 'Estimated'
+                            })
                         }
                     },
                     options: () => ([
@@ -545,16 +555,16 @@ export default defineComponent({
                     appearInSummary: () => false,
                     condition: (f: any) => f.confirmatory_hiv_test_location.value,
                     validation: (val: any) => {
-                        if (val.value != 'Unknown') {
-                            const date = HisDate.stitchDate(val.value)
-                            return this.validateSeries([
-                                Validation.required(val),
-                                Validation.isNumber(val),
-                                this.yearNotHundredAgo(val.value),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
+                        if (val.value === 'Unknown')
+                            return null
+                        const date = HisDate.stitchDate(val.value)
+                        return this.validateSeries([
+                            Validation.required(val),
+                            Validation.isNumber(val),
+                            this.yearNotHundredAgo(val.value),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])
                     }
                 },
                 {
@@ -565,17 +575,18 @@ export default defineComponent({
                     options: () => MonthOptions,
                     condition: (f: any) => f.confirmatory_hiv_test_year.value != "Unknown",
                     validation: (val: any, f: any) => {
-                        if (val.value === 'Unknown') {
-                            const date = HisDate.stitchDate(
-                                f.confirmatory_hiv_test_year.value, 
-                                val.value
-                            )
-                            return this.validateSeries([
-                                Validation.required(val),
-                                this.dateBeforeBirthDate(date),
-                                this.dateInFuture(date)
-                            ])
-                        }
+                        if (val.value === 'Unknown') 
+                            return null
+
+                        const date = HisDate.stitchDate(
+                            f.confirmatory_hiv_test_year.value, 
+                            val.value
+                        )
+                        return this.validateSeries([
+                            Validation.required(val),
+                            this.dateBeforeBirthDate(date),
+                            this.dateInFuture(date)
+                        ])
                     } 
                 },
                 {
@@ -583,7 +594,8 @@ export default defineComponent({
                     helpText: 'Confirmatory HIV test day',
                     type: FieldType.TT_MONTHLY_DAYS,
                     summaryMapValue: (_: Option, f: any, computedValue: any) => ({
-                        label: 'Confirmatory test Date', value: computedValue.date
+                        label: 'Confirmatory test Date', 
+                        value: computedValue.date
                     }),
                     computedValue: (d: Option, f: any) => {
                         const date = HisDate.stitchDate(
@@ -598,14 +610,12 @@ export default defineComponent({
                         }
                     },
                     condition: (f: any) => f.confirmatory_hiv_test_month.value != 'Unknown',
-                    validation: (val: any, f: any, { date }: any) => {
-                        return this.validateSeries([
-                            Validation.required(val),
-                            Validation.isNumber(val),
-                            this.dateBeforeBirthDate(date),
-                            this.dateInFuture(date)
-                        ])
-                    }
+                    validation: (val: any, f: any, { date }: any) => this.validateSeries([
+                        Validation.required(val),
+                        Validation.isNumber(val),
+                        this.dateBeforeBirthDate(date),
+                        this.dateInFuture(date)
+                    ])
                 },
                 this.getStagingSummaryField('Staging summary')
             ]
