@@ -1,6 +1,7 @@
 import Apps from "@/apps/his_apps";
 import ApplicationModal from "@/components/ApplicationModal.vue";
 import ActivitiesModal from "@/components/ART/ActivitiesModal.vue";
+import OrdersModal from "@/components/ART/OrdersModal.vue";
 import { modalController } from "@ionic/vue";
 import { ActivityInterface } from './interfaces/AppInterface';
 import { find, isEmpty } from 'lodash';
@@ -44,8 +45,15 @@ async function selectApplication() {
 
     return data
 }
-
+async function makeLabOrders() {
+    const modal = await openModal(OrdersModal, {cssClass: "my-custom-class"})
+    modal.present()
+    return modal;
+    // const { data } = await modal.onDidDismiss()
+   
+}
 export default {
     selectApplication,
-    getActiveApp
+    getActiveApp,
+    makeLabOrders
 }

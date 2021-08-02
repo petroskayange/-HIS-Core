@@ -20,6 +20,7 @@ import { findIndex, isEmpty } from "lodash";
 import { ConsultationService } from "@/apps/ART/services/consultation_service";
 import { UserService } from "@/services/user_service";
 import { OrderService } from "@/services/order_service";
+import HisApp from "@/apps/app_lib"
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -406,6 +407,19 @@ export default defineComponent({
           },
           config: {
             hiddenFooterBtns: ["Clear"],
+            footerBtns: [
+                            {
+                                name: 'Order',
+                                size: 'large',
+                                slot: 'end',
+                                color: 'primary',
+                                visible: true,
+                                onClick: async () => {
+                                  const data = await HisApp.makeLabOrders() 
+                                    // this.fieldComponent = 'custom_regimen'
+                                }
+                            }
+                        ]
           },
         },
         {

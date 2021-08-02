@@ -12,6 +12,14 @@ export class OrderService extends Service {
             ...params
         });
     }
+    
+    static getTestTypes() {
+        return super.getJson('/lab/test_types');
+    }
+    
+    static getSpecimens(testName: string) {
+        return super.getJson('/lab/specimen_types', {'test_type': testName});
+    }
 
     static getViralLoadOrders(orders: Order[]) {
         return orders.filter(order => {
