@@ -426,14 +426,17 @@ export default defineComponent({
                     helpText: 'CD4 Percent',
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.new_cd4_percent_available.value === 'Yes',
-                    validation: (val: any) => {
-                        if (!val) return ['Value is required']
-
-                        const {value} = val
-
-                        if (value != 'Unknown' && !this.staging.cd4CountIsValid(value)) 
-                            return ['Pleas start with either modifier first: >, <, or =']
+                    output: ({ value }: Option) => this.registration.buildValueNumber(
+                        'CD4 percent', parseInt(value.toString().substring(1)), '%'
+                    ),
+                    onValue: (d: Option) => {
+                        if (d.value && !this.staging.cd4CountIsValid(d.value)) {
+                            toastWarning('Cd4 percentage invalid. Use one modifier or start with either of these symbols: >, < or =')
+                            return false
+                        }
+                        return true
                     },
+                    validation: (val: any) => Validation.required(val),
                     config: {
                         customKeyboard: [
                             CD4_COUNT_PAD_LO,

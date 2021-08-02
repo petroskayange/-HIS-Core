@@ -1,6 +1,11 @@
 export default [
    {
       "categories": [],
+      "concept_id": 730,
+      "name": "CD4 percent"
+   },
+   {
+      "categories": [],
       "concept_id": 2552,
       "name": "Agrees to followup"
    },
