@@ -372,8 +372,8 @@ export default defineComponent({
                             'Has transfer letter', value
                         )
                     }),
+                    options: () => this.yesNoOptions(),
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
-                    options: () => this.yesNoOptions()
                 },
                 {
                     id: 'height',
