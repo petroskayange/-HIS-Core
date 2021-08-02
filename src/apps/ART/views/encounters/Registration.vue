@@ -406,7 +406,11 @@ export default defineComponent({
                         tag:'vitals',
                         obs: this.vitals.buildValueNumber('Height', value)
                     }),
-                    validation: (val: any) => Validation.required(val)
+                    validation: (val: any) => this.validateSeries([
+                        Validation.required(val),
+                        Validation.isNumber(val),
+                        Validation.rangeOf(val, 40, 222)
+                    ])
                 },
                 {
                     id: 'weight',
