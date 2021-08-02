@@ -21,9 +21,9 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit() {
+        async onSubmit(f: any, computedValues: any) {
             try{ 
-                await this.submitStaging()
+                await this.submitStaging(computedValues)
                 toastSuccess('Staging information has been saved')
                 this.nextTask()
             }catch(e) {
