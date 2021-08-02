@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
-import { Option } from "@/components/Forms/FieldInterface"
+import { Field, Option } from "@/components/Forms/FieldInterface"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import StagingMixin from "@/apps/ART/views/encounters/StagingMixin.vue"
@@ -105,6 +105,10 @@ export default defineComponent({
                     id: 'followup_agreement',
                     helpText: 'Agrees to follow-up',
                     type: FieldType.TT_MULTIPLE_YES_NO,
+                    summaryMapValue: ({value, label}: Option) => ({
+                        label: `${label} followup`, 
+                        value: value
+                    }),
                     validation: (v: any) => Validation.anyEmpty(v),
                     output: (d: Array<Option>) => {
                         const obs: any = []
@@ -145,6 +149,7 @@ export default defineComponent({
                     id: 'year_last_taken_arvs',
                     helpText: 'Year last taken ARVs',
                     type: FieldType.TT_NUMBER,
+                    appearInSummary: () => false,
                     condition: (f: any) => f.received_arvs.value === 'Yes',
                     validation: (val: any) => {
                         const date = HisDate.stitchDate(val.value)
@@ -164,6 +169,7 @@ export default defineComponent({
                     id: 'month_last_taken_arvs',
                     helpText: 'Month last taken ARVs',
                     type: FieldType.TT_SELECT,
+                    appearInSummary: () => false,
                     options: () => MonthOptions,
                     condition: (f: any) => f.year_last_taken_arvs.value != 'Unknown',
                     validation: (val: any, f: any) => {
@@ -182,6 +188,13 @@ export default defineComponent({
                     id: 'day_last_taken_arvs',
                     helpText: 'Day last taken ARVs',
                     type: FieldType.TT_MONTHLY_DAYS,
+                    summaryMapValue: (d: Option, f: any) => ({
+                        label: 'Date last taken Arvs', value : HisDate.stitchDate(
+                           f.year_last_taken_arvs.value, 
+                           f.month_last_taken_arvs.value,
+                           d.value
+                        )
+                    }),
                     validation: (val: any, f: any) => {
                         const date = HisDate.stitchDate(
                            f.year_last_taken_arvs.value, 
@@ -257,6 +270,7 @@ export default defineComponent({
                     id: 'year_started_art',
                     helpText: 'Year started ART',
                     type: FieldType.TT_NUMBER,
+                    appearInSummary: () => false,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     validation: (val: any) => {
                         if (val.value != 'Unknown') {
@@ -276,6 +290,7 @@ export default defineComponent({
                     id: 'month_started_art',
                     helpText: 'Month last taken ARVs',
                     type: FieldType.TT_SELECT,
+                    appearInSummary: () => false,
                     options: () => MonthOptions,
                     condition: (f: any) => f.year_started_art.value != 'Unknown',
                     validation: (val: any, f: any) => {
@@ -294,6 +309,13 @@ export default defineComponent({
                     id: 'day_started_art',
                     helpText: 'Day started ART',
                     type: FieldType.TT_MONTHLY_DAYS,
+                    summaryMapValue: ({value}: Option, f: any) => ({
+                        label: 'Date started Art', value: HisDate.stitchDate(
+                            f.year_started_art.value,
+                            f.month_started_art.value,
+                            value
+                        )
+                    }),
                     output: ({value}: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.year_started_art.value,
@@ -489,6 +511,7 @@ export default defineComponent({
                     id: 'confirmatory_hiv_test_year',
                     helpText: 'Confirmatory HIV test year',
                     type: FieldType.TT_NUMBER,
+                    appearInSummary: () => false,
                     condition: (f: any) => f.confirmatory_hiv_test_location.value,
                     validation: (val: any) => {
                         if (val.value != 'Unknown') {
@@ -507,6 +530,7 @@ export default defineComponent({
                     id: 'confirmatory_hiv_test_month',
                     helpText: 'Confirmatory HIV test month',
                     type: FieldType.TT_SELECT,
+                    appearInSummary: () => false,
                     options: () => MonthOptions,
                     condition: (f: any) => f.confirmatory_hiv_test_year.value != "Unknown",
                     validation: (val: any, f: any) => {
@@ -527,6 +551,14 @@ export default defineComponent({
                     id: 'day_confirmatory_hiv_test',
                     helpText: 'Confirmatory HIV test day',
                     type: FieldType.TT_MONTHLY_DAYS,
+                    summaryMapValue: ({ value }: Option, f: any) => ({
+                        label: 'Confirmatory test Date',
+                        value: HisDate.stitchDate(
+                            f.confirmatory_hiv_test_year.value,
+                            f.confirmatory_hiv_test_month.value,
+                            value
+                        )
+                    }),
                     output: (d: Option, f: any) => {
                         const date = HisDate.stitchDate(
                             f.confirmatory_hiv_test_year.value,
