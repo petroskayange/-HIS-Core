@@ -251,10 +251,10 @@ export default defineComponent({
                 ...this.stagingFacts.selectedConditions.map((i: string) => ({ label: i, value: i }))
             ]
         },
-        getStagingSummaryField() {
+        getStagingSummaryField(helpText="Summary" as string) {
             return {
                 id: 'summary',
-                helpText: 'Summary',
+                helpText,
                 type: FieldType.TT_ART_STAGING_SUMMARY,
                 condition: () => this.isShowStaging,
                 onload: () => this.onSummary(),
