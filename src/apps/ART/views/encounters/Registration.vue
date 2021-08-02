@@ -230,7 +230,7 @@ export default defineComponent({
                 },
                 {
                     id: 'taken_art_in_last_two_weeks',
-                    helpText: 'Ever received ARVs for treatment or prophylaxis?',
+                    helpText: "Taken ARV's in the last two weeks?",
                     type: FieldType.TT_SELECT,
                     computedValue: ({value}: Option) => ({
                         tag:'reg',
