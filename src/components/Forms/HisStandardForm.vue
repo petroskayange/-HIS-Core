@@ -252,7 +252,7 @@ export default defineComponent({
                     
                         values.forEach(item => {
                             if (field.summaryMapValue) {
-                                data.push(field.summaryMapValue(item))
+                                data.push(field.summaryMapValue(item, formData))
                                 return
                             }
                             data.push({ label: field.helpText, value: item.label })
