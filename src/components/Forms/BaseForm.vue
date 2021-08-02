@@ -8,6 +8,7 @@
       :preset="activeField.preset"
       :clear="isClear"
       :fdata="formData"
+      :cdata="computedFormData"
       :activationState="state"
       :onValue="activeField.onValue"
       :onValueUpdate="activeField.onValueUpdate"
@@ -72,7 +73,7 @@ export default defineComponent({
       if (val) {
         if (this.activeField.validation) {
           const value = this.formData[this.activeField.id]
-          const errors = this.activeField.validation(value, this.formData)
+          const errors = this.activeField.validation(value, this.formData, this.computedFormData)
           if (errors) {
             this.emitState()
             return this.$emit('onErrors', errors)
@@ -119,8 +120,8 @@ export default defineComponent({
       const { id } = this.activeField
       this.formData[id] = value;
       // Set computed field values seperately
-      if (this.activeField.output)  {
-        this.computedFormData[id] = value != null ? this.activeField.output(value, this.formData): null
+      if (this.activeField.computedValue)  {
+        this.computedFormData[id] = value != null ? this.activeField.computedValue(value, this.formData): null
       }
     },
     async onNext() {
@@ -167,7 +168,7 @@ export default defineComponent({
       // load callback before changing active component
       if (!isEmpty(this.activeField) && this.activeField.unload) {
         const data = this.formData[this.activeField.id]
-        if (data) await this.activeField.unload(data, state, this.formData)
+        if (data) await this.activeField.unload(data, state, this.formData, this.computedFormData)
       }
       this.state = state
       this.activeIndex = index;
@@ -182,8 +183,12 @@ export default defineComponent({
       if ('requireNext' in this.activeField && !this.activeField.requireNext) this.onNext()
     },
     emitState() {
-      this.$emit("onState", { field: this.activeField, 
-        index: this.activeIndex, formData: this.formData });
+      this.$emit("onState", { 
+        field: this.activeField, 
+        index: this.activeIndex, 
+        formData: this.formData,
+        computedFormData: this.computedFormData 
+      });
     }
   },
 });

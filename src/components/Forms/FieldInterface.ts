@@ -20,7 +20,7 @@ export interface Field {
     helpText: string;
     type: FieldType;
     group?: string;  // Categories fields with related data
-    output?: Function;
+    computedValue?: Function;
     preset?: Option | Record<string, any>;
     condition?: Function;
     validation?: Function;
@@ -31,7 +31,7 @@ export interface Field {
     unload?: Function;
     summaryMapValue?: Function;
     appearInSummary?: Function;
-    options?(fdata?: any): Promise<Option[]> | Array<Option>;
+    options?(fdata?: any, cdata?: any): Promise<Option[]> | Array<Option>;
     requireNext?: boolean;
     config?: Record<string, any>;
 }
