@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :skipSummary="isShowStaging" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 
 <script lang="ts">
@@ -20,7 +20,7 @@ export default defineComponent({
     mixins: [StagingMixin],
     data: () => ({
         registration: {} as any,
-        vitals: {} as any
+        vitals: {} as any,
     }),
     watch: {
         patient: {
@@ -31,7 +31,6 @@ export default defineComponent({
                 this.vitals = new VitalsService(patient.getID())
                 await this.initStaging(this.patient)
 
-                this.isShowStaging = false
                 this.showStagingWeightChart = false
                 this.fields = this.getRegistrationFields()
             },
@@ -47,7 +46,7 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create registration encounter')
 
             try {
-                if (this.isShowStaging) {
+                if (this.hasStaging(f)) {
                     await this.submitStaging(computedData)
                     await this.vitals.createEncounter()
 
