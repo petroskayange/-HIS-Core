@@ -1,6 +1,7 @@
 import { ObservationService, ObsValue } from "@/services/observation_service"
 import { EncounterService } from "@/services/encounter_service"
 import { Encounter } from "@/interfaces/encounter"
+import { ConceptService } from "@/services/concept_service"
 
 export class AppEncounterService extends ObservationService {
     encounterTypeID: number;
@@ -30,7 +31,23 @@ export class AppEncounterService extends ObservationService {
     getEncounterID() {
         return this.encounterID
     }
-    
+
+    async buildObs(conceptName: string, obj: Record<string, any>) {
+        const obs: any = {
+            ...obj,
+            'person_id': this.patientID,
+            'obs_datetime': this.date
+        }
+
+        obs['concept_id'] = await ConceptService.getConceptID(conceptName)
+
+        if (obj.value_coded) {
+            obs['value_coded'] = await ConceptService.getConceptID(obj.value_coded)
+        }
+
+        return obs
+    }
+
     buildValueText(conceptName: string, value: string) {
         return AppEncounterService.buildValueText(conceptName, value, this.date)
     }
