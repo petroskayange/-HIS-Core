@@ -42,6 +42,40 @@ export default defineComponent({
         nextTask() {
             //TODO: add workflow logic here to navigate to other encounter
             this.gotoPatientDashboard()
+        },
+        yesNoOptions() {
+            return [
+                { label: "Yes", value: "Yes" },
+                { label: "No", value: "No" }
+            ]
+        },
+        yesNoUnknownOptions() {
+            return [
+                { label: "Yes", value: "Yes" },
+                { label: "No", value: "No" },
+                { label: "Unknown", value: "Unknown" }
+            ]
+        },
+        resolveObs(obs: any, tag='') {
+            let values: Array<any> = []
+            Object.values(obs)
+                  .filter((d: any) => d.tag === tag || tag === '')
+                  .forEach((data: any) => {
+                    if (Array.isArray(data.obs)) {
+                        values = [...values, ...data.obs]
+                    } else {
+                        values.push(data.obs)
+                    }
+                })
+            return Promise.all(values)
+        },
+        validateSeries(conditions: Array<any>){
+            for(const i in conditions) {
+                const condition = conditions[i]
+                if (condition) {
+                    return condition
+                }
+            }
         }
     }
 })
