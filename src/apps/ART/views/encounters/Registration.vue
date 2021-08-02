@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
-import { Field, Option } from "@/components/Forms/FieldInterface"
+import { Option } from "@/components/Forms/FieldInterface"
 import MonthOptions from "@/components/FormElements/Presets/MonthOptions"
 import Validation from "@/components/Forms/validations/StandardValidations"
 import StagingMixin from "@/apps/ART/views/encounters/StagingMixin.vue"
@@ -51,17 +51,13 @@ export default defineComponent({
                     await this.submitStaging()
                     await this.vitals.createEncounter()
 
-                    const vitalsObs = await this.resolveObs({weight: fObs.weight, height: fObs.height})
+                    const vitalsObs = await this.resolveObs(fObs, 'vitals')
                     await this.vitals.saveObservationList(vitalsObs)
-
-                    delete fObs.weight
-                    delete fObs.height
                 } 
             } catch(e) {
                 return toastWarning(e)
             }
-
-            const registrationData = await this.resolveObs(fObs)
+            const registrationData = await this.resolveObs(fObs, 'reg')
             const registrationObs = await this.registration.saveObservationList(registrationData)
 
             if (!registrationObs) return toastWarning('Unable to save observations')
@@ -70,15 +66,17 @@ export default defineComponent({
 
             this.nextTask()
         },
-        resolveObs(obs: any) {
+        resolveObs(obs: any, tag='') {
             let values: Array<any> = []
-            Object.values(obs).forEach((data: any) => {
-                if (Array.isArray(data.obs)) {
-                    values = [...values, ...data.obs]
-                } else {
-                    values.push(data.obs)
-                }
-            })
+            Object.values(obs)
+                  .filter((d: any) => d.tag === tag || tag === '')
+                  .forEach((data: any) => {
+                    if (Array.isArray(data.obs)) {
+                        values = [...values, ...data.obs]
+                    } else {
+                        values.push(data.obs)
+                    }
+                })
             return Promise.all(values)
         },
         yearNotHundredAgo(year: string) {
@@ -114,7 +112,7 @@ export default defineComponent({
                             obs.push(this.registration.buildValueCoded('Agrees to followup', label))
                             obs.push(this.registration.buildValueCoded(label, value))
                         })
-                        return { obs }
+                        return { tag:'reg', obs }
                     },
                     options: () => ([
                         {
@@ -138,6 +136,7 @@ export default defineComponent({
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
                     computedValue: ({value}: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Ever registered at ART clinic', value
                         )
@@ -206,6 +205,7 @@ export default defineComponent({
                             value
                         )
                         return {
+                            tag:'reg', 
                             date,
                             obs: this.registration.buildValueDate('Date ART last taken', date) 
                         }
@@ -218,6 +218,7 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
                     computedValue: ({value}: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Has the patient taken ART in the last two months', value
                         )
@@ -230,6 +231,7 @@ export default defineComponent({
                     helpText: 'Ever received ARVs for treatment or prophylaxis?',
                     type: FieldType.TT_SELECT,
                     computedValue: ({value}: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Has the patient taken ART in the last two weeks', value
                         ) 
@@ -243,6 +245,7 @@ export default defineComponent({
                     helpText: 'Ever registered at an ART clinic?',
                     type: FieldType.TT_SELECT,
                     computedValue: ({ value }: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Ever registered at ART clinic', value
                         )
@@ -256,6 +259,7 @@ export default defineComponent({
                     helpText: 'Location of ART initiation',
                     type: FieldType.TT_SELECT,
                     computedValue: ({label}: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueText(
                             'Location of ART initiation', label
                         )
@@ -323,7 +327,7 @@ export default defineComponent({
                         this.staging.setDate(date)
                         this.vitals.setDate(date)
                         return {
-                            date,
+                            tag:'reg', date,
                             obs: this.registration.buildValueDate('Drug start date', date)
                         }
                     },
@@ -352,6 +356,7 @@ export default defineComponent({
                         this.vitals.setDate(hisDate)
 
                         return {
+                            tag:'reg',
                             date: hisDate,
                             obs: this.registration.buildValueDate('Drug start date', hisDate)
                         }
@@ -370,6 +375,7 @@ export default defineComponent({
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     computedValue: (d: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueText(
                             'ART number at previous location', d.value
                         )
@@ -382,6 +388,7 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
                     computedValue: ({ value }: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Has transfer letter', value
                         )
@@ -396,6 +403,7 @@ export default defineComponent({
                     type: FieldType.TT_NUMBER,
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
                     computedValue: ({ value }: Option) => ({
+                        tag:'vitals',
                         obs: this.vitals.buildValueNumber('Height', value)
                     }),
                     validation: (val: any) => Validation.required(val)
@@ -466,6 +474,7 @@ export default defineComponent({
                     type: FieldType.TT_TEXT,
                     condition: (f: any) => f.new_cd4_percent_available.value === 'Yes',
                     computedValue: ({ value }: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueNumber(
                             'CD4 percent', parseInt(value.toString().substring(1)), '%'
                         )
@@ -493,6 +502,7 @@ export default defineComponent({
                     type: FieldType.TT_SELECT,
                     validation: (val: any) => Validation.required(val),
                     computedValue: ({ value }: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueCoded(
                             'Confirmatory hiv test type', value
                         )
@@ -508,6 +518,7 @@ export default defineComponent({
                     helpText: 'Location of confirmatory HIV test',
                     type: FieldType.TT_SELECT,
                     computedValue: (d: Option) => ({
+                        tag:'reg',
                         obs: this.registration.buildValueText(
                             'Confirmatory HIV test location', d.label
                         ) 
@@ -574,6 +585,7 @@ export default defineComponent({
                             d.value
                         )
                         return {
+                            tag:'reg',
                             date: date,
                             obs: this.registration.buildValueDate('Confirmatory HIV test date', date),
                         }
