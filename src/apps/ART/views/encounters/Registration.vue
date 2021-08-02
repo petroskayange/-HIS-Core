@@ -29,7 +29,6 @@ export default defineComponent({
 
                 this.registration = new ClinicRegistrationService(patient.getID())
                 this.vitals = new VitalsService(patient.getID())
-        
                 await this.initStaging(this.patient)
 
                 this.isShowStaging = false
@@ -367,7 +366,7 @@ export default defineComponent({
                 {
                     id: 'weight',
                     helpText: 'Weight (Kg)',
-                    type: FieldType.TT_NUMBER,
+                    type: FieldType.TT_TEXT,
                     unload: async (d: any, s: string, f: any) => {
                         const weight = f.weight.value
                         const height = f.height.value
@@ -392,7 +391,20 @@ export default defineComponent({
                     },
                     output: ({ value }: Option) => this.vitals.buildValueNumber('weight', value),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
-                    validation: (val: any) => Validation.required(val)
+                    validation: (val: any) => Validation.required(val),
+                    config: {
+                        customKeyboard: [
+                            [
+                                ['1', '2', '3', ''],
+                                ['4', '5', '6', ''],
+                                ['7', '8', '9', '.'],
+                                ['',  '0', '' , '']
+                            ],
+                            [
+                                ['Delete']
+                            ]
+                        ]
+                    }
                 },
                 /*** 
                     Start Staging Fields
