@@ -372,7 +372,6 @@ export default defineComponent({
                             'Has transfer letter', value
                         )
                     }),
-                    unload: ({value}: any) => this.isShowStaging = value === 'Yes',
                     condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
                     options: () => this.yesNoOptions()
                 },
