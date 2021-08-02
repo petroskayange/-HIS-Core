@@ -30,6 +30,17 @@
    background-color: rgb(235, 235, 235);
 }
 
+.his-danger-color {
+    color: brown !important;
+}
+.his-warning-color {
+    color: orange !important;
+}
+
+.his-info-color {
+    color: green
+}
+
 .his-table {
     border-collapse: collapse;
     width: 100%;
@@ -66,6 +77,10 @@
     box-shadow: -1px 4px 30px -16px rgba(0,0,0,0.28);
 }
 
+.full-width-ion-btn {
+    width: 1600px !important;
+}
+
 body {
  font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
 }
@@ -83,6 +98,11 @@ body {
 .custom-modal .modal-wrapper {
     width: 90%;
     height: 80%;
+}
+
+.action-sheet-modal .modal-wrapper {
+    width: 80%;
+    height: 94%;
 }
 
 #view-port {

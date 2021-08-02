@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :activeField="fieldComponent" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form @onIndex="fieldComponent=''" :activeField="fieldComponent" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -7,29 +7,62 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { RegimenInterface } from "@/interfaces/Regimen"
 import Validation from "@/components/Forms/validations/StandardValidations"
-import { PrescriptionService, HangingPill, REGIMEN_SWITCH_REASONS } from "@/apps/ART/services/prescription_service"
-import { toastWarning, toastSuccess, actionSheet } from "@/utils/Alerts"
+import { PrescriptionService } from "@/apps/ART/services/prescription_service"
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import HisDate from "@/utils/Date"
+import { matchToGuidelines } from "@/utils/GuidelineEngine"
+import { isEmpty } from "lodash"
 import EncounterMixinVue from './EncounterMixin.vue'
+import { 
+    PRESCRIPTION_GUIDELINES,
+    DRUG_FREQUENCY_GUIDELINE,
+    TargetEvent, 
+    Target, 
+    FlowState 
+} from "@/apps/ART/guidelines/prescription_guidelines"
+
 export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         drugs: [] as Array<RegimenInterface>,
         nextInterval: 0,
         prescription: {} as any,
-        fieldComponent: '',
         patientToolbar: [] as Array<Option>,
-        regimenSwitchReason: '' as string | undefined,
-        hangingPillOptimization: '' as HangingPill | '',
-        patientWeight: 0 as number,
-        starterPackSelected: false as boolean
+        fieldComponent: '' as string,
+        facts: {
+            age: -1 as number,
+            gender: '' as string,
+            weight: -1 as number,
+            currentDate: '' as string,
+            prescriptionType: '' as 'Custom' | 'Regimen',
+            tptPrescriptionCount: 0,
+            currentRegimenCode: -1 as number,
+            currentRegimenStr: '' as string,
+            drug: '' as string,
+            drugs: [] as Array<any>,
+            contraindications: {} as any,
+            hasSideEffects: false as boolean,
+            sideEffectsTable: {} as any,
+            lastSideEffectDate: '' as string,
+            regimenCode: -1 as number,
+            regimenCodeStr: '' as string,
+            regimenName: '' as string,
+            regimenDrugs: [] as any,
+            hangingPills: [] as Array<any>,
+            reasonForSwitch: '' as string,
+            starterPackNeeded: false as boolean,
+            hangingPillsStatus: '' as string,
+            treatmentInitiationState: '' as string,
+            lpvType: '' as string,
+            medicationOrders: [] as Array<any>,
+            selectedInterval: 0 as number
+        }
     }),
     watch: {
         patient: {
             async handler(patient: any){
                 if (!patient) return
 
-                this.patientWeight = await patient.getRecentWeight()
                 this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadMedicationOrders()
                 await this.prescription.loadFastTrackStatus()
@@ -38,11 +71,15 @@ export default defineComponent({
                     toastWarning('Patient is not eligible for treatment Today! Please check HIV Clinic Consultation')
                     return this.nextTask()
                 }
-                
+
                 await this.prescription.loadRegimenExtras()
                 await this.prescription.loadHangingPills()
-                await this.prescription.load3HpStatus()
                 await this.prescription.loadTreatmentState()
+                await this.prescription.loadDrugInduced()
+                await this.prescription.loadContraindications()
+                await this.prescription.loadTptPrescriptionCount()
+
+                await this.initFacts(patient)
 
                 if (this.prescription.isFastTrack()) {
                     await this.prescription.loadFastTrackMedications()
@@ -58,9 +95,30 @@ export default defineComponent({
             },
             immediate: true,
             deep: true
+        },
+        drugs: {
+            handler(drugs: Array<any>) {
+                this.facts.drugs = drugs.map(d => d.drug_id)
+            },
+            immediate: true,
+            deep: true
         }
     },
     methods: {
+        async initFacts(patient: any) {
+            this.facts.age = patient.getAge()
+            this.facts.gender = patient.getGender() === 'Female' ? 'F' : 'M'
+            this.facts.weight = await patient.getRecentWeight()
+            this.facts.hangingPills = this.prescription.getHangingPills()
+            this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
+            this.facts.currentRegimenStr = this.programInfo.current_regimen
+            this.facts.currentRegimenCode = this.extractRegimenCode(this.programInfo.current_regimen)
+            this.facts.medicationOrders = this.prescription.getMedicationOrders()
+            this.facts.contraindications = this.prescription.getContraindications()
+            this.facts.tptPrescriptionCount = this.prescription.getTptPrescriptionCount()
+            this.facts.lastSideEffectDate = this.prescription.getLastSideEffectDate()
+            this.facts.currentDate = PrescriptionService.getSessionDate()
+        },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
 
@@ -71,25 +129,166 @@ export default defineComponent({
             if (!encounter) return toastWarning('Unable to create treatment encounter')
 
             const drugOrder = await this.prescription.createDrugOrder(payload) 
-            
+
             if(!drugOrder) return toastWarning('Unable to create drug orders!')
 
-            if (this.regimenSwitchReason) {
-                await this.prescription.createRegimenSwitchObs(this.regimenSwitchReason)
+            if (this.facts.reasonForSwitch) {
+                await this.prescription.createRegimenSwitchObs(this.facts.reasonForSwitch)
             }
 
-            if (this.hangingPillOptimization) {
-                await this.prescription.createHangingPillsObs(this.hangingPillOptimization)
+            if (this.facts.hangingPillsStatus) {
+                await this.prescription.createHangingPillsObs(this.facts.hangingPillsStatus)
             }
 
             toastSuccess('Drug order has been created')
 
             this.nextTask()
         },
+        async onEvent(target: Target, targetEvent: TargetEvent) {
+            const findings = matchToGuidelines(this.facts, PRESCRIPTION_GUIDELINES, target, targetEvent)
+            for(const index in findings) {
+                const finding = findings[index]
+
+                if (finding?.actions?.alert) {
+                    const state = await finding?.actions?.alert(this.facts)
+                    if (state === FlowState.EXIT)
+                        return false
+                }
+            }
+            return true
+        },
+        onBuildOptions(target: Target, targetEvent: TargetEvent){
+            const findings = matchToGuidelines(this.facts, PRESCRIPTION_GUIDELINES, target, targetEvent)
+            for(const index in findings) {
+                const finding = findings[index]
+
+                if (finding.data) return finding.data
+            }
+            return {}
+        },
+        async onRegimen({ label, value, other }: Option) {
+            this.facts.lpvType = ''
+            this.facts.hangingPillsStatus = ''
+            this.facts.starterPackNeeded = false
+            this.facts.regimenName = `${value} (${label})`
+            this.facts.regimenCodeStr = value.toString()
+            this.facts.regimenCode = this.extractRegimenCode(value.toString())
+            this.facts.regimenDrugs = other.regimenDrugs
+            this.facts.drugs = other.regimenDrugs.map((d: any) => d.drug_id)
+
+            const sideEffects = this.prescription.findAndGroupDrugSideEffects(this.facts.drugs)
+            this.facts.hasSideEffects = !isEmpty(sideEffects)
+            this.facts.sideEffectsTable = this.buildSideEffectsTable(sideEffects)
+        },
+        async onBeforeRegimenNext() {
+            const event = await this.onEvent(Target.ARV_REGIMENS, TargetEvent.BEFORE_NEXT)
+            let drugs = []
+
+            if (!event) return false
+
+            if (this.facts.lpvType) {
+               drugs = await this.getLpvDrugs()
+            } else if (this.facts.starterPackNeeded) {
+               drugs = await this.getStarterPackDrugs()
+            } else {
+                drugs = this.facts.regimenDrugs
+            }
+
+            this.drugs = [...this.prescription.getRegimenExtras(), ...drugs]
+
+            return true
+        },
+        getLpvDrugs() {
+            return this.prescription.getLvpDrugsByType(
+                this.facts.lpvType, this.facts.regimenCode
+            ) 
+        },
+        getStarterPackDrugs() {
+            return this.prescription.getRegimenStarterpack(
+                this.facts.regimenCode, this.facts.weight
+            )
+        },
+        setCustomDrugs(drugs: any) {
+            this.drugs = drugs.map((drug: Option) => drug.other)
+        },
+        buildSideEffectsTable(sideEffects: any) {
+            const columns = ['Date', 'Contraindication(s)', 'Side effect(s)']
+            const rows = []
+            for(const date in sideEffects) {
+                const contraindications = this.facts.contraindications[date] || []
+                rows.push([
+                    HisDate.toStandardHisDisplayFormat(date), 
+                    contraindications.join(', '),
+                    sideEffects[date].join(', ')
+                ])
+            }
+            return { columns, rows }
+        },
+        async buildRegimenOptions() {
+            const regimenCategories = await this.prescription.getPatientRegimens()
+            const options = []
+            for(const value in regimenCategories) {
+                const regimenDrugs = regimenCategories[value]
+                const label = regimenDrugs.map((r: RegimenInterface) => 
+                    r.alternative_drug_name || r.concept_name).join(' + ')
+
+                options.push({ 
+                    label, 
+                    value, 
+                    other: {
+                        regimenDrugs 
+                    } 
+                })
+            }
+            return options
+        },
+        buildIntervalOptions() {
+            const intervals = [
+                { label: '2 weeks', value: 14 },
+                { label: '1 month', value: 28 },
+                { label: '2 months', value: 56 },
+                { label: '3 months', value: 84 },
+                { label: '4 months', value: 112 },
+                { label: '5 months', value: 140 },
+                { label: '6 months', value: 168 },
+                { label: '7 months', value: 196 },
+                { label: '8 months', value: 224 },
+                { label: '9 months', value: 252 },
+                { label: '10 months', value: 280 },
+                { label: '11 months', value: 308 },                        
+                { label: '12 months', value: 336 },
+            ]
+            return intervals.map(({label, value}: Option) => {
+                this.facts.selectedInterval = parseInt(value.toString())
+                const config = this.onBuildOptions(Target.INTERVAL_SELECTION, TargetEvent.ON_BUILD)
+                return {
+                    label,
+                    value,
+                    other: {
+                        ...config,
+                        ...this.getDrugEstimates(this.drugs, this.facts.selectedInterval)
+                    }
+                }
+            })
+        },
+        getDrugFrequency(drugName: string){
+            this.facts.drug = drugName
+            const findings = matchToGuidelines(this.facts, DRUG_FREQUENCY_GUIDELINE)
+
+            if (!isEmpty(findings)) {
+                return findings[0].concept
+            }
+        },
+        extractRegimenCode(regimen: string): number {
+           if (regimen.match(/n\/a/i))
+               return -1
+
+           return parseInt(regimen.substring(0, regimen.length))
+        },
         getDosageTableOptions(regimen: any) {
             const rowColors: any = [ 
                 { indexes: [], class: 'adult-regimen-formulation' },
-                { indexes: [], class: 'pedaid-regimen-formulation' }
+                { indexes: [], class: 'peads-regimen-formulation' }
             ]
             const columns = ['Drug name', 'Units', 'AM', 'Noon', 'PM', 'Frequency']
             const rows = regimen.map((regimen: any, index: number) => {
@@ -99,6 +298,7 @@ export default defineComponent({
                         break
                     case 'P':
                         rowColors[1].indexes.push(index)
+                        break
                 }
                 return [
                     regimen.drug_name,
@@ -106,7 +306,7 @@ export default defineComponent({
                     regimen.am,
                     regimen.noon,
                     regimen.pm,
-                    regimen.frequency || this.prescription.getDrugFrequency(regimen.drug_name)
+                    regimen.frequency || this.getDrugFrequency(regimen.drug_name)
                 ]              
             })
             return [
@@ -146,12 +346,9 @@ export default defineComponent({
                     regimen.units, 
                     regimen.am, 
                     regimen.pm,
-                    regimen.frequency || ''
+                    regimen.frequency || this.getDrugFrequency(regimen.drug_name)
                 )
             })
-        },
-        hasCustomRegimen() {
-            return this.fieldComponent === "custom_regimen"
         },
         async getPatientToolBar() {
             const reasonForSwitch = await this.prescription.getReasonForRegimenSwitch()
@@ -159,85 +356,25 @@ export default defineComponent({
                 { label: 'Age', value: `${this.patient.getAge()} Year(s)` },
                 { label: 'Gender', value: this.patient.getGender() },
                 { label: 'Current Regimen', value: this.programInfo.current_regimen },
-                { label: 'Current weight', value: `${this.patientWeight} kg(s)` || 'Unknown' },
+                { label: 'Current weight', value: `${this.facts.weight} kg(s)` || 'Unknown' },
                 { label: 'Reason for change', value: reasonForSwitch }
             ]
-        },
-        async promptHangingPill() {
-            return actionSheet(
-                'Do you want to use hanging pills?', '',
-                ['Yes', 'No']
-            )
-        },
-        async promptAcceptStarterPack() {
-            return actionSheet(
-                'First time initiation', 
-                'Starter pack needed for 14 days',
-                ['Prescribe starter pack', 'Cancel'] 
-            )
-        },
-        async promptWhySwitchingRegimen() {
-            return actionSheet(
-                `Are you sure you want to replace ${this.programInfo.current_regimen}?`,
-                'Specify reason for switching regimen',
-                [...REGIMEN_SWITCH_REASONS, 'Cancel']
-            )
         },
         getFields(): Array<Field> {
             return [
                 {
-                    id: 'arv_regimens',
+                    id: Target.ARV_REGIMENS,
                     helpText: 'ARV Regimen(s)',
                     type: FieldType.TT_ART_REGIMEN_SELECTION,
-                    preset: { value: this.programInfo.current_regimen },
                     condition: () => this.prescription.shouldPrescribeArvs(),
                     validation: (val: Option) => Validation.required(val),
-                    unload: (data: any) => {
-                        if (!this.starterPackSelected) {
-                            this.drugs = [
-                                ...this.prescription.getRegimenExtras(), ...data.other.regimens
-                            ]
-                        }
+                    options: () => this.buildRegimenOptions(),
+                    onload: () => this.facts.prescriptionType = 'Regimen',
+                    onValue: (regimen: Option) => {
+                        this.onRegimen(regimen)
+                        return this.onEvent(Target.ARV_REGIMENS, TargetEvent.ON_VALUE)
                     },
-                    options: async () => {
-                        const regimenCategories = await this.prescription.getPatientRegimens()
-                        const options = []
-                        for(const index in regimenCategories) {
-                            const regimens = regimenCategories[index]
-                            const drug = regimens.map((regimen: RegimenInterface) => regimen.alternative_drug_name).join(' + ')
-                            options.push({ label: drug, value: index, other: { regimens } })
-                        }
-                        return options
-                    },
-                    onValue: async ({ label, value }: Option) => {
-                        this.starterPackSelected = false
-                        const currentRegimen = this.programInfo.current_regimen
-
-                        if (currentRegimen !='N/A' && value != currentRegimen) {
-                            const reasonOption = await this.promptWhySwitchingRegimen()
-                            if (reasonOption != 'cancel') {
-                                this.regimenSwitchReason = reasonOption
-                            } else {
-                                this.regimenSwitchReason = '' 
-                                return false
-                            }
-                        }
-
-                        if (this.prescription.starterPackNeeded(label)) {
-                            const starterPackOption = await this.promptAcceptStarterPack()
-
-                            if (starterPackOption === 'cancel') return false
-
-                            this.drugs = await this.prescription.getRegimenStarterpack(
-                                value, this.patientWeight
-                            )
-                            this.drugs = [...this.prescription.getRegimenExtras(), ...this.drugs]
-                            this.starterPackSelected = true
-                            this.fieldComponent = 'selected_meds'
-                        }
-
-                        return true
-                    },
+                    beforeNext: () => this.onBeforeRegimenNext(),
                     config: {
                         toolbarInfo: this.patientToolbar,
                         footerBtns: [
@@ -261,7 +398,8 @@ export default defineComponent({
                     id: 'custom_regimen',
                     helpText: 'Custom prescription',
                     type: FieldType.TT_MULTIPLE_SELECT,
-                    condition: () => this.hasCustomRegimen(),
+                    condition: () => this.facts.prescriptionType === 'Custom',
+                    onload: () => this.facts.prescriptionType = 'Custom',
                     validation: (val: Option) => Validation.required(val),
                     options: async () => {
                         const drugs = await this.prescription.getCustomIngridients()
@@ -295,14 +433,14 @@ export default defineComponent({
                     id: 'custom_dosage',
                     helpText: 'Custom dose',
                     type: FieldType.TT_DOSAGE_INPUT,
-                    condition: () => this.hasCustomRegimen(),
+                    condition: (f: any) => !isEmpty(f.custom_regimen),
                     validation: (val: Array<Option>) => {
                         if (Validation.required(val)) return ['Drugs are not available']
 
                         const empty = val.map(({ other }: Option) => other.am <= 0 && other.pm <= 0)
                         return empty.some(Boolean) ? ['Missing dosage configuration on some drugs'] : null
                     },
-                    unload: (data: any) => this.drugs = data.map((drug: Option) => drug.other),
+                    unload: (data: any) => this.setCustomDrugs(data),
                     summaryMapValue: ({other}: any) => ({
                         label: 'Dosages', 
                         value: this.prescription.getInstructions(
@@ -321,7 +459,7 @@ export default defineComponent({
                                 'am': 0,
                                 'noon': 0,
                                 'pm': 0,
-                                'frequency': 'Daily (QOD)'
+                                'frequency': this.getDrugFrequency(regimen.label)
                             }
                         }))
                     }
@@ -332,52 +470,19 @@ export default defineComponent({
                     type: FieldType.TT_TABLE_VIEWER,
                     options: () => this.getDosageTableOptions(this.drugs),
                     config: {
+                        toolbarInfo: this.patientToolbar,
                         hiddenFooterBtns: [ 'Clear' ]
                     }
                 },
                 {
-                    id: 'next_visit_interval',
+                    id: Target.INTERVAL_SELECTION,
                     helpText: 'Interval to next visit',
                     type: FieldType.TT_NEXT_VISIT_INTERVAL_SELECTION,
                     validation: (val: Option) => Validation.required(val),
-                    unload: async (data: any, state: string) => {
-                        this.nextInterval = data.value
-                        if (this.prescription.hasHangingPills(this.drugs) && state==='next') {
-                            
-                            const hangingPillOption = await this.promptHangingPill()
-
-                            if (hangingPillOption === 'yes') {
-                                return this.hangingPillOptimization = HangingPill.OPTIMIZE
-                            }
-                            return this.hangingPillOptimization = HangingPill.EXACT
-                        }
-                        this.hangingPillOptimization = ''
-                    },
-                    options: () => {
-                        const intervals = [
-                            { label: '2 weeks', value: 14 },
-                            { label: '1 month', value: 28 },
-                            { label: '2 months', value: 56 },
-                            { label: '3 months', value: 84 },
-                            { label: '4 months', value: 112 },
-                            { label: '5 months', value: 140 },
-                            { label: '6 months', value: 168 },
-                            { label: '7 months', value: 196 },
-                            { label: '8 months', value: 224 },
-                            { label: '9 months', value: 252 },
-                            { label: '10 months', value: 280 },
-                            { label: '11 months', value: 308 },                        
-                            { label: '12 months', value: 336 },
-                        ]
-                        return intervals.map(interval => ({
-                            ...interval, other: { 
-                                ...this.getDrugEstimates(this.drugs, interval.value),
-                                enabled: (this.starterPackSelected 
-                                            && interval.value <= 14 || !this.starterPackSelected)
-                                }
-                            })
-                        )
-                    },
+                    unload: async (data: any) => this.nextInterval = data.value,
+                    options: () => this.buildIntervalOptions(),
+                    onValue: () => this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.ON_VALUE),
+                    beforeNext: () => this.onEvent(Target.INTERVAL_SELECTION, TargetEvent.BEFORE_NEXT), 
                     config: {
                         showRegimenCardTitle: false
                     }

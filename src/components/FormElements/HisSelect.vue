@@ -17,6 +17,8 @@
 import { defineComponent } from 'vue'
 import { Option } from '../Forms/FieldInterface'
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
+import { find } from "lodash"
+
 export default defineComponent({
     name: "HisSelect",
     mixins: [SelectMixin],
@@ -25,7 +27,11 @@ export default defineComponent({
     },
     async activated() {
         this.listData = await this.options(this.fdata)
-        if (this.preset) this.onselect(this.preset)
+        if (this.preset) {
+            const found = find(this.listData, {label: this.preset.label})
+
+            if (found) this.onselect(found)
+        }
     },
     methods: {
         onselect(item: Option): void {

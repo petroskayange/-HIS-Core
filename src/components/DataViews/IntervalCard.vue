@@ -1,5 +1,5 @@
 <template>
-    <div :class="`his-card clickable ${color}`" @click="$emit('onclick')"> 
+    <div :class="`his-card ${state}`" @click="$emit('onclick')"> 
         <div> {{ label }} </div>
     </div>
 </template>
@@ -12,11 +12,20 @@ export default defineComponent({
     color: {
         type: String
     },
+    enabled: {
+      type: Boolean,
+      default: true
+    },
     label: {
         type: String,
         required: true
     }
-  }  
+  },
+  computed: {
+    state(): string {
+      return this.enabled ? `clickable ${this.color}` : 'disabled-card-color'
+    }
+  }
 })
 </script>
 <style scoped>

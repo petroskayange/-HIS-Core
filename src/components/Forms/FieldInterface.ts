@@ -23,6 +23,7 @@ export interface Field {
     preset?: Option | Record<string, any>;
     condition?: Function;
     validation?: Function;
+    beforeNext?: Function;
     onValue?: Function;
     onValueUpdate?: Function;
     onload?: Function;

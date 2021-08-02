@@ -1,4 +1,5 @@
-import { toastController, alertController, actionSheetController } from "@ionic/vue";
+import { toastController, alertController, modalController, actionSheetController } from "@ionic/vue";
+import HisActionSheet from "@/components/DataViews/actionsheet/HisActionSheetModal.vue"
 
 async function toast(message: string, color="primary", duration=6000) {
     const toast = await toastController.create({
@@ -36,6 +37,7 @@ export async function alertAction(message: string, buttons: any) {
     const { role } = await alert.onDidDismiss()
     return role || ''
 }
+
 export async function actionSheet(header: string, subHeader: string, buttons: Array<string>) {
     const action = await actionSheetController.create({
         header,
