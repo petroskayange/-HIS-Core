@@ -344,6 +344,16 @@ export default defineComponent({
                     ]),
                 },
                 {
+                    id: 'previous_art_number',
+                    helpText: 'ART number at previous location',
+                    type: FieldType.TT_TEXT,
+                    condition: (f: any) => f.ever_registered_at_art_clinic.value === 'Yes',
+                    output: (d: Option) => this.registration.buildValueText(
+                        'ART number at previous location', d.value
+                    ),
+                    validation: (val: Option) => Validation.required(val)
+                },
+                {
                     id: 'has_transfer_letter',
                     helpText: 'Has staging information?',
                     type: FieldType.TT_SELECT,
