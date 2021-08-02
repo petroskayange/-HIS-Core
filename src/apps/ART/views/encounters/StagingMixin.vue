@@ -15,7 +15,6 @@ export default defineComponent({
     mixins: [EncounterMixinVue],
     data: () => ({
         staging: {} as any,
-        isShowStaging: true,
         showStagingWeightChart: true,
         stagingFacts : {
             age: -1 as number,
