@@ -17,17 +17,17 @@ export const ENCOUNTERS: Array<TaskInterface> = [
   },
   {
     id: "hiv clinic registration",
-    name: "HIV first visits",
+    name: "Hiv clinic registration",
     icon: img("registration.png")
   },
   {
     id: "hiv reception",
-    name: "HIV reception visits",
+    name: "HIV reception",
     icon: img("reception.png")
   },
   {
     id: "hiv staging",
-    name: "HIV staging visits",
+    name: "HIV staging",
     icon: img("hiv-staging.png")
   },
   {
@@ -42,7 +42,7 @@ export const ENCOUNTERS: Array<TaskInterface> = [
   },
   {
     id: "treatment",
-    name: "Prescriptions",
+    name: "Treatment",
     icon: img("prescription.png")
   },
   {

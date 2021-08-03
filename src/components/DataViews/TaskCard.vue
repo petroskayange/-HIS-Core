@@ -1,14 +1,10 @@
 <template>
-    <ion-card class="task-card">
-        <ion-item lines="none"> 
-            <ion-thumbnail> 
-                <ion-img :src="icon"/> 
+    <ion-card class="his-card task-card clickable">
+        <ion-item>
+            <ion-thumbnail slot="start">
+                <img :src="icon"/>
             </ion-thumbnail>
-            <ion-label> 
-                {{ title }}
-                <br/>
-                <small>{{ description }}</small> 
-            </ion-label> 
+            <ion-label class="title">{{title}}</ion-label>
         </ion-item>
     </ion-card>
 </template>
@@ -34,12 +30,14 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-    .task-card {
+    .title {
+        font-size: 0.8em;
         font-weight: bold;
+    }
+    .task-card {
+        padding: 0;
+        margin: 0;
         height: 70px;
         overflow: hidden;
-    }
-    .task-card:active {
-        transform: translateY(4px);
     }
 </style>

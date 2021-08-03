@@ -12,7 +12,7 @@ import FastTrack from "@/apps/ART/views/encounters/FastTrack.vue"
 
 export default [
     {
-        name: "Prescriptions",
+        name: "Treatment",
         path: "/art/encounters/prescriptions",
         component: Prescription
     },
@@ -27,17 +27,17 @@ export default [
         component: Consultation
     },
     {
-        name: "HIV first visits",
+        name: "Hiv clinic registration",
         path: "/art/encounters/registration",
         component: Registration
     },
     {
-        name: "HIV reception visits",
+        name: "HIV reception",
         path: "/art/encounters/reception",
         component: Reception
     },
     {
-        name: "HIV staging visits",
+        name: "HIV staging",
         path: "/art/encounters/staging",
         component: Staging
     },
