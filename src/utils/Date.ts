@@ -51,8 +51,8 @@ function getDateBeforeByDays(date: string, days: number) {
 }
 
 function stitchDate(year: number | string, month=-1 as number | string, day=-1 as number | string) {
-    let fmonth = month
-    let fday = day
+    let fmonth = month.toString()
+    let fday = day.toString()
 
     const unknown = (d: number | string) => d.toString().match(/Unknown/i) 
 
@@ -61,7 +61,7 @@ function stitchDate(year: number | string, month=-1 as number | string, day=-1 a
     }
 
     if (!day || unknown(day)) {
-        fday = '01'
+        fday = '15'
     }
 
     return toStandardHisFormat(`${year}-${fmonth}-${fday}`)
