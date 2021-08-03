@@ -265,7 +265,7 @@ export default defineComponent({
                 },
                 {
                     id: 'month_started_art',
-                    helpText: 'Month last taken ARVs',
+                    helpText: 'Month started ART',
                     type: FieldType.TT_SELECT,
                     appearInSummary: () => false,
                     options: () => MonthOptions,
