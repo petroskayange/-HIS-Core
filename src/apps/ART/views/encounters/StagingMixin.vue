@@ -164,7 +164,7 @@ export default defineComponent({
         hasStaging(f: Record<string, any>) {
             // For components that have Optional staging
             if ('has_transfer_letter' in f) {
-                return f.has_transfer_letter.value === 'Yes'
+                return f.has_transfer_letter && f.has_transfer_letter.value === 'Yes'
             }
             return true
         },
