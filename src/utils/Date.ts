@@ -51,11 +51,11 @@ function stitchDate(year: number | string, month=-1 as number | string, day=-1 a
     const unknown = (d: number | string) => d.toString().match(/Unknown/i) 
 
     if (!month || unknown(month)) {
-        fmonth = dayjs().month()
+        fmonth = '07'
     }
 
     if (!day || unknown(day)) {
-        fday = dayjs().day()
+        fday = '01'
     }
 
     return toStandardHisFormat(`${year}-${fmonth}-${fday}`)
