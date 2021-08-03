@@ -417,6 +417,7 @@ export default defineComponent({
                         }
                     },
                     computedValue: ({ value }: Option) => ({
+                        tag:'vitals',
                         obs: this.vitals.buildValueNumber('weight', value)
                     }),
                     condition: (f: any) => f.has_transfer_letter.value === 'Yes',
