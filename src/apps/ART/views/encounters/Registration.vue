@@ -188,25 +188,49 @@ export default defineComponent({
                     helpText: 'Taken ARVs in the last two months?',
                     type: FieldType.TT_SELECT,
                     validation: (v: any) => Validation.required(v),
-                    computedValue: ({value}: Option) => ({
-                        tag:'reg',
-                        obs: this.registration.buildValueCoded(
-                            'Has the patient taken ART in the last two months', value
-                        )
-                    }),
-                    condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown',
-                    options: () => this.yesNoUnknownOptions()
+                    computedValue: ({value}: Option) => {
+                        return {
+                            tag:'reg',
+                            obs: [
+                                this.registration.buildValueCoded(
+                                    'Has the patient taken ART in the last two months', value
+                                )
+                            ]
+                        }
+                    },
+                    options: () => this.yesNoUnknownOptions(),
+                    condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown'
                 },
                 {
                     id: 'taken_art_in_last_two_weeks',
                     helpText: "Taken ARV's in the last two weeks?",
                     type: FieldType.TT_SELECT,
-                    computedValue: ({value}: Option) => ({
-                        tag:'reg',
-                        obs: this.registration.buildValueCoded(
-                            'Has the patient taken ART in the last two weeks', value
-                        ) 
-                    }),
+                    computedValue: ({ value }: Option, f: any) => {
+                        let date = ''
+                        const obs = []
+                        let duration = -1
+
+                        if (value === 'Yes') {
+                            duration = 14
+                        } else if (f.taken_art_in_last_two_months.value === 'Yes') {
+                            duration = 60
+                        }
+
+                        if (duration > 0) {
+                            date = HisDate.getDateBeforeByDays(this.registration.getDate(), duration)
+                            obs.push(this.registration.buildValueDateEstimated('Date ART last taken', date))
+                        }
+                        return {
+                            date,
+                            tag:'reg',
+                            obs: [
+                                ...obs,
+                                this.registration.buildValueCoded(
+                                    'Has the patient taken ART in the last two weeks', value
+                                )
+                            ]
+                        }
+                    },
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.taken_art_in_last_two_months.value === 'Yes',
                     options: () => this.yesNoUnknownOptions()
@@ -327,19 +351,17 @@ export default defineComponent({
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.year_started_art.value === "Unknown",
                     computedValue: ({value}: Option) => {
-                        const hisDate = HisDate.getDateBeforeByDays(
+                        const date = HisDate.getDateBeforeByDays(
                             this.registration.getDate(), parseInt(value.toString())
                         )
-                        this.staging.setDate(hisDate)
-                        this.vitals.setDate(hisDate)
+                        this.staging.setDate(date)
+                        this.vitals.setDate(date)
                         return {
                             tag:'reg',
-                            date: hisDate,
-                            obs: this.registration.buildObs(
-                            'Drug start date', {
-                                'value_datetime': hisDate,
-                                'value_text': 'Estimated'
-                            })
+                            date,
+                            obs: this.registration.buildValueDateEstimated(
+                                'Drug start date', date
+                            )
                         }
                     },
                     options: () => ([
