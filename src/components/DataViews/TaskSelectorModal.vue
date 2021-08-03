@@ -9,7 +9,7 @@
       <ion-col size="4" v-for="(taskItem, taskIndex) in row" :key="`task-${taskIndex}`">
         <task-card
           @click="doTask(taskItem)"
-          :title="taskItem.name"
+          :title="taskItem.name.toUpperCase()"
           :description="taskItem.description"
           :icon="taskItem.icon">
         </task-card>
