@@ -1,24 +1,27 @@
 import { Order } from '@/interfaces/order';
 import { Service } from '@/services/service'
 import HisDate from "@/utils/Date"
+import { ConceptService } from './concept_service';
 export class OrderService extends Service {
     constructor() {
         super()
     }
-
+    static create(data: any) {
+        return super.postJson('/lab/orders', data)     
+    }
     static getOrders(patientID: number, params = {}) {
         return super.getJson('/lab/orders', {
             'patient_id': patientID,
             ...params
         });
     }
-    
+
     static getTestTypes() {
         return super.getJson('/lab/test_types');
     }
-    
+
     static getSpecimens(testName: string) {
-        return super.getJson('/lab/specimen_types', {'test_type': testName});
+        return super.getJson('/lab/specimen_types', { 'test_type': testName });
     }
 
     static getViralLoadOrders(orders: Order[]) {
@@ -73,6 +76,27 @@ export class OrderService extends Service {
         }
         return formatted;
     }
-
-
+    static buildLabOrders(encounter: any, orders: any) {
+        return orders.map((data: any) => {
+            const testReason = ConceptService.getCachedConceptID(data.reason);
+            return {
+                'encounter_id': encounter.encounter_id,
+                'tests': [{ 'concept_id': data.concept_id }],
+                'reason_for_test_id': testReason,
+                'target_lab': super.getUserLocation(),
+                'date': HisDate.toStandardHisFormat(super.getSessionDate()),
+                'requesting_clinician': super.getUserName(),
+                'specimen': {
+                    'concept_id': data.specimenConcept
+                }
+                
+            }
+        })
+    }
+    static saveOrdersArray(encounterId: number, orders: Array<Order>) {
+        return this.create({
+            'encounter_id': encounterId,
+            orders: orders
+        })
+    }
 }

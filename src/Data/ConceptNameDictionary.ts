@@ -1,4 +1,25 @@
 export default [
+    {
+      "categories": [],
+      "concept_id": 9144,
+      "name": "Repeat / Missing"
+   }, {
+      "categories": [],
+      "concept_id": 3280,
+      "name": "Targeted"
+   }, {
+      "categories": [],
+      "concept_id": 1345,
+      "name": "Confirmatory"
+   }, {
+      "categories": [],
+      "concept_id": 6383,
+      "name": "Stat"
+   }, {
+      "categories": [],
+      "concept_id": 432,
+      "name": "Routine"
+   },
    {
       "categories": [],
       "concept_id": 9974,

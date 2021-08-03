@@ -13,8 +13,8 @@
       <div >
   <ion-list> 
       <ion-item
-         v-for="data in testTypes" :key="data"
-         @click="getSpecimens(data.name)"
+         v-for="(data, index) in testTypes" :key="data"
+         @click="getSpecimens(data.name, index)"
       > 
         <ion-label> {{ data.name }} </ion-label>
         <ion-checkbox v-model="data.isChecked" slot="start"/>
@@ -22,33 +22,57 @@
     </ion-list>
       </div>
     </ion-col>
-    <ion-col>
+    <ion-col v-if="activeIndex != null && selectedOrders.length > 0">
       <div style="">
       <ion-list> 
-    <h3>Select specimen</h3>
-      <ion-item
-         v-for="data in specimens" :key="data"
+      
+    <ion-radio-group v-model="testTypes[activeIndex]['specimen']">
+      <ion-list-header>
+        <ion-label>Select specimen</ion-label>
+      </ion-list-header>
+        <!-- :color="isActive(item) ? 'primary' : ''" -->
+        <ion-item
+         v-for="data in specimens" :key="data" 
         :detail="true"
       > 
-        <!-- :color="isActive(item) ? 'primary' : ''" -->
-        {{ data.name }}
+      <ion-label>{{data.name}}</ion-label>
+        <ion-radio slot="start" :value="data.name" @click="addSpecimen(data)"></ion-radio>
       </ion-item>
+    </ion-radio-group>
     </ion-list>
-    <h3>Main test(s) reason</h3>
-        <p v-for="data in specimens" :key="data">
-          {{data.name}}
-        </p>
-      </div>
-     <div style="">
-<ion-item
-         v-for="data in reasons" :key="data"
-      > 
+    <ion-radio-group v-model="testTypes[activeIndex]['reason']">
+      <ion-list-header>
+        <ion-label>Select Reason</ion-label>
+      </ion-list-header>
         <!-- :color="isActive(item) ? 'primary' : ''" -->
-        {{ data }}
+        <ion-item
+          v-for="data in reasons" :key="data"
+        :detail="true"
+      > 
+      <ion-label>{{data}}</ion-label>
+        <ion-radio slot="start" :value="data" ></ion-radio>
       </ion-item>
+    </ion-radio-group>
       </div>
-       <div style="height: 30%">
-
+       <div>
+         <table>
+           <thead>
+             <tr>
+               <td>Test</td>
+               <td>Specimen</td>
+               <td>Reason</td>
+               <td>Action</td>
+             </tr>
+           </thead>
+           <tbody>
+             <tr v-for="(data, index) in finalOrders" :key="index">
+               <td>{{data.name}}</td>
+               <td>{{data.specimen}}</td>
+               <td>{{data.reason}}</td>
+               <td><ion-button @click="removeOrder(data.currentIndex)" slot="end" color="danger">X</ion-button></td>
+             </tr>
+           </tbody>
+         </table>
       </div>
     </ion-col>
   </ion-row>
@@ -56,7 +80,7 @@
     </div>
   <ion-footer>
     <ion-toolbar> 
-      <ion-button @click="closeModal" slot="end"> Place orders </ion-button>
+      <ion-button @click="postActivities" slot="end" :disabled="finalOrders.length === 0"> Place orders </ion-button>
       <ion-button @click="closeModal" slot="start" color="danger"> Close </ion-button>
     </ion-toolbar>
   </ion-footer>
@@ -74,13 +98,15 @@ import {
   IonList,
   IonItem,
   IonCheckbox,
+  IonRadioGroup,
+  IonRow,
 } from "@ionic/vue";
 import { defineComponent, PropType } from "vue";
-import { toastWarning } from "@/utils/Alerts"
-import ApiClient from "@/services/api_client";
+import { toastSuccess, toastWarning } from "@/utils/Alerts"
 import { ActivityInterface } from "@/apps/interfaces/AppInterface"
 import { OrderService } from "@/services/order_service";
-
+import { LabOrderService } from "@/apps/ART/services/lab_order_service";
+import { alertAction } from "@/utils/Alerts"
 export default defineComponent({
   name: "Modal",
   props: {
@@ -108,33 +134,56 @@ export default defineComponent({
     async getActivities() {
      this.testTypes = await OrderService.getTestTypes();
     },
-    async getSpecimens(testName: string) {
+    async getSpecimens(testName: string, index: number) {
      this.specimens = await OrderService.getSpecimens(testName);
+     this.testTypes[index]['currentIndex'] = index;
+     this.activeIndex = index;
+    },
+    removeOrder(index: number) {
+      this.testTypes[index]['isChecked'] = false;
+    },
+    addSpecimen(data: any) {
+      this.testTypes[this.activeIndex]['specimenConcept'] = data.concept_id;
     },
     async postActivities() {
-      const userActivities = {
-        property: "activities",
-        'property_value': this.selectedActivities,
-      };
-      const response = await ApiClient.post(`/user_properties`, userActivities);
-
-      if (!response || response.status !== 201) {
-        toastWarning("Could not save activities");
-        //
-      } else {
-        await modalController.dismiss();
+      const patientID= `${this.$route.query.patient_id}`;
+      const orders = new LabOrderService(parseInt(patientID));
+      const encounter = await orders.createEncounter();
+      if(encounter) {
+        const formattedOrders = await OrderService.buildLabOrders(encounter, this.finalOrders);
+        const d =await  OrderService.saveOrdersArray(encounter.encounter_id, formattedOrders);
+        if(!d) 
+          return toastWarning('Unable to save lab orders')
+        alertAction('Lab orders and encounter created!, print out your last orders?', [
+        {
+          text: 'Yes',
+          handler: () => this.printOrders(d)
+        },
+        {
+          text: 'No',
+          handler: () => this.closeModal()
+        }
+      ])
+        toastSuccess("");
       }
     },
     async closeModal() {
       await modalController.dismiss({})
     },
+    async printOrders(orders: any) {
+     const orderIDs = orders.reduce((accumulator: string, currentValue: any) => {
+          return currentValue.order_id + "," + accumulator
+      }, '')
+      console.log(orderIDs);
+      await modalController.dismiss({})
+    },
   },
   computed: {
-    selectedActivities(): string {
-      return this.appActivities
-        .filter((element) => element.selected == true)
-        .map((el) => el.value )
-        .join(",");
+    selectedOrders(): any {
+      return this.testTypes.filter((data: any) => data.isChecked === true);
+    },
+    finalOrders(): any {
+      return this.selectedOrders.filter((data: any) => data.reason && data.specimen)
     }
   },
   mounted() {
@@ -144,9 +193,10 @@ export default defineComponent({
     return {
       content: "Content",
       appActivities: [] as Array<ActivityInterface>,
-      testTypes: [],
+      testTypes: [] as any,
       specimens: [],
-      reasons: ['Routine', 'Targeted', 'Confirmatory', 'Stat', 'Repeat / Missing']
+      reasons: ['Routine', 'Targeted', 'Confirmatory', 'Stat', 'Repeat / Missing'],
+      activeIndex: null as any
     };
   },
   components: {
@@ -159,6 +209,26 @@ export default defineComponent({
     IonList,
     IonItem,
     IonCheckbox,
+    IonRadioGroup,
+    IonRow,
   },
 });
 </script>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>

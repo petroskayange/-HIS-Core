@@ -58,4 +58,7 @@ export class Service {
        
        return roles ? JSON.parse(roles) : []
     }
+    static getUserName() {
+       return sessionStorage.username;
+    }
 }

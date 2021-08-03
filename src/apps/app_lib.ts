@@ -14,9 +14,10 @@ function getActiveApp() {
     }
 }
 
-function openModal(component: any, props = {}) {
+function openModal(component: any, props = {}, cssClass = "") {
     return modalController.create({
         component,
+        cssClass: cssClass,
         backdropDismiss: false,
         componentProps: { ...props }
     });
@@ -46,7 +47,7 @@ async function selectApplication() {
     return data
 }
 async function makeLabOrders() {
-    const modal = await openModal(OrdersModal, {cssClass: "my-custom-class"})
+    const modal = await openModal(OrdersModal, {}, "custom-modal")
     modal.present()
     return modal;
     // const { data } = await modal.onDidDismiss()
