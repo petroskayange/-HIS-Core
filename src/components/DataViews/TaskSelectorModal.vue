@@ -9,7 +9,7 @@
       <ion-col size="4" v-for="(taskItem, taskIndex) in row" :key="`task-${taskIndex}`">
         <task-card
           @click="doTask(taskItem)"
-          :title="taskItem.name"
+          :title="taskItem.name.toUpperCase()"
           :description="taskItem.description"
           :icon="taskItem.icon">
         </task-card>
@@ -18,7 +18,7 @@
   </ion-grid>
   <ion-footer>
     <ion-toolbar> 
-      <ion-button @click="closeModal" slot="end"> Close </ion-button>
+      <ion-button class="close-btn" color="danger" size="large" @click="closeModal" slot="end"> Close </ion-button>
     </ion-toolbar>
   </ion-footer>
 </template>
@@ -75,5 +75,8 @@ export default defineComponent({
     width: 100%;
     height: 90%;
     overflow-y: auto;
+  }
+  .close-btn {
+    margin: 2%;
   }
 </style>
