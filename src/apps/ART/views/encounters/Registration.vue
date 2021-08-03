@@ -52,7 +52,7 @@ export default defineComponent({
 
                     const vitalsObs = await this.resolveObs(fObs, 'vitals')
                     await this.vitals.saveObservationList(vitalsObs)
-                } 
+                }
             } catch(e) {
                 return toastWarning(e)
             }
@@ -195,7 +195,7 @@ export default defineComponent({
                         )
                     }),
                     condition: (f: any) => f.year_last_taken_arvs.value === 'Unknown',
-                    options: () => [...this.yesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
+                    options: () => this.yesNoUnknownOptions()
                 },
                 {
                     id: 'taken_art_in_last_two_weeks',
@@ -209,7 +209,7 @@ export default defineComponent({
                     }),
                     validation: (v: any) => Validation.required(v),
                     condition: (f: any) => f.taken_art_in_last_two_months.value === 'Yes',
-                    options: () => [...this.yesNoOptions(), { label: 'Unknown', value: 'Unknown' }]
+                    options: () => this.yesNoUnknownOptions()
                 },
                 {
                     id: 'ever_registered_at_art_clinic',
