@@ -315,26 +315,32 @@ export default defineComponent({
                     type: FieldType.TT_MONTHLY_DAYS,
                     summaryMapValue: (_: Option, f: any, computedValue: any) => ({
                         label: 'Date started Art', 
-                        value: computedValue.date
+                        value: `${computedValue.date} ${computedValue.isEstimate ? '(Estimated Date)': ''}`
                     }),
                     computedValue: ({value}: Option, f: any) => {
-                        const date = HisDate.stitchDate(
-                            f.year_started_art.value,
-                            f.month_started_art.value,
-                            value
-                        )
+                        let obs = {}
+                        let isEstimate = false
+                        const year = f.year_started_art.value
+                        const month = f.month_started_art.value
+                        const day = value
+                        const date = HisDate.stitchDate(year, month, day)
+
+                        if (month === 'Unknown' || day === 'Unknown') {
+                            isEstimate = true
+                            obs = this.registration.buildValueDateEstimated('Drug start date', date)
+                        } else {
+                            obs = this.registration.buildValueDate('Drug start date', date)
+                        }
+
                         this.staging.setDate(date)
                         this.vitals.setDate(date)
-                        return {
-                            tag:'reg', date,
-                            obs: this.registration.buildValueDate('Drug start date', date)
-                        }
+
+                        return { tag:'reg', date, obs, isEstimate }
                     },
-                    condition: (f: any) => f.month_started_art.value != 'Unknown',
+                    condition: (f: any) => f.month_started_art.value,
                     validation: (val: any, f: any, { date }: any) => {
                         return this.validateSeries([
                             Validation.required(val),
-                            Validation.isNumber(val),
                             this.dateBeforeBirthDate(date),
                             this.dateInFuture(date)
                         ])
