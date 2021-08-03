@@ -320,16 +320,18 @@ export default defineComponent({
                     id: 'art_start_date_estimation',
                     helpText: 'Estimated time since ART initiation',
                     type: FieldType.TT_SELECT,
+                    summaryMapValue: ({ label }: Option, f: any, computedValue: any) => ({ 
+                        label: 'Estimated time since ART initiation',
+                        value: `${label} (${computedValue.date})`
+                    }),
                     validation: (val: any) => Validation.required(val),
                     condition: (f: any) => f.year_started_art.value === "Unknown",
                     computedValue: ({value}: Option) => {
-                        const date = new Date()
-                        date.setDate(date.getDate() - parseInt(value.toString()))
-
-                        const hisDate = HisDate.toStandardHisFormat(date)
+                        const hisDate = HisDate.getDateBeforeByDays(
+                            this.registration.getDate(), parseInt(value.toString())
+                        )
                         this.staging.setDate(hisDate)
                         this.vitals.setDate(hisDate)
-
                         return {
                             tag:'reg',
                             date: hisDate,

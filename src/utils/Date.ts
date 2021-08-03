@@ -44,6 +44,12 @@ function dateIsAfter(date: string) { return dayjs().isAfter(date) }
 
 function getCurrentYear() { return dayjs().year() }
 
+function getDateBeforeByDays(date: string, days: number) {
+    const dateObj = new Date(date)
+    dateObj.setDate(dateObj.getDate() - days)
+    return toStandardHisFormat(dateObj)
+}
+
 function stitchDate(year: number | string, month=-1 as number | string, day=-1 as number | string) {
     let fmonth = month
     let fday = day
@@ -73,5 +79,6 @@ export default {
     toStandardHisFormat,
     estimateDateFromAge,
     getYearFromAge,
-    getCurrentYear
+    getCurrentYear,
+    getDateBeforeByDays
 }
