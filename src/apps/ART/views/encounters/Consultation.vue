@@ -425,6 +425,9 @@ export default defineComponent({
                   const data = await HisApp.makeLabOrders();
                   // this.fieldComponent = 'custom_regimen'
                 },
+                visibleOnStateChange: (state: Record<string, any>) => {
+                  return state.index === 1
+                },
               },
             ],
           },
