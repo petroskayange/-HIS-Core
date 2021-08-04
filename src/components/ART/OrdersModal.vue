@@ -4,13 +4,10 @@
       <ion-title>Lab orders</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding">
-    <div style="height: 90%; overflow: scroll;">
-
+  <ion-content class="ion-padding" >
   <ion-grid>
   <ion-row>
-    <ion-col  size="6">
-      <div >
+    <ion-col  size="6" style="height: 90%; ">
   <ion-list> 
       <ion-item
          v-for="(data, index) in testTypes" :key="data"
@@ -20,7 +17,6 @@
         <ion-checkbox v-model="data.isChecked" slot="start"/>
       </ion-item>
     </ion-list>
-      </div>
     </ion-col>
     <ion-col v-if="activeIndex != null && selectedOrders.length > 0">
       <div style="">
@@ -77,14 +73,13 @@
     </ion-col>
   </ion-row>
 </ion-grid> 
-    </div>
+  </ion-content>
   <ion-footer>
     <ion-toolbar> 
       <ion-button @click="postActivities" slot="end" :disabled="finalOrders.length === 0"> Place orders </ion-button>
       <ion-button @click="closeModal" slot="start" color="danger"> Close </ion-button>
     </ion-toolbar>
   </ion-footer>
-  </ion-content>
 </template>
 <script lang="ts">
 import {
@@ -107,6 +102,7 @@ import { ActivityInterface } from "@/apps/interfaces/AppInterface"
 import { OrderService } from "@/services/order_service";
 import { LabOrderService } from "@/apps/ART/services/lab_order_service";
 import { alertAction } from "@/utils/Alerts"
+import { PrintoutService } from "@/services/printout_service";
 export default defineComponent({
   name: "Modal",
   props: {
@@ -171,10 +167,11 @@ export default defineComponent({
       await modalController.dismiss({})
     },
     async printOrders(orders: any) {
-     const orderIDs = orders.reduce((accumulator: string, currentValue: any) => {
-          return currentValue.order_id + "," + accumulator
-      }, '')
-      console.log(orderIDs);
+      const p = new PrintoutService();
+      await orders.forEach(async (element: any) => {
+        const url = `lab/labels/order?order_id=${element.order_id}`
+        await p.printLbl(url);
+      });
       await modalController.dismiss({})
     },
   },

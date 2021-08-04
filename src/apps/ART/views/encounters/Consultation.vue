@@ -20,7 +20,7 @@ import { findIndex, isEmpty } from "lodash";
 import { ConsultationService } from "@/apps/ART/services/consultation_service";
 import { UserService } from "@/services/user_service";
 import { OrderService } from "@/services/order_service";
-import HisApp from "@/apps/app_lib"
+import HisApp from "@/apps/app_lib";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -46,7 +46,7 @@ export default defineComponent({
     treatmentStatusObs: {} as any,
     sulphurObs: {} as any,
     referObs: {} as any,
-    medicationObs: [] as any
+    medicationObs: [] as any,
   }),
   watch: {
     ready: {
@@ -63,36 +63,36 @@ export default defineComponent({
   },
   methods: {
     async onFinish(formData: any) {
-            this.setDrugOrderObs(formData.prescription);
-            const encounter = await this.consultation.createEncounter()
+      this.setDrugOrderObs(formData.prescription);
+      const encounter = await this.consultation.createEncounter();
 
-            if (!encounter) return toastWarning('Unable to create encounter')
+      if (!encounter) return toastWarning("Unable to create encounter");
 
-            const data = await Promise.all([
-                ...this.pregnancy,
-                ...this.currentFPM,
-                ...this.newFPM,
-                this.reasonForNoFPM,
-                this.specificReasonForNoFPM,
-                this.offerContraceptives,
-                ...this.sideEffects,
-                ...this.otherSideEffects,
-                this.tbObs,
-                ...this.tbSideEffectsObs,
-                this.tbStatusObs,
-                this.treatmentStatusObs,
-                this.sulphurObs,
-                this.referObs,
-                ...this.medicationObs
-            ])
-            const filtered = data.filter(d => !isEmpty(d));
-            const obs = await this.consultation.saveObservationList(filtered)
+      const data = await Promise.all([
+        ...this.pregnancy,
+        ...this.currentFPM,
+        ...this.newFPM,
+        this.reasonForNoFPM,
+        this.specificReasonForNoFPM,
+        this.offerContraceptives,
+        ...this.sideEffects,
+        ...this.otherSideEffects,
+        this.tbObs,
+        ...this.tbSideEffectsObs,
+        this.tbStatusObs,
+        this.treatmentStatusObs,
+        this.sulphurObs,
+        this.referObs,
+        ...this.medicationObs,
+      ]);
+      const filtered = data.filter((d) => !isEmpty(d));
+      const obs = await this.consultation.saveObservationList(filtered);
 
-            if (!obs) return toastWarning('Unable to save patient observations')
+      if (!obs) return toastWarning("Unable to save patient observations");
 
-            toastSuccess('Observations and encounter created!')
+      toastSuccess("Observations and encounter created!");
 
-            this.nextTask()
+      this.nextTask();
     },
     isGender(gender: string) {
       return this.patient.getGender() === gender;
@@ -175,12 +175,19 @@ export default defineComponent({
       return listData;
     },
     setDrugOrderObs(listData: Array<Option>) {
-      listData.forEach(element => {
+      listData.forEach((element) => {
         if (element.label != "NONE OF THE ABOVE" && element.isChecked) {
-          this.medicationObs.push(this.consultation.buildValueCoded('Medication orders', element.label));
+          this.medicationObs.push(
+            this.consultation.buildValueCoded(
+              "Medication orders",
+              element.label
+            )
+          );
         }
         if (element.label === "NONE OF THE ABOVE" && element.isChecked) {
-          this.medicationObs.push(this.consultation.buildValueCoded('Prescribe drugs', 'No'));
+          this.medicationObs.push(
+            this.consultation.buildValueCoded("Prescribe drugs", "No")
+          );
         }
       });
     },
@@ -267,7 +274,7 @@ export default defineComponent({
         "TUBAL LIGATION",
         "NONE",
       ];
-      const filtered = methods.filter(data => !exclusionList.includes(data)); 
+      const filtered = methods.filter((data) => !exclusionList.includes(data));
       return filtered.map((method) => {
         return { label: method, value: method };
       });
@@ -381,7 +388,7 @@ export default defineComponent({
           id: "prescription",
           helpText: "Medication to prescribe during this visit",
           type: FieldType.TT_MULTIPLE_SELECT,
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disablePrescriptions(listData, value);
           },
@@ -393,9 +400,9 @@ export default defineComponent({
           helpText: "Lab orders",
           type: FieldType.TT_LAB_ORDERS,
           options: async () => {
-          const orders = await OrderService.getOrders(this.patientID);
-          const VLOrders = OrderService.formatLabs(orders);
-          return [
+            const orders = await OrderService.getOrders(this.patientID);
+            const VLOrders = OrderService.formatLabs(orders);
+            return [
               {
                 label: "Lab orders",
                 value: "order trail",
@@ -408,18 +415,18 @@ export default defineComponent({
           config: {
             hiddenFooterBtns: ["Clear"],
             footerBtns: [
-                            {
-                                name: 'Order',
-                                size: 'large',
-                                slot: 'end',
-                                color: 'primary',
-                                visible: true,
-                                onClick: async () => {
-                                  const data = await HisApp.makeLabOrders() 
-                                    // this.fieldComponent = 'custom_regimen'
-                                }
-                            }
-                        ]
+              {
+                name: "Order",
+                size: "large",
+                slot: "end",
+                color: "primary",
+                visible: true,
+                onClick: async () => {
+                  const data = await HisApp.makeLabOrders();
+                  // this.fieldComponent = 'custom_regimen'
+                },
+              },
+            ],
           },
         },
         {
@@ -427,11 +434,14 @@ export default defineComponent({
           helpText: `Patient Pregnant or breastfeeding?`,
           condition: () => this.showPregnancyQuestions(),
           type: FieldType.TT_MULTIPLE_YES_NO,
-          validation: (data: any) => Validation.anyEmpty(data), 
+          validation: (data: any) => Validation.anyEmpty(data),
           unload: (data: any) => {
             this.pregnancy = data.map((data: Option) => {
-                return this.consultation.buildValueCoded(data.other.concept, data.value)
-            })
+              return this.consultation.buildValueCoded(
+                data.other.concept,
+                data.value
+              );
+            });
           },
           options: () => [
             {
@@ -439,7 +449,7 @@ export default defineComponent({
               value: "",
               other: {
                 values: this.getYesNo(),
-                concept: 'Is patient pregnant',
+                concept: "Is patient pregnant",
               },
             },
             {
@@ -447,7 +457,7 @@ export default defineComponent({
               value: "",
               other: {
                 values: this.getYesNo(),
-                concept: 'Is patient breast feeding',
+                concept: "Is patient breast feeding",
               },
             },
           ],
@@ -485,10 +495,10 @@ export default defineComponent({
           },
           unload: (data: any) => {
             this.currentFPM = data.map((data: Option) => {
-                return this.consultation.buildValueCoded(data.label, data.value)
-            })
+              return this.consultation.buildValueCoded(data.label, data.value);
+            });
           },
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) =>
             this.showCurrentContraceptionMethods(formData),
           type: FieldType.TT_MULTIPLE_SELECT,
@@ -499,14 +509,14 @@ export default defineComponent({
           condition: (formData: any) =>
             this.showNewContraceptionMethods(formData),
           helpText: "What method are you providing today?",
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disableFPMethods(listData, value);
           },
           unload: (data: any) => {
             this.newFPM = data.map((data: Option) => {
-                return this.consultation.buildValueCoded(data.label, data.value)
-            })
+              return this.consultation.buildValueCoded(data.label, data.value);
+            });
           },
           type: FieldType.TT_MULTIPLE_SELECT,
           options: () => this.getFPMethods(),
@@ -514,10 +524,13 @@ export default defineComponent({
         {
           id: "reason_for_no_fpm",
           helpText: "Main reason for not using family planning methods",
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) => this.declinedFPM(formData),
           unload: (data: any) => {
-            this.reasonForNoFPM = this.consultation.buildValueText('Why does the woman not want to use birth control', data.value)
+            this.reasonForNoFPM = this.consultation.buildValueText(
+              "Why does the woman not want to use birth control",
+              data.value
+            );
           },
           type: FieldType.TT_SELECT,
           options: () => {
@@ -541,10 +554,13 @@ export default defineComponent({
         {
           id: "specific_reason_for_no_fpm",
           helpText: "Specific reason for not using family planning methods",
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) => this.riskOfUnplannedPregnancy(formData),
           unload: (data: any) => {
-            this.specificReasonForNoFPM = this.consultation.buildValueText('Reason for not using contraceptives', data.value)
+            this.specificReasonForNoFPM = this.consultation.buildValueText(
+              "Reason for not using contraceptives",
+              data.value
+            );
           },
           type: FieldType.TT_SELECT,
           options: () => {
@@ -573,10 +589,13 @@ export default defineComponent({
           id: "offer_contraceptives",
           helpText: "Offer contraceptives",
           //show when previous one has a value
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) => this.riskOfUnplannedPregnancy(formData),
           unload: (data: any) => {
-            this.offerContraceptives = this.consultation.buildValueCoded('Family planning, action to take', data.value)
+            this.offerContraceptives = this.consultation.buildValueCoded(
+              "Family planning, action to take",
+              data.value
+            );
           },
           type: FieldType.TT_SELECT,
           options: () => {
@@ -591,66 +610,76 @@ export default defineComponent({
           id: "offered_intervention",
           helpText: "Offered intervention",
           //show when the previous one is accepted
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) => this.acceptedIntervention(formData),
           type: FieldType.TT_MULTIPLE_SELECT,
           unload: (data: any) => {
             this.newFPM = data.map((data: Option) => {
-                return this.consultation.buildValueCoded(data.label, data.value)
-            })
+              return this.consultation.buildValueCoded(data.label, data.value);
+            });
           },
-          options: () => this.getFPMethods(['NONE']),
+          options: () => this.getFPMethods(["NONE"]),
         },
         {
           id: "side_effects",
           helpText:
             "Contraindications / Side effects (select either 'Yes' or 'No')",
           type: FieldType.TT_MULTIPLE_YES_NO,
-          validation: (data: any) => Validation.anyEmpty(data), 
+          validation: (data: any) => Validation.anyEmpty(data),
           unload: async (data: any) => {
-          this.sideEffects = await data.map(async (data: Option) => {
-                const host = await this.consultation.buildValueCoded("Malawi ART side effects", data.label);
-                const child = await this.consultation.buildValueCoded(data.label, data.value);
-                return {
-                  ...host,
-                  child: {
-                    ...child
-                  }
-                }
-          
-            })
+            this.sideEffects = await data.map(async (data: Option) => {
+              const host = await this.consultation.buildValueCoded(
+                "Malawi ART side effects",
+                data.label
+              );
+              const child = await this.consultation.buildValueCoded(
+                data.label,
+                data.value
+              );
+              return {
+                ...host,
+                child: {
+                  ...child,
+                },
+              };
+            });
           },
           options: () => this.getContraindications(),
         },
         {
           id: "other_side_effects",
           condition: (formData: any) => this.showOtherSideEffects(formData),
-          validation: (data: any) => Validation.anyEmpty(data), 
+          validation: (data: any) => Validation.anyEmpty(data),
           helpText:
             "Other Contraindications / Side effects (select either 'Yes' or 'No')",
           type: FieldType.TT_MULTIPLE_YES_NO,
           unload: async (data: any) => {
             const filtered = data.filter((d: any) => {
               return d.label !== "Other (Specify)";
-            })
+            });
             this.otherSideEffects = await filtered.map(async (data: Option) => {
-                const host = await this.consultation.buildValueCoded("Other side effect", data.label);
-                const child = await this.consultation.buildValueCoded(data.label, data.value);
-                return {
-                  ...host,
-                  child: {
-                    ...child
-                  }
-                }
-          
-            })
+              const host = await this.consultation.buildValueCoded(
+                "Other side effect",
+                data.label
+              );
+              const child = await this.consultation.buildValueCoded(
+                data.label,
+                data.value
+              );
+              return {
+                ...host,
+                child: {
+                  ...child,
+                },
+              };
+            });
           },
           options: () => this.getOtherContraindications(),
         },
         {
           id: "on_tb_treatment",
           helpText: "On TB Treatment?",
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           type: FieldType.TT_SELECT,
           unload: async (data: any) => {
             if (data.value === "Yes") {
@@ -658,14 +687,17 @@ export default defineComponent({
             } else {
               this.TBSuspected = false;
             }
-            this.tbObs =  this.consultation.buildValueCoded(data.label, data.value)
+            this.tbObs = this.consultation.buildValueCoded(
+              data.label,
+              data.value
+            );
           },
           options: () => this.getYesNo(),
         },
         {
           id: "tb_side_effects",
           helpText: "TB Associated symptoms",
-          validation: (data: any) => Validation.anyEmpty(data), 
+          validation: (data: any) => Validation.anyEmpty(data),
           condition: (formData: any) => this.notOnTBTreatment(formData),
           unload: async (vals: any) => {
             const val =
@@ -674,15 +706,21 @@ export default defineComponent({
               }).length > 0;
             this.presentedTBSymptoms = val;
             this.tbSideEffectsObs = await vals.map(async (data: Option) => {
-                const host = await this.consultation.buildValueCoded("Routine TB Screening", data.label);
-                const child = await this.consultation.buildValueCoded(data.label, data.value);
-                return {
-                  ...host,
-                  child: {
-                    ...child
-                  }
-                }
-            })
+              const host = await this.consultation.buildValueCoded(
+                "Routine TB Screening",
+                data.label
+              );
+              const child = await this.consultation.buildValueCoded(
+                data.label,
+                data.value
+              );
+              return {
+                ...host,
+                child: {
+                  ...child,
+                },
+              };
+            });
           },
           type: FieldType.TT_MULTIPLE_YES_NO,
           options: () => this.getTBSymptoms(),
@@ -691,9 +729,9 @@ export default defineComponent({
           id: "tb_status",
           helpText: "TB Status",
           type: FieldType.TT_SELECT,
-          // pre select yb suspected when the patient has TB symptoms 
+          // pre select yb suspected when the patient has TB symptoms
           preset: this.getFieldPreset(),
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: (formData: any) => this.hasTBSymptoms(formData),
           unload: async (data: any) => {
             if (data.value === "TB Suspected") {
@@ -701,12 +739,15 @@ export default defineComponent({
             } else {
               this.TBSuspected = false;
             }
-            this.tbStatusObs = this.consultation.buildValueText('TB Status', data.value)
+            this.tbStatusObs = this.consultation.buildValueText(
+              "TB Status",
+              data.value
+            );
           },
           options: () => {
             return [
               { label: "TB NOT suspected", value: "TB NOT suspected" },
-              { label: "TB Suspected", value: "TB Suspected"},
+              { label: "TB Suspected", value: "TB Suspected" },
               {
                 label: "Confirmed TB Not on treatment",
                 value: "Confirmed TB Not on treatment",
@@ -717,11 +758,14 @@ export default defineComponent({
         {
           id: "routine_tb_therapy",
           helpText: "TB preventive therapy (TPT) history",
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           condition: () => !this.hasTBTherapyObs,
           unload: async (data: any) => {
-            this.updateCompletedTPT(data)
-            this.treatmentStatusObs = this.consultation.buildValueText('TB Status', data.value)
+            this.updateCompletedTPT(data);
+            this.treatmentStatusObs = this.consultation.buildValueText(
+              "TB Status",
+              data.value
+            );
           },
           type: FieldType.TT_SELECT,
           options: () => {
@@ -753,10 +797,13 @@ export default defineComponent({
           id: "allergic_to_sulphur",
           helpText: "Allergic to Cotrimoxazole",
           type: FieldType.TT_SELECT,
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           unload: async (data: any) => {
-            this.updateAllergicToSulphur(data)
-            this.sulphurObs = this.consultation.buildValueCoded("Allergic to sulphur", data.value)
+            this.updateAllergicToSulphur(data);
+            this.sulphurObs = this.consultation.buildValueCoded(
+              "Allergic to sulphur",
+              data.value
+            );
           },
           options: () => {
             return [...this.getYesNo(), { label: "Unknown", value: "Unknown" }];
@@ -766,9 +813,12 @@ export default defineComponent({
           id: "refer_to_clinician",
           helpText: "Refer to clinician",
           condition: () => UserService.isNurse(),
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           unload: async (data: any) => {
-            this.referObs = this.consultation.buildValueCoded("Refer to clinician", data.value)
+            this.referObs = this.consultation.buildValueCoded(
+              "Refer to clinician",
+              data.value
+            );
           },
           type: FieldType.TT_SELECT,
           options: () => this.getYesNo(),
@@ -777,7 +827,7 @@ export default defineComponent({
           id: "prescription",
           helpText: "Medication to prescribe during this visit",
           type: FieldType.TT_MULTIPLE_SELECT,
-          validation: (data: any) => Validation.required(data), 
+          validation: (data: any) => Validation.required(data),
           onValueUpdate: (listData: Array<Option>, value: Option) => {
             return this.disablePrescriptions(listData, value);
           },

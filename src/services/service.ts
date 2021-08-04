@@ -40,7 +40,9 @@ export class Service {
     static getUserLocation() {
         return sessionStorage.getItem('userLocation')
     }
-
+    static getLocationName() {
+        return sessionStorage.getItem('locationName')
+    }
     static getSessionDate() {
         return sessionStorage.getItem('sessionDate') || '';
     }

@@ -58,7 +58,7 @@ export default [
          "adverse_effect"
       ],
       "concept_id": 6029,
-      name: "Night sweat"
+      name: "Night sweats"
    },
    {
       "categories":[

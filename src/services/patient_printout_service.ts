@@ -40,9 +40,5 @@ export class PatientPrintoutService extends PrintoutService {
     printTransferOutLbl() {
         return this.printPatientLbl('transfer_out')
     }
-    printLabOrdersLbl(orderID: number) {
-        // const url = `programs/${PrintoutService.getProgramID()}/${this.baseUrl}/visits?date=${date}`
-        // return this.printLbl(url)
-    }
 
 }
