@@ -24,11 +24,8 @@ export default [
       "categories": [],
       "concept_id": 9974,
       "name": "3HP (RFP + INH)"
-   },{
-      "categories": [],
-      "concept_id": 916,
-      "name": "CPT"
-   },{
+   },
+   {
       "categories": [],
       "concept_id": 656,
       "name": "IPT"
