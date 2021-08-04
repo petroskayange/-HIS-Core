@@ -1,6 +1,86 @@
 export default [
    {
       "categories": [],
+      "concept_id": 730,
+      "name": "CD4 percent"
+   },
+   {
+      "categories": [],
+      "concept_id": 2552,
+      "name": "Agrees to followup"
+   },
+   {
+      "categories": [],
+      "concept_id": 7882,
+      "name": "Confirmatory HIV test date"
+   },
+   {
+      "categories": [],
+      "concept_id": 2516,
+      "name": "Date ART started"
+   },
+   {
+      "categories": [],
+      "concept_id": 1499,
+      "name": "Drug start date"
+   },
+   {
+      "categories": [],
+      "concept_id": 7750,
+      "name": "Location of ART initiation"
+   },
+   {
+      "categories" : [],
+      "concept_id": 6394,
+      "name": "Has the patient taken ART in the last two weeks"
+   },
+   {
+      "categories" : [],
+      "concept_id": 7752,
+      "name": "Has the patient taken ART in the last two months"
+   },
+   {
+      "categories" : [],
+      "concept_id": 7751,
+      "name": "Date ART last taken"
+   },
+   {
+      "categories" : [],
+      "concept_id": 6981,
+      "name": "ART number at previous location"
+   },
+   {
+      "categories" : [],
+      "concept_id": 7881,
+      "name": "Confirmatory HIV test location"
+   },
+   {
+      "categories" : [],
+      "concept_id": 7754,
+      "name": "Ever received ART"
+   },
+   {
+      "categories": [],
+      "concept_id": 7937,
+      "name": "Ever registered at ART clinic"
+   },
+   {
+      "categories": [],
+      "concept_id": 6393,
+      "name": "Has transfer letter"
+   },
+   {
+      "categories": [],
+      "concept_id": 9685,
+      "name": "Phone"
+   },
+   {
+      "categories": [],
+      "concept_id": 9686,
+      "name": "Home visit"
+   },
+   {
+      "categories": [],
       "concept_id": 8260,
       "name": "Past medical history"
    },

@@ -36,15 +36,39 @@ function getYearFromAge(age: number) {
     return dayjs().subtract(age, 'years').year()
 }
 
+function getYear(date: string) {
+    return dayjs(date).year()
+}
+
 function dateIsAfter(date: string) { return dayjs().isAfter(date) }
 
 function getCurrentYear() { return dayjs().year() }
 
-function stitchDate(year: number | string, month='01', day='01') {
-    return toStandardHisFormat(`${year}-${month}-${day}`)
+function getDateBeforeByDays(date: string, days: number) {
+    const dateObj = new Date(date)
+    dateObj.setDate(dateObj.getDate() - days)
+    return toStandardHisFormat(dateObj)
+}
+
+function stitchDate(year: number | string, month=-1 as number | string, day=-1 as number | string) {
+    let fmonth = month.toString()
+    let fday = day.toString()
+
+    const unknown = (d: number | string) => d.toString().match(/Unknown/i) 
+
+    if (!month || unknown(month)) {
+        fmonth = '07'
+    }
+
+    if (!day || unknown(day)) {
+        fday = '15'
+    }
+
+    return toStandardHisFormat(`${year}-${fmonth}-${fday}`)
 }
 
 export default {
+    getYear,
     dateDiffInDays,
     getAgeInYears,
     toStandardHisTimeFormat,
@@ -55,5 +79,6 @@ export default {
     toStandardHisFormat,
     estimateDateFromAge,
     getYearFromAge,
-    getCurrentYear
+    getCurrentYear,
+    getDateBeforeByDays
 }
