@@ -14,7 +14,7 @@ import { Option } from "@/components/Forms/FieldInterface";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations";
 import EncounterMixinVue from "./EncounterMixin.vue";
-import { toastSuccess, toastWarning } from "@/utils/Alerts";
+import { alertAction, toastSuccess, toastWarning } from "@/utils/Alerts";
 import HisDate from "@/utils/Date";
 import { findIndex, isEmpty } from "lodash";
 import { ConsultationService } from "@/apps/ART/services/consultation_service";
@@ -153,14 +153,36 @@ export default defineComponent({
     disableFPMethods(listData: Array<Option>, value: Option) {
       if (value.isChecked && value.label === "NONE") {
         return listData.map((i) => {
-          if (i.label != "NONE") i.isChecked = false;
+          if (i.label != "NONE") {
+            i.isChecked = false;
+            i.disabled = false;
+          }
           return i;
         });
       } else if (value.label != "NONE" && value.isChecked) {
+        if (value.label.match(/condom/gi)) {
+          alertAction("Combine with other modern methods of family planning", [
+            {
+              text: "OK",
+              handler: () => null,
+            },
+          ]);
+        }
         const noneIndex = findIndex(listData, { label: "NONE" });
         listData[noneIndex].isChecked = false;
+        const vals = this.consultation.familyPlanningMethods(
+          value.label,
+          listData
+        );
+        const currentIndex = findIndex(vals, { label: value.label });
+        vals[currentIndex].isChecked = true;
+        return vals;
+      } else {
+        return listData.map((i) => {
+          i.disabled = false;
+          return i;
+        });
       }
-      return listData;
     },
     disablePrescriptions(listData: Array<Option>, value: Option) {
       if (value.isChecked && value.label === "NONE OF THE ABOVE") {
@@ -426,7 +448,7 @@ export default defineComponent({
                   // this.fieldComponent = 'custom_regimen'
                 },
                 visibleOnStateChange: (state: Record<string, any>) => {
-                  return state.index === 1
+                  return state.index === 1;
                 },
               },
             ],
