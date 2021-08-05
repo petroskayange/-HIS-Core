@@ -1,5 +1,11 @@
 import router from '@/router/index';
 import { toastDanger } from "@/utils/Alerts"
+/** Nprogress */
+import 'nprogress/nprogress.css'
+import nprogress from 'nprogress'
+
+nprogress.configure({ easing: 'ease', speed: 500 });
+
 const ApiClient = (() => {
     interface Config {
         protocol?: string;
@@ -72,9 +78,13 @@ const ApiClient = (() => {
             }
 
             let response;
-
             try {
+                nprogress.start()
+ 
                 response = await fetch(url, params);
+
+                nprogress.done()
+
                 if (response.status === 401 && !noRedirectCodes.includes(response.status)
                     && window.location.href.search(/login\/?$/) < 0) {
                     router.push('/login');
