@@ -98,14 +98,7 @@ export default defineComponent({
       return this.patient.getGender() === gender;
     },
     async completedTBTherapy() {
-      const data = await ConsultationService.getAll(
-        this.patientID,
-        "TB treatment history"
-      );
-      if (!data) return;
-      const obs = await data.filter((data: any) => {
-        return data.value_text.match(/Complete/i);
-      });
+      const obs = await this.patient.getCompleteTBTherapyHistory(); 
       this.hasTBTherapyObs = obs.length > 0;
     },
     isOfChildBearingAge() {
