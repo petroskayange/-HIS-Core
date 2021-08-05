@@ -78,7 +78,7 @@ export class OrderService extends Service {
     }
     static buildLabOrders(encounter: any, orders: any) {
         return orders.map((data: any) => {
-            const testReason = ConceptService.getCachedConceptID(data.reason);
+            const testReason = ConceptService.getCachedConceptID(data.reason, true);
             return {
                 'encounter_id': encounter.encounter_id,
                 'tests': [{ 'concept_id': data.concept_id }],
