@@ -1,18 +1,18 @@
 <template>
   <div class="card his-card">
-    <ion-button 
-      color="light" 
-      class="nav-btn" 
-      :disabled="!showPrevButton" 
-      @click="goPrev">
-      <img :src="upbuttonImg" :width="btnSize"/>
-    </ion-button>
-    
     <div class="header-section">
       {{ title }} 
     </div>
     
-    <ion-list> 
+    <button 
+      v-if="showPaginationBtns"
+      class="nav-btn nav-btn-top clickable" 
+      :disabled="!showPrevButton" 
+      @click="goPrev">
+      <img :src="upbuttonImg" :width="btnSize"/>
+    </button>
+
+    <ion-list class="body-section"> 
       <ion-item
         v-for="(item, index) in activeListItems" :key="index"
         @click="onselect(item)"
@@ -23,25 +23,23 @@
       </ion-item>
     </ion-list>
 
-    <div class="bottom-section"> 
-      <ion-button 
-        class="nav-btn" 
-        color="light" 
-        :disabled="!showNextButton" 
-        @click="goNext">
-        <img :src="downbuttonImg" :width="btnSize"/>
-      </ion-button>
+    <div class="bottom-section">
+      <button 
+          v-if="showPaginationBtns"
+          class="nav-btn nav-btn-bottom clickable" 
+          :disabled="!showNextButton" 
+          @click="goNext">
+          <img :src="downbuttonImg" :width="btnSize"/>
+      </button>
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Option } from "@/components/Forms/FieldInterface";
-import { IonButton } from "@ionic/vue";
 import { chunk, isEmpty } from "lodash"
 
 export default defineComponent({
-  components: { IonButton },
   props: {
     title: {
       type: String,
@@ -57,10 +55,13 @@ export default defineComponent({
     activeListItems: [] as any,
     paginatedListItems: [] as any,
     index: -1,
-    perPage: 7,
+    perPage: 6,
     btnSize: 45
   }),
   computed: {
+    showPaginationBtns(): boolean {
+      return this.items.length >= this.perPage
+    },
     upbuttonImg(): string {
       return '/assets/images/drop-up-arrow.svg'
     },
@@ -119,6 +120,23 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+button:disabled,
+button[disabled]{
+  cursor: not-allowed;
+  filter: alpha(opacity=62);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  opacity: .62;
+}
+
+.body-section {
+  position: absolute;
+  width: 96%;
+  top: 50%;
+  margin: 0;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 .card {
   position: relative;
   width: 100%;
@@ -126,8 +144,16 @@ export default defineComponent({
   overflow: hidden;
 }
 .nav-btn {
-  margin-left: 14%;
-  width: 70%;
+  width: 90%;
+  margin-left: 5%;
+  height: 50px;
+  background-color: white;
+}
+.nav-btn-top {
+  border-bottom: solid 2px #ccc;
+}
+.nav-btn-bottom {
+  border-top: solid 2px #ccc;
 }
 .header-section {
   text-align: center;
@@ -139,5 +165,6 @@ export default defineComponent({
   left: 0;
   right: 0;
   bottom: 0;
+  padding: 15px;
 }
 </style>
