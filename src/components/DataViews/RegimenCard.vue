@@ -47,7 +47,7 @@ export default defineComponent({
     border-style: solid;
     border-width: 0px 1px 0px 0px;
     text-align: center;
-    width: 35px;
+    min-width: 35px;
     font-weight: bold;
  }
  .his-card {
