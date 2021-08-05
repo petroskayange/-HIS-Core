@@ -70,11 +70,14 @@ export default defineComponent({
             return Promise.all(values)
         },
         validateSeries(conditions: Array<any>){
-            for(const i in conditions) {
-                const condition = conditions[i]
-                if (condition) {
-                    return condition
+            try {
+                for(const i in conditions) {
+                    const condition = conditions[i]()
+
+                    if (condition) return condition
                 }
+            } catch (e) {
+                return [e]
             }
         }
     }
