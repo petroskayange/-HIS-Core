@@ -24,13 +24,17 @@ export default defineComponent({
             type: Object,
             required: true
         },
+        cdata: {
+            type: Object,
+            required: true
+        },
         options: {
             type: Function,
             required: true
         }
     },
     async activated() {
-        this.listData = this.options(this.fdata)
+        this.listData = this.options(this.fdata, this.cdata)
     }
 })
 </script>

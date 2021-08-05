@@ -41,3 +41,8 @@ export default defineComponent({
     }
 })
 </script>
+<style scoped>
+    .view-port-content {
+        height: 89%;
+    }
+</style>

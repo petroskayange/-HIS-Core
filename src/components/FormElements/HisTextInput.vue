@@ -30,7 +30,7 @@ import { TextInputInterface } from '@/components/FormElements/Interfaces/TextCon
 import ViewPort from "@/components/DataViews/ViewPort.vue"
 export default defineComponent({
     components: { BaseInput, HisKeyboard, ViewPort, IonList, IonItem, IonLabel },
-    data: ()=>({ 
+    data: ()=>({
         value: '',
         keyboard: {} as Array<any>,
         listData: [] as Array<Option>
@@ -48,6 +48,9 @@ export default defineComponent({
             type: Function,
             required: false,
         },
+        onValue: {
+            type: Function
+        },
         config: {
             type: Object as PropType<TextInputInterface>,
         },
@@ -61,21 +64,28 @@ export default defineComponent({
         this.keyboard = this.config?.customKeyboard || QWERTY
     },
     methods: {
-        onselect(item: Option){
-            this.value = item.label
-            this.$emit('onValue', item)
+        async emitValue(v: Option) {
+            if (this.onValue) {
+                const ok = await this.onValue(v)
+                if (!ok) {
+                    return
+                }
+            }
+            this.value = v.label
+            this.$emit('onValue', v)
         },
-        onKbValue(text: any) {
-            this.value = text
+        async onselect(item: Option){
+            await this.emitValue(item)
+        },
+        async onKbValue(text: any) {
+            await this.emitValue({ label: text, value: text })
         },
         async keypress(text: any){
-            this.value = handleVirtualInput(text, this.value)
+            const input = handleVirtualInput(text, this.value)
+            await this.emitValue({ label: input, value: input })
         }
     },
     watch: {
-        value(value: any) {
-            this.$emit('onValue', { label: this.value, value: value })
-        },
         fdata: {
             async handler(data: any) {
               if (this.options) {

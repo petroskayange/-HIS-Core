@@ -8,6 +8,7 @@
       :preset="activeField.preset"
       :clear="isClear"
       :fdata="formData"
+      :cdata="computedFormData"
       :activationState="state"
       :onValue="activeField.onValue"
       :onValueUpdate="activeField.onValueUpdate"
@@ -49,6 +50,7 @@ export default defineComponent({
       isClear: false,
       activeIndex: 0,
       formData: {} as any,
+      computedFormData: {} as any,
       activeField: {} as Field,
       state: '' as 'init' | 'next' | 'prev', 
     };
@@ -71,7 +73,7 @@ export default defineComponent({
       if (val) {
         if (this.activeField.validation) {
           const value = this.formData[this.activeField.id]
-          const errors = this.activeField.validation(value, this.formData)
+          const errors = this.activeField.validation(value, this.formData, this.computedFormData)
           if (errors) {
             this.emitState()
             return this.$emit('onErrors', errors)
@@ -112,10 +114,15 @@ export default defineComponent({
       fields.forEach((field) => (this.formData[field.id] = null));
     },
     isIndexValid(i: number): boolean {
-      return i >= 0 && i <= this.fields.length    
+      return i >= 0 && i <= this.fields.length
     },
     async setActiveFieldValue(value: any) {
-      this.formData[this.activeField.id] = value;
+      const { id } = this.activeField
+      this.formData[id] = value;
+      // Set computed field values seperately
+      if (this.activeField.computedValue)  {
+        this.computedFormData[id] = value != null ? this.activeField.computedValue(value, this.formData): null
+      }
     },
     async onNext() {
       const totalFields = this.fields.length
@@ -123,30 +130,35 @@ export default defineComponent({
       for(let i=this.activeIndex; i < totalFields; ++i) {
         const field = this.fields[i]
 
-        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
-          continue
-        
-        if (field.condition && !field.condition(this.formData)) {
-          this.formData[field.id] = null
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) continue
+
+        try {
+          if (field.condition && !field.condition(this.formData)) {
+            this.formData[field.id] = null
+            continue
+          }
+        }catch(e){
           continue
         }
         await this.setActiveField(i, 'next')
         return
       }
-      this.$emit("onFinish", this.formData);
+      this.$emit("onFinish", this.formData, this.computedFormData);
     },
     async onPrev() {
       for(let i=this.activeIndex; i >= 0; --i) {
         const field = this.fields[i]
-        
-        if (!isEmpty(this.activeField) && this.activeField.id === field.id) 
-          continue
-        
-        if (field.condition && !field.condition(this.formData)) {
-          this.formData[field.id] = null
+
+        if (!isEmpty(this.activeField) && this.activeField.id === field.id) continue
+
+        try {
+          if (field.condition && !field.condition(this.formData)) {
+            this.formData[field.id] = null
+            continue
+          }
+        } catch(e) {
           continue
         }
-
         await this.setActiveField(i, 'prev')
         return
       }
@@ -156,7 +168,7 @@ export default defineComponent({
       // load callback before changing active component
       if (!isEmpty(this.activeField) && this.activeField.unload) {
         const data = this.formData[this.activeField.id]
-        if (data) await this.activeField.unload(data, state)
+        if (data) await this.activeField.unload(data, state, this.formData, this.computedFormData)
       }
       this.state = state
       this.activeIndex = index;
@@ -171,8 +183,12 @@ export default defineComponent({
       if ('requireNext' in this.activeField && !this.activeField.requireNext) this.onNext()
     },
     emitState() {
-      this.$emit("onState", { field: this.activeField, 
-        index: this.activeIndex, formData: this.formData });
+      this.$emit("onState", { 
+        field: this.activeField, 
+        index: this.activeIndex, 
+        formData: this.formData,
+        computedFormData: this.computedFormData 
+      });
     }
   },
 });
