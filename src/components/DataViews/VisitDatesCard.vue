@@ -5,7 +5,6 @@
     </div>
     
     <button 
-      v-if="showPaginationBtns"
       class="nav-btn nav-btn-top clickable" 
       :disabled="!showPrevButton" 
       @click="goPrev">
@@ -25,7 +24,6 @@
 
     <div class="bottom-section">
       <button 
-          v-if="showPaginationBtns"
           class="nav-btn nav-btn-bottom clickable" 
           :disabled="!showNextButton" 
           @click="goNext">
@@ -59,9 +57,6 @@ export default defineComponent({
     btnSize: 45
   }),
   computed: {
-    showPaginationBtns(): boolean {
-      return this.items.length >= this.perPage
-    },
     upbuttonImg(): string {
       return '/assets/images/drop-up-arrow.svg'
     },
