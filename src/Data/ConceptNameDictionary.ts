@@ -1,4 +1,25 @@
 export default [
+    {
+      "categories": [],
+      "concept_id": 9144,
+      "name": "Repeat / Missing"
+   }, {
+      "categories": [],
+      "concept_id": 3280,
+      "name": "Targeted"
+   }, {
+      "categories": [],
+      "concept_id": 1345,
+      "name": "Confirmatory"
+   }, {
+      "categories": [],
+      "concept_id": 6383,
+      "name": "Stat"
+   }, {
+      "categories": [],
+      "concept_id": 432,
+      "name": "Routine"
+   },
    {
       "categories": [],
       "concept_id": 730,
@@ -81,8 +102,26 @@ export default [
    },
    {
       "categories": [],
+     "concept_id": 9974,
+      "name": "3HP (RFP + INH)"
+   },
+   {
+      "categories": [],
+      "concept_id": 656,
+      "name": "IPT"
+   },
+   {
+      "categories": ["side_effect"],
+      "concept_id": 1773,
+      "name": "Heavy alcohol use"
+   },
+   {
+      "categories": [
+         "tb_symptom",
+         "side_effect"
+      ],
       "concept_id": 8260,
-      "name": "Past medical history"
+      "name": "Weight loss / Failure to thrive / malnutrition"
    },
    {
       "categories": [],
@@ -96,13 +135,16 @@ export default [
    },
    {
       "categories": [
+         "tb_symptom",
+         "side_effect",
          "adverse_effect"
       ],
       "concept_id": 6029,
-      name: "Night sweat"
+      name: "Night sweats"
    },
    {
       "categories":[
+         "tb_symptom",
          "0_art_regimen_side_effect",
          "9_art_regimen_side_effect",
          "14_art_regimen_side_effect",
@@ -182,7 +224,6 @@ export default [
          "12_art_regimen_side_effect",
          "13_art_regimen_side_effect",
          "14_art_regimen_side_effect",
-         "side_effect",
          "adverse_effect"
       ],
       "concept_id":843,
@@ -202,6 +243,7 @@ export default [
    },
    {
       "categories":[
+         "tb_symptom",
          "0_art_regimen_side_effect",
          "9_art_regimen_side_effect",
          "15_art_regimen_side_effect",
@@ -307,8 +349,14 @@ export default [
       ],
       "concept_id":867,
       "name":"Insomnia"
-   }
-   ,{
+   },
+   {
+      "categories":[
+      ],
+      "concept_id":1588,
+      "name":"TB treatment history"
+   },
+   {
       "categories":[
          "fast_track"
       ],

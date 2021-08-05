@@ -11,17 +11,25 @@ export default defineComponent({
         programInfo: {} as any,
         fields: [] as Array<Field>,
         form: {} as Record<string, Option> | Record<string, null>,
-        patientID: '' as any
+        patientID: '' as any,
+        ready: false
     }),
     watch: {
        '$route': {
             async handler(route: any){
-                if (!route || !route.params.p) return
-
-                const { patient, program } = JSON.parse(route.params.p.toString())
-                this.patientID = route.query.patient_id;
-                this.patient = new Patientservice(patient)
-                this.programInfo = program
+                if (!route)  return 
+                if(!route.params.p && route.query.patient_id) {
+                    this.patientID = route.query.patient_id;
+                    const response = await Patientservice.findByID(this.patientID);
+                    this.patient = new Patientservice(response);
+                    this.ready = true;
+                }else {
+                    const { patient, program } = JSON.parse(route.params.p.toString())
+                    this.patient = new Patientservice(patient)
+                    this.patientID = this.patient.getID();
+                    this.programInfo = program
+                    this.ready = true;
+                }
             },
             immediate: true,
             deep: true

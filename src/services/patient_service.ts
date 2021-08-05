@@ -76,7 +76,12 @@ export class Patientservice extends Service {
             weight: obs.value_numeric, date: obs.obs_datetime
         }))
     }
-
+    async getCompleteTBTherapyHistory() {
+        const data = await ObservationService.getAll(this.getID(), 'TB treatment history')
+        return data.filter((data: any) => {
+         return data.value_text.match(/Complete/i);
+        });
+    }
     async getBMI() {
         const weight = await this.getRecentWeight()
         const height = await this.getRecentHeight()

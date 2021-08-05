@@ -40,7 +40,9 @@ export class Service {
     static getUserLocation() {
         return sessionStorage.getItem('userLocation')
     }
-
+    static getLocationName() {
+        return sessionStorage.getItem('locationName')
+    }
     static getSessionDate() {
         return sessionStorage.getItem('sessionDate') || '';
     }
@@ -57,5 +59,8 @@ export class Service {
        const roles = sessionStorage.getItem('userRoles');
        
        return roles ? JSON.parse(roles) : []
+    }
+    static getUserName() {
+       return sessionStorage.username;
     }
 }

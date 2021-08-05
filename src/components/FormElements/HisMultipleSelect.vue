@@ -31,11 +31,11 @@
 <script lang="ts">
 import { Option, OptionDescriptionInterface } from "../Forms/FieldInterface";
 import { defineComponent } from "vue";
-import { IonCheckbox } from "@ionic/vue";
+import { IonCheckbox, IonText, IonChip,  } from "@ionic/vue";
 import SelectMixin from "@/components/FormElements/SelectMixin.vue"
 
 export default defineComponent({
-  components: { IonCheckbox },
+  components: { IonCheckbox, IonText, IonChip },
   name: "HisMultipleSelect",
   mixins: [SelectMixin],
   methods: {

@@ -1,16 +1,27 @@
 import { Order } from '@/interfaces/order';
 import { Service } from '@/services/service'
 import HisDate from "@/utils/Date"
+import { ConceptService } from './concept_service';
 export class OrderService extends Service {
     constructor() {
         super()
     }
-
-    static getOrders(patientID: number, params={}) {
+    static create(data: any) {
+        return super.postJson('/lab/orders', data)     
+    }
+    static getOrders(patientID: number, params = {}) {
         return super.getJson('/lab/orders', {
             'patient_id': patientID,
             ...params
         });
+    }
+
+    static getTestTypes() {
+        return super.getJson('/lab/test_types');
+    }
+
+    static getSpecimens(testName: string) {
+        return super.getJson('/lab/specimen_types', { 'test_type': testName });
     }
 
     static getViralLoadOrders(orders: Order[]) {
@@ -32,4 +43,60 @@ export class OrderService extends Service {
         return `${test.name} ${result.value_modifier}${result.value} ${resultDate}`;
     }
 
+    static formatLabs(orders: Order[]) {
+        const formatted = [];
+        for (let x = 0; x < orders.length; x++) {
+            const accessionNumber = orders[x].accession_number;
+            const testStatus = (orders[x].specimen.name == "Unknown" ? "N/A" : orders[x].specimen.name);
+            const dateOrdered = orders[x].order_date;
+            const tests = orders[x].tests;
+
+            for (let i = 0; i < tests.length; i++) {
+                const results = (tests[i].result ? tests[i].result : []);
+                const resultsArr = [];
+                let resultDate = '';
+
+                for (let r = 0; r < results.length; r++) {
+                    resultDate = (results[r].date == null ? "" : `${results[r].date}`);
+                    const name = results[r].indicator.name;
+                    const value = results[r].value;
+                    const valueModifier = results[r].value_modifier === '<' ? '&lt;' : results[r].value_modifier;
+                    resultsArr.push(name + "   " + valueModifier + value);
+                }
+                formatted.push({
+                    'accession_number': accessionNumber,
+                    'test_name': tests[i].name,
+                    specimen: testStatus,
+                    ordered: HisDate.toStandardHisFormat(dateOrdered),
+                    result: resultsArr,
+                    released: HisDate.toStandardHisFormat(resultDate)
+                })
+
+            }
+        }
+        return formatted;
+    }
+    static buildLabOrders(encounter: any, orders: any) {
+        return orders.map((data: any) => {
+            const testReason = ConceptService.getCachedConceptID(data.reason, true);
+            return {
+                'encounter_id': encounter.encounter_id,
+                'tests': [{ 'concept_id': data.concept_id }],
+                'reason_for_test_id': testReason,
+                'target_lab': super.getLocationName(),
+                'date': HisDate.toStandardHisFormat(super.getSessionDate()),
+                'requesting_clinician': super.getUserName(),
+                'specimen': {
+                    'concept_id': data.specimenConcept
+                }
+                
+            }
+        })
+    }
+    static saveOrdersArray(encounterId: number, orders: Array<Order>) {
+        return this.create({
+            'encounter_id': encounterId,
+            orders: orders
+        })
+    }
 }
