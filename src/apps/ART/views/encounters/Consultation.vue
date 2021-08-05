@@ -280,18 +280,9 @@ export default defineComponent({
       ];
     },
     getFPMethods(exclusionList: string[] = []) {
-      const methods = [
-        "ORAL CONTRACEPTIVE PILLS",
-        "DEPO-PROVERA",
-        "INTRAUTERINE CONTRACEPTION",
-        "CONTRACEPTIVE IMPLANT",
-        "MALE CONDOMS",
-        "FEMALE CONDOMS",
-        "TUBAL LIGATION",
-        "NONE",
-      ];
-      const filtered = methods.filter((data) => !exclusionList.includes(data));
-      return filtered.map((method) => {
+      const methods = this.consultation.getFamilyPlanningMethods(); 
+      const filtered = methods.filter((data: string) => !exclusionList.includes(data));
+      return filtered.map((method: any) => {
         return { label: method, value: method };
       });
     },

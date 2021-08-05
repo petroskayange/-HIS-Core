@@ -3,8 +3,21 @@ export class ConsultationService extends AppEncounterService {
   constructor(patientID: number) {
     super(patientID, 53);
   }
+  getFamilyPlanningMethods() {
+    return [
+      "ORAL CONTRACEPTIVE PILLS",
+      "DEPO-PROVERA",
+      "INTRAUTERINE CONTRACEPTION",
+      "CONTRACEPTIVE IMPLANT",
+      "MALE CONDOMS",
+      "FEMALE CONDOMS",
+      "TUBAL LIGATION",
+      "NONE",
+    ];
+  }
+  
   familyPlanningMethods(label: string, values: any[]) {
-    const familyPlanningLogic: any= {
+    const familyPlanningLogic: any = {
       "ORAL CONTRACEPTIVE PILLS": {
         "DEPO-PROVERA": 'N', "INTRAUTERINE CONTRACEPTION": 'N', 'CONTRACEPTIVE IMPLANT': 'N',
         'MALE CONDOMS': 'Y', 'FEMALE CONDOMS': 'Y', 'RYTHM METHOD': 'N', 'TUBAL LIGATION': 'N',
@@ -43,7 +56,7 @@ export class ConsultationService extends AppEncounterService {
       "TUBAL LIGATION": {
         "ORAL CONTRACEPTIVE PILLS": 'N', "DEPO-PROVERA": 'N', 'INTRAUTERINE CONTRACEPTION': 'N',
         'MALE CONDOMS': 'N', 'FEMALE CONDOMS': 'N', 'CONTRACEPTIVE IMPLANT': 'N', 'RYTHM METHOD': 'N',
-        'VASECTOMY': 'N', 
+        'VASECTOMY': 'N',
       },
       "VASECTOMY": {
         "ORAL CONTRACEPTIVE PILLS": 'N', "DEPO-PROVERA": 'Y', 'INTRAUTERINE CONTRACEPTION': 'N',
@@ -65,15 +78,15 @@ export class ConsultationService extends AppEncounterService {
           isChecked: false,
           disabled: true,
         }
-      }      
+      }
       else {
-          return {
-            label: data.label,
-            value: data.value,
-            isChecked: data.isChecked,
-            disabled: false,
-          }
+        return {
+          label: data.label,
+          value: data.value,
+          isChecked: data.isChecked,
+          disabled: false,
         }
+      }
 
     })
   }
