@@ -31,14 +31,17 @@ export default [
       "name": "IPT"
    },
    {
-      "categories": [],
+      "categories": ["side_effect"],
       "concept_id": 1773,
       "name": "Heavy alcohol use"
    },
    {
-      "categories": [],
+      "categories": [
+         "tb_symptom",
+         "side_effect"
+      ],
       "concept_id": 8260,
-      "name": "Past medical history"
+      "name": "Weight loss / Failure to thrive / malnutrition"
    },
    {
       "categories": [],
@@ -52,6 +55,8 @@ export default [
    },
    {
       "categories": [
+         "tb_symptom",
+         "side_effect",
          "adverse_effect"
       ],
       "concept_id": 6029,
@@ -59,6 +64,7 @@ export default [
    },
    {
       "categories":[
+         "tb_symptom",
          "0_art_regimen_side_effect",
          "9_art_regimen_side_effect",
          "14_art_regimen_side_effect",
@@ -138,7 +144,6 @@ export default [
          "12_art_regimen_side_effect",
          "13_art_regimen_side_effect",
          "14_art_regimen_side_effect",
-         "side_effect",
          "adverse_effect"
       ],
       "concept_id":843,
@@ -158,6 +163,7 @@ export default [
    },
    {
       "categories":[
+         "tb_symptom",
          "0_art_regimen_side_effect",
          "9_art_regimen_side_effect",
          "15_art_regimen_side_effect",

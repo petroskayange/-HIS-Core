@@ -21,6 +21,7 @@ import { ConsultationService } from "@/apps/ART/services/consultation_service";
 import { UserService } from "@/services/user_service";
 import { OrderService } from "@/services/order_service";
 import HisApp from "@/apps/app_lib";
+import { ConceptService } from "@/services/concept_service";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -306,44 +307,17 @@ export default defineComponent({
       });
     },
     getContraindications() {
-      const contraIndications = [
-        "Peripheral neuropathy",
-        "Jaundice",
-        "Lipodystrophy",
-        "Kidney Failure",
-        "Psychosis",
-        "Gynaecomastia",
-        "Anemia",
-        "Skin rash",
-        "Insomnia",
-        "Other",
-      ];
-      return this.getOptions(contraIndications);
+      const contraIndications = ConceptService.getConceptsByCategory('contraindication').map(data => data.name);
+      return this.getOptions([...contraIndications, 'Other']);
     },
     getOtherContraindications() {
-      const contraIndications = [
-        "Fever",
-        "Vomiting",
-        "Dizziness",
-        "Headache",
-        "Night sweats",
-        "Nausea",
-        "Weight loss / Failure to thrive / malnutrition",
-        "Lactic acidosis",
-        "Cough",
-        "Heavy alcohol use",
-        "Other (Specify)",
-      ];
-      return this.getOptions(contraIndications);
+      const contraIndications = ConceptService.getConceptsByCategory('side_effect').map(data => data.name);
+      return this.getOptions([...contraIndications, 'Other (Specify)']);
     },
     getTBSymptoms() {
-      const contraIndications = [
-        "Cough of any duration",
-        "Fever",
-        "Night sweats",
-        "Weight loss / Failure to thrive / malnutrition",
-      ];
-      return this.getOptions(contraIndications);
+
+      const contraIndications = ConceptService.getConceptsByCategory('tb_symptom').map(data => data.name);
+      return this.getOptions([...contraIndications]);
     },
     getPrescriptionFields() {
       const vals = [
