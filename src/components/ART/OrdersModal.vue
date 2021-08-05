@@ -160,7 +160,6 @@ export default defineComponent({
           handler: () => this.closeModal()
         }
       ])
-        toastSuccess("");
       }
     },
     async closeModal() {
