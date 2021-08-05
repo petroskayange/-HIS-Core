@@ -141,8 +141,8 @@ export default defineComponent({
                             isEstimate,
                             obs: this.buildDateObs('Date ART last taken', date, isEstimate) 
                         }
-                    },
-                }),
+                    }
+                }, this.registration.getDate()),
                 {
                     id: 'taken_art_in_last_two_months',
                     helpText: 'Taken ARVs in the last two months?',
@@ -248,37 +248,7 @@ export default defineComponent({
                             obs: this.buildDateObs('Drug start date', date, isEstimate) 
                         }
                     },
-                }),
-                {
-                    id: 'art_start_date_estimation',
-                    helpText: 'Estimated time since ART initiation',
-                    type: FieldType.TT_SELECT,
-                    summaryMapValue: ({ label }: Option, f: any, computedValue: any) => ({ 
-                        label: 'Estimated time since ART initiation',
-                        value: `${label} (${computedValue.date})`
-                    }),
-                    validation: (val: any) => Validation.required(val),
-                    condition: (f: any) => f.year_date_started_art.value === "Unknown",
-                    computedValue: ({value}: Option) => {
-                        const date = HisDate.getDateBeforeByDays(
-                            this.registration.getDate(), parseInt(value.toString())
-                        )
-                        this.staging.setDate(date)
-                        this.vitals.setDate(date)
-                        return {
-                            date,
-                            tag:'reg',
-                            obs: this.registration.buildValueDateEstimated('Drug start date', date)
-                        }
-                    },
-                    options: () => ([
-                        { label: '6 months', value: 180 },
-                        { label: '12 months', value: 365 },
-                        { label: '18 months', value: 540 },
-                        { label: '24 months', value: 730 },
-                        { label: 'Over 2 years', value: 730 }
-                    ]),
-                },
+                }, this.registration.getDate(), true),
                 {
                     id: 'previous_art_number',
                     helpText: 'ART number at previous location',
@@ -467,7 +437,7 @@ export default defineComponent({
                             obs: this.buildDateObs('Confirmatory HIV test date', date, isEstimate) 
                         }
                     },
-                }),
+                }, this.registration.getDate(), true),
                 this.getStagingSummaryField('Staging summary')
             ]
         }

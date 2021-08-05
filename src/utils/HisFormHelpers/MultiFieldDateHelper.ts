@@ -15,9 +15,8 @@ export interface DateFieldInterface {
 function onValidation(field: DateFieldInterface, val: Option, formData: any, computedFormData: any) {
     let data = val
     if (data) {
-        if (data.value === 'Unknown') {
-            return null
-        }
+        if (data.value === 'Unknown') return null
+
         const year = formData[`year_${field.id}`] || {}
         const month = formData[`month_${field.id}`] || {}
         const day = formData[`day_${field.id}`] || {}
@@ -26,7 +25,6 @@ function onValidation(field: DateFieldInterface, val: Option, formData: any, com
             value: HisDate.stitchDate(year.value, month.value, day.value)
         }
     }
-    
     return field.validation ? field.validation(data, formData, computedFormData) : true
 }
 
@@ -37,7 +35,7 @@ function onCondition(field: DateFieldInterface, formData: any) {
     return field.condition ? field.condition(formData): true 
 }
 
-export function generateDateFields(field: DateFieldInterface): Array<Field>{
+export function generateDateFields(field: DateFieldInterface, currentDate: string, estimateUnknown=false): Array<Field>{
     const yearId = `year_${field.id}`
     const monthId = `month_${field.id}`
     return [
@@ -46,8 +44,8 @@ export function generateDateFields(field: DateFieldInterface): Array<Field>{
             helpText: `Year ${field.helpText}`,
             type: FieldType.TT_NUMBER,
             appearInSummary: () => false,
-            validation: (v: Option, f: any, c: any) => onValidation(field, v, f, c),
-            condition: (f: any) => field.condition ? field.condition(f) : true
+            condition: (f: any) => field.condition ? field.condition(f) : true,
+            validation: (v: Option, f: any, c: any) => onValidation(field, v, f, c)
         },
         {
             id: monthId,
@@ -55,8 +53,8 @@ export function generateDateFields(field: DateFieldInterface): Array<Field>{
             type: FieldType.TT_SELECT,
             appearInSummary: () => false,
             options: () => MonthOptions,
-            validation: (v: Option, f: any, c: any) => onValidation(field, v, f, c),
-            condition: (f: any) => onCondition(field, f)
+            condition: (f: any) => onCondition(field, f),
+            validation: (v: Option, f: any, c: any) => onValidation(field, v, f, c)
         },
         {
             id: field.id,
@@ -82,7 +80,36 @@ export function generateDateFields(field: DateFieldInterface): Array<Field>{
 
                 return field.computeValue(date, isEstimate)
             }
+        },
+        {
+            id: `estimated_${field.id}`,
+            helpText: `${field.helpText} Estimated period`,
+            type: FieldType.TT_SELECT,
+            summaryMapValue: ({ label }: Option, f: any, computedValue: any) => ({ 
+                label: `${field.helpText} Date Estimate`,
+                value: `${label} (${computedValue.date})`
+            }),
+            condition: (f: any) => {
+                const conditions = [
+                    estimateUnknown,
+                    f[yearId].value === 'Unknown',
+                    field.condition ? field.condition(f): true
+                ]
+                return conditions.every(Boolean)
+            },
+            computedValue: ({ value }: Option) => {
+                const date = HisDate.getDateBeforeByDays(
+                    currentDate, parseInt(value.toString())
+                )
+                return field.computeValue(date, true)
+            },
+            options: () => ([
+                { label: '6 months ago', value: 180 },
+                { label: '12 months ago', value: 365 },
+                { label: '18 months ago', value: 540 },
+                { label: '24 months ago', value: 730 },
+                { label: 'Over 2 years ago', value: 730 }
+            ])
         }
     ]
 }
-
