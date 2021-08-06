@@ -4,7 +4,7 @@ import { toastDanger } from "@/utils/Alerts"
 import 'nprogress/nprogress.css'
 import nprogress from 'nprogress'
 
-nprogress.configure({ easing: 'ease', speed: 500 });
+nprogress.configure({ easing: 'ease', speed: 870, trickleSpeed:1 });
 
 const ApiClient = (() => {
     interface Config {
