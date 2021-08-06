@@ -7,19 +7,9 @@
     </ion-header>
     
     <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">HIS Core</ion-title>
-        </ion-toolbar>
-      </ion-header>
-    
-      <div id="container">
-        <barcode-scan></barcode-scan>
-      </div>
+      <barcode-scan></barcode-scan>
     </ion-content>
-
-    <HisNavFooter @onFinish="gotoHome"></HisNavFooter>
-
+    <HisNavFooter @onCancel="gotoMain()" :showNext="false" @onFinish="gotoHome"></HisNavFooter>
   </ion-page>
 </template>
 
@@ -43,14 +33,18 @@ export default defineComponent({
   methods: {
     gotoHome(){
       this.$router.push({path: "/"})
+    },
+    gotoMain() {
+      this.$router.push({path: "/login"})
     }
   }
 });
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
+.container {
+  margin: auto;
+  /* text-align: center;
   position: absolute;
   left: 0;
   right: 0;
@@ -61,7 +55,7 @@ export default defineComponent({
   border-width: 1px;
   border-radius: 9px;
   height: 20%;
-  margin: 3%;
+  margin: 3%; */
 }
 
 .loc-footer {
