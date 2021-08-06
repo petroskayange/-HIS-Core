@@ -55,6 +55,11 @@ export default defineComponent({
 });
 </script>
 <style scoped>
+input:focus { 
+    outline: none !important;
+    border-color: #719ECE;
+    box-shadow: 0 0 5px #202020;
+}
 .his-card {
   margin: auto;
   margin-top: 3%;
