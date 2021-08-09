@@ -1,5 +1,5 @@
 <template>
-    <view-port :showFull="false">
+    <view-port>
         <div class='view-port-content'>
             <ion-row> 
                 <ion-col size="3">
@@ -9,18 +9,18 @@
                             :color="tab === 'prescribe' ? 'secondary' : ''" 
                             :detail="true">
                             <ion-icon :icon="time"> </ion-icon>
-                            <ion-label> Prescribed </ion-label> 
+                            <ion-label> <b> Prescribed </b> </ion-label> 
                         </ion-item>
                         <ion-item 
                             @click="tab='history'" 
                             :color="tab === 'history' ? 'secondary' : ''" 
                             :detail="true">
                             <ion-icon :icon="time"> </ion-icon> 
-                            <ion-label> History </ion-label> 
+                            <ion-label> <b> History </b> </ion-label> 
                         </ion-item>
                     </ion-list>             
                 </ion-col>
-                <ion-col size="9"> 
+                <ion-col class='prescribe' size="9"> 
                     <!--- HISTORY START--->
                     <table v-if="tab === 'history'" class="his-table">
                         <tr>
@@ -56,9 +56,9 @@
                     <!-- PRESCRIPTION END -->
                 </ion-col>
             </ion-row>
+            <barcode v-if="tab === 'prescribe'" class="ftn"/>
         </div>
     </view-port>
-    <barcode class="ftn"/>
 </template>
 
 <script lang="ts">
@@ -131,9 +131,6 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-    td, th {
-        border: 1px solid #dddddd;
-    }
     .view-port-content {
         background: white;
     }
@@ -143,13 +140,13 @@ export default defineComponent({
         border: solid 1px #ccc;
         height: 60px;
         width: 100%;
-        background-color: lightgoldenrodyellow;
+        background-color: rgb(252, 252, 252);
     }
     .ftn {
         position: absolute;
-        bottom: 8px;
+        bottom: 15px;
         left: 0;
         right: 0;
-        width: 95%;
+        width: 80%;
     }
 </style>
