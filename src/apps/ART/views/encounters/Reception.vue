@@ -66,7 +66,7 @@ export default defineComponent({
         if (!arv) return toastWarning('Unable to save Arv number')
       }
 
-      toastSuccess('Arv number has been created!')
+      toastSuccess('Encounter created')
 
       this.nextTask()
     },

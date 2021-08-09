@@ -32,7 +32,7 @@ function rangeOf(val: any, min: number, max: number): null | Array<string> {
 function neitherOr(val: any): null | Array<string> {
     const allNo = val.filter((arr: any) => {
         const val = arr.value || arr.other.value
-        return parseInt(val) === ConceptService.getCachedConceptID('No', true)
+        return val === 'No'
     });
     if(allNo.length == val.length) {
         return ['All values can not be no']
