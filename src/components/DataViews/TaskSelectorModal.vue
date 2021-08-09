@@ -57,7 +57,7 @@ export default defineComponent({
         return taskItem.action(this.taskParams)
 
       this.$router.push({ 
-        name: taskItem.name,
+        name: taskItem.id,
         params: {
           'patient_id': this.taskParams?.patient.patient_id
         }

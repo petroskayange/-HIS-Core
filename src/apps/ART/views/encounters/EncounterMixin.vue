@@ -42,9 +42,14 @@ export default defineComponent({
         gotoPatientDashboard() {
             return this.$router.push({path: this.patientDashboardUrl()}) 
         },
-        nextTask() {
-            //TODO: add workflow logic here to navigate to other encounter
-            this.gotoPatientDashboard()
+        async nextTask() {
+            try {
+                const workflow = await ProgramService.getNextTask(this.patientID)
+                const name = workflow.name.toLowerCase()
+                this.$router.push({ name })
+            } catch (e) {
+                this.gotoPatientDashboard()
+            }
         },
         yesNoOptions() {
             return [
