@@ -115,7 +115,7 @@ export default defineComponent({
         },
         {
           id: "arv_number",
-          helpText: "Conditionally display next question",
+          helpText: "ART number",
           type: FieldType.TT_TEXT,
           computedValue: ({ value }: Option) => {
             return this.reception.buildArvNumber(value)
