@@ -121,7 +121,7 @@ export default defineComponent({
             return this.reception.buildArvNumber(value)
           },
           validation: (val: any) => Validation.required(val),
-          condition: (f: any) => !this.hasARVNumber && f.capture_arv.value,
+          condition: (f: any) => !this.hasARVNumber && f.capture_arv.value === "Yes",
           config: {
             prepend: true,
             prependValue: `${this.reception.getSitePrefix()}-ARV-`,
