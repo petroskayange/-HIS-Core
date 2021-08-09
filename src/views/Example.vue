@@ -31,6 +31,48 @@ export default defineComponent({
     getFields(): Array<Field> {
       return [
         {
+          id: 'dispense',
+          helpText: 'Dispensation',
+          type: FieldType.TT_DISPENSATION_INPUT,
+          config: {
+            toolbarInfo: [
+              { label: 'Name', value: 'Test patient' },
+              { label: 'Gender', value: 'Female' },
+              { label: 'Date Of Birth', value: '12/May/1994' }
+            ]
+          },
+          options: () => [
+            {
+              label: 'TDF300/3TC300/DTG50',
+              value: 0,
+              other: {
+                'amounted_needed': 30
+              }
+            },
+            {
+              label: 'Cotrimoxazole (960mg)',
+              value: 0,
+              other: {
+                'amounted_needed': 30
+              }
+            },
+            {
+              label: 'Rifapentine (150mg)',
+              value: 0,
+              other: {
+                'amounted_needed': 30
+              }
+            },
+            {
+              label: 'INH or H (Isoniazid 100mg tablet)',
+              value: 0,
+              other: {
+                'amounted_needed': 30
+              }
+            }
+          ]
+        },
+        {
           id: 'hello_world',
           helpText: 'BeforeNext',
           type: FieldType.TT_TEXT,
