@@ -25,7 +25,7 @@
                         </tr>
                         <tr v-for="(data, index) in listData" :key="index">
                             <td> {{ data.label }} </td>
-                            <td> N/A </td>
+                            <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
                             <td> {{ data.other.amounted_needed }} </td>
                             <td> <ion-input :value="data.value" @click="launchKeyPad(data)" class='dosage-input'/> </td>
                             <td> <ion-button color="danger"> Reset </ion-button></td>
