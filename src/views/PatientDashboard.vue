@@ -14,7 +14,12 @@
                                <b>Today's Date:</b> {{ currentDate }}
                             </ion-col> 
                             <ion-col size-md="5" size-sm="6"> 
-                                <b>Next Task:</b> {{ nextTask }}
+                                <span v-if="nextTask.name"> 
+                                    <ion-chip :style="{marginTop: '-8px'}" color="success" @click="$router.push(nextTask)">Next Task: <b>{{ nextTask.name.toUpperCase() }}</b> </ion-chip>
+                                </span>
+                                <span v-else> 
+                                    None
+                                </span>
                             </ion-col>
                             <ion-col size-md="3" size-sm="12"> 
                                 <b>Set Date:</b> {{ sessionDate }}
@@ -79,6 +84,7 @@ import PatientHeader from "@/components/Toolbars/PatientDashboardToolBar.vue"
 import EncounterView from "@/components/DataViews/DashboardEncounterModal.vue"
 import CardDrilldown from "@/components/DataViews/DashboardTableModal.vue"
 import { man, woman } from "ionicons/icons";
+import { WorkflowService } from "@/services/workflow_service"
 import { toastSuccess, toastDanger, alertConfirmation } from "@/utils/Alerts";
 import _ from "lodash"
 import {
@@ -111,7 +117,7 @@ export default defineComponent({
         app: {} as AppInterface | {},
         currentDate: '',
         sessionDate: '',
-        nextTask: "None",
+        nextTask: {} as any,
         patientId: 0,
         programID : 0,
         patient: {} as any,
@@ -183,12 +189,7 @@ export default defineComponent({
             }))
         },
         async getNextTask(patientId: number) {
-            try {
-                const {name} = await ProgramService.getNextTask(patientId)
-                return name
-            }catch(e) {
-                return 'None'
-            }
+            return await WorkflowService.getNextTaskParams(patientId)
         },
         onActiveVisitDate(data: Option) {
             this.activeVisitDate = data.value
