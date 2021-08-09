@@ -1,7 +1,6 @@
 <template>
   <his-standard-form
     :fields="fields"
-    :activeField="activeField"
     @onFinish="onFinish"
     :skipSummary="true"
     :cancelDestinationPath="cancelDestination"
@@ -21,59 +20,41 @@ export default defineComponent({
   mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
-    activeField: "",
-    fields: [] as any,
-    patientType: "" as any,
+    patientType: {} as any,
   }),
   watch: {
-    $route: {
-      async handler({ query }: any) {
-        this.patientID = query.patient_id;
-        await this.setPatientType();
+    patient: {
+      async handler() {
+        this.patientType = new PatientTypeService(this.patientID);
+        await this.patientType.loadPatientType()
         this.fields = this.getFields();
       },
-      deep: true,
-      immediate: true,
+      deep: true
     },
   },
   methods: {
     async onFinish(formData: any) {
-      const pts = new PatientTypeService(this.patientID);
-      const encounter = await pts.createEncounter();
-      if (encounter) {
-        const observations = await pts.saveValueCodedObs(
-          "Type of patient",
-          formData.patient_type.value
-        );
-        if (!observations)
-          return toastWarning("Unable to save patient observations");
+      const encounter = await this.patientType.createEncounter();
 
-        toastSuccess("Observations and encounter created!");
-        this.nextTask();
-      } else {
-        return toastWarning("Unable to create encounter");
-      }
-    },
-    async setPatientType() {
-      await PatientTypeService.getAll(this.patientID, "Type of patient").then(
-        async (data) => {
-          if (data.length > 0) {
-            this.patientType = await PatientTypeService.getConceptName(
-              data[0].value_coded
-            );
-          }
-        }
-      );
+      if (!encounter) return toastWarning("Unable to create encounter");
+
+      const obs = await this.patientType.savePatientType(formData.patient_type.value)
+
+      if (!obs) return toastWarning("Unable to save patient observations");
+
+      toastSuccess("Observations and encounter created!");
+
+      this.nextTask();
     },
     getFields(): any {
       return [
         {
           id: "patient_type",
-          helpText: `Current type: ${this.patientType}`,
+          helpText: `Current type: ${this.patientType.getType()}`,
           type: FieldType.TT_SELECT,
           validation: (val: any) =>
             Validation.required(val) ||
-            Validation.notTheSame(val, this.patientType),
+            Validation.notTheSame(val, this.patientType.getType()),
           options: () => [
             {
               label: "New patient",
