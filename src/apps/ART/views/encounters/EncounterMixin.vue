@@ -44,7 +44,7 @@ export default defineComponent({
             return this.$router.push({path: this.patientDashboardUrl()}) 
         },
         async nextTask() {
-            const params = await WorkflowService.getTaskRouterParams(this.patientID)
+            const params = await WorkflowService.getNextTaskParams(this.patientID)
             this.$router.push(params)
         },
         yesNoOptions() {

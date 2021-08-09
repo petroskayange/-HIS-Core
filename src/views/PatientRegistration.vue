@@ -22,6 +22,7 @@ import { ConceptService } from "@/services/concept_service";
 import { ObservationService } from "@/services/observation_service";
 import { PatientPrintoutService } from "@/services/patient_printout_service";
 import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { WorkflowService } from "@/services/workflow_service"
 
 export default defineComponent({
   components: { HisStandardForm },
@@ -68,7 +69,10 @@ export default defineComponent({
                     .then((data: Encounter) => {
                         this.createRegistrationOs(data, personPayload.patient_type? personPayload.patient_type : 'New patient')
                         .then(() => new PatientPrintoutService(person.person_id).printNidLbl())
-                        .then(() => this.$router.push(`/patient/dashboard/${person.person_id}`))
+                        .then(async () => {
+                            const params = await WorkflowService.getNextTaskParams(person.person_id)
+                            this.$router.push(params)
+                        })
                     })
                 })
             });

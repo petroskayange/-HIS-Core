@@ -81,7 +81,7 @@
             >
           </ion-col>
           <ion-col>
-            <ion-button color="success" size="large" :router-link="`/patient/dashboard/${patientID}`">Continue</ion-button>
+            <ion-button color="success" size="large" @click="nextTask">Continue</ion-button>
           </ion-col>
         </ion-row>
       </ion-toolbar>
@@ -123,6 +123,7 @@ import { UserService } from "@/services/user_service";
 import { RelationshipService } from "@/services/relationship_service";
 import { ConceptService } from "@/services/concept_service"
 import { alertAction } from "@/utils/Alerts"
+import { WorkflowService } from "@/services/workflow_service"
 import PatientAlerts from "@/services/patient_alerts"
 import HisDate from "@/utils/Date"
 export default defineComponent({
@@ -164,6 +165,10 @@ export default defineComponent({
     };
   },
   methods: {
+    async nextTask() {
+      const params = await WorkflowService.getNextTaskParams(this.patientID)
+      this.$router.push(params)
+    },
     alertPatientNotFound() {
       alertAction('Patient not found', [
         {

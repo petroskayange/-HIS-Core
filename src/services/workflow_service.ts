@@ -11,7 +11,7 @@ export class WorkflowService extends Service {
         });
     }
 
-    static async getTaskRouterParams(patientID: number, taskName='') {
+    static async getNextTaskParams(patientID: number, taskName='') {
         let task: string = taskName
         if (!task) {
             const { name } = await WorkflowService.nextTask(patientID)
