@@ -15,7 +15,6 @@ import Validation from "@/components/Forms/validations/StandardValidations";
 import EncounterMixinVue from "./EncounterMixin.vue";
 import { FastTrackService } from "@/apps/ART/services/fast_track_service";
 import { toastSuccess, toastWarning } from "@/utils/Alerts";
-import { Patientservice } from "@/services/patient_service";
 
 export default defineComponent({
   mixins: [EncounterMixinVue],
@@ -28,12 +27,10 @@ export default defineComponent({
     gender: null as any,
   }),
   watch: {
-    $route: {
-      async handler({ query }: any) {
-        this.patientID = query.patient_id;
-        this.init();
+    patient: {
+      async handler(patient: any) {
+        this.init(patient);
       },
-      deep: true,
       immediate: true,
     },
   },
@@ -52,11 +49,9 @@ export default defineComponent({
         return toastWarning("Unable to create fast track encounter");
       }
     },
-    async init() {
-      const response = await Patientservice.findByID(this.patientID);
-      const patient = new Patientservice(response);
+    async init(patient: any) {
       this.gender = patient.getGender();
-      this.fastTrack = new FastTrackService(this.patientID);
+      this.fastTrack = new FastTrackService(patient.getID());
       this.values = await this.getYesNo();
       this.options = await this.getOptions();
       this.fields = this.getFields();

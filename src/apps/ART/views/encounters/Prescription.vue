@@ -61,8 +61,6 @@ export default defineComponent({
     watch: {
         patient: {
             async handler(patient: any){
-                if (!patient) return
-
                 this.prescription = new PrescriptionService(patient.getID())
                 await this.prescription.loadMedicationOrders()
                 await this.prescription.loadFastTrackStatus()
@@ -93,7 +91,6 @@ export default defineComponent({
                 this.patientToolbar = await this.getPatientToolBar()
                 this.fields = this.getFields()
             },
-            immediate: true,
             deep: true
         },
         drugs: {

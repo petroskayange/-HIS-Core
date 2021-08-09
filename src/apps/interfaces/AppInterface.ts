@@ -35,6 +35,6 @@ export interface AppInterface {
     readonly appRoutes: Array<RouteRecordRaw>;
     readonly patientDashboard: PatientDashboarInterface;
     activities: Array<ActivityInterface>;
-    preferences: { [key: string] : Array<PreferenceInterface>};
+    preferences: { [key: string]: Array<PreferenceInterface>};
     preferenceComponents?: any;
 }

@@ -14,8 +14,6 @@ import { defineComponent } from "vue";
 import { Field, Option } from "@/components/Forms/FieldInterface";
 import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
-import { Patient } from "@/interfaces/patient";
-import { Patientservice } from "@/services/patient_service";
 import Validation from "@/components/Forms/validations/StandardValidations";
 import { VitalsService } from "@/apps/ART/services/vitals_service";
 import { toastSuccess, toastWarning } from "@/utils/Alerts";
@@ -28,8 +26,6 @@ export default defineComponent({
   components: { HisStandardForm },
   data: () => ({
     activeField: "",
-    fields: [] as Array<Field>,
-    patientID: "" as any,
     age: null as any,
     gender: null as any,
     hasBPinfo: false,
@@ -38,37 +34,56 @@ export default defineComponent({
     hasHTNObs: false,
     vitals: {} as any,
     weightForHeight: {} as any,
-    medianWeightandHeight: {} as any,
+    medianWeightandHeight: {} as any
   }),
-  computed: {
-    patientDashboard(): string {
-      return `/patient/dashboard/${this.patientID}`;
-    },
-  },
   watch: {
-    $route: {
-      async handler({ query }: any) {
-        this.init(query.patient_id);
+    patient: {
+      async handler(patient) {
+        await this.init(patient)
       },
-      deep: true,
-      immediate: true,
-    },
+      deep: true
+    }
   },
   methods: {
+    async init(patient: any) {
+      this.vitals = new VitalsService(patient.getID());
+
+      this.age = patient.getAge();
+      this.gender = patient.getGender();
+
+      const lastHeight = await patient.getRecentHeight();
+      this.recentHeight = lastHeight == -1 ? null : lastHeight;
+
+      if (this.age <= 14) {
+        this.medianWeightandHeight = await patient.getMedianWeightHeight();
+        this.weightForHeight = await ProgramService.getWeightForHeightValues();
+      }
+      await VitalsService.getAll(patient.getID(), "Treatment status").then(
+        (data: any) => {
+          this.hasHTNObs = data && data.length > 0;
+        }
+      );
+      await GlobalPropertyService.isHTNEnabled().then((data) => {
+        if (data && data === "true") {
+          this.HTNEnabled = true;
+        }
+      });
+
+      this.fields = this.getFields();
+    },
     async onFinish(formData: any) {
       const encounter = await this.vitals.createEncounter();
 
-      if (encounter) {
-        const obs = await this.buildObs(formData);
-        const observations = await this.vitals.saveObservationList(obs);
-        if (!observations)
-          return toastWarning("Unable to save patient observations");
+      if (!encounter) return toastWarning("Unable to create treatment encounter");
 
-        toastSuccess("Observations and encounter created!");
-        this.nextTask();
-      } else {
-        return toastWarning("Unable to create treatment encounter");
-      }
+      const obs = await this.buildObs(formData);
+      const observations = await this.vitals.saveObservationList(obs);
+
+      if (!observations) return toastWarning("Unable to save patient observations");
+
+      toastSuccess("Observations and encounter created!");
+
+      this.nextTask();
     },
     async buildObs(formData: any) {
       const observations: any = await this.mapObs(
@@ -178,31 +193,6 @@ export default defineComponent({
       return vitals.filter((element) => {
         return element.value === "" && element.other.required === true;
       });
-    },
-    async init(patientID: number) {
-      const response: Patient = await Patientservice.findByID(patientID);
-      this.patientID = patientID;
-      const patient = new Patientservice(response);
-      this.age = patient.getAge();
-      this.gender = patient.getGender();
-      const lastHeight = await patient.getRecentHeight();
-      this.recentHeight = lastHeight == -1 ? null : lastHeight;
-      this.vitals = new VitalsService(patientID);
-      if (this.age <= 14) {
-        this.medianWeightandHeight = await patient.getMedianWeightHeight();
-        this.weightForHeight = await ProgramService.getWeightForHeightValues();
-      }
-      await VitalsService.getAll(patient.getID(), "Treatment status").then(
-        (data: any) => {
-          this.hasHTNObs = data && data.length > 0;
-        }
-      );
-      await GlobalPropertyService.isHTNEnabled().then((data) => {
-        if (data && data === "true") {
-          this.HTNEnabled = true;
-        }
-      });
-      this.fields = this.getFields();
     },
     getFields(): Array<Field> {
       const recentHeight = this.recentHeight && this.age > 18? this.recentHeight : "";

@@ -1,8 +1,10 @@
 <script lang="ts">
-import { Field, Option } from '@/components/Forms/FieldInterface'
 import { defineComponent } from 'vue'
+import { Field, Option } from '@/components/Forms/FieldInterface'
+import { Patientservice } from "@/services/patient_service"
+import { ProgramService } from "@/services/program_service"
+import { WorkflowService } from "@/services/workflow_service"
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
-import {Patientservice} from "@/services/patient_service"
 
 export default defineComponent({
     components: { HisStandardForm },
@@ -16,18 +18,12 @@ export default defineComponent({
     }),
     watch: {
        '$route': {
-            async handler(route: any){
-                if (!route)  return 
-                if(!route.params.p && route.query.patient_id) {
-                    this.patientID = route.query.patient_id;
+            async handler(route: any) {
+                if(route.params.patient_id) {
+                    this.patientID = route.params.patient_id;
                     const response = await Patientservice.findByID(this.patientID);
                     this.patient = new Patientservice(response);
-                    this.ready = true;
-                }else {
-                    const { patient, program } = JSON.parse(route.params.p.toString())
-                    this.patient = new Patientservice(patient)
-                    this.patientID = this.patient.getID();
-                    this.programInfo = program
+                    this.programInfo = await ProgramService.getProgramInformation(this.patientID)
                     this.ready = true;
                 }
             },
@@ -47,9 +43,9 @@ export default defineComponent({
         gotoPatientDashboard() {
             return this.$router.push({path: this.patientDashboardUrl()}) 
         },
-        nextTask() {
-            //TODO: add workflow logic here to navigate to other encounter
-            this.gotoPatientDashboard()
+        async nextTask() {
+            const params = await WorkflowService.getNextTaskParams(this.patientID)
+            this.$router.push(params)
         },
         yesNoOptions() {
             return [

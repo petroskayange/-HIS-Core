@@ -12,58 +12,58 @@ import FastTrack from "@/apps/ART/views/encounters/FastTrack.vue"
 
 export default [
     {
-        name: "Treatment",
-        path: "/art/encounters/prescriptions",
+        name: "treatment",
+        path: "/art/encounters/prescriptions/:patient_id",
         component: Prescription
     },
     {
-        name: "ART adherence",
-        path: "/art/encounters/adherence",
+        name: "art adherence",
+        path: "/art/encounters/adherence/:patient_id",
         component: Adherence
     },
     {
-        name: "HIV clinic consultations",
-        path: "/art/encounters/consultation",
+        name: "hiv clinic consultation",
+        path: "/art/encounters/consultation/:patient_id",
         component: Consultation
     },
     {
-        name: "Hiv clinic registration",
-        path: "/art/encounters/registration",
+        name: "hiv clinic registration",
+        path: "/art/encounters/registration/:patient_id",
         component: Registration
     },
     {
-        name: "HIV reception",
-        path: "/art/encounters/reception",
+        name: "hiv reception",
+        path: "/art/encounters/reception/:patient_id",
         component: Reception
     },
     {
-        name: "HIV staging",
-        path: "/art/encounters/staging",
+        name: "hiv staging",
+        path: "/art/encounters/staging/:patient_id",
         component: Staging
     },
     {
-        name: "Manage Appointments",
-        path: "/art/encounters/appointment",
+        name: "appointment",
+        path: "/art/encounters/appointment/:patient_id",
         component: Appointments
     },
     {
-        name: "Drug Dispensations",
-        path: "/art/encounters/dispensation",
+        name: "dispensing",
+        path: "/art/encounters/dispensation/:patient_id",
         component: Dispensing
     },
     {
-        name: "Vitals",
-        path: "/art/encounters/vitals",
+        name: "vitals",
+        path: "/art/encounters/vitals/:patient_id",
         component: Vitals
     },
     {
-        name: "Patient Type",
-        path: "/art/encounters/patient_type",
+        name: "patient type",
+        path: "/art/encounters/patient_type/:patient_id",
         component: PatientType
     },
     {
-        name: "Fast Track",
-        path: "/art/encounters/fast_track",
+        name: "fast track",
+        path: "/art/encounters/fast_track/:patient_id",
         component: FastTrack
     }
 ]

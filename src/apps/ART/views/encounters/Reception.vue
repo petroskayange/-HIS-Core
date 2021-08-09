@@ -10,177 +10,129 @@
 </template> 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Field, Option } from "@/components/Forms/FieldInterface"
 import { FieldType } from "@/components/Forms/BaseFormElements";
 import HisStandardForm from "@/components/Forms/HisStandardForm.vue";
 import Validation from "@/components/Forms/validations/StandardValidations";
-import { ConceptService } from "@/services/concept_service";
-import { GlobalPropertyService } from "@/services/global_property_service";
+import { ReceptionService } from "@/apps/ART/services/reception_service"
 import { ProgramService } from "@/services/program_service";
-import { Patient } from "@/interfaces/patient";
-import { Patientservice } from "@/services/patient_service";
-import { EncounterService } from "@/services/encounter_service";
-import { Encounter } from "@/interfaces/encounter";
-import { ObservationService } from "@/services/observation_service";
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import EncounterMixinVue from './EncounterMixin.vue'
+
 export default defineComponent({
   mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
+    reception: {} as any,
     activeField: "",
-    fields: [] as any,
     hasARVNumber: true,
-    sitePrefix: "" as any,
     suggestedNumber: "" as any,
   }),
-  computed: {
-    patientDashboard(): string {
-      return `/patient/dashboard/${this.patientID}`;
-    }
-  },
   watch: {
-    $route: {
-      async handler({ query }: any) {
-          const response: Patient = await ProgramService.getJson(
-            `/patients/${query.patient_id}`
-          );
-          this.patientID = query.patient_id;
-          const patient = new Patientservice(response);
-          const ARVNumber = patient.getPatientIdentifier(4);
-          if (ARVNumber === "") {
-            this.hasARVNumber = false;
-            this.sitePrefix = await GlobalPropertyService.getSitePrefix();
-            const j = await ProgramService.getNextSuggestedARVNumber();
-            this.suggestedNumber = j.arv_number.replace(/^\D+/g, "");
-          }
-          this.fields = this.getFields();
+    patient: {
+      async handler(patient: any) {
+        this.reception = new ReceptionService(patient.getID())
+
+        await this.reception.loadSitePrefix()
+
+        const ARVNumber = patient.getPatientIdentifier(4);
+  
+        if (ARVNumber === "") {
+          this.hasARVNumber = false;
+
+          const j = await ProgramService.getNextSuggestedARVNumber();
+          this.suggestedNumber = j.arv_number.replace(/^\D+/g, "");
+        }
+        this.fields = this.getFields();
       },
-      deep: true,
-      immediate: true,
+      deep: true
     },
   },
   methods: {
-    onFinish(formData: any) {
-      this.createRegistrationEncounter(this.patientID)
-        .then((data: Encounter) => {
-          this.createRegistrationOs(data, formData.present);
-        })
-        .then(() => {
-          if (
-            !this.hasARVNumber && formData.capture_arv.value ===
-            ConceptService.getCachedConceptID("Yes", true)
-          ) {
-            this.postARVNumber(`${this.sitePrefix}-ARV-${formData.arv_number.value}`)
-          }
-        })
-        .then(() => this.gotoPatientDashboard())
-    },
-    postARVNumber(ARVNumber: string) {
-      const identifierData = {
-        identifier: ARVNumber,
-        'identifier_type': 4,
-        'patient_id': this.patientID,
-      };
-      const url = "/patient_identifiers/";
-      return ProgramService.postJson(url, identifierData);
-    },
-    createRegistrationEncounter(patientID: number) {
-      return EncounterService.create({
-        'encounter_type_id': 51, //TODO: get key from api or reference dictionary using name
-        'patient_id': patientID,
-      });
-    },
-    createRegistrationOs(encounter: Encounter, present: any) {
-      const patientPresentConcept =  ConceptService.getCachedConceptID("Patient present");
-      const guardianPresentConcept =  ConceptService.getCachedConceptID("Guardian present");
-      const getValue = (key: string) =>{
-        const j = present.filter((val: any) => val.other.property === key);
-        return j[0].value; 
-      }
-      const obs = {
-        'encounter_id': encounter.encounter_id,
-        observations: [
-          { 'concept_id': patientPresentConcept, 'value_coded': getValue('patient_present') },
-          { 'concept_id': guardianPresentConcept, 'value_coded': getValue('guardian_present') },
-        ],
-      };
-      return ObservationService.create(obs);
-    },
-    getFields(): any {
-      const values = [
-        {
-          label: "yes",
-          value: ConceptService.getCachedConceptID("Yes", true),
-        },
-        {
-          label: "no",
-          value: ConceptService.getCachedConceptID("No", true),
-        },
-      ];
+    async onFinish(formData: any, computedData: any) {
+      const encounter = await this.reception.createEncounter()
 
-     
+      if (!encounter) return toastWarning('Unable to create encounter')
+
+      const registrationObs = await this.resolveObs(computedData, 'obs')
+
+      const obs = await this.reception.saveObservationList(registrationObs)
+
+      if (!obs) return toastWarning('Unable to create Obs')
+
+      if (formData.capture_arv && formData.capture_arv.value === 'Yes') {
+        const arv = await this.reception.createArvNumber(computedData.arv_number)
+
+        if (!arv) return toastWarning('Unable to save Arv number')
+      }
+
+      toastSuccess('Encounter created')
+
+      this.nextTask()
+    },
+    getFields(): Array<Field> {
       return [
         {
-          id: "present",
-          helpText: "Who is present",
+          id: "who_is_present",
+          helpText: "Hiv Reception",
           type: FieldType.TT_MULTIPLE_YES_NO,
-          config: {
-            showKeyboard: false,
-            showSummary: false,
-            eventValidation: (newValue: any) => {
-              return {};
-            },
-          },
           validation: (val: any) => Validation.neitherOr(val) || Validation.anyEmpty(val),
+          computedValue: (d: Array<Option>) => {
+            return {
+              tag: 'obs',
+              obs: d.map(({ other, value }: Option) => this.reception.buildValueCoded(other.concept, value))
+            }
+          },
           options: () => [
             {
-              label: "Patient Present",
+              label: "Patient Present?",
               value: "",
               other: {
+                concept: "Patient Present",
                 property: "patient_present",
-                values: values,
+                values: this.yesNoOptions(),
               },
             },
             {
-              label: "Guardian Present",
+              label: "Guardian Present?",
               value: "",
               other: {
+                concept: "Guardian Present",
                 property: "guardian_present",
-                values: values,
+                values: this.yesNoOptions(),
               },
-            },
-          ],
+            }
+          ]
         },
         {
-            id: "capture_arv",
-            helpText: "Capture ARV Number?",
-            type: FieldType.TT_SELECT,
-            requireNext: true,
-            condition: () => !this.hasARVNumber,
-            validation: (val: any) => Validation.required(val),
-            options: () => values,
+          id: "capture_arv",
+          helpText: "Capture ARV Number?",
+          type: FieldType.TT_SELECT,
+          requireNext: true,
+          condition: () => !this.hasARVNumber,
+          validation: (val: any) => Validation.required(val),
+          options: () => this.yesNoOptions(),
+        },
+        {
+          id: "arv_number",
+          helpText: "ART number",
+          type: FieldType.TT_TEXT,
+          computedValue: ({ value }: Option) => {
+            return this.reception.buildArvNumber(value)
           },
-          {
-            id: "arv_number",
-            helpText: "Conditionally display next question",
-            type: FieldType.TT_TEXT,
-            validation: (val: any) => Validation.required(val),
-            condition(formData: any) {
-              return (
-                !this.hasARVNumber && formData.capture_arv && formData.capture_arv.value ===
-                ConceptService.getCachedConceptID("Yes")
-              );
-            },
-            config: {
-              prepend: true,
-              prependValue: `${this.sitePrefix}-ARV-`,
-            },
-            preset: {
-              label: this.suggestedNumber,
-              value: this.suggestedNumber,
-            },
+          validation: (val: any) => Validation.required(val),
+          condition: (f: any) => !this.hasARVNumber && f.capture_arv.value === "Yes",
+          config: {
+            prepend: true,
+            prependValue: `${this.reception.getSitePrefix()}-ARV-`,
+          },
+          preset: {
+            label: this.suggestedNumber,
+            value: this.suggestedNumber,
           }
-      ];
-    },
-  },
+        }
+      ]
+    }
+  }
 });
 </script>
