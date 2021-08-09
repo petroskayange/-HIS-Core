@@ -21,10 +21,6 @@ export interface ActivityInterface {
     selected: boolean;
 }
 
-export interface WorkflowInterface {
-    nextTask: Function;
-}
-
 export interface PreferenceInterface {
     name: string;
     component?: string;
@@ -38,7 +34,6 @@ export interface AppInterface {
     readonly applicationDescription: string;
     readonly appRoutes: Array<RouteRecordRaw>;
     readonly patientDashboard: PatientDashboarInterface;
-    workflow: WorkflowInterface;
     activities: Array<ActivityInterface>;
     preferences: { [key: string]: Array<PreferenceInterface>};
     preferenceComponents?: any;
