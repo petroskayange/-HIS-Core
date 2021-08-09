@@ -4,18 +4,34 @@
             <ion-row> 
                 <ion-col size="3">
                     <ion-list>
-                        <ion-item :detail="true">
+                        <ion-item @click="tab='prescribe'" :detail="true">
                             <ion-icon :icon="time"> </ion-icon>
                             <ion-label> Prescribed </ion-label> 
                         </ion-item>
-                        <ion-item :detail="true">
+                        <ion-item @click="tab='history'" :detail="true">
                             <ion-icon :icon="time"> </ion-icon> 
                             <ion-label> History </ion-label> 
                         </ion-item>
                     </ion-list>             
                 </ion-col>
                 <ion-col size="9"> 
-                    <table class="his-table">
+                    <!--- HISTORY START--->
+                    <table v-if="tab === 'history'" class="his-table">
+                        <tr>
+                            <th> Medication</th>
+                            <th> Date</th>
+                            <th> Amount dispensed </th>
+                        </tr>
+                        <tr v-for="(history, hindex) in medicationHistory" :key="hindex">
+                            <td> {{ history.medication }} </td>
+                            <td> {{ history.date }} </td>
+                            <td> {{ history.amount }}</td>
+                        </tr>
+                    </table>
+                    <!-- HISTORY END --->
+
+                    <!--- PRESCRIPTION START --->
+                    <table v-if="tab === 'prescribe'" class="his-table">
                         <tr>
                             <th> Medication</th>
                             <th> Amount in stock</th>
@@ -31,6 +47,7 @@
                             <td> <ion-button color="danger"> Reset </ion-button></td>
                         </tr>
                     </table>
+                    <!-- PRESCRIPTION END -->
                 </ion-col>
             </ion-row>
         </div>
@@ -54,6 +71,12 @@ export default defineComponent({
         type: Object as PropType<Record<string, any>>,
         required: true
     },
+    onValue: {
+        type: Function
+    },
+    config: {
+        type: Object
+    },
     options: {
         type: Function,
         required: true
@@ -61,19 +84,19 @@ export default defineComponent({
   },
   data: () => ({
     time,
+    tab: 'prescribe',
     listData: [] as any
   }),
-  watch: {
-    listData: {
-        handler() {
-            this.$emit('onValue', this.listData)
-        },
-        deep: true,
-        immediate: true
-    }
-  },
   async activated() {
     this.listData = await this.options(this.fdata)
+  },
+  computed: {
+    medicationHistory(): Array<any> {
+        if (this.config && this.config.medicationHistory) {
+            return this.config.medicationHistory
+        }
+        return []
+    }
   },
   methods: {
     async launchKeyPad(item: Option) {
@@ -84,8 +107,15 @@ export default defineComponent({
             componentProps: {
                 title: item.label,
                 preset: item.value,
-                onKeyPress(val: string){
+                onKeyPress: async (val: string) => {
+                    if (this.onValue) {
+                        const ok = await this.onValue({
+                            label: item.label, value: val
+                        })
+                        if (!ok) return
+                    }
                     item.value = val
+                    this.$emit('onValue', item)
                 }
             }
         })
