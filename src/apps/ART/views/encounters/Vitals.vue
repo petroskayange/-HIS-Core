@@ -41,8 +41,7 @@ export default defineComponent({
       async handler(patient) {
         await this.init(patient)
       },
-      deep: true,
-      immediate: true
+      deep: true
     }
   },
   methods: {

@@ -16,7 +16,6 @@ export default defineComponent({
                     this.fields = [...this.getStagingFields(), this.getStagingSummaryField()]
                 }
             },
-            immediate: true,
             deep: true
         }
     },

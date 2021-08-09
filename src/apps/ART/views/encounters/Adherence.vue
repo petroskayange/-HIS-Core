@@ -21,12 +21,10 @@ export default defineComponent({
     watch: {
         patient: {
             async handler(patient: any){
-                if (!patient) return
                 this.adherence = new AdherenceService(patient.getID())
                 await this.adherence.loadPreviousDrugs()
                 this.fields = this.getFields()
             },
-            immediate: true,
             deep: true
         }
     },
