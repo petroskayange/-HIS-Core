@@ -38,9 +38,11 @@ export default defineComponent({
                     type: FieldType.TT_DISPENSATION_INPUT,
                     config: {
                         toolbarInfo: [
-                            { label: 'Name', value: 'Test patient' },
-                            { label: 'Gender', value: 'Female' },
-                            { label: 'Date Of Birth', value: '12/May/1994' }
+                            { label: 'Name', value: this.patient.getFullName() },
+                            { label: 'Gender', value: this.patient.getGender() },
+                            { label: 'Date Of Birth', value: HisDate.toStandardHisDisplayFormat(
+                                this.patient.getBirthdate()
+                            )}
                         ]
                     },
                     options: () => [
