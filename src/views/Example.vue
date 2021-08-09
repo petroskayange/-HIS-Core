@@ -41,9 +41,6 @@ export default defineComponent({
               { label: 'Date Of Birth', value: '12/May/1994' }
             ]
           },
-          onValue: (val: Option) => {
-            console.log(val)
-          },
           options: () => [
             {
               label: 'TDF300/3TC300/DTG50',

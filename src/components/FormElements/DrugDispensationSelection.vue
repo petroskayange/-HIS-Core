@@ -4,11 +4,17 @@
             <ion-row> 
                 <ion-col size="3">
                     <ion-list>
-                        <ion-item @click="tab='prescribe'" :detail="true">
+                        <ion-item 
+                            @click="tab='prescribe'" 
+                            :color="tab === 'prescribe' ? 'secondary' : ''" 
+                            :detail="true">
                             <ion-icon :icon="time"> </ion-icon>
                             <ion-label> Prescribed </ion-label> 
                         </ion-item>
-                        <ion-item @click="tab='history'" :detail="true">
+                        <ion-item 
+                            @click="tab='history'" 
+                            :color="tab === 'history' ? 'secondary' : ''" 
+                            :detail="true">
                             <ion-icon :icon="time"> </ion-icon> 
                             <ion-label> History </ion-label> 
                         </ion-item>
