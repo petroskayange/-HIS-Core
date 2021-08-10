@@ -119,6 +119,7 @@ export default defineComponent({
                     i.value = 0
                     return i
                 })
+                this.$emit('onClear')
             }
         },
         immediate: true
