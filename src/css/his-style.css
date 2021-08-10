@@ -22,11 +22,9 @@
 }
 
 .active-card-color {
-    border-color: rgb(53, 133, 247) !important;
+    color: white !important;
+    box-shadow: inset 0 0 10px rgb(124, 124, 124) !important;
     background: rgb(121, 186, 252) !important;
-    box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
-    -webkit-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
-    -moz-box-shadow: 1px 0px 10px 0px rgba(131,182,253,0.75) !important;
 }
 
 .clickable:active {

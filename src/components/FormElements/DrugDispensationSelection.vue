@@ -2,25 +2,21 @@
     <view-port>
         <div class='view-port-content'>
             <ion-row> 
-                <ion-col size="3">
-                    <ion-list>
-                        <ion-item 
-                            @click="tab='prescribe'" 
-                            :color="tab === 'prescribe' ? 'secondary' : ''" 
-                            :detail="true">
-                            <ion-icon :icon="time"> </ion-icon>
-                            <ion-label> <b> Prescribed </b> </ion-label> 
-                        </ion-item>
-                        <ion-item 
-                            @click="tab='history'" 
-                            :color="tab === 'history' ? 'secondary' : ''" 
-                            :detail="true">
-                            <ion-icon :icon="time"> </ion-icon> 
-                            <ion-label> <b> History </b> </ion-label> 
-                        </ion-item>
-                    </ion-list>             
+                <ion-col size="2">
+                    <nav-button
+                        @click="tab='prescribe'"
+                        :isActive="tab === 'prescribe'"
+                        image='prescription/rx'
+                        label='Prescribed'
+                    />
+                    <nav-button
+                        @click="tab='history'"
+                        :isActive="tab === 'history'"
+                        image='prescription/history'
+                        label='History'
+                    />             
                 </ion-col>
-                <ion-col class='prescribe' size="9"> 
+                <ion-col class='prescribe' size="10"> 
                     <!--- HISTORY START--->
                     <table v-if="tab === 'history'" class="his-table">
                         <tr>
@@ -69,9 +65,10 @@ import { Option } from '@/components/Forms/FieldInterface'
 import KeyPad from '../Keyboard/HisKeypad.vue'
 import Barcode from '@/components/BarcodeScan.vue'
 import { time } from "ionicons/icons";
+import NavButton from "@/components/Buttons/ActionSideButton.vue"
 
 export default defineComponent({
-  components: { ViewPort, Barcode },
+  components: { ViewPort, Barcode, NavButton },
   props: {
     fdata: {
         type: Object as PropType<Record<string, any>>,
