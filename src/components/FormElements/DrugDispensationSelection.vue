@@ -16,43 +16,51 @@
                         label='History'
                     />             
                 </ion-col>
-                <ion-col class='prescribe' size="10"> 
+                <ion-col size="10"> 
                     <!--- HISTORY START--->
-                    <table v-if="tab === 'history'" class="his-table">
-                        <tr>
-                            <th> Medication</th>
-                            <th> Date</th>
-                            <th> Amount dispensed </th>
-                        </tr>
-                        <tr v-for="(history, hindex) in medicationHistory" :key="hindex">
-                            <td> {{ history.medication }} </td>
-                            <td> {{ history.date }} </td>
-                            <td> {{ history.amount }}</td>
-                        </tr>
-                    </table>
+                    <div class="history" v-if="tab === 'history'"> 
+                        <table class="his-table">
+                            <tr>
+                                <th> Medication</th>
+                                <th> Date</th>
+                                <th> Amount dispensed </th>
+                            </tr>
+                            <tr v-for="(history, hindex) in medicationHistory" :key="hindex">
+                                <td> {{ history.medication }} </td>
+                                <td> {{ history.date }} </td>
+                                <td> {{ history.amount }}</td>
+                            </tr>
+                        </table>
+                    </div>
                     <!-- HISTORY END --->
 
                     <!--- PRESCRIPTION START --->
-                    <table v-if="tab === 'prescribe'" class="his-table">
-                        <tr>
-                            <th> Medication</th>
-                            <th> Amount in stock</th>
-                            <th> Amount needed</th>
-                            <th> Amount dispensed </th>
-                            <th> Reset </th>
-                        </tr>
-                        <tr v-for="(data, index) in listData" :key="index">
-                            <td> {{ data.label }} </td>
-                            <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
-                            <td> {{ data.other.amounted_needed }} </td>
-                            <td> <ion-input :value="data.value" @click="launchKeyPad(data)" class='dosage-input'/> </td>
-                            <td> <reset-button> </reset-button> </td>
-                        </tr>
-                    </table>
+                    <div class="prescription-tab" v-if="tab === 'prescribe'">
+                        <div class='prescription-table-section'> 
+                            <table class="his-table">
+                                <tr>
+                                    <th> Medication</th>
+                                    <th> Amount in stock</th>
+                                    <th> Amount needed</th>
+                                    <th> Amount dispensed </th>
+                                    <th> Reset </th>
+                                </tr>
+                                <tr v-for="(data, index) in listData" :key="index">
+                                    <td> {{ data.label }} </td>
+                                    <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
+                                    <td> {{ data.other.amounted_needed }} </td>
+                                    <td> <ion-input :value="data.value" @click="launchKeyPad(data)" class='dosage-input'/> </td>
+                                    <td> <reset-button> </reset-button> </td>
+                                </tr>
+                            </table>
+                        </div> 
+                        <div class='barcode-section'> 
+                            <barcode @onScan="onScan"/>
+                        </div>
+                    </div>
                     <!-- PRESCRIPTION END -->
                 </ion-col>
             </ion-row>
-            <barcode v-if="tab === 'prescribe'" class="ftn"/>
         </div>
     </view-port>
 </template>
@@ -63,7 +71,7 @@ import ViewPort from '../DataViews/ViewPort.vue'
 import { modalController } from '@ionic/vue'
 import { Option } from '@/components/Forms/FieldInterface'
 import KeyPad from '../Keyboard/HisKeypad.vue'
-import Barcode from '@/components/BarcodeScan.vue'
+import Barcode from '@/components/BarcodeInput.vue'
 import { time } from "ionicons/icons";
 import NavButton from "@/components/Buttons/ActionSideButton.vue"
 import ResetButton from "@/components/Buttons/ResetButton.vue"
@@ -103,6 +111,9 @@ export default defineComponent({
     }
   },
   methods: {
+    onScan(text: string){
+        this.$emit('onScan', text)
+    },
     async launchKeyPad(item: Option) {
         const modal = await modalController.create({
             component: KeyPad,
@@ -131,6 +142,25 @@ export default defineComponent({
 <style scoped>
     .view-port-content {
         background: white;
+        height: 100%;
+    }
+    .prescription-tab {
+        position: relative;
+        height: 75vh;
+    }
+    .prescription-table-section {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 76%;
+        overflow-x: auto;
+    }
+    .barcode-section {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
     }
     .dosage-input {
         text-align: center;
@@ -139,12 +169,5 @@ export default defineComponent({
         height: 60px;
         width: 100%;
         background-color: rgb(252, 252, 252);
-    }
-    .ftn {
-        position: absolute;
-        bottom: 15px;
-        left: 0;
-        right: 0;
-        width: 80%;
     }
 </style>
