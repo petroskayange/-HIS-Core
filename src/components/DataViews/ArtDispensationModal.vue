@@ -15,7 +15,7 @@
                     <th> </th>
                     <th> Pack size </th>
                     <th> Packs </th>
-                    <th> Total Tab(s) </th>
+                    <th> Total Tab(s)</th>
                     <th> Packs </th>
                     <th> </th>
                 </tr>
@@ -25,8 +25,7 @@
                     <td :rowspan="amountNeededRowSpan"> {{tabsNeeded}} tab(s) </td>
                 </tr>
                 <tr v-for="(list, rIndex) in listData" :key="rIndex">
-                    <td v-for="(amount, cIndex) in list" 
-                        :key="cIndex"
+                    <td v-for="(amount, cIndex) in list" :key="cIndex" 
                         :class="cIndex >= 2 ? 'input-field' : ''"> 
                         {{ amount }}
                     </td>
@@ -41,9 +40,9 @@
         </table>
     </ion-content>
     <ion-footer>
-        <ion-toolbar> 
+        <ion-toolbar>
         <ion-button @click="onClose" color="danger" size="large" slot="end"> Close </ion-button>
-        <ion-button @click="onDispense" color="success" size="large" slot="end"> Dispense </ion-button>
+        <ion-button @click="onDispense(totalTabs)" color="success" size="large" slot="end"> Dispense </ion-button>
         </ion-toolbar>
     </ion-footer>
 </template>
@@ -68,6 +67,10 @@ export default defineComponent({
         items: {
             type: Array,
             required: true
+        },
+        onDispense: {
+            type: Function,
+            required: true
         }
     },
     computed: {
@@ -78,17 +81,15 @@ export default defineComponent({
     watch: {
         items: {
             handler(items: Array<any>){
-                this.listData = [...items]
+                if (items) this.listData = [...items]
             },
-            deep: true
+            deep: true,
+            immediate: true
         }
     },
     methods: {
         async onClose() {
             await modalController.dismiss({})
-        },
-        onDispense() {
-            this.$emit('onDispense', this.totalTabs)
         },
         incrementAmount(rIndex: number) {
             const [packSize, _, totalTabs, totalPacks ] = this.listData[rIndex]

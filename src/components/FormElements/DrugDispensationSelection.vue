@@ -49,7 +49,7 @@
                                     <td> {{ data.label }} </td>
                                     <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
                                     <td> {{ data.other.amounted_needed }} </td>
-                                    <td> <ion-input :value="data.value" @click="launchKeyPad(data)" class='dosage-input'/> </td>
+                                    <td> <ion-input :value="data.value" @click="launchDispenser(data)" class='dosage-input'/> </td>
                                     <td> <reset-button> </reset-button> </td>
                                 </tr>
                             </table>
@@ -70,9 +70,7 @@ import { defineComponent, PropType } from 'vue'
 import ViewPort from '../DataViews/ViewPort.vue'
 import { modalController } from '@ionic/vue'
 import { Option } from '@/components/Forms/FieldInterface'
-import KeyPad from '../Keyboard/HisKeypad.vue'
 import Barcode from '@/components/BarcodeInput.vue'
-import { time } from "ionicons/icons";
 import NavButton from "@/components/Buttons/ActionSideButton.vue"
 import ResetButton from "@/components/Buttons/ResetButton.vue"
 import ArtDispensationModal from "@/components/DataViews/ArtDispensationModal.vue"
@@ -96,7 +94,6 @@ export default defineComponent({
     }
   },
   data: () => ({
-    time,
     tab: 'prescribe',
     listData: [] as any
   }),
@@ -115,23 +112,30 @@ export default defineComponent({
     onScan(text: string){
         this.$emit('onScan', text)
     },
-    async launchKeyPad(item: Option) {
+    async launchDispenser(item: Option) {
         const modal = await modalController.create({
             component: ArtDispensationModal,
             backdropDismiss: false,
             cssClass: 'custom-modal',
             componentProps: {
-                title: item.label,
-                preset: item.value,
-                onKeyPress: async (val: string) => {
-                    if (this.onValue) {
-                        const ok = await this.onValue({
-                            label: item.label, value: val
-                        })
-                        if (!ok) return
-                    }
-                    item.value = val
-                    this.$emit('onValue', item)
+                drugName: item.label,
+                tabsNeeded: item.other.amounted_needed,
+                items: [
+                    [30, 0, 0, 0],
+                    [60, 0, 0, 0],
+                    [90, 0, 0, 0]
+                ],
+                onDispense: async (quantity: number) => {
+                   if (this.onValue) {
+                       const ok = await this.onValue({
+                           label: item.label, value: quantity
+                       })
+                       if (!ok) return
+                   }
+                   console.log(quantity)
+                   item.value = quantity
+                   this.$emit('onValue', item)
+                   await modalController.dismiss({})
                 }
             }
         })
