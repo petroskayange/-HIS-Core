@@ -91,6 +91,9 @@ export default defineComponent({
     options: {
         type: Function,
         required: true
+    },
+    clear: {
+        type: Boolean
     }
   },
   data: () => ({
@@ -106,6 +109,19 @@ export default defineComponent({
             return this.config.medicationHistory
         }
         return []
+    }
+  },
+  watch: {
+    clear: {
+        handler(clear: boolean) {
+            if (clear) {
+                this.listData = this.listData.map((i: Option) => {
+                    i.value = 0
+                    return i
+                })
+            }
+        },
+        immediate: true
     }
   },
   methods: {
