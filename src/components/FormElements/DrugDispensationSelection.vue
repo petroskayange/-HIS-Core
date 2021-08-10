@@ -111,8 +111,7 @@ export default defineComponent({
   methods: {
     onScan(barcode: string) {
         try {
-            const drugId = barcode.split("-")[0];
-            const quantity = barcode.split("-")[1];
+            const [ drugId, quantity ] = barcode.split('-')
             this.$emit('onValue', { label: drugId, value: quantity })
         }catch(e) {
             console.warn(e)
