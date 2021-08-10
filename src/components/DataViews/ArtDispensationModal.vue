@@ -1,17 +1,17 @@
 <template>
     <ion-content>
-        <table> 
-            <thead> 
+        <table>
+            <thead>
                 <tr>
-                    <th colspan="6"> Cotrimoxazole (960mg) </th>
+                    <th colspan="6"> {{ drugName }} </th>
                 </tr>
-                <tr> 
+                <tr>
                     <th>Total tab(s) needed </th>
                     <th colspan="2"> Available stock </th>
                     <th colspan="2"> Dispensed </th>
-                    <th> </th>
+                    <th></th>
                 </tr>
-                <tr> 
+                <tr>
                     <th> </th>
                     <th> Pack size </th>
                     <th> Packs </th>
@@ -21,12 +21,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr> 
+                <tr>
                     <td :rowspan="amountNeededRowSpan"> {{tabsNeeded}} tab(s) </td>
                 </tr>
-                <tr v-for="(list, rIndex) in items" :key="rIndex">
-                    <td 
-                        v-for="(amount, cIndex) in list" 
+                <tr v-for="(list, rIndex) in listData" :key="rIndex">
+                    <td v-for="(amount, cIndex) in list" 
                         :key="cIndex"
                         :class="cIndex >= 2 ? 'input-field' : ''"> 
                         {{ amount }}
@@ -43,58 +42,65 @@
     </ion-content>
     <ion-footer>
         <ion-toolbar> 
-        <ion-button color="danger" size="large" slot="end"> Close </ion-button>
-        <ion-button color="success" size="large" slot="end"> Dispense </ion-button>
+        <ion-button @click="onClose" color="danger" size="large" slot="end"> Close </ion-button>
+        <ion-button @click="onDispense" color="success" size="large" slot="end"> Dispense </ion-button>
         </ion-toolbar>
     </ion-footer>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { modalController } from "@ionic/vue"
 
 export default defineComponent({
     data: () => ({
-        tabsNeeded: 14,
-        items: [
-            [
-                30, 
-                1,
-                0,
-                0
-            ],
-            [
-                60, 
-                1,
-                0,
-                0
-            ],
-            [
-                90, 
-                1,
-                0,
-                0
-            ],
-        ]
+        listData: [] as Array<any>,
+        totalTabs: 0 as number
     }),
+    props: {
+        drugName: {
+            type: String,
+            required: true 
+        },
+        tabsNeeded: {
+            type: String,
+            required: true
+        },
+        items: {
+            type: Array,
+            required: true
+        }
+    },
     computed: {
         amountNeededRowSpan(): number {
             return this.items.length + 1
         }
     },
+    mounted() {
+        this.listData = [...this.items]
+    },
     methods: {
+        async onClose() {
+            await modalController.dismiss({})
+        },
+        onDispense() {
+            this.$emit('onDispense', this.totalTabs)
+        },
         incrementAmount(rIndex: number) {
-            const [packSize, _, totalTabs, totalPacks ] = this.items[rIndex]
+            const [packSize, _, totalTabs, totalPacks ] = this.listData[rIndex]
             const tabsAmount = packSize + totalTabs
             const packAmount = totalPacks + 1
-            this.items[rIndex][2] = tabsAmount
-            this.items[rIndex][3] = packAmount
+            this.listData[rIndex][2] = tabsAmount
+            this.listData[rIndex][3] = packAmount
+            this.totalTabs += tabsAmount
         },
         decrementAmount(rIndex: number) {
-            const [packSize, _, totalTabs, totalPacks ] = this.items[rIndex]
+            const [packSize, _, totalTabs, totalPacks ] = this.listData[rIndex]
             const packAmount = totalPacks - 1
             if (packAmount >= 0) {
                 const tabsAmount = totalTabs - packSize
-                this.items[rIndex][2] = tabsAmount
-                this.items[rIndex][3] = packAmount
+                this.listData[rIndex][2] = tabsAmount
+                this.listData[rIndex][3] = packAmount
+                this.totalTabs -= tabsAmount
             }
         }
     }
