@@ -1,6 +1,7 @@
 <template>
-    <div :class="`his-card ${state} clickable`" size="large" expan="full">
-        <img :src="icon"/> {{ label }}
+    <div :class="`his-card ${state} clickable`">
+        <img :src="icon"/> 
+        <center> {{ label }} </center>
     </div>
 </template>
 <script lang="ts">
@@ -41,11 +42,5 @@ export default defineComponent({
         margin: 10px;
         text-align: center;
         font-weight: bold;
-    }
-    ion-card {
-        text-align: center;
-    }
-    ion-card-content {
-        padding: 5px;
     }
 </style>
