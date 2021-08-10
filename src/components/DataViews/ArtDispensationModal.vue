@@ -24,17 +24,17 @@
                 <tr> 
                     <td :rowspan="amountNeededRowSpan"> {{tabsNeeded}} tab(s) </td>
                 </tr>
-                <tr v-for="(list, index) in items" :key="index">
+                <tr v-for="(list, rIndex) in items" :key="rIndex">
                     <td 
-                        v-for="(data, dIndex) in list" 
-                        :key="dIndex"
-                        :class="dIndex === 3 ? 'input-field' : ''"> 
-                        {{ data }} 
+                        v-for="(amount, cIndex) in list" 
+                        :key="cIndex"
+                        :class="cIndex >= 2 ? 'input-field' : ''"> 
+                        {{ amount }}
                     </td>
                     <td> 
                         <ul class='btn-list'> 
-                            <li> <ion-button class='dispense-btn' size="large"> + </ion-button> </li>
-                            <li> <ion-button class='dispense-btn' size="large"> - </ion-button> </li>
+                            <li> <ion-button @click="incrementAmount(rIndex)" class='dispense-btn' size="large"> + </ion-button> </li>
+                            <li> <ion-button @click="decrementAmount(rIndex)" class='dispense-btn' size="large"> - </ion-button> </li>
                         </ul>
                     </td>
                 </tr>
@@ -58,19 +58,19 @@ export default defineComponent({
             [
                 30, 
                 1,
-                30,
+                0,
                 0
             ],
             [
                 60, 
                 1,
-                30,
+                0,
                 0
             ],
             [
                 90, 
                 1,
-                30,
+                0,
                 0
             ],
         ]
@@ -78,6 +78,24 @@ export default defineComponent({
     computed: {
         amountNeededRowSpan(): number {
             return this.items.length + 1
+        }
+    },
+    methods: {
+        incrementAmount(rIndex: number) {
+            const [packSize, _, totalTabs, totalPacks ] = this.items[rIndex]
+            const tabsAmount = packSize + totalTabs
+            const packAmount = totalPacks + 1
+            this.items[rIndex][2] = tabsAmount
+            this.items[rIndex][3] = packAmount
+        },
+        decrementAmount(rIndex: number) {
+            const [packSize, _, totalTabs, totalPacks ] = this.items[rIndex]
+            const packAmount = totalPacks - 1
+            if (packAmount >= 0) {
+                const tabsAmount = totalTabs - packSize
+                this.items[rIndex][2] = tabsAmount
+                this.items[rIndex][3] = packAmount
+            }
         }
     }
 })
@@ -106,7 +124,6 @@ export default defineComponent({
     .input-field {
         font-weight: bold;
         font-size: 1.3em;
-        border: 2px solid #ccc;
         background-color: rgb(248, 248, 167);
     }
 </style>
