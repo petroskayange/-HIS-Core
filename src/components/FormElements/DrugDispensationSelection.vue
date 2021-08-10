@@ -110,12 +110,14 @@ export default defineComponent({
   },
   methods: {
     onScan(barcode: string) {
-        try {
-            const [ drugId, quantity ] = barcode.split('-')
-            this.$emit('onValue', { label: drugId, value: quantity })
-        }catch(e) {
-            console.warn(e)
-        }
+        const [ drugId, quantity ] = barcode.split('-')
+        this.listData = this.listData.map((i: Option) => {
+            if (i.other.drug_id === parseInt(drugId)) {
+                i.value = parseInt(quantity)
+                this.$emit('onValue', i)
+            }
+            return i
+        })
     },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({

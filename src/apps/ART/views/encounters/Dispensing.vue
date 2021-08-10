@@ -50,6 +50,7 @@ export default defineComponent({
                             label: 'TDF300/3TC300/DTG50',
                             value: 0,
                             other: {
+                                'drug_id': 1,
                                 'amounted_needed': 30
                             }
                         },
@@ -57,6 +58,7 @@ export default defineComponent({
                             label: 'Cotrimoxazole (960mg)',
                             value: 0,
                             other: {
+                                'drug_id': 2,
                                 'amounted_needed': 30
                             }
                         },
@@ -64,6 +66,7 @@ export default defineComponent({
                             label: 'Rifapentine (150mg)',
                             value: 0,
                             other: {
+                                'drug_id': 3,
                                 'amounted_needed': 30
                             }
                         },
@@ -71,6 +74,7 @@ export default defineComponent({
                             label: 'INH or H (Isoniazid 100mg tablet)',
                             value: 0,
                             other: {
+                                'drug_id': 4,
                                 'amounted_needed': 30
                             }
                         }
