@@ -109,8 +109,14 @@ export default defineComponent({
     }
   },
   methods: {
-    onScan(text: string){
-        this.$emit('onScan', text)
+    onScan(barcode: string) {
+        try {
+            const drugId = barcode.split("-")[0];
+            const quantity = barcode.split("-")[1];
+            this.$emit('onValue', { label: drugId, value: quantity })
+        }catch(e) {
+            console.warn(e)
+        }
     },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({
@@ -132,7 +138,6 @@ export default defineComponent({
                        })
                        if (!ok) return
                    }
-                   console.log(quantity)
                    item.value = quantity
                    this.$emit('onValue', item)
                    await modalController.dismiss({})
