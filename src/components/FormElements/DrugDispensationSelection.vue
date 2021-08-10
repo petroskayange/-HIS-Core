@@ -75,6 +75,7 @@ import Barcode from '@/components/BarcodeInput.vue'
 import { time } from "ionicons/icons";
 import NavButton from "@/components/Buttons/ActionSideButton.vue"
 import ResetButton from "@/components/Buttons/ResetButton.vue"
+import ArtDispensationModal from "@/components/DataViews/ArtDispensationModal.vue"
 
 export default defineComponent({
   components: { ViewPort, Barcode, NavButton, ResetButton },
@@ -116,9 +117,9 @@ export default defineComponent({
     },
     async launchKeyPad(item: Option) {
         const modal = await modalController.create({
-            component: KeyPad,
+            component: ArtDispensationModal,
             backdropDismiss: false,
-            cssClass: 'keypad-modal',
+            cssClass: 'custom-modal',
             componentProps: {
                 title: item.label,
                 preset: item.value,
