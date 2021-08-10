@@ -72,11 +72,16 @@ export default defineComponent({
     },
     computed: {
         amountNeededRowSpan(): number {
-            return this.items.length + 1
+            return this.listData.length + 1
         }
     },
-    mounted() {
-        this.listData = [...this.items]
+    watch: {
+        items: {
+            handler(items: Array<any>){
+                this.listData = [...items]
+            },
+            deep: true
+        }
     },
     methods: {
         async onClose() {
