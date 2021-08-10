@@ -170,4 +170,7 @@ export default defineComponent({
         width: 100%;
         background-color: rgb(252, 252, 252);
     }
+    .his-table > tr > td, th {
+        padding: 0.3em !important;
+    }
 </style>
