@@ -46,7 +46,7 @@
                             <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
                             <td> {{ data.other.amounted_needed }} </td>
                             <td> <ion-input :value="data.value" @click="launchKeyPad(data)" class='dosage-input'/> </td>
-                            <td> <ion-button color="danger"> Reset </ion-button></td>
+                            <td> <reset-button> </reset-button> </td>
                         </tr>
                     </table>
                     <!-- PRESCRIPTION END -->
@@ -66,9 +66,10 @@ import KeyPad from '../Keyboard/HisKeypad.vue'
 import Barcode from '@/components/BarcodeScan.vue'
 import { time } from "ionicons/icons";
 import NavButton from "@/components/Buttons/ActionSideButton.vue"
+import ResetButton from "@/components/Buttons/ResetButton.vue"
 
 export default defineComponent({
-  components: { ViewPort, Barcode, NavButton },
+  components: { ViewPort, Barcode, NavButton, ResetButton },
   props: {
     fdata: {
         type: Object as PropType<Record<string, any>>,
