@@ -50,7 +50,7 @@
                                     <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
                                     <td> {{ data.other.amounted_needed }} </td>
                                     <td> <ion-input :value="data.value" @click="launchDispenser(data)" class='dosage-input'/> </td>
-                                    <td> <reset-button> </reset-button> </td>
+                                    <td> <reset-button @click='onReset(data)'> </reset-button> </td>
                                 </tr>
                             </table>
                         </div> 
@@ -119,6 +119,18 @@ export default defineComponent({
             return i
         })
     },
+    async onReset(item: Option) {
+        await this.updateOnValue(item, 0)
+    },
+    async updateOnValue(item: Option, value: any) {
+        if (this.onValue) {
+            const ok = await this.onValue({ label: item.label, value })
+            if (!ok) return false
+        }
+        item.value = value
+        this.$emit('onValue', item)
+        return true
+    },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({
             component: ArtDispensationModal,
@@ -133,15 +145,8 @@ export default defineComponent({
                     [90, 0, 0, 0]
                 ],
                 onDispense: async (quantity: number) => {
-                   if (this.onValue) {
-                       const ok = await this.onValue({
-                           label: item.label, value: quantity
-                       })
-                       if (!ok) return
-                   }
-                   item.value = quantity
-                   this.$emit('onValue', item)
-                   await modalController.dismiss({})
+                   const ok = await this.updateOnValue(item, quantity)
+                   if (ok) await modalController.dismiss({})
                 }
             }
         })
