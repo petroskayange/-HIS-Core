@@ -34,7 +34,7 @@ export default defineComponent({
         buildOrderOptions() {
             return this.dispensation.getCurrentOrder().map((d: any) => ({
                 label: d.drug.name,
-                value: 0,
+                value: d.quantity || 0,
                 other: {
                     'drug_id': d.drug_id,
                     'order_id': d.order.order_id,
