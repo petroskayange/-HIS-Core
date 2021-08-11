@@ -30,13 +30,7 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit(f: any, computed: any) {
-            const req = await this.dispensation.saveDispensations(computed.dispenses)
-
-            if (!req) return toastWarning('Unable to dispense drugs')
-
-            toastSuccess('Drugs have been dispensed')
-
+        async onSubmit() {
             this.nextTask()
         },
         buildMedicationHistory() {
@@ -69,9 +63,14 @@ export default defineComponent({
                     id: 'dispenses',
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
-                    computedValue: (d: Array<Option>) => d.map(({other, value}: Option) => {
-                        return this.dispensation.buildDispensationPayload(other.order_id, value) 
-                    }),
+                    onValue: async ({value, other}: Option) => {
+                        const data = this.dispensation.buildDispensationPayload(other.order_id, value)
+                        const res = await this.dispensation.saveDispensations([data])
+                        if (res) return true
+
+                        toastWarning('Unable to save dispensation')
+                        return false
+                    },
                     config: {
                         medicationHistory: this.buildMedicationHistory(),
                         toolbarInfo: [
@@ -80,6 +79,9 @@ export default defineComponent({
                             { label: 'Date Of Birth', value: HisDate.toStandardHisDisplayFormat(
                                 this.patient.getBirthdate()
                             )}
+                        ],
+                        hiddenFooterBtns: [ 
+                            'Clear'
                         ]
                     },
                     options: () => this.buildOrderOptions()

@@ -91,9 +91,6 @@ export default defineComponent({
     options: {
         type: Function,
         required: true
-    },
-    clear: {
-        type: Boolean
     }
   },
   data: () => ({
@@ -111,50 +108,31 @@ export default defineComponent({
         return []
     }
   },
-  watch: {
-    listData: {
-        handler(data: Array<Option>) {
-            if (data) {
-                this.$emit('onValue', data.filter((i: Option) => {
-                    return  i.value > 0 && i.other.amount_needed > 0 
-                }))
-            }
-        },
-        immediate: true,
-        deep: true
-    },
-    clear: {
-        handler(clear: boolean) {
-            if (clear) {
-                this.listData = this.listData.map((i: Option) => {
-                    i.value = 0
-                    return i
-                })
-                this.$emit('onClear')
-            }
-        },
-        immediate: true
-    }
-  },
   methods: {
     onScan(barcode: string) {
         const [ drugId, quantity ] = barcode.split('-')
         this.listData = this.listData.map((i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
                 i.value = parseInt(quantity)
+                this.$emit('onValue', i)
             }
             return i
         })
     },
     async onReset(item: Option) {
-        await this.updateOnValue(item, 0)
+        await this.updateOnValue(item, -1)
     },
     async updateOnValue(item: Option, value: any) {
         if (this.onValue) {
-            const ok = await this.onValue({ label: item.label, value })
+            const ok = await this.onValue({ 
+                label: item.label, 
+                other: item.other, 
+                value 
+            })
             if (!ok) return false
         }
         item.value = value
+        this.$emit('onValue', item)
         return true
     },
     buildPackSizeRows(packSizes: Array<number>) {
