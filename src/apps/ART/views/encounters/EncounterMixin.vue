@@ -45,7 +45,11 @@ export default defineComponent({
         },
         async nextTask() {
             const params = await WorkflowService.getNextTaskParams(this.patientID)
-            this.$router.push(params)
+            if (params.name) {
+                this.$router.push(params)
+            } else {
+                this.gotoPatientDashboard()
+            }
         },
         yesNoOptions() {
             return [
