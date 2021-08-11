@@ -126,7 +126,7 @@ export default defineComponent({
         const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
                 const value = parseInt(quantity)
-                await this.updateOnValue(i, value)
+                await this.updateOnValue(i, value, false)
             }
             return i
         })
@@ -135,8 +135,8 @@ export default defineComponent({
     async onReset(item: Option) {
         await this.updateOnValue(item, -1)
     },
-    async updateOnValue(item: Option, value: any) {
-        if (this.onValue) {
+    async updateOnValue(item: Option, value: any, shouldOnValueCallback=true) {
+        if (this.onValue && shouldOnValueCallback) {
             const ok = await this.onValue({
                 label: item.label,
                 other: item.other,
