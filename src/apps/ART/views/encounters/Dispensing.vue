@@ -20,7 +20,10 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 this.dispensation = new DispensationService(patient.getID())
+                
                 await this.dispensation.loadCurrentDrugOrder()
+                await this.dispensation.loadDrugHistory()
+
                 this.fields = this.getFields()
             },
             deep: true
@@ -30,6 +33,14 @@ export default defineComponent({
         async onSubmit() {
             //TODO: save something
             this.nextTask()
+        },
+        buildMedicationHistory() {
+            console.log(this.dispensation.getDrugHistory())
+            return this.dispensation.getDrugHistory().map((d: any) => ({
+                medication: d.drug.name,
+                date: HisDate.toStandardHisDisplayFormat(d.order.start_date),
+                amount: d.quantity
+            }))
         },
         buildOrderOptions() {
             return this.dispensation.getCurrentOrder().map((d: any) => ({
@@ -55,6 +66,7 @@ export default defineComponent({
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
                     config: {
+                        medicationHistory: this.buildMedicationHistory(),
                         toolbarInfo: [
                             { label: 'Name', value: this.patient.getFullName() },
                             { label: 'Gender', value: this.patient.getGender() },

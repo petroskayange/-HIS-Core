@@ -11,11 +11,11 @@ export class DrugOrderService extends Service {
     }
 
     static getDrugOrderHistory(patientID: number) {
-        return this.getJson(`drugs/orders`, { 'patient_id': patientID })
+        return this.getJson('drug_orders', { 'patient_id': patientID })
     }
 
     static getDrugOrders(patientID: number) {
-        return this.getJson(`drug_orders`, {
+        return this.getJson('drug_orders', {
             'patient_id': patientID,
             'date': Service.getSessionDate(),
             'program_id': Service.getProgramID()

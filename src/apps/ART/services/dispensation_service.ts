@@ -39,11 +39,10 @@ export const DRUG_PACK_SIZES: Record<string, any> = {
     '1056': [ 24 ]
 }
 
-
 export class DispensationService extends AppEncounterService {
     drugHistory: Array<any>;
     currentDrugOrder: Array<any>;
-    
+
     constructor(patientID: number) {
         super(patientID, 54)
         this.drugHistory = []
