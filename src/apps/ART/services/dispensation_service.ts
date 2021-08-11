@@ -11,6 +11,14 @@ export class DispensationService extends AppEncounterService {
         this.currentDrugOrder = []
     }
 
+    getDrugHistory() {
+        return this.drugHistory
+    }
+
+    getCurrentOrder() {
+        return this.currentDrugOrder
+    }
+
     async loadDrugHistory() {
         const res = await DrugOrderService.getDrugOrderHistory(this.patientID)
         if (res) {
