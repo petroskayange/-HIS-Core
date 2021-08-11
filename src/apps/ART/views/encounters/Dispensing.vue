@@ -5,7 +5,7 @@
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
-import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { toastWarning, alertConfirmation } from "@/utils/Alerts"
 import { DispensationService } from "@/apps/ART/services/dispensation_service"
 import EncounterMixinVue from './EncounterMixin.vue'
 // import Validation from "@/components/Forms/validations/StandardValidations"
@@ -54,6 +54,21 @@ export default defineComponent({
             const completePack = this.dispensation.calcCompletePack(order, units)
             return completePack < 0 ? 0 : completePack
         },
+        async isValidDispensation(option: Option) {
+            let isOk = true
+            const totalTabs = parseInt(option.value.toString())
+            const amountNeeded = option.other['amount_needed']
+            const percentageGiven = (totalTabs / amountNeeded) * 100
+
+            if (percentageGiven > 110) {
+                isOk = await alertConfirmation('Are you sure you want to dispense over 110% of the prescribed pill count?')
+            }
+
+            if (percentageGiven < 100) {
+                isOk = await alertConfirmation('Are you sure you want to dispense less than 100% of the prescribe amount?')
+            }
+            return isOk
+        },
         getFields(): Array<Field> {
             return [
                 {
@@ -64,18 +79,23 @@ export default defineComponent({
                         await this.dispensation.loadCurrentDrugOrder()
                         return this.buildOrderOptions()
                     },
-                    onValue: async ({value, other}: Option) => {
-                        if (value  === -1) {
-                            const voided = await this.dispensation.voidOrder(other.order_id)
+                    onValue: async (i: Option) => {
+                        if (i.value  === -1) {
+                            const voided = await this.dispensation.voidOrder(i.other.order_id)
                             return voided ? true : false
                         }
 
-                        const data = this.dispensation.buildDispensationPayload(other.order_id, value)
+                        const isValidDispensation = await this.isValidDispensation(i)
+
+                        if (!isValidDispensation) return false
+
+                        const data = this.dispensation.buildDispensationPayload(i.other.order_id, i.value)
                         const res = await this.dispensation.saveDispensations([data])
 
                         if (res) return true
 
                         toastWarning('Unable to save dispensation')
+
                         return false
                     },
                     config: {
