@@ -5,7 +5,7 @@
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
-// import { toastWarning, toastSuccess } from "@/utils/Alerts"
+import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DispensationService } from "@/apps/ART/services/dispensation_service"
 import EncounterMixinVue from './EncounterMixin.vue'
 // import Validation from "@/components/Forms/validations/StandardValidations"
@@ -30,8 +30,13 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit() {
-            //TODO: save something
+        async onSubmit(f: any, computed: any) {
+            const req = await this.dispensation.saveDispensations(computed.dispenses)
+
+            if (!req) return toastWarning('Unable to dispense drugs')
+
+            toastSuccess('Drugs have been dispensed')
+
             this.nextTask()
         },
         buildMedicationHistory() {
@@ -61,9 +66,12 @@ export default defineComponent({
         getFields(): Array<Field> {
             return [
                 {
-                    id: 'dispense',
+                    id: 'dispenses',
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
+                    computedValue: (d: Array<Option>) => d.map(({other, value}: Option) => {
+                        return this.dispensation.buildDispensationPayload(other.order_id, value) 
+                    }),
                     config: {
                         medicationHistory: this.buildMedicationHistory(),
                         toolbarInfo: [

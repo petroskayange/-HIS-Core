@@ -57,6 +57,21 @@ export class DispensationService extends AppEncounterService {
         return this.currentDrugOrder
     }
 
+    buildDispensationPayload(orderId: number, quantity: number) {
+        return {
+            quantity,
+            'date': this.date,
+            'drug_order_id': orderId,
+        }
+    }
+
+    saveDispensations(dispensations: Array<any>) {
+        return AppEncounterService.postJson('/dispensations', { 
+            dispensations, 
+            'program_id': AppEncounterService.getProgramID()
+        })
+    }
+
     async loadDrugHistory() {
         const res = await DrugOrderService.getDrugOrderHistory(this.patientID)
         if (res) {

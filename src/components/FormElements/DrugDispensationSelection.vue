@@ -112,6 +112,17 @@ export default defineComponent({
     }
   },
   watch: {
+    listData: {
+        handler(data: Array<Option>) {
+            if (data) {
+                this.$emit('onValue', data.filter((i: Option) => {
+                    return  i.value > 0 && i.other.amount_needed > 0 
+                }))
+            }
+        },
+        immediate: true,
+        deep: true
+    },
     clear: {
         handler(clear: boolean) {
             if (clear) {
@@ -131,7 +142,6 @@ export default defineComponent({
         this.listData = this.listData.map((i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
                 i.value = parseInt(quantity)
-                this.$emit('onValue', i)
             }
             return i
         })
@@ -145,7 +155,6 @@ export default defineComponent({
             if (!ok) return false
         }
         item.value = value
-        this.$emit('onValue', item)
         return true
     },
     buildPackSizeRows(packSizes: Array<number>) {
