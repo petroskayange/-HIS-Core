@@ -5,10 +5,10 @@
 import { defineComponent } from 'vue'
 import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
-import { toastWarning, toastSuccess } from "@/utils/Alerts"
+// import { toastWarning, toastSuccess } from "@/utils/Alerts"
 import { DispensationService } from "@/apps/ART/services/dispensation_service"
 import EncounterMixinVue from './EncounterMixin.vue'
-import Validation from "@/components/Forms/validations/StandardValidations"
+// import Validation from "@/components/Forms/validations/StandardValidations"
 import HisDate from "@/utils/Date"
 
 export default defineComponent({
@@ -20,6 +20,7 @@ export default defineComponent({
         patient: {
             async handler(patient: any){
                 this.dispensation = new DispensationService(patient.getID())
+                await this.dispensation.loadCurrentDrugOrder()
                 this.fields = this.getFields()
             },
             deep: true
@@ -29,6 +30,17 @@ export default defineComponent({
         async onSubmit() {
             //TODO: save something
             this.nextTask()
+        },
+        buildOrderOptions() {
+            return this.dispensation.getCurrentOrder().map((d: any) => ({
+                label: d.drug.name,
+                value: 0,
+                other: {
+                    'drug_id': d.drug_id,
+                    'order_id': d.order.order_id,
+                    'amount_needed': d.amount_needed
+                }
+            }))
         },
         getFields(): Array<Field> {
             return [
@@ -45,40 +57,7 @@ export default defineComponent({
                             )}
                         ]
                     },
-                    options: () => [
-                        {
-                            label: 'TDF300/3TC300/DTG50',
-                            value: 0,
-                            other: {
-                                'drug_id': 1,
-                                'amounted_needed': 30
-                            }
-                        },
-                        {
-                            label: 'Cotrimoxazole (960mg)',
-                            value: 0,
-                            other: {
-                                'drug_id': 2,
-                                'amounted_needed': 30
-                            }
-                        },
-                        {
-                            label: 'Rifapentine (150mg)',
-                            value: 0,
-                            other: {
-                                'drug_id': 3,
-                                'amounted_needed': 30
-                            }
-                        },
-                        {
-                            label: 'INH or H (Isoniazid 100mg tablet)',
-                            value: 0,
-                            other: {
-                                'drug_id': 4,
-                                'amounted_needed': 30
-                            }
-                        }
-                    ]
+                    options: () => this.buildOrderOptions()
                 }
             ]
         }

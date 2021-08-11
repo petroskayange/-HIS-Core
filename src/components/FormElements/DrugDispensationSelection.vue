@@ -47,8 +47,8 @@
                                 </tr>
                                 <tr v-for="(data, index) in listData" :key="index">
                                     <td> {{ data.label }} </td>
-                                    <td> {{ data.other.amount_in_stock || 'N/A'}} </td>
-                                    <td> {{ data.other.amounted_needed }} </td>
+                                    <td> {{ data.other.amount_in_stock || '-'}} </td>
+                                    <td> {{ data.other.amount_needed }} </td>
                                     <td> <ion-input :value="data.value" @click="launchDispenser(data)" class='dosage-input'/> </td>
                                     <td> <reset-button @click='onReset(data)'> </reset-button> </td>
                                 </tr>
@@ -155,7 +155,7 @@ export default defineComponent({
             cssClass: 'custom-modal',
             componentProps: {
                 drugName: item.label,
-                tabsNeeded: item.other.amounted_needed,
+                tabsNeeded: item.other.amount_needed,
                 items: [
                     [30, 0, 0, 0],
                     [60, 0, 0, 0],
