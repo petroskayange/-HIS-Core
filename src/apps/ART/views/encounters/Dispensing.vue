@@ -54,6 +54,9 @@ export default defineComponent({
             const completePack = this.dispensation.calcCompletePack(order, units)
             return completePack < 0 ? 0 : completePack
         },
+        isDoneDispensing(orders: Array<any>) {
+            return orders.filter((o: any) => o.amount_needed > 0).length <= 0
+        },
         async isValidDispensation(option: Option) {
             let isOk = true
             const totalTabs = parseInt(option.value.toString())
@@ -77,6 +80,9 @@ export default defineComponent({
                     type: FieldType.TT_DISPENSATION_INPUT,
                     onValueUpdate: async() => {
                         await this.dispensation.loadCurrentDrugOrder()
+                        if (this.isDoneDispensing(this.dispensation.getCurrentOrder())) {
+                            return this.nextTask()
+                        }
                         return this.buildOrderOptions()
                     },
                     onValue: async (i: Option) => {
