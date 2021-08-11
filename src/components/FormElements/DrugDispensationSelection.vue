@@ -109,15 +109,17 @@ export default defineComponent({
     }
   },
   methods: {
-    onScan(barcode: string) {
+    async onScan(barcode: string) {
         const [ drugId, quantity ] = barcode.split('-')
-        this.listData = this.listData.map((i: Option) => {
+        const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
-                i.value = parseInt(quantity)
-                this.$emit('onValue', i)
+                const value = parseInt(quantity)
+                const ok = await this.updateOnValue(i, value)
+                if (ok) i.value = value
             }
             return i
         })
+        this.listData = await Promise.all(data)
     },
     async onReset(item: Option) {
         await this.updateOnValue(item, -1)
