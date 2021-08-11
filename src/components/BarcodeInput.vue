@@ -28,8 +28,9 @@ export default defineComponent({
   methods: {
     checkForbarcode(){
         if(this.barcodeText.match(/.+\$$/i) != null){
-            this.barcodeText = this.barcodeText.replace(/\$/ig, '');
-            this.$emit('onScan', this.barcodeText)
+          const text = this.barcodeText.replace(/\$/ig, '');
+          this.$emit('onScan', text)
+          this.barcodeText = ''
         }
     }
   },
