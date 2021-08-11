@@ -94,7 +94,7 @@ export class DispensationService extends AppEncounterService {
         if (drugId in DRUG_PACK_SIZES) {
             return DRUG_PACK_SIZES[drugId]
         }
-        return [30]
+        return [30, 60, 90]
     }
     
     // Ripped from old ART system for backwards compatibility purposes
