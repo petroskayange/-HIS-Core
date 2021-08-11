@@ -125,14 +125,14 @@ export default defineComponent({
     },
     async updateOnValue(item: Option, value: any) {
         if (this.onValue) {
-            const ok = await this.onValue({ 
-                label: item.label, 
-                other: item.other, 
-                value 
+            const ok = await this.onValue({
+                label: item.label,
+                other: item.other,
+                value
             })
             if (!ok) return false
         }
-        item.value = value
+        item.value = value < 0 ? 0 : value
         this.$emit('onValue', item)
         return true
     },

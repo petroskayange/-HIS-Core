@@ -64,6 +64,10 @@ export default defineComponent({
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
                     onValue: async ({value, other}: Option) => {
+                        if (value  === -1) {
+                            const voided = await this.dispensation.voidOrder(other.order_id)
+                            return voided ? true : false
+                        }
                         const data = this.dispensation.buildDispensationPayload(other.order_id, value)
                         const res = await this.dispensation.saveDispensations([data])
                         if (res) return true

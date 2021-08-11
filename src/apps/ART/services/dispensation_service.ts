@@ -72,6 +72,10 @@ export class DispensationService extends AppEncounterService {
         })
     }
 
+    async voidOrder(orderId: number) {
+        return AppEncounterService.void(`/dispensations/${orderId}`, {})
+    }
+
     async loadDrugHistory() {
         const res = await DrugOrderService.getDrugOrderHistory(this.patientID)
         if (res) {
