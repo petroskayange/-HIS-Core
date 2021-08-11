@@ -60,6 +60,10 @@ export default defineComponent({
                     id: 'dispenses',
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
+                    onValueUpdate: async() => {
+                        await this.dispensation.loadCurrentDrugOrder()
+                        return this.buildOrderOptions()
+                    },
                     onValue: async ({value, other}: Option) => {
                         if (value  === -1) {
                             const voided = await this.dispensation.voidOrder(other.order_id)

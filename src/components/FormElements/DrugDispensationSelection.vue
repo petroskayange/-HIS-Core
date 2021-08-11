@@ -94,6 +94,9 @@ export default defineComponent({
     onValue: {
         type: Function
     },
+    onValueUpdate: {
+        type: Function
+    },
     config: {
         type: Object
     },
@@ -141,9 +144,14 @@ export default defineComponent({
             })
             if (!ok) return false
         }
+        
         item.value = value < 0 ? 0 : value
         item.other['amount_needed'] = value > 0 ? 0 : item.other['amount_needed']
         this.$emit('onValue', item)
+
+        if (this.onValueUpdate) {
+            this.listData = await this.onValueUpdate(item, this.listData)
+        }
         return true
     },
     buildPackSizeRows(packSizes: Array<number>) {
