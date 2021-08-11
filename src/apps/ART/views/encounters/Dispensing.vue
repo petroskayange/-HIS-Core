@@ -38,10 +38,15 @@ export default defineComponent({
                 other: {
                     'drug_id': d.drug_id,
                     'order_id': d.order.order_id,
-                    'amount_needed': d.amount_needed,
+                    'amount_needed': this.calculateCompletePack(d),
                     'pack_sizes': this.dispensation.getDrugPackSizes(d.drug_id)
                 }
             }))
+        },
+        calculateCompletePack(order: any) {
+            const units = parseFloat(order.amount_needed) - (order.quantity || 0)
+            const completePack = this.dispensation.calcCompletePack(order, units)
+            return completePack < 0 ? 0 : completePack
         },
         getFields(): Array<Field> {
             return [

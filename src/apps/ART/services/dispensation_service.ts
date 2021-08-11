@@ -78,4 +78,26 @@ export class DispensationService extends AppEncounterService {
         }
         return [30]
     }
+    
+    // Ripped from old ART system for backwards compatibility purposes
+    calcCompletePack(drug: any, units: number) {
+        const drugOrderBarcodes = drug.barcodes.sort((a: any, b: any) => a.tabs - b.tabs); 
+        
+        //sorting in an ascending order by tabs
+        if (drugOrderBarcodes.length == 0 || units == 0.0) return units;
+
+        for (const i in drugOrderBarcodes) {
+            const { tabs } = drugOrderBarcodes[i]
+
+            if (parseInt(tabs) >= units) return tabs;
+        }
+
+        const smallestAvailableTab = parseInt(drugOrderBarcodes[0].tabs)
+        let completePack = parseInt(drugOrderBarcodes[drugOrderBarcodes.length - 1].tabs)
+    
+        while (completePack < units) {
+            completePack += smallestAvailableTab
+        }
+        return completePack
+    }
 }
