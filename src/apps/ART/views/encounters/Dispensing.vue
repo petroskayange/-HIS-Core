@@ -45,10 +45,10 @@ export default defineComponent({
                 label: d.drug.name,
                 value: d.quantity || 0,
                 other: {
-                    'drug_id': d.drug_id,
+                    'drug_id': d.drug.drug_id,
                     'order_id': d.order.order_id,
                     'amount_needed': this.calculateCompletePack(d),
-                    'pack_sizes': this.dispensation.getDrugPackSizes(d.drug_id)
+                    'pack_sizes': this.dispensation.getDrugPackSizes(d.drug.drug_id)
                 }
             }))
         },
