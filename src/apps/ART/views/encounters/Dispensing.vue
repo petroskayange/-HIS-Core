@@ -1,5 +1,5 @@
 <template>
-    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields" @onFinish="onSubmit"/>
+    <his-standard-form :skipSummary="true" :cancelDestinationPath="cancelDestination" :fields="fields"/>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -30,9 +30,6 @@ export default defineComponent({
         }
     },
     methods: {
-        async onSubmit() {
-            this.nextTask()
-        },
         buildMedicationHistory() {
             return this.dispensation.getDrugHistory().map((d: any) => ({
                 medication: d.drug.name,
@@ -68,8 +65,10 @@ export default defineComponent({
                             const voided = await this.dispensation.voidOrder(other.order_id)
                             return voided ? true : false
                         }
+
                         const data = this.dispensation.buildDispensationPayload(other.order_id, value)
                         const res = await this.dispensation.saveDispensations([data])
+
                         if (res) return true
 
                         toastWarning('Unable to save dispensation')
@@ -85,7 +84,8 @@ export default defineComponent({
                             )}
                         ],
                         hiddenFooterBtns: [ 
-                            'Clear'
+                            'Clear',
+                            'Finish'
                         ]
                     },
                     options: () => this.buildOrderOptions()
