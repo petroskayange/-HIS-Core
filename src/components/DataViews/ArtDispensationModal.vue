@@ -42,7 +42,14 @@
     <ion-footer>
         <ion-toolbar>
         <ion-button @click="onClose" color="danger" size="large" slot="end"> Close </ion-button>
-        <ion-button @click="onDispense(totalTabs)" color="success" size="large" slot="end"> Done </ion-button>
+        <ion-button 
+            @click="onDispense(totalTabs)" 
+            :disabled="totalTabs <= 0"
+            color="success" 
+            size="large" 
+            slot="end"> 
+            Dispense 
+        </ion-button>
         </ion-toolbar>
     </ion-footer>
 </template>
