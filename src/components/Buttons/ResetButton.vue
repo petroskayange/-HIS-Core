@@ -1,6 +1,6 @@
 <template>
-    <div class="clickable">
-        <center> 
+    <div :class="state">
+        <center>
             <img :src="icon"/>
         </center>
     </div>
@@ -13,9 +13,15 @@ export default defineComponent({
         label: {
             type: String,
             required: true
+        },
+        disabled: {
+            type: Boolean
         }
     },
     computed: {
+        state(): string {
+            return this.disabled ? 'disabled-btn' : 'clickable'
+        },
         icon(): string {
             return `assets/images/reset.png`;
         }

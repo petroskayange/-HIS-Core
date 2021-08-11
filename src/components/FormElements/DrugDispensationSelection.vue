@@ -50,7 +50,7 @@
                                     <td> {{ data.other.amount_in_stock || '-'}} </td>
                                     <td> {{ data.other.amount_needed }} </td>
                                     <td> <ion-input :value="data.value" @click="launchDispenser(data)" class='dosage-input'/> </td>
-                                    <td> <reset-button @click='onReset(data)'> </reset-button> </td>
+                                    <td> <reset-button :disabled="data.value <= 0" @click='onReset(data)'> </reset-button> </td>
                                 </tr>
                             </table>
                         </div> 
@@ -121,7 +121,9 @@ export default defineComponent({
         this.listData = await Promise.all(data)
     },
     async onReset(item: Option) {
-        await this.updateOnValue(item, -1)
+        if (item.value > 0) {
+            await this.updateOnValue(item, -1)
+        }
     },
     async updateOnValue(item: Option, value: any) {
         if (this.onValue) {

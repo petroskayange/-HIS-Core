@@ -21,6 +21,14 @@
     color: #aaaaaa;
 }
 
+.disabled-btn {
+    cursor: not-allowed;
+    filter: alpha(opacity=62);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    opacity: .62;
+}
+
 .active-card-color {
     color: white !important;
     box-shadow: inset 0 0 10px rgb(124, 124, 124) !important;
