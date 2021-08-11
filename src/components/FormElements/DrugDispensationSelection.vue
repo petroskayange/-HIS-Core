@@ -114,8 +114,7 @@ export default defineComponent({
         const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
                 const value = parseInt(quantity)
-                const ok = await this.updateOnValue(i, value)
-                if (ok) i.value = value
+                await this.updateOnValue(i, value)
             }
             return i
         })
