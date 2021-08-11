@@ -148,6 +148,9 @@ export default defineComponent({
         this.$emit('onValue', item)
         return true
     },
+    buildPackSizeRows(packSizes: Array<number>) {
+        return packSizes.map((p: number) => [p, 0, 0, 0])
+    },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({
             component: ArtDispensationModal,
@@ -156,11 +159,7 @@ export default defineComponent({
             componentProps: {
                 drugName: item.label,
                 tabsNeeded: item.other.amount_needed,
-                items: [
-                    [30, 0, 0, 0],
-                    [60, 0, 0, 0],
-                    [90, 0, 0, 0]
-                ],
+                items: this.buildPackSizeRows(item.other.pack_sizes),
                 onDispense: async (quantity: number) => {
                    const ok = await this.updateOnValue(item, quantity)
                    if (ok) await modalController.dismiss({})

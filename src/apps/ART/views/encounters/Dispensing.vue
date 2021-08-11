@@ -38,7 +38,8 @@ export default defineComponent({
                 other: {
                     'drug_id': d.drug_id,
                     'order_id': d.order.order_id,
-                    'amount_needed': d.amount_needed
+                    'amount_needed': d.amount_needed,
+                    'pack_sizes': this.dispensation.getDrugPackSizes(d.drug_id)
                 }
             }))
         },
