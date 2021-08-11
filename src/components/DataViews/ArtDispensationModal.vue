@@ -53,7 +53,6 @@ import { modalController } from "@ionic/vue"
 export default defineComponent({
     data: () => ({
         listData: [] as Array<any>,
-        totalTabs: 0 as number
     }),
     props: {
         drugName: {
@@ -74,6 +73,9 @@ export default defineComponent({
         }
     },
     computed: {
+        totalTabs(): number {
+            return this.listData.reduce((p: number, c: Array<number>) => c[2] + p , 0)
+        },
         amountNeededRowSpan(): number {
             return this.listData.length + 1
         }
@@ -97,7 +99,6 @@ export default defineComponent({
             const packAmount = totalPacks + 1
             this.listData[rIndex][2] = tabsAmount
             this.listData[rIndex][3] = packAmount
-            this.totalTabs += tabsAmount
         },
         decrementAmount(rIndex: number) {
             const [packSize, _, totalTabs, totalPacks ] = this.listData[rIndex]
@@ -106,7 +107,6 @@ export default defineComponent({
                 const tabsAmount = totalTabs - packSize
                 this.listData[rIndex][2] = tabsAmount
                 this.listData[rIndex][3] = packAmount
-                this.totalTabs -= tabsAmount
             }
         }
     }

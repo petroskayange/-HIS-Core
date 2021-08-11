@@ -35,7 +35,6 @@ export default defineComponent({
             this.nextTask()
         },
         buildMedicationHistory() {
-            console.log(this.dispensation.getDrugHistory())
             return this.dispensation.getDrugHistory().map((d: any) => ({
                 medication: d.drug.name,
                 date: HisDate.toStandardHisDisplayFormat(d.order.start_date),
