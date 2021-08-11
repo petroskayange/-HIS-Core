@@ -133,6 +133,7 @@ export default defineComponent({
             if (!ok) return false
         }
         item.value = value < 0 ? 0 : value
+        item.other['amount_needed'] = value > 0 ? 0 : item.other['amount_needed']
         this.$emit('onValue', item)
         return true
     },
