@@ -23,7 +23,13 @@ export default defineComponent({
     barcodeText: ''
   }),
   mounted() {
-    setTimeout(() => this.$refs.barcode.focus(), 500)
+    setInterval(() => {
+      try {
+        this.$refs.barcode.focus()
+      } catch(e) {
+        //No focus
+      }
+    }, 1500)
   },
   methods: {
     checkForbarcode(){
