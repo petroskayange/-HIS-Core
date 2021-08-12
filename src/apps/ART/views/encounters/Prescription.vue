@@ -119,9 +119,9 @@ export default defineComponent({
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
 
-            const payload = this.mapOrder(this.drugs)
-
             this.prescription.setNextVisitInterval(this.nextInterval)
+
+            const payload = this.mapOrder(this.drugs)
 
             if (!encounter) return toastWarning('Unable to create treatment encounter')
 
