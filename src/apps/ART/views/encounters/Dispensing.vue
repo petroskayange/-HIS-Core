@@ -107,7 +107,8 @@ export default defineComponent({
                     id: 'dispenses',
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
-                    onValueUpdate: async() => {
+                    onValueUpdate: async(i: Option) => {
+                        i.other['amount_needed'] = 0
                         await this.dispensation.loadCurrentDrugOrder()
 
                         if (this.isDoneDispensing(this.dispensation.getCurrentOrder())) {
