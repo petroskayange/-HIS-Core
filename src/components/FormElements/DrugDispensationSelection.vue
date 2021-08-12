@@ -47,7 +47,7 @@
                                 </tr>
                                 <tr v-for="(data, index) in listData" :key="index">
                                     <td> {{ data.label }} </td>
-                                    <td> {{ data.other.amount_in_stock || '-'}} </td>
+                                    <td> {{ data.other.available_stock || '-'}} </td>
                                     <td> {{ data.other.amount_needed }} </td>
                                     <td> <ion-input 
                                             :disabled="data.value > 0" 

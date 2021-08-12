@@ -69,6 +69,7 @@ export default defineComponent({
                 other: {
                     'drug_id': d.drug.drug_id,
                     'order_id': d.order.order_id,
+                    'available_stock': d.available_stock,
                     'amount_needed': this.calculateCompletePack(d),
                     'pack_sizes': this.getPackSizesRows(d.drug.drug_id),
                 }
