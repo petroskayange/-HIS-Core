@@ -123,10 +123,16 @@ export default defineComponent({
   methods: {
     async onScan(barcode: string) {
         const [ drugId, quantity ] = barcode.split('-')
+        /** Find the drug matching the one detected on the barcode */
         const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
-                const value = parseInt(quantity)
-                await this.updateOnValue(i, value, [], true)
+                const prevQuantity = parseInt(i.value.toString())
+                const curQuantity = parseInt(quantity)
+                const ok = await this.updateOnValue(i, curQuantity, [], true)
+                // continously increment barcode values for presentation purposes only
+                if (ok) {
+                    i.value = curQuantity + prevQuantity
+                }
             }
             return i
         })
