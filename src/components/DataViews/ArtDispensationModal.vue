@@ -126,7 +126,8 @@ export default defineComponent({
 
 <style scoped>
     table {
-        width: 100%;
+        width: 98%;
+        margin: auto;
     }
     table, td, th {
         border: solid 1px #ccc;
