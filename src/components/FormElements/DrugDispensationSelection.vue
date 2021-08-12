@@ -37,7 +37,7 @@
                     <!--- PRESCRIPTION START --->
                     <div class="prescription-tab" v-if="tab === 'prescribe'">
                         <div class='prescription-table-section'> 
-                            <table>
+                            <table class="his-table">
                                 <tr>
                                     <th> Medication</th>
                                     <th> Amount in stock</th>
