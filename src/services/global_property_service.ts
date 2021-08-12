@@ -26,4 +26,5 @@ export class GlobalPropertyService extends Service {
 
     static isMilitarySite() { return this.get('military.enabled') }
     static isHTNEnabled() { return this.get('activate.htn.enhancement') }
+    static getAppointmentLimit() { return this.get('clinic.appointment.limit') }
 }
