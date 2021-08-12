@@ -1,7 +1,6 @@
 <template>
   <his-standard-form
     :fields="fields"
-    :activeField="activeField"
     @onFinish="onFinish"
     :skipSummary="true"
     :cancelDestinationPath="cancelDestination"
@@ -22,8 +21,6 @@ export default defineComponent({
   mixins: [EncounterMixinVue],
   components: { HisStandardForm },
   data: () => ({
-    reception: {} as any,
-    activeField: "",
     appointmentDate: "" as any,
     medicationRunOutDate: "" as any,
     appointment: {} as any
@@ -66,7 +63,7 @@ export default defineComponent({
     getFields(): Array<Field> {
       return [
         {
-          id: "capture_arv",
+          id: "set_appointment",
           helpText: "Appointments booking",
           type: FieldType.TT_APPOINTMENTS_ENTRY,
           validation: (val: any) => Validation.required(val),
