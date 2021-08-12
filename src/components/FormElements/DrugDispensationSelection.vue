@@ -37,7 +37,7 @@
                     <!--- PRESCRIPTION START --->
                     <div class="prescription-tab" v-if="tab === 'prescribe'">
                         <div class='prescription-table-section'> 
-                            <table class="his-table">
+                            <table>
                                 <tr>
                                     <th> Medication</th>
                                     <th> Amount in stock</th>
@@ -204,11 +204,16 @@ export default defineComponent({
         text-align: center;
         font-weight: bold;
         border: solid 1px #ccc;
-        height: 60px;
-        width: 100%;
-        background-color: rgb(252, 252, 252);
+        height: 50px;
+        width: 80%;
+        margin: auto;
+        background-color: rgb(255, 248, 221);
     }
-    .his-table > tr > td, th {
-        padding: 0.3em !important;
+    table {
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #ccc;
+        padding: 0.6em !important;
     }
 </style>
