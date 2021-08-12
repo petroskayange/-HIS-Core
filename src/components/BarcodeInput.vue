@@ -53,12 +53,6 @@ input:focus {
     border-color: #719ECE;
     box-shadow: 0 0 5px #202020;
 }
-.his-card {
-  margin: auto;
-  margin-top: 3%;
-  width: 90%;
-  max-height: 40%;
-}
 #barcode-img {
   width: 70%;
 }
