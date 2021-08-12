@@ -1,6 +1,6 @@
 import { AppEncounterService } from "@/services/app_encounter_service";
 import { DrugOrderService } from "@/services/drug_order_service";
-
+import { StockService } from "./stock_service";
 // ripped from old ART system
 export const DRUG_PACK_SIZES: Record<string, any> = {
     '11': [ 30 ],
@@ -57,12 +57,16 @@ export class DispensationService extends AppEncounterService {
         return this.currentDrugOrder
     }
 
-    buildDispensationPayload(orderId: number, quantity: number) {
-        return {
-            quantity,
-            'date': this.date,
-            'drug_order_id': orderId,
+    buildDispensations(orderId: number, tabs: number, totalPacks: number) {
+        const dispensations = []
+        for(let i=0; i < totalPacks; i++) {
+            dispensations.push({
+                'drug_order_id': orderId,
+                date: this.date,
+                quantity: (tabs / totalPacks)
+            })
         }
+        return dispensations
     }
 
     saveDispensations(dispensations: Array<any>) {
@@ -86,7 +90,11 @@ export class DispensationService extends AppEncounterService {
     async loadCurrentDrugOrder() {
         const res = await DrugOrderService.getDrugOrders(this.patientID)
         if (res) {
-            this.currentDrugOrder = res
+            const drugs = res.map(async (d: any) => {
+                d['available_stock'] = await StockService.fetchAvailableDrugStock(d.drug.drug_id)
+                return d
+            })
+            this.currentDrugOrder = await Promise.all(drugs)
         }
     }
 
@@ -96,7 +104,7 @@ export class DispensationService extends AppEncounterService {
         }
         return [30, 60, 90]
     }
-    
+
     // Ripped from old ART system for backwards compatibility purposes
     calcCompletePack(drug: any, units: number) {
         const drugOrderBarcodes = drug.barcodes.sort((a: any, b: any) => a.tabs - b.tabs); 

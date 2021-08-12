@@ -43,7 +43,7 @@
         <ion-toolbar>
         <ion-button @click="onClose" color="danger" size="large" slot="end"> Close </ion-button>
         <ion-button 
-            @click="onDispense(totalTabs)" 
+            @click="onDispense(dispensedValues)" 
             :disabled="totalTabs <= 0"
             color="success" 
             size="large" 
@@ -60,6 +60,8 @@ import { modalController } from "@ionic/vue"
 export default defineComponent({
     data: () => ({
         listData: [] as Array<any>,
+        tabsIndex: 2,
+        packsIndex: 3
     }),
     props: {
         drugName: {
@@ -80,8 +82,10 @@ export default defineComponent({
         }
     },
     computed: {
-        totalTabs(): number {
-            return this.listData.reduce((p: number, c: Array<number>) => c[2] + p , 0)
+        dispensedValues(): Array<[number, number]> {
+            return this.listData
+                       .filter((d: Array<number>) => d[this.tabsIndex] > 0) // We only want tabs with entered value amounts
+                       .map((d: Array<number>) => [ d[this.tabsIndex], d[this.packsIndex] ]) // Just track Tabs and packs changed.. ignore the rest
         },
         amountNeededRowSpan(): number {
             return this.listData.length + 1
@@ -122,7 +126,8 @@ export default defineComponent({
 
 <style scoped>
     table {
-        width: 100%;
+        width: 98%;
+        margin: auto;
     }
     table, td, th {
         border: solid 1px #ccc;

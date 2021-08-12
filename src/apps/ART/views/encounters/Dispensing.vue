@@ -7,8 +7,8 @@ import { FieldType } from "@/components/Forms/BaseFormElements"
 import { Field, Option } from "@/components/Forms/FieldInterface"
 import { toastWarning, alertConfirmation } from "@/utils/Alerts"
 import { DispensationService } from "@/apps/ART/services/dispensation_service"
+import { isEmpty } from 'lodash'
 import EncounterMixinVue from './EncounterMixin.vue'
-// import Validation from "@/components/Forms/validations/StandardValidations"
 import HisDate from "@/utils/Date"
 
 export default defineComponent({
@@ -30,8 +30,33 @@ export default defineComponent({
         }
     },
     methods: {
+        saveDispensations(item: Option) {
+            const dispensations = this.buildDispensations(item)
+            return this.dispensation.saveDispensations(dispensations)    
+        },
+        buildDispensations(item: Option) {
+            if (!isEmpty(item.other?.dispenses)) {
+                let dispenses: any = []
+                item.other.dispenses.forEach(([tabs, packs]: Array<number>) => {
+                    dispenses = [...dispenses, 
+                    ...this.dispensation.buildDispensations(
+                        item.other.order_id, tabs, packs
+                    )]
+                })
+                return dispenses
+            }
+            return this.dispensation.buildDispensations(
+                item.other.order_id, parseInt(item.value.toString()), 1
+            )
+        },
         buildMedicationHistory() {
-            return this.dispensation.getDrugHistory().map((d: any) => ({
+            return this.dispensation.getDrugHistory()
+            .sort((a: any, b: any) => {
+                const dateA: any = new Date(a.order.start_date)
+                const dateB: any = new Date(b.order.start_date)
+                return dateB - dateA
+            })
+            .map((d: any) => ({
                 medication: d.drug.name,
                 date: HisDate.toStandardHisDisplayFormat(d.order.start_date),
                 amount: d.quantity
@@ -44,10 +69,18 @@ export default defineComponent({
                 other: {
                     'drug_id': d.drug.drug_id,
                     'order_id': d.order.order_id,
+                    'available_stock': d.available_stock,
                     'amount_needed': this.calculateCompletePack(d),
-                    'pack_sizes': this.dispensation.getDrugPackSizes(d.drug.drug_id)
+                    'pack_sizes': this.getPackSizesRows(d.drug.drug_id, d.available_stock || 0),
                 }
             }))
+        },
+        getPackSizesRows(drugId: number, availableStock: number) {
+            const packs = this.dispensation.getDrugPackSizes(drugId)
+            return packs.map((packSize: number) => {
+                const packs = availableStock > 0 ? (availableStock / packSize) : '-'
+                return [packSize, packs, 0, 0]
+            })
         },
         calculateCompletePack(order: any) {
             const units = parseFloat(order.amount_needed) - (order.quantity || 0)
@@ -78,27 +111,30 @@ export default defineComponent({
                     id: 'dispenses',
                     helpText: 'Dispensation',
                     type: FieldType.TT_DISPENSATION_INPUT,
-                    onValueUpdate: async() => {
+                    onValueUpdate: async(i: Option) => {
+                        i.other['amount_needed'] = 0
                         await this.dispensation.loadCurrentDrugOrder()
+
                         if (this.isDoneDispensing(this.dispensation.getCurrentOrder())) {
-                            return this.nextTask()
+                            return this.$router.push({name: 'appointment'})
                         }
                         return this.buildOrderOptions()
                     },
-                    onValue: async (i: Option) => {
+                    onValue: async (i: Option, isBarcodeScanned: boolean) => {
                         if (i.value  === -1) {
                             const voided = await this.dispensation.voidOrder(i.other.order_id)
                             return voided ? true : false
                         }
 
-                        const isValidDispensation = await this.isValidDispensation(i)
+                        if (!isBarcodeScanned) {
+                            const isValidDispensation = await this.isValidDispensation(i)
 
-                        if (!isValidDispensation) return false
+                            if (!isValidDispensation) return false
+                        }
 
-                        const data = this.dispensation.buildDispensationPayload(i.other.order_id, i.value)
-                        const res = await this.dispensation.saveDispensations([data])
+                        const dispensed = await this.saveDispensations(i)
 
-                        if (res) return true
+                        if (dispensed) return true
 
                         toastWarning('Unable to save dispensation')
 

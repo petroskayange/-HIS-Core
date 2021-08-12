@@ -18,7 +18,7 @@
                 </ion-col>
                 <ion-col size="10"> 
                     <!--- HISTORY START--->
-                    <div class="history" v-if="tab === 'history'"> 
+                    <div class="his-card history" v-if="tab === 'history'"> 
                         <table class="his-table">
                             <tr>
                                 <th> Medication</th>
@@ -36,7 +36,7 @@
 
                     <!--- PRESCRIPTION START --->
                     <div class="prescription-tab" v-if="tab === 'prescribe'">
-                        <div class='prescription-table-section'> 
+                        <div class='prescription-table-section his-card'> 
                             <table class="his-table">
                                 <tr>
                                     <th> Medication</th>
@@ -47,7 +47,7 @@
                                 </tr>
                                 <tr v-for="(data, index) in listData" :key="index">
                                     <td> {{ data.label }} </td>
-                                    <td> {{ data.other.amount_in_stock || '-'}} </td>
+                                    <td> {{ data.other.available_stock || '-'}} </td>
                                     <td> {{ data.other.amount_needed }} </td>
                                     <td> <ion-input 
                                             :disabled="data.value > 0" 
@@ -123,10 +123,16 @@ export default defineComponent({
   methods: {
     async onScan(barcode: string) {
         const [ drugId, quantity ] = barcode.split('-')
+        /** Find the drug matching the one detected on the barcode */
         const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
-                const value = parseInt(quantity)
-                await this.updateOnValue(i, value, false)
+                const prevQuantity = parseInt(i.value.toString())
+                const curQuantity = parseInt(quantity)
+                const ok = await this.updateOnValue(i, curQuantity, [], true)
+                // continously increment barcode values for presentation purposes only
+                if (ok) {
+                    i.value = curQuantity + prevQuantity
+                }
             }
             return i
         })
@@ -135,27 +141,23 @@ export default defineComponent({
     async onReset(item: Option) {
         await this.updateOnValue(item, -1)
     },
-    async updateOnValue(item: Option, value: any, shouldOnValueCallback=true) {
-        if (this.onValue && shouldOnValueCallback) {
+    async updateOnValue(item: Option, quantity: any, dispenses=[] as Array<any>, isBarcode=false) {
+        if (this.onValue) {
             const ok = await this.onValue({
-                label: item.label,
-                other: item.other,
-                value
-            })
+                label: item.label, 
+                other: {
+                    dispenses, ...item.other
+                },
+                value: quantity
+            }, isBarcode)
             if (!ok) return false
         }
-        
-        item.value = value < 0 ? 0 : value
-        item.other['amount_needed'] = value > 0 ? 0 : item.other['amount_needed']
+        item.value = quantity < 0 ? 0 : quantity
         this.$emit('onValue', item)
-
         if (this.onValueUpdate) {
             this.listData = await this.onValueUpdate(item, this.listData)
         }
         return true
-    },
-    buildPackSizeRows(packSizes: Array<number>) {
-        return packSizes.map((p: number) => [p, 0, 0, 0])
     },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({
@@ -165,10 +167,14 @@ export default defineComponent({
             componentProps: {
                 drugName: item.label,
                 tabsNeeded: item.other.amount_needed,
-                items: this.buildPackSizeRows(item.other.pack_sizes),
-                onDispense: async (quantity: number) => {
-                   const ok = await this.updateOnValue(item, quantity)
-                   if (ok) await modalController.dismiss({})
+                items: item.other.pack_sizes,
+                onDispense: async (values: Array<any>) => {
+                   const tabsIndex = 0
+                   const quantity = values.reduce((a: number, c: Array<number>) => a + c[tabsIndex], 0)
+                   const ok = await this.updateOnValue(item, quantity, values)
+                   if (ok) {
+                       await modalController.dismiss({})
+                   } 
                 }
             }
         })
@@ -198,17 +204,22 @@ export default defineComponent({
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: -20px;
     }
     .dosage-input {
         text-align: center;
         font-weight: bold;
         border: solid 1px #ccc;
-        height: 60px;
-        width: 100%;
-        background-color: rgb(252, 252, 252);
+        height: 50px;
+        width: 80%;
+        margin: auto;
+        background-color: rgb(255, 248, 221);
     }
-    .his-table > tr > td, th {
-        padding: 0.3em !important;
+    table {
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #ccc;
+        padding: 0.6em !important;
     }
 </style>

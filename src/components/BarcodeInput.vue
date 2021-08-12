@@ -23,7 +23,13 @@ export default defineComponent({
     barcodeText: ''
   }),
   mounted() {
-    setTimeout(() => this.$refs.barcode.focus(), 500)
+    setInterval(() => {
+      try {
+        this.$refs.barcode.focus()
+      } catch(e) {
+        //No focus
+      }
+    }, 1500)
   },
   methods: {
     checkForbarcode(){
@@ -46,12 +52,6 @@ input:focus {
     outline: none !important;
     border-color: #719ECE;
     box-shadow: 0 0 5px #202020;
-}
-.his-card {
-  margin: auto;
-  margin-top: 3%;
-  width: 90%;
-  max-height: 40%;
 }
 #barcode-img {
   width: 70%;
