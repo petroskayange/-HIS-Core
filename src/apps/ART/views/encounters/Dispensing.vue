@@ -81,7 +81,7 @@ export default defineComponent({
                     onValueUpdate: async() => {
                         await this.dispensation.loadCurrentDrugOrder()
                         if (this.isDoneDispensing(this.dispensation.getCurrentOrder())) {
-                            return this.nextTask()
+                            return this.$router.push({name: 'appointment'})
                         }
                         return this.buildOrderOptions()
                     },
