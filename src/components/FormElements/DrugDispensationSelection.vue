@@ -18,7 +18,7 @@
                 </ion-col>
                 <ion-col size="10"> 
                     <!--- HISTORY START--->
-                    <div class="history" v-if="tab === 'history'"> 
+                    <div class="his-card history" v-if="tab === 'history'"> 
                         <table class="his-table">
                             <tr>
                                 <th> Medication</th>
@@ -36,7 +36,7 @@
 
                     <!--- PRESCRIPTION START --->
                     <div class="prescription-tab" v-if="tab === 'prescribe'">
-                        <div class='prescription-table-section'> 
+                        <div class='prescription-table-section his-card'> 
                             <table class="his-table">
                                 <tr>
                                     <th> Medication</th>
