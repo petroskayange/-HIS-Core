@@ -71,13 +71,16 @@ export default defineComponent({
                     'order_id': d.order.order_id,
                     'available_stock': d.available_stock,
                     'amount_needed': this.calculateCompletePack(d),
-                    'pack_sizes': this.getPackSizesRows(d.drug.drug_id),
+                    'pack_sizes': this.getPackSizesRows(d.drug.drug_id, d.available_stock || 0),
                 }
             }))
         },
-        getPackSizesRows(drugId: number) {
+        getPackSizesRows(drugId: number, availableStock: number) {
             const packs = this.dispensation.getDrugPackSizes(drugId)
-            return packs.map((p: number) => [p, 0, 0, 0])
+            return packs.map((packSize: number) => {
+                const packs = availableStock > 0 ? (availableStock / packSize) : '-'
+                return [packSize, packs, 0, 0]
+            })
         },
         calculateCompletePack(order: any) {
             const units = parseFloat(order.amount_needed) - (order.quantity || 0)
