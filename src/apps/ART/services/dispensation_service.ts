@@ -91,8 +91,7 @@ export class DispensationService extends AppEncounterService {
         const res = await DrugOrderService.getDrugOrders(this.patientID)
         if (res) {
             const drugs = res.map(async (d: any) => {
-                const availableStock = await StockService.fetchAvailableDrugStock(d.drug.drug_id)
-                d['available_stock'] = availableStock
+                d['available_stock'] = await StockService.fetchAvailableDrugStock(d.drug.drug_id)
                 return d
             })
             this.currentDrugOrder = await Promise.all(drugs)
