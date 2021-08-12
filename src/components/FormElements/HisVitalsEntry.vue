@@ -4,20 +4,16 @@
       <ion-grid style="width: 100%">
         <ion-row>
           <ion-col size="2">
-            <ion-card
-              v-for="(key, index) in keys"
-              :key="key.label"
-              @click="activeField = index"
-              size="large"
-              expan="full"
-              :color="activeField === index ? 'medium' : 'primary'"
+            <option-button
+              v-for="(key, bIndex) in keys"
+              :key="bIndex"
+              :label="key.label"
+              :isActive="activeField === bIndex"
+              :image="'vitals/'+key.other.icon"
+              @click="activeField = bIndex"
               v-show="key.other.visible !== false"
             >
-              <img :src="img(key.other.icon)" />
-              <ion-card-content>
-                <ion-label>{{ key.label }}</ion-label>
-              </ion-card-content>
-            </ion-card>
+            </option-button>
           </ion-col>
           <ion-col size="5">
             <div class="centered">
@@ -65,15 +61,14 @@ import {
   IonGrid,
   IonCol,
   IonRow,
-  IonInput,
-  IonCard,
-  IonCardContent,
-  IonLabel
+  IonInput
 } from "@ionic/vue";
 import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 import { VITALS_KEYPAD } from "../Keyboard/KbLayouts";
 import { BMIService } from "@/services/bmi_service";
 import { Option } from "../Forms/FieldInterface";
+import OptionButton from "@/components/Buttons/ActionSideButton.vue"
+
 export default defineComponent({
   components: {
     ViewPort,
@@ -82,9 +77,7 @@ export default defineComponent({
     IonRow,
     IonInput,
     BaseKeyboard,
-    IonCard,
-    IonCardContent,
-    IonLabel
+    OptionButton
   },
   props: {
     fdata: {
