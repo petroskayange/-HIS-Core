@@ -198,7 +198,7 @@ export default defineComponent({
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 0;
+        bottom: -20px;
     }
     .dosage-input {
         text-align: center;

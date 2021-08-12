@@ -31,7 +31,13 @@ export default defineComponent({
     },
     methods: {
         buildMedicationHistory() {
-            return this.dispensation.getDrugHistory().map((d: any) => ({
+            return this.dispensation.getDrugHistory()
+            .sort((a: any, b: any) => {
+                const dateA: any = new Date(a.order.start_date)
+                const dateB: any = new Date(b.order.start_date)
+                return dateB - dateA
+            })
+            .map((d: any) => ({
                 medication: d.drug.name,
                 date: HisDate.toStandardHisDisplayFormat(d.order.start_date),
                 amount: d.quantity
