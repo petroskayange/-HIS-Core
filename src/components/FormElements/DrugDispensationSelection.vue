@@ -126,7 +126,7 @@ export default defineComponent({
         const data = this.listData.map(async (i: Option) => {
             if (i.other.drug_id === parseInt(drugId)) {
                 const value = parseInt(quantity)
-                await this.updateOnValue(i, value, false)
+                await this.updateOnValue(i, value, [], true)
             }
             return i
         })
@@ -135,27 +135,23 @@ export default defineComponent({
     async onReset(item: Option) {
         await this.updateOnValue(item, -1)
     },
-    async updateOnValue(item: Option, value: any, shouldOnValueCallback=true) {
-        if (this.onValue && shouldOnValueCallback) {
+    async updateOnValue(item: Option, quantity: any, dispenses=[] as Array<any>, isBarcode=false) {
+        if (this.onValue) {
             const ok = await this.onValue({
-                label: item.label,
-                other: item.other,
-                value
-            })
+                label: item.label, 
+                other: {
+                    dispenses, ...item.other
+                },
+                value: quantity
+            }, isBarcode)
             if (!ok) return false
         }
-        
-        item.value = value < 0 ? 0 : value
-        item.other['amount_needed'] = value > 0 ? 0 : item.other['amount_needed']
+        item.value = quantity < 0 ? 0 : quantity
         this.$emit('onValue', item)
-
         if (this.onValueUpdate) {
             this.listData = await this.onValueUpdate(item, this.listData)
         }
         return true
-    },
-    buildPackSizeRows(packSizes: Array<number>) {
-        return packSizes.map((p: number) => [p, 0, 0, 0])
     },
     async launchDispenser(item: Option) {
         const modal = await modalController.create({
@@ -165,10 +161,14 @@ export default defineComponent({
             componentProps: {
                 drugName: item.label,
                 tabsNeeded: item.other.amount_needed,
-                items: this.buildPackSizeRows(item.other.pack_sizes),
-                onDispense: async (quantity: number) => {
-                   const ok = await this.updateOnValue(item, quantity)
-                   if (ok) await modalController.dismiss({})
+                items: item.other.pack_sizes,
+                onDispense: async (values: Array<any>) => {
+                   const tabsIndex = 0
+                   const quantity = values.reduce((a: number, c: Array<number>) => a + c[tabsIndex], 0)
+                   const ok = await this.updateOnValue(item, quantity, values)
+                   if (ok) {
+                       await modalController.dismiss({})
+                   } 
                 }
             }
         })

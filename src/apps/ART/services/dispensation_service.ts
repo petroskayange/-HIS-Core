@@ -57,12 +57,16 @@ export class DispensationService extends AppEncounterService {
         return this.currentDrugOrder
     }
 
-    buildDispensationPayload(orderId: number, quantity: number) {
-        return {
-            quantity,
-            'date': this.date,
-            'drug_order_id': orderId,
+    buildDispensations(orderId: number, tabs: number, totalPacks: number) {
+        const dispensations = []
+        for(let i=0; i < totalPacks; i++) {
+            dispensations.push({
+                'drug_order_id': orderId,
+                date: this.date,
+                quantity: (tabs / totalPacks)
+            })
         }
+        return dispensations
     }
 
     saveDispensations(dispensations: Array<any>) {
