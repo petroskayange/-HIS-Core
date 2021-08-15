@@ -56,8 +56,9 @@ export const ENCOUNTERS: Array<TaskInterface> = [
     icon: img("patient-type.png")
   },
   {
-    id: "fast track",
-    name: "Fast Track",
+    id: "fast track assesment",
+    name: "Fast Track assesment",
     icon: img("fast-track.png")
+    //how it's named in the database. ignore grammatical error
   }
 ]
