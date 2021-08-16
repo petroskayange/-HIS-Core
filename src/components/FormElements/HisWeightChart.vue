@@ -1,8 +1,8 @@
 <template>
     <view-port>
         <div class="view-port-content">
-            <ion-row>
-                <ion-col size="8" class="his-card"> 
+            <ion-row class='parent-row'>
+                <ion-col size="8"> 
                     <apexchart
                         :width="width"
                         :height="height"
@@ -152,6 +152,9 @@ export default defineComponent({
 <style scoped>
     .view-port-content {
         background: white;
+    }
+    ion-col {
+        border-right: #ccc solid 2px;
     }
     .title {
      font-weight: bold;   
