@@ -35,7 +35,7 @@
                         <ion-item> 
                             <ion-label class='title'>Patient Age</ion-label>
                             <ion-chip slot="end" color="primary"> 
-                                {{ age }}
+                                {{ stats.age }}
                             </ion-chip>
                         </ion-item>
                         <ion-item> 
@@ -106,6 +106,7 @@ export default defineComponent({
                 if (secondY && secondY > 0) {
                     return (((firstY/secondY)*100)-100).toFixed(2)+' %' 
                 }
+                return ''
             } 
         }
       }
@@ -116,6 +117,8 @@ export default defineComponent({
             const curWeight = data.values[data.values.length - 1] || 0
             this.stats.curWeight = curWeight || '-'
             this.stats.prevWeight = prevWeight || '-'
+            this.stats.age = data.age
+            this.stats.bmi = data.bmi
 
             if (curWeight > 0 && prevWeight > 0) {
                 this.stats.curWeightChange = (((curWeight/prevWeight)*100)-100).toFixed(2)+' %'

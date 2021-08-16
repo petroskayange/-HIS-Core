@@ -275,7 +275,9 @@ export default defineComponent({
                                 label: "Weight for patient",
                                 value: "Weight trail",
                                 other: {
-                                    labels, values
+                                    labels, 
+                                    values,
+                                    age: this.patient.getAge()
                                 }
                             }
                         ]
