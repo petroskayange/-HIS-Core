@@ -4,54 +4,66 @@
       <ion-grid style="width: 100%">
         <ion-row>
           <ion-col size="2">
-            <ion-card
-              v-for="(key, index) in keys"
-              :key="key.label"
-              @click="activeField = index"
-              size="large"
-              expan="full"
-              :color="activeField === index ? 'medium' : 'primary'"
+            <option-button
+              v-for="(key, bIndex) in keys"
+              :key="bIndex"
+              :label="key.label"
+              :isActive="activeField === bIndex"
+              :image="'vitals/'+key.other.icon"
+              @click="activeField = bIndex"
               v-show="key.other.visible !== false"
             >
-              <img :src="img(key.other.icon)" />
-              <ion-card-content>
-                <ion-label>{{ key.label }}</ion-label>
-              </ion-card-content>
-            </ion-card>
+            </option-button>
           </ion-col>
-          <ion-col size="5">
+          <ion-col size="6">
             <div class="centered">
               <ion-input
                 type="text"
                 class='keypad-input'
                 v-if="keys.length > 0"
-                v-model="keys[activeField].value"
+                :value="keys[activeField].value"
               />
-              <base-keyboard :layout="keyboard" :onKeyPress="onKeyPress" btnSize="110px" />
+              <table class="keypad">
+                <tr v-for="(row, rowIndex) in keyboard" :key="rowIndex">
+                  <td class='his-keyboard-margin' v-for="(btnKey, btnIndex) in row" :key="`btn-${btnIndex}`">
+                    <ion-button color="primary" class="his-keyboard-btn" @click="onKeyPress(btnKey)">
+                      {{ btnKey }}
+                    </ion-button>
+                  </td>
+                </tr>
+              </table>
             </div>
           </ion-col>
-          <ion-col size="5">
-            <table class="his-table">
-              <tr
-                v-for="(key, index) in keys"
-                :key="key.name"
-                :style="activeField === index ? { color: 'red' } : ''"
-              >
-                <td>{{ key.label }}</td>
-                <td>{{ key.value }}</td>
-                <td>{{ key.other.modifier }}</td>
-              </tr>
-              <tr>
-                <td colspan="2">BMI</td>
-                <td>{{ BMI.index }}</td>
-              </tr>
-              <tr>
-
-              <td  colspan="3" :style="{'background-color': BMI.color, color: 'white', 'text-align': 'center'}">
-                {{BMI.result}}
-              </td>
-              </tr>
-            </table>
+          <ion-col size="4">
+            <ion-list> 
+              <ion-item
+                v-for="(key, rIndex) in keys" 
+                :key="rIndex"
+                :color="activeField === rIndex ? 'secondary': ''">
+                <ion-label><b>{{ key.label }}</b></ion-label>
+                <ion-label slot="end">
+                  <span class='value-highlight'>
+                    {{ key.value || '-' }}
+                  </span> 
+                  {{ key.other.modifier }} 
+                </ion-label>
+              </ion-item>
+              <ion-item> 
+                <ion-label>
+                  <b>BMI</b>
+                </ion-label>
+                <ion-label slot="end"> 
+                  <span class='value-highlight'>
+                    {{ BMI.index }}
+                  </span>
+                </ion-label>
+              </ion-item>
+              <ion-item> 
+                  <ion-label :style="{'background-color': BMI.color, color: 'white', padding:'10px', 'text-align': 'center'}"> 
+                    {{BMI.result}}
+                  </ion-label>
+              </ion-item>
+            </ion-list>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -64,27 +76,19 @@ import ViewPort from "../DataViews/ViewPort.vue";
 import {
   IonGrid,
   IonCol,
-  IonRow,
-  IonInput,
-  IonCard,
-  IonCardContent,
-  IonLabel
+  IonRow
 } from "@ionic/vue";
-import BaseKeyboard from "@/components/Keyboard/BaseKeyboard.vue";
 import { VITALS_KEYPAD } from "../Keyboard/KbLayouts";
 import { BMIService } from "@/services/bmi_service";
 import { Option } from "../Forms/FieldInterface";
+import OptionButton from "@/components/Buttons/ActionSideButton.vue"
 export default defineComponent({
   components: {
     ViewPort,
     IonGrid,
     IonCol,
     IonRow,
-    IonInput,
-    BaseKeyboard,
-    IonCard,
-    IonCardContent,
-    IonLabel
+    OptionButton
   },
   props: {
     fdata: {
@@ -107,9 +111,9 @@ export default defineComponent({
     keys: [] as any,
     patientID: "" as any,
     activeField: 0,
-    keyboard: VITALS_KEYPAD,
     age: null as any,
     gender: null as any,
+    keyboard: VITALS_KEYPAD,
     BMI: {
       index: 0,
       result: "Normal",
@@ -179,75 +183,40 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.ico {
-  width: 60px;
-}
 .view-port-content {
   height: 100%;
   background: white;
+} 
+.value-highlight {
+  color: green;
+  font-weight: bold;
 }
-.key-b {
-  position: relative;
+ion-col {
+  border-right: #ccc solid 1px;
 }
 .keypad {
-  background: #f4f4f4;
-  padding: 0.7em;
   margin: auto;
 }
-.his-keyboard-margin {
-  padding: 0px !important;
+.centered {
+  width: 90%;
+  background: #f4f4f4;
+  padding: 1.2em;
+  margin: auto;
 }
-
 .his-keyboard-btn {
-  width: 110px !important;
-}
-.his-keyboard {
-  width: 100% !important;
+  width: 110px;
+  font-size: 1.4em;
+  height: 70px;
 }
 .keypad-input {
   border: solid 1px #ccc;
   background: white;
   border-radius: 10px;
-  width: 100%;
-  height: 70px;
+  width: 92%;
+  height: 100px;
+  margin: auto;
   text-align: center;
   font-size: 3em;
-}
-.active {
-  color: blue;
-}
-.vitals-btn {
-  width: 100%;
-  height: 15%;
-}
-ion-col {
-  border-right: black solid 1px;
-}
-img {
-  width: 40px;
-  height: 40px;
-}
-ion-card {
-  text-align: center;
-}
-ion-card-content {
-  padding: 5px;
-}
-.centered {
-  background: #f4f4f4;
-  padding: 0.7em;
-  margin: auto;
-}
-.his-table > tr {
-  border-bottom: solid 1px rgb(87, 87, 87);
-}
-.keypad-input {
-    border: solid 1px #ccc;
-    background: white;
-    border-radius: 10px;
-    width: 350px;
-    height: 70px;
-    text-align: center;
-    font-size: 3em;
+  margin: 15px;
 }
 </style>

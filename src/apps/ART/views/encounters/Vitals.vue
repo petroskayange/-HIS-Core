@@ -229,6 +229,11 @@ export default defineComponent({
             label: "Gender",
             value: this.gender,
           },
+          config: {
+            hiddenFooterBtns : [
+              'Clear'
+            ]
+          },
           options: () => [
             {
               label: "Weight",
