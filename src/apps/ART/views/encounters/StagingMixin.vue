@@ -262,7 +262,12 @@ export default defineComponent({
                     helpText: 'Weight history',
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
-                        const history = await this.patient.getWeightHistory()
+                        let history = await this.patient.getWeightHistory()
+                        history = history.sort((a: any, b: any) => {
+                            const dateA: any = new Date(a.date)
+                            const dateB: any = new Date(b.date)
+                            return dateA - dateB
+                        })
                         const labels = history.map((i: any) => HisDate.toStandardHisDisplayFormat(i.date))
                         const values = history.map((i: any) => i.weight)
                         return [
