@@ -16,6 +16,7 @@ export default defineComponent({
     data: () => ({
         staging: {} as any,
         showStagingWeightChart: true,
+        bmiObj: {} as any, 
         stagingFacts : {
             age: -1 as number,
             bmi: -1 as number,
@@ -44,9 +45,9 @@ export default defineComponent({
             this.staging = new StagingService(patient.getID(), patient.getAge())
 
             await this.staging.loadHivConfirmatoryTestType()
-
+            this.bmiObj = await patient.getBMI()
             this.stagingFacts.age = patient.getAge()
-            this.stagingFacts.bmi = await patient.getBMI()
+            this.stagingFacts.bmi = this.bmiObj['index']
             this.stagingFacts.date = StagingService.getSessionDate()
             this.stagingFacts.gender = patient.isMale() ? 'M' : 'F' 
             this.stagingFacts.testType = this.staging.getConfirmatoryTestType()
@@ -262,15 +263,19 @@ export default defineComponent({
                     helpText: 'Weight history',
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
-                        const history = await this.patient.getWeightHistory()
-                        const labels = history.map((i: any) => HisDate.toStandardHisDisplayFormat(i.date))
-                        const values = history.map((i: any) => i.weight)
+                        let values = await this.patient.getWeightHistory()
+                        values = values.map((d: any) => ({ 
+                            x: HisDate.toStandardHisDisplayFormat(d.date), 
+                            y: d.weight
+                        }))
                         return [
                             {
                                 label: "Weight for patient",
                                 value: "Weight trail",
                                 other: {
-                                    labels, values
+                                    values,
+                                    age: this.patient.getAge(),
+                                    bmi: this.bmiObj
                                 }
                             }
                         ]

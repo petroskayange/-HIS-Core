@@ -450,21 +450,22 @@ export default defineComponent({
           helpText: "Patient weight chart",
           type: FieldType.TT_WEIGHT_CHART,
           options: async () => {
-            const history = await this.patient.getWeightHistory();
-            const labels = history.map((i: any) =>
-              HisDate.toStandardHisDisplayFormat(i.date)
-            );
-            const values = history.map((i: any) => i.weight);
+            const bmi = await this.patient.getBMI()
+            const values = await this.patient.getWeightHistory()
             return [
               {
                 label: "Weight for patient",
                 value: "Weight trail",
                 other: {
-                  labels,
-                  values,
-                },
-              },
-            ];
+                  bmi,
+                  values: values.map((d: any) => ({ 
+                    x: HisDate.toStandardHisDisplayFormat(d.date), 
+                    y: d.weight
+                  })),
+                  age: this.patient.getAge()
+                }
+              }
+            ]
           },
           config: {
             hiddenFooterBtns: ["Clear"],
