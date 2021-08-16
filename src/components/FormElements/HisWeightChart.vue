@@ -104,7 +104,7 @@ export default defineComponent({
             enabled: true,
             textAnchor: 'start',
             formatter: function(firstY: any, opt: any): any {
-                const secondY = opt.w.config.series[0].data[opt.dataPointIndex - 1]
+                const secondY = opt.w.config.series[0].data[opt.dataPointIndex - 1]?.y
                 if (secondY && secondY > 0) {
                     return (((firstY/secondY)*100)-100).toFixed(2)+' %' 
                 }
@@ -115,8 +115,8 @@ export default defineComponent({
     }),
     methods: {
         setStats(data: any) {
-            const prevWeight =  data.values[data.values.length - 2] || 0
-            const curWeight = data.values[data.values.length - 1] || 0
+            const prevWeight =  data.values[data.values.length - 2]?.y || 0
+            const curWeight = data.values[data.values.length - 1]?.y || 0
             this.stats.curWeight = curWeight || '-'
             this.stats.prevWeight = prevWeight || '-'
             this.stats.age = data.age
@@ -133,7 +133,6 @@ export default defineComponent({
     async created() {
         const items = await this.options(this.fdata)
         const data = items[0].other
-        this.chartOptions.xaxis.categories = data.labels
         this.series = [
             {
                 name: 'Weight',

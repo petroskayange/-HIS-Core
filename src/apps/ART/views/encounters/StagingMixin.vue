@@ -263,20 +263,20 @@ export default defineComponent({
                     helpText: 'Weight history',
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
-                        let history = await this.patient.getWeightHistory()
-                        history = history.sort((a: any, b: any) => {
+                        let values = await this.patient.getWeightHistory()
+                        values = values.sort((a: any, b: any) => {
                             const dateA: any = new Date(a.date)
                             const dateB: any = new Date(b.date)
                             return dateA - dateB
-                        })
-                        const labels = history.map((i: any) => HisDate.toStandardHisDisplayFormat(i.date))
-                        const values = history.map((i: any) => i.weight)
+                        }).map((d: any) => ({ 
+                            x: HisDate.toStandardHisDisplayFormat(d.date), 
+                            y: d.weight
+                        }))
                         return [
                             {
                                 label: "Weight for patient",
                                 value: "Weight trail",
                                 other: {
-                                    labels,
                                     values,
                                     age: this.patient.getAge(),
                                     bmi: this.bmiObj
