@@ -154,7 +154,7 @@ export default defineComponent({
         background: white;
     }
     ion-col {
-        border-right: #ccc solid 2px;
+        border-right: #ccc solid 1px;
     }
     .title {
      font-weight: bold;   
