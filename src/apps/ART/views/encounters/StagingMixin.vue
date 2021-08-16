@@ -264,11 +264,7 @@ export default defineComponent({
                     type: FieldType.TT_WEIGHT_CHART,
                     options: async () => {
                         let values = await this.patient.getWeightHistory()
-                        values = values.sort((a: any, b: any) => {
-                            const dateA: any = new Date(a.date)
-                            const dateB: any = new Date(b.date)
-                            return dateA - dateB
-                        }).map((d: any) => ({ 
+                        values = values.map((d: any) => ({ 
                             x: HisDate.toStandardHisDisplayFormat(d.date), 
                             y: d.weight
                         }))

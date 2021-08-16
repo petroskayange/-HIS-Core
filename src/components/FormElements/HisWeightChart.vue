@@ -136,7 +136,11 @@ export default defineComponent({
         this.series = [
             {
                 name: 'Weight',
-                data: data.values
+                data: data.values.sort((a: any, b: any) => {
+                    const dateA: any = new Date(a.x)
+                    const dateB: any = new Date(b.x)
+                    return dateA - dateB
+                })
             }
         ]
         this.type = data.type ? data.type : 'area'
