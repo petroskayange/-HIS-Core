@@ -34,8 +34,8 @@ export default defineComponent({
 </script>
 <style scoped>
     img {
-        width: 60px;
-        height: 60px;
+        width: 40px;
+        height: 40px;
     }
     .his-card {
         color: black;
