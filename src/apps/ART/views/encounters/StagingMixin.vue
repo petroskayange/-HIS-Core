@@ -16,6 +16,7 @@ export default defineComponent({
     data: () => ({
         staging: {} as any,
         showStagingWeightChart: true,
+        bmiObj: {} as any, 
         stagingFacts : {
             age: -1 as number,
             bmi: -1 as number,
@@ -44,9 +45,9 @@ export default defineComponent({
             this.staging = new StagingService(patient.getID(), patient.getAge())
 
             await this.staging.loadHivConfirmatoryTestType()
-
+            this.bmiObj = await patient.getBMI()
             this.stagingFacts.age = patient.getAge()
-            this.stagingFacts.bmi = await patient.getBMI()
+            this.stagingFacts.bmi = this.bmiObj['index']
             this.stagingFacts.date = StagingService.getSessionDate()
             this.stagingFacts.gender = patient.isMale() ? 'M' : 'F' 
             this.stagingFacts.testType = this.staging.getConfirmatoryTestType()
@@ -275,9 +276,10 @@ export default defineComponent({
                                 label: "Weight for patient",
                                 value: "Weight trail",
                                 other: {
-                                    labels, 
+                                    labels,
                                     values,
-                                    age: this.patient.getAge()
+                                    age: this.patient.getAge(),
+                                    bmi: this.bmiObj
                                 }
                             }
                         ]

@@ -91,7 +91,7 @@ export class Patientservice extends Service {
         const gender = this.getGender() === 'Male' ? 'M': 'F'
         const bmi: any = await BMIService.getBMI(weight, height, gender, this.getAge())
 
-        return bmi['index']
+        return bmi
     }
 
     async calculateWeightPercentile() {

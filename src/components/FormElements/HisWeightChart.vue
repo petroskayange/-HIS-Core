@@ -41,12 +41,12 @@
                         <ion-item> 
                             <ion-label class='title'>Patient BMI</ion-label>
                             <ion-chip slot="end" color="primary"> 
-                                0
+                                {{stats.bmi.index}}
                             </ion-chip>
                         </ion-item>
                         <ion-item> 
-                            <ion-label :style="{'background-color': 'green', color: 'white', padding:'10px', 'text-align': 'center'}"> 
-                                Normal
+                            <ion-label :style="{'background-color': stats.bmi.color, color: 'white', padding:'10px', 'text-align': 'center'}"> 
+                                {{stats.bmi.result}}
                             </ion-label>
                         </ion-item>
                     </ion-list>
