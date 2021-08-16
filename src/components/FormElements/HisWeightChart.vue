@@ -6,6 +6,7 @@
                 v-if="series.length >= 1"
                 :width="width"
                 :type="type"
+                :plotOptions="plotOptions"
                 :options="chartOptions"
                 :series="series"
             ></apexchart>
@@ -47,7 +48,17 @@ export default defineComponent({
         },
         xaxis: {
             categories: []
-        }
+        },
+        dataLabels: {
+            enabled: true,
+            textAnchor: 'start',
+            formatter: (firstY: any, opt: any) => {
+                const secondY = opt.w.config.series[0].data[opt.dataPointIndex - 1]
+                if (secondY && secondY > 0) {
+                    return (((firstY/secondY)*100)-100).toFixed(2)+' %';
+                }
+            }
+        },
       },
     }),
     async created() {
