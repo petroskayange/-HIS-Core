@@ -7,7 +7,6 @@
                         :width="width"
                         :height="height"
                         :type="type"
-                        :plotOptions="plotOptions"
                         :options="chartOptions"
                         :series="series"
                     ></apexchart>
