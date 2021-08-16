@@ -1,6 +1,6 @@
 import { AppEncounterService } from "@/services/app_encounter_service"
 import { DrugInterface } from "@/interfaces/Drug"
-import { DrugOrderService } from "@/services/drug_order_service"
+import HisDate from "@/utils/Date"
 
 export class AdherenceService extends AppEncounterService {
     lastDrugs: Array<DrugInterface>
@@ -12,7 +12,14 @@ export class AdherenceService extends AppEncounterService {
     }
 
     async loadPreviousDrugs() {
-        const drugs = await DrugOrderService.getLastDrugsReceived(this.patientID)
+        const date = new Date(this.date)
+        date.setDate(date.getDate() - 1) // we don't want current date to count
+
+        const drugs = await AppEncounterService.getJson(
+            `patients/${this.patientID}/drugs_received`, {
+                date: HisDate.toStandardHisFormat(date)
+            }
+        )
 
         if (!drugs) return
 
