@@ -221,6 +221,7 @@ export default defineComponent({
                         try {
                             await EncounterService.voidEncounter(encounter.encounter_id, reason)
                             _.remove(this.encountersCardItems, { label: encounter.type.name })
+                            this.nextTask = await this.getNextTask(this.patientId)
                             toastSuccess('Encounter has been voided!', 3000)
                         }catch(e) {
                             toastDanger('Unable to void encounter!')
