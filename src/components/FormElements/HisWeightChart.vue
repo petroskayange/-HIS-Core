@@ -28,11 +28,12 @@
                         </ion-item>
                         <ion-item>
                             <ion-label class='title'>Latest weight change</ion-label>
-                            <ion-chip slot="end" color="primary"> 
+                            <img v-show="stats.weightState" :src="stats.weightState" width="50"/>
+                            <ion-chip slot="end" color="primary">
                                 {{stats.curWeightChange}}
                             </ion-chip>
                         </ion-item>
-                        <ion-item> 
+                        <ion-item>
                             <ion-label class='title'>Patient Age</ion-label>
                             <ion-chip slot="end" color="primary"> 
                                 {{ stats.age }}
@@ -75,6 +76,7 @@ export default defineComponent({
         prevWeight: '-' as string,
         curWeight: '-' as string,
         curWeightChange: '-' as string,
+        weightState: '' as string,
         age: '-' as string,
         bmi: {} as any
       },
@@ -122,6 +124,9 @@ export default defineComponent({
 
             if (curWeight > 0 && prevWeight > 0) {
                 this.stats.curWeightChange = (((curWeight/prevWeight)*100)-100).toFixed(2)+' %'
+                const increased = '/assets/images/drop-up-arrow.svg'
+                const decreased = '/assets/images/drop-down-arrow.svg'
+                this.stats.weightState = curWeight > prevWeight ? increased : decreased
             }
         }
     },
