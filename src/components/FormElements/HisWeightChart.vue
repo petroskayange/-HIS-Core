@@ -1,16 +1,46 @@
 <template>
     <view-port>
         <div class="view-port-content">
-            <center> 
-            <apexchart
-                v-if="series.length >= 1"
-                :width="width"
-                :type="type"
-                :plotOptions="plotOptions"
-                :options="chartOptions"
-                :series="series"
-            ></apexchart>
-            </center>
+            <ion-row>
+                <ion-col size="8"> 
+                    <apexchart
+                        :width="width"
+                        :height="height"
+                        :type="type"
+                        :plotOptions="plotOptions"
+                        :options="chartOptions"
+                        :series="series"
+                    ></apexchart>
+                </ion-col>
+                <ion-col size="4">
+                    <ion-list class="his-card">
+                        <ion-item> 
+                            <ion-label class='title'>Previous weight</ion-label>
+                            <ion-chip slot="end" color="primary"> 
+                                0
+                            </ion-chip>
+                        </ion-item>
+                        <ion-item> 
+                            <ion-label class='title'>Latest weight change</ion-label>
+                            <ion-chip slot="end" color="primary"> 
+                                0
+                            </ion-chip>
+                        </ion-item>
+                        <ion-item> 
+                            <ion-label class='title'>Patient Age</ion-label>
+                            <ion-chip slot="end" color="primary"> 
+                                0
+                            </ion-chip>
+                        </ion-item>
+                        <ion-item> 
+                            <ion-label class='title'>Patient BMI</ion-label>
+                            <ion-chip slot="end" color="primary"> 
+                                0
+                            </ion-chip>
+                        </ion-item>
+                    </ion-list>
+                </ion-col>
+            </ion-row>
         </div>
   </view-port>
 </template>
@@ -32,6 +62,7 @@ export default defineComponent({
    data: () => ({
       type: 'area' as string,
       width: '100%' as string,
+      height: '560px' as string,
       series: [] as Array<Record<string, any>>,
       chartOptions: {
         chart: {
@@ -72,7 +103,18 @@ export default defineComponent({
             }
         ]
         this.type = data.type ? data.type : 'area'
-        this.width = data.width ? data.width: '90%'
+        this.width = data.width ? data.width: '100%'
     }
   })
 </script>
+<style scoped>
+    .view-port-content {
+        background: white;
+    }
+    .title {
+     font-weight: bold;   
+    }
+    .his-card {
+        padding: 0px!important;
+    }
+</style>
