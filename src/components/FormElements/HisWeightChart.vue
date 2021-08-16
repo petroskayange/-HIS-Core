@@ -2,7 +2,7 @@
     <view-port>
         <div class="view-port-content">
             <ion-row>
-                <ion-col size="8"> 
+                <ion-col size="8" class="his-card"> 
                     <apexchart
                         :width="width"
                         :height="height"
@@ -13,23 +13,29 @@
                     ></apexchart>
                 </ion-col>
                 <ion-col size="4">
-                    <ion-list class="his-card">
+                    <ion-list >
                         <ion-item> 
                             <ion-label class='title'>Previous weight</ion-label>
                             <ion-chip slot="end" color="primary"> 
-                                0
+                                {{stats.prevWeight}}
                             </ion-chip>
                         </ion-item>
                         <ion-item> 
+                            <ion-label class='title'>Lastest weight</ion-label>
+                            <ion-chip slot="end" color="primary"> 
+                                {{stats.curWeight}}
+                            </ion-chip>
+                        </ion-item>
+                        <ion-item>
                             <ion-label class='title'>Latest weight change</ion-label>
                             <ion-chip slot="end" color="primary"> 
-                                0
+                                {{stats.curWeightChange}}
                             </ion-chip>
                         </ion-item>
                         <ion-item> 
                             <ion-label class='title'>Patient Age</ion-label>
                             <ion-chip slot="end" color="primary"> 
-                                0
+                                {{ age }}
                             </ion-chip>
                         </ion-item>
                         <ion-item> 
@@ -37,6 +43,11 @@
                             <ion-chip slot="end" color="primary"> 
                                 0
                             </ion-chip>
+                        </ion-item>
+                        <ion-item> 
+                            <ion-label :style="{'background-color': 'green', color: 'white', padding:'10px', 'text-align': 'center'}"> 
+                                Normal
+                            </ion-label>
                         </ion-item>
                     </ion-list>
                 </ion-col>
@@ -60,6 +71,13 @@ export default defineComponent({
        }
    },
    data: () => ({
+      stats: {
+        prevWeight: '-' as string,
+        curWeight: '-' as string,
+        curWeightChange: '-' as string,
+        age: '-' as string,
+        bmi: {} as any
+      },
       type: 'area' as string,
       width: '100%' as string,
       height: '560px' as string,
@@ -83,15 +101,27 @@ export default defineComponent({
         dataLabels: {
             enabled: true,
             textAnchor: 'start',
-            formatter: (firstY: any, opt: any) => {
+            formatter: function(firstY: any, opt: any): any {
                 const secondY = opt.w.config.series[0].data[opt.dataPointIndex - 1]
                 if (secondY && secondY > 0) {
-                    return (((firstY/secondY)*100)-100).toFixed(2)+' %';
+                    return (((firstY/secondY)*100)-100).toFixed(2)+' %' 
                 }
-            }
-        },
-      },
+            } 
+        }
+      }
     }),
+    methods: {
+        setStats(data: any) {
+            const prevWeight =  data.values[data.values.length - 2] || 0
+            const curWeight = data.values[data.values.length - 1] || 0
+            this.stats.curWeight = curWeight || '-'
+            this.stats.prevWeight = prevWeight || '-'
+
+            if (curWeight > 0 && prevWeight > 0) {
+                this.stats.curWeightChange = (((curWeight/prevWeight)*100)-100).toFixed(2)+' %'
+            }
+        }
+    },
     async created() {
         const items = await this.options(this.fdata)
         const data = items[0].other
@@ -104,6 +134,7 @@ export default defineComponent({
         ]
         this.type = data.type ? data.type : 'area'
         this.width = data.width ? data.width: '100%'
+        this.setStats(data)
     }
   })
 </script>
