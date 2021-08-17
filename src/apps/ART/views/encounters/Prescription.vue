@@ -34,6 +34,7 @@ export default defineComponent({
             gender: '' as string,
             weight: -1 as number,
             currentDate: '' as string,
+            isChildBearing: false as boolean,
             prescriptionType: '' as 'Custom' | 'Regimen',
             tptPrescriptionCount: 0,
             currentRegimenCode: -1 as number,
@@ -104,7 +105,7 @@ export default defineComponent({
     methods: {
         async initFacts(patient: any) {
             this.facts.age = patient.getAge()
-            this.facts.gender = patient.getGender() === 'Female' ? 'F' : 'M'
+            this.facts.gender = patient.getGender()
             this.facts.weight = await patient.getRecentWeight()
             this.facts.hangingPills = this.prescription.getHangingPills()
             this.facts.treatmentInitiationState = this.prescription.getTreatmentState()
@@ -115,13 +116,14 @@ export default defineComponent({
             this.facts.tptPrescriptionCount = this.prescription.getTptPrescriptionCount()
             this.facts.lastSideEffectDate = this.prescription.getLastSideEffectDate()
             this.facts.currentDate = PrescriptionService.getSessionDate()
+            this.facts.isChildBearing = patient.isChildBearing()
         },
         async onSubmit() {
             const encounter = await this.prescription.createEncounter()
 
-            const payload = this.mapOrder(this.drugs)
-
             this.prescription.setNextVisitInterval(this.nextInterval)
+
+            const payload = this.mapOrder(this.drugs)
 
             if (!encounter) return toastWarning('Unable to create treatment encounter')
 

@@ -11,11 +11,13 @@ import YesNo from "@/components/FormElements/YesNoSelect.vue"
 import MultiYesNo from "@/components/FormElements/MultiYesNoSelect.vue"
 import WeightChart from "@/components/FormElements/HisWeightChart.vue"
 import VitalsEntry from "@/components/FormElements/HisVitalsEntry.vue"
+import AppointmentsEntry from "@/components/FormElements/HisAppointments.vue"
 
 import SummaryPage from "@/components/FormElements/HisSummary.vue"
 import ArtStagingSummary from "@/components/FormElements/ArtStagingSummary.vue"
 import AdherenceInput from "@/components/FormElements/HisAdherenceInput.vue"
 import LabOrders from "@/components/FormElements/HisLabOrders.vue"
+import DispensationInput from "@/components/FormElements/DrugDispensationSelection.vue"
 // Reference names for BaseFormComponents
 export enum FieldType {
     TT_MONTHLY_DAYS="monthly-days",
@@ -35,7 +37,9 @@ export enum FieldType {
     TT_VITALS_ENTRY="vitals-entry",
     TT_ADHERENCE_INPUT = "adherence-input",
     TT_ART_STAGING_SUMMARY = "art-staging-summary",
-    TT_LAB_ORDERS = "lab-orders"
+    TT_LAB_ORDERS = "lab-orders",
+    TT_APPOINTMENTS_ENTRY = "appointments-entry",
+    TT_DISPENSATION_INPUT = 'dispensation-input'
 }
 // Components to be rendered
 export const BaseFormComponents = {
@@ -55,5 +59,7 @@ export const BaseFormComponents = {
     VitalsEntry,
     AdherenceInput,
     ArtStagingSummary,
-    LabOrders
+    LabOrders,
+    AppointmentsEntry,
+    DispensationInput
 }

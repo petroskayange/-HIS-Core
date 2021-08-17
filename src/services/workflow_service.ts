@@ -13,11 +13,14 @@ export class WorkflowService extends Service {
 
     static async getNextTaskParams(patientID: number, taskName='') {
         let task: string = taskName
-        if (!task) {
-            const { name } = await WorkflowService.nextTask(patientID)
-            task = name ? name: 'Patient Dashboard'
+        try {
+            if (!task) {
+                const { name } = await WorkflowService.nextTask(patientID)
+                task = name
+            }
+        } catch(e) {
+            task = ''
         }
-
         return {
             name: task.toLowerCase(),
             params: {

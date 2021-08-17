@@ -57,12 +57,17 @@ export default [
         component: Vitals
     },
     {
+        name: "htn_vitals",
+        path: "/art/encounters/vitals/:patient_id",
+        component: Vitals
+    },
+    {
         name: "patient type",
         path: "/art/encounters/patient_type/:patient_id",
         component: PatientType
     },
     {
-        name: "fast track",
+        name: "fast track assesment",
         path: "/art/encounters/fast_track/:patient_id",
         component: FastTrack
     }
