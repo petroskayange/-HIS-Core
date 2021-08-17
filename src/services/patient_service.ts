@@ -52,6 +52,11 @@ export class Patientservice extends Service {
         return this.getGender() === 'Female'
     }
 
+    isChildBearing() {
+        const age = this.getAge()
+        return this.isFemale() && age >= 12 && age <= 50
+    }
+
     async getRecentWeight() {
         const concept = await ConceptService.getConceptID('weight', true)
         const obs = await ObservationService.getObs({

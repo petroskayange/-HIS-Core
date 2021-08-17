@@ -24,6 +24,7 @@ export default defineComponent({
             stage: -1 as number,
             cd4: -1 as number,
             date: '' as string,
+            isChildBearing: false as boolean,
             stageOneConditions: [] as Array<string>,
             stageTwoConditions: [] as Array<string>,
             stageThreeConditions: [] as Array<string>,
@@ -52,6 +53,7 @@ export default defineComponent({
             this.stagingFacts.gender = patient.isMale() ? 'M' : 'F' 
             this.stagingFacts.testType = this.staging.getConfirmatoryTestType()
             this.stagingFacts.ageInMonths = patient.getAgeInMonths()
+            this.stagingFacts.isChildBearing = patient.isChildBearing()
 
             if (this.staging.isPedaid()) {
                 this.stagingFacts.weightPercentile = await patient.calculateWeightPercentile()
@@ -256,7 +258,7 @@ export default defineComponent({
                             }
                         }
                     ]),
-                    condition: (f: any) => this.hasStaging(f) && this.patient.isFemale(),
+                    condition: (f: any) => this.hasStaging(f) && this.stagingFacts.isChildBearing,
                 },
                 {
                     id: 'patient_weight_chart',
