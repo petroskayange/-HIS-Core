@@ -389,8 +389,8 @@ export default defineComponent({
                     validation: (val: any) => {
                         const isCd4 = () => this.staging.cd4CountIsValid(val.value)
                         return this.validateSeries([
-                            Validation.required(val),
-                            !isCd4() ? ['Please start with either modifier first: >, <, or ='] : null
+                            () => Validation.required(val),
+                            () => !isCd4() ? ['Please start with either modifier first: >, <, or ='] : null
                         ])
                     },
                     config: {
