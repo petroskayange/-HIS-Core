@@ -68,7 +68,7 @@
               >Logout</ion-button
             >
           </ion-col>
-          <ion-col>
+          <ion-col v-if="app.applicationName == 'ART'">
             <ion-button color="primary" size="large" router-link="/patients/search/by_arv">Find By</ion-button>
           </ion-col>
           <ion-col>
@@ -114,7 +114,8 @@ import { GlobalPropertyService } from "@/services/global_property_service"
 import ApiClient from "@/services/api_client";
 import Administration from "@/components/ART/administration.vue";
 import Reports from "@/components/ART/reports.vue";
-import Overview from "@/components/ART/overview.vue";
+
+import Overview from "@/components/OPD/overview.vue";
 import HisDate from "@/utils/Date"
 import { AppInterface } from "@/apps/interfaces/AppInterface";
 export default defineComponent({
